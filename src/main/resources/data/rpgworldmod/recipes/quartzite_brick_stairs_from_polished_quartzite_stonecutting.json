@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "count": 1,
+  "ingredient": {
+    "item": "rpgworldmod:polished_quartzite"
+  },
+  "result": "rpgworldmod:quartzite_brick_stairs"
+}

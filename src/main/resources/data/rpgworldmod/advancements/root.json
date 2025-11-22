@@ -1,0 +1,42 @@
+{
+  "criteria": {
+    "rpgworldmod:rie_weald": {
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "rpgworldmod:rie_weald"
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:location"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "background": "rpgworldmod:textures/block/maskonite_bricks.png",
+    "description": {
+      "translate": "advancements.rpgworldmod.rie_weald.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:rie_sapling"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.rpgworldmod.rie_weald.title"
+    }
+  },
+  "requirements": [
+    [
+      "rpgworldmod:rie_weald"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

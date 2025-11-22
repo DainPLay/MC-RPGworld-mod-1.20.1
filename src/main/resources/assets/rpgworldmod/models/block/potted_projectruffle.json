@@ -1,0 +1,6 @@
+{
+  "parent": "rpgworldmod:block/flower_pot_cross",
+  "textures": {
+    "plant": "rpgworldmod:block/potted_projectruffle"
+  }
+}

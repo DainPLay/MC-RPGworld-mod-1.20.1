@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "age=0": {
+      "model": "rpgworldmod:block/paralily"
+    },
+    "age=1": {
+      "model": "rpgworldmod:block/paralily_berry"
+    }
+  }
+}

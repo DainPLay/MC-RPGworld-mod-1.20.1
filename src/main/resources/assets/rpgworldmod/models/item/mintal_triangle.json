@@ -1,0 +1,172 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "rpgworldmod:item/mintal_triangle_2"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "translation": [-0.75, -5.5, -0.25],
+      "scale": [0.65, 0.65, 0.65]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [0, 180, 0],
+      "translation": [-0.75, -5.5, -0.25],
+      "scale": [0.65, 0.65, 0.65]
+    },
+    "firstperson_righthand": {
+      "translation": [3.38, 1.7, -2.62],
+      "scale": [0.68, 0.68, 0.68]
+    },
+    "firstperson_lefthand": {
+      "rotation": [0, 180, 0],
+      "translation": [3.38, 1.7, -2.62],
+      "scale": [0.68, 0.68, 0.68]
+    }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "vibration": 0.0
+      },
+      "model": "rpgworldmod:item/mintal_triangle_0"
+    },
+    {
+      "predicate": {
+        "vibration": 0.01
+      },
+      "model": "rpgworldmod:item/mintal_triangle_4"
+    },
+    {
+      "predicate": {
+        "vibration": 0.02
+      },
+      "model": "rpgworldmod:item/mintal_triangle_0"
+    },
+    {
+      "predicate": {
+        "vibration": 0.03
+      },
+      "model": "rpgworldmod:item/mintal_triangle_4"
+    },
+    {
+      "predicate": {
+        "vibration": 0.04
+      },
+      "model": "rpgworldmod:item/mintal_triangle_1"
+    },
+    {
+      "predicate": {
+        "vibration": 0.05
+      },
+      "model": "rpgworldmod:item/mintal_triangle_4"
+    },
+    {
+      "predicate": {
+        "vibration": 0.06
+      },
+      "model": "rpgworldmod:item/mintal_triangle_1"
+    },
+    {
+      "predicate": {
+        "vibration": 0.07
+      },
+      "model": "rpgworldmod:item/mintal_triangle_4"
+    },
+    {
+      "predicate": {
+        "vibration": 0.08
+      },
+      "model": "rpgworldmod:item/mintal_triangle_1"
+    },
+    {
+      "predicate": {
+        "vibration": 0.09
+      },
+      "model": "rpgworldmod:item/mintal_triangle_3"
+    },
+    {
+      "predicate": {
+        "vibration": 0.1
+      },
+      "model": "rpgworldmod:item/mintal_triangle_1"
+    },
+    {
+      "predicate": {
+        "vibration": 0.11
+      },
+      "model": "rpgworldmod:item/mintal_triangle_3"
+    },
+    {
+      "predicate": {
+        "vibration": 0.12
+      },
+      "model": "rpgworldmod:item/mintal_triangle_1"
+    },
+    {
+      "predicate": {
+        "vibration": 0.13
+      },
+      "model": "rpgworldmod:item/mintal_triangle_3"
+    },
+    {
+      "predicate": {
+        "vibration": 0.14
+      },
+      "model": "rpgworldmod:item/mintal_triangle_1"
+    },
+    {
+      "predicate": {
+        "vibration": 0.15
+      },
+      "model": "rpgworldmod:item/mintal_triangle_2"
+    },
+    {
+      "predicate": {
+        "vibration": 0.16
+      },
+      "model": "rpgworldmod:item/mintal_triangle_3"
+    },
+    {
+      "predicate": {
+        "vibration": 0.17
+      },
+      "model": "rpgworldmod:item/mintal_triangle_2"
+    },
+    {
+      "predicate": {
+        "vibration": 0.18
+      },
+      "model": "rpgworldmod:item/mintal_triangle_3"
+    },
+    {
+      "predicate": {
+        "vibration": 0.19
+      },
+      "model": "rpgworldmod:item/mintal_triangle_2"
+    },
+    {
+      "predicate": {
+        "vibration": 0.2
+      },
+      "model": "rpgworldmod:item/mintal_triangle_2"
+    },
+    {
+      "predicate": {
+        "vibration": 0.21
+      },
+      "model": "rpgworldmod:item/mintal_triangle_3"
+    },
+    {
+      "predicate": {
+        "vibration": 0.22
+      },
+      "model": "rpgworldmod:item/mintal_triangle_3"
+    },
+    {
+      "predicate": {
+        "vibration": 0.23
+      },
+      "model": "rpgworldmod:item/mintal_triangle_2"
+    }
+  ]
+}

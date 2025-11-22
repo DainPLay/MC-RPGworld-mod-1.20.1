@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "rpgworldmod:block/maskonite_bricks",
+    "top": "rpgworldmod:block/maskonite_bricks",
+    "side": "rpgworldmod:block/maskonite_bricks"
+  }
+}

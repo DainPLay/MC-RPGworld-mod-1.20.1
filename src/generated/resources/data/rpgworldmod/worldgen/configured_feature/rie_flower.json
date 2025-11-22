@@ -1,0 +1,157 @@
+{
+  "type": "minecraft:flower",
+  "config": {
+    "feature": {
+      "feature": {
+        "type": "minecraft:simple_block",
+        "config": {
+          "to_place": {
+            "type": "minecraft:weighted_state_provider",
+            "entries": [
+              {
+                "data": {
+                  "Name": "rpgworldmod:rpgirolle"
+                },
+                "weight": 8
+              },
+              {
+                "data": {
+                  "Name": "rpgworldmod:projectruffle"
+                },
+                "weight": 8
+              },
+              {
+                "data": {
+                  "Name": "rpgworldmod:silicina"
+                },
+                "weight": 8
+              },
+              {
+                "data": {
+                  "Name": "rpgworldmod:mimossa"
+                },
+                "weight": 6
+              },
+              {
+                "data": {
+                  "Name": "rpgworldmod:typhon"
+                },
+                "weight": 6
+              },
+              {
+                "data": {
+                  "Name": "rpgworldmod:wild_fairapier"
+                },
+                "weight": 8
+              },
+              {
+                "data": {
+                  "Name": "rpgworldmod:cheese_cap"
+                },
+                "weight": 6
+              },
+              {
+                "data": {
+                  "Name": "rpgworldmod:mosshroom"
+                },
+                "weight": 6
+              },
+              {
+                "data": {
+                  "Name": "rpgworldmod:holts_reflection",
+                  "Properties": {
+                    "facing": "north",
+                    "timestate": "1"
+                  }
+                },
+                "weight": 1
+              },
+              {
+                "data": {
+                  "Name": "rpgworldmod:holts_reflection",
+                  "Properties": {
+                    "facing": "south",
+                    "timestate": "1"
+                  }
+                },
+                "weight": 1
+              },
+              {
+                "data": {
+                  "Name": "rpgworldmod:holts_reflection",
+                  "Properties": {
+                    "facing": "east",
+                    "timestate": "1"
+                  }
+                },
+                "weight": 1
+              },
+              {
+                "data": {
+                  "Name": "rpgworldmod:holts_reflection",
+                  "Properties": {
+                    "facing": "west",
+                    "timestate": "1"
+                  }
+                },
+                "weight": 1
+              },
+              {
+                "data": {
+                  "Name": "rpgworldmod:glossom",
+                  "Properties": {
+                    "facing": "north",
+                    "glowing": "false"
+                  }
+                },
+                "weight": 1
+              },
+              {
+                "data": {
+                  "Name": "rpgworldmod:glossom",
+                  "Properties": {
+                    "facing": "south",
+                    "glowing": "false"
+                  }
+                },
+                "weight": 1
+              },
+              {
+                "data": {
+                  "Name": "rpgworldmod:glossom",
+                  "Properties": {
+                    "facing": "east",
+                    "glowing": "false"
+                  }
+                },
+                "weight": 1
+              },
+              {
+                "data": {
+                  "Name": "rpgworldmod:glossom",
+                  "Properties": {
+                    "facing": "west",
+                    "glowing": "false"
+                  }
+                },
+                "weight": 1
+              }
+            ]
+          }
+        }
+      },
+      "placement": [
+        {
+          "type": "minecraft:block_predicate_filter",
+          "predicate": {
+            "type": "minecraft:matching_blocks",
+            "blocks": "minecraft:air"
+          }
+        }
+      ]
+    },
+    "tries": 96,
+    "xz_spread": 6,
+    "y_spread": 2
+  }
+}

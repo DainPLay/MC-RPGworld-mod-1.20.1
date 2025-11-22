@@ -1,0 +1,30 @@
+{
+  "parent": "rpgworldmod:drill_tusk_ore",
+  "criteria": {
+    "drill_straight_down": {
+      "conditions": {},
+      "trigger": "rpgworldmod:drill_straight_down"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.drill_straight_down.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:drill_spear"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.drill_straight_down.title"
+    }
+  },
+  "requirements": [
+    [
+      "drill_straight_down"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

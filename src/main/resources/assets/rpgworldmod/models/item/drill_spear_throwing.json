@@ -1,0 +1,18 @@
+{
+	"parent": "minecraft:item/handheld",
+	"loader": "forge:separate_transforms",
+	"base": {
+		"parent": "rpgworldmod:item/drill_spear_in_hand_throwing"
+	},
+	"perspectives": {
+		"gui": {
+			"parent": "rpgworldmod:item/drill_spear_2d"
+		},
+		"ground": {
+			"parent": "rpgworldmod:item/drill_spear_2d"
+		},
+		"fixed": {
+			"parent": "rpgworldmod:item/drill_spear_2d"
+		}
+	}
+}

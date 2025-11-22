@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:fishing",
+  "pools": [
+    {
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "rpgworldmod:bramblefox_scarf"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "rpgworldmod:fig_leaf"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "enchantments": [
+                "rpgworldmod:pitch",
+                "rpgworldmod:tempo",
+                "rpgworldmod:crescendo",
+                "rpgworldmod:soundproof",
+                "rpgworldmod:stereo"
+              ],
+              "function": "minecraft:enchant_randomly"
+            }
+          ],
+          "name": "minecraft:book"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "minecraft:gameplay/fishing/treasure"
+}

@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "rpgworldmod:block/potted_holts_reflection"
+      },
+      {
+        "model": "rpgworldmod:block/potted_holts_reflection",
+        "y": 90
+      },
+      {
+        "model": "rpgworldmod:block/potted_holts_reflection",
+        "y": 180
+      },
+      {
+        "model": "rpgworldmod:block/potted_holts_reflection",
+        "y": 270
+      }
+    ]
+  }
+}

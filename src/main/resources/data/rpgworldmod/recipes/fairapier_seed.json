@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "rpgworldmod:fairapier_sword"
+    }
+  ],
+  "result": {
+    "item": "rpgworldmod:fairapier_seed",
+    "count": 3
+  }
+}

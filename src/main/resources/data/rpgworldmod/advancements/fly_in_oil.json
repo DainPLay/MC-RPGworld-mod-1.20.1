@@ -1,0 +1,30 @@
+{
+  "parent": "rpgworldmod:mossiosis_get",
+  "criteria": {
+    "fly_in_oil": {
+      "conditions": {},
+      "trigger": "rpgworldmod:fly_in_oil"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.fly_in_oil.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:arbor_fuel_bucket"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.fly_in_oil.title"
+    }
+  },
+  "requirements": [
+    [
+      "fly_in_oil"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

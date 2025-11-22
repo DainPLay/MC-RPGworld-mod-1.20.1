@@ -1,0 +1,6 @@
+{
+    "parent": "item/bow",
+    "textures": {
+        "layer0": "rpgworldmod:item/bow_pulling_projectruffle_1"
+    }
+}

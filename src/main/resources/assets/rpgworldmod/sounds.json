@@ -1,0 +1,663 @@
+{
+  "music.overworld.rie_weald": {
+    "sounds": [
+	  {
+        "name": "rpgworldmod:music/game/rie_weald",
+        "stream": true,
+		"weight": 1
+      }
+    ]
+  },
+  "music.overworld.rie_weald_fog": {
+    "sounds": [
+      {
+        "name": "rpgworldmod:music/game/rie_weald_fog",
+        "stream": true,
+        "weight": 1
+      }
+    ]
+  },
+  "rpgworldmod.zap": {
+    "sounds": [
+        "rpgworldmod:zap1",
+      "rpgworldmod:zap2"
+    ]
+  },
+  "rpgworldmod.paralised": {
+    "sounds": [
+      "rpgworldmod:deny"
+    ]
+  },
+  "rpgworldmod.triangle_ding": {
+    "sounds": [
+      "rpgworldmod:triangle_ding"
+    ],
+    "subtitle": "subtitles.rpgworldmod.triangle_ding"
+  },
+  "rpgworldmod.guitar_ax_play": {
+    "sounds": [
+      "rpgworldmod:guitar_ax_play_01",
+      "rpgworldmod:guitar_ax_play_02",
+      "rpgworldmod:guitar_ax_play_03",
+      "rpgworldmod:guitar_ax_play_04",
+      "rpgworldmod:guitar_ax_play_05",
+      "rpgworldmod:guitar_ax_play_06",
+      "rpgworldmod:guitar_ax_play_07",
+      "rpgworldmod:guitar_ax_play_08",
+      "rpgworldmod:guitar_ax_play_09",
+      "rpgworldmod:guitar_ax_play_10",
+      "rpgworldmod:guitar_ax_play_11",
+      "rpgworldmod:guitar_ax_play_12",
+      "rpgworldmod:guitar_ax_play_13",
+      "rpgworldmod:guitar_ax_play_14",
+      "rpgworldmod:guitar_ax_play_15",
+      "rpgworldmod:guitar_ax_play_16",
+      "rpgworldmod:guitar_ax_play_17",
+      "rpgworldmod:guitar_ax_play_18",
+      "rpgworldmod:guitar_ax_play_19",
+      "rpgworldmod:guitar_ax_play_20",
+      "rpgworldmod:guitar_ax_play_21",
+      "rpgworldmod:guitar_ax_play_22",
+      "rpgworldmod:guitar_ax_play_23",
+      "rpgworldmod:guitar_ax_play_24",
+      "rpgworldmod:guitar_ax_play_25",
+      "rpgworldmod:guitar_ax_play_26",
+      "rpgworldmod:guitar_ax_play_27",
+      "rpgworldmod:guitar_ax_play_28",
+      "rpgworldmod:guitar_ax_play_29",
+      "rpgworldmod:guitar_ax_play_30",
+      "rpgworldmod:guitar_ax_play_31",
+      "rpgworldmod:guitar_ax_play_32",
+      "rpgworldmod:guitar_ax_play_33",
+      "rpgworldmod:guitar_ax_play_34",
+      "rpgworldmod:guitar_ax_play_35",
+      "rpgworldmod:guitar_ax_play_36",
+      "rpgworldmod:guitar_ax_play_37",
+      "rpgworldmod:guitar_ax_play_38",
+      "rpgworldmod:guitar_ax_play_39",
+      "rpgworldmod:guitar_ax_play_40",
+      "rpgworldmod:guitar_ax_play_41",
+      "rpgworldmod:guitar_ax_play_42",
+      "rpgworldmod:guitar_ax_play_43"
+    ],
+    "subtitle": "subtitles.rpgworldmod.guitar_ax_play"
+  },
+  "rpgworldmod.drillhog.drill": {
+    "sounds": [
+      "rpgworldmod:drillhog/drill1",
+      "rpgworldmod:drillhog/drill2"
+    ],
+    "subtitle": "subtitles.rpgworldmod.drillhog.drill"
+  },
+  "rpgworldmod.drillhog.attack": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.hoglin.attack"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.drillhog.attack"
+  },
+  "rpgworldmod.drillhog.ambient": {
+    "sounds": [
+      "rpgworldmod:drillhog/drill2"
+    ],
+    "subtitle": "subtitles.rpgworldmod.drillhog.ambient"
+  },
+  "rpgworldmod.drillhog.death": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.hoglin.death"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.drillhog.death"
+  },
+  "rpgworldmod.drillhog.hit": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.hoglin.hurt"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.drillhog.hit"
+  },
+  "rpgworldmod.burr_purr.spin": {
+    "sounds": [
+      "rpgworldmod:burr_purr/spin"
+    ],
+    "subtitle": "subtitles.rpgworldmod.burr_purr.spin"
+  },
+  "rpgworldmod.burr_purr.dash": {
+    "sounds": [
+      "rpgworldmod:burr_purr/dash"
+    ],
+    "subtitle": "subtitles.rpgworldmod.burr_purr.dash"
+  },
+  "rpgworldmod.burr_purr.ambient": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.fox.aggro"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.burr_purr.ambient"
+  },
+  "rpgworldmod.burr_purr.death": {
+    "sounds": [
+      "rpgworldmod:burr_purr/death1",
+      "rpgworldmod:burr_purr/death2"
+    ],
+    "subtitle": "subtitles.rpgworldmod.burr_purr.death"
+  },
+  "rpgworldmod.burr_purr.hit": {
+    "sounds": [
+      "rpgworldmod:burr_purr/hurt1",
+      "rpgworldmod:burr_purr/hurt2"
+    ],
+    "subtitle": "subtitles.rpgworldmod.burr_purr.hit"
+  },
+  "rpgworldmod.mintobat.attack": {
+    "sounds": [
+      "rpgworldmod:mintobat/howl1",
+      "rpgworldmod:mintobat/howl2"
+    ],
+    "subtitle": "subtitles.rpgworldmod.mintobat.attack"
+  },
+  "rpgworldmod.mintobat.ambient": {
+    "sounds": [
+      "rpgworldmod:mintobat/ambient"
+    ],
+    "subtitle": "subtitles.rpgworldmod.mintobat.ambient"
+  },
+  "rpgworldmod.mintobat.death": {
+    "sounds": [
+      "rpgworldmod:mintobat/death1",
+      "rpgworldmod:mintobat/death2"
+    ],
+    "subtitle": "subtitles.rpgworldmod.mintobat.death"
+  },
+  "rpgworldmod.mintobat.hit": {
+    "sounds": [
+      "rpgworldmod:mintobat/hit"
+    ],
+    "subtitle": "subtitles.rpgworldmod.mintobat.hit"
+  },
+  "rpgworldmod.fireflantern.hit": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.lodestone_compass.lock"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.fireflantern.hit"
+  },
+  "rpgworldmod.fireflantern.death": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.glass.break"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.fireflantern.death"
+  },
+  "rpgworldmod.fireflantern.ambient": {
+    "sounds": [
+      "rpgworldmod:fireflantern/ambient1",
+      "rpgworldmod:fireflantern/ambient2"
+    ],
+    "subtitle": "subtitles.rpgworldmod.fireflantern.ambient"
+  },
+  "rpgworldmod.fireflantern.fall": {
+    "sounds": [
+      "rpgworldmod:fireflantern/fall"
+    ],
+    "subtitle": "subtitles.rpgworldmod.fireflantern.fall"
+  },
+  "rpgworldmod.fireflantern.impact": {
+    "sounds": [
+      "rpgworldmod:fireflantern/impact"
+    ],
+    "subtitle": "subtitles.rpgworldmod.fireflantern.impact"
+  },
+  "rpgworldmod.music_disc_howling": {
+    "sounds": [
+      {
+        "name": "rpgworldmod:music/records/howling",
+        "stream": true,
+        "weight": 1
+      }
+    ]
+  },
+
+
+  "rpgworldmod.bibbit.hit": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.grass.break"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.bibbit.hit"
+  },
+  "rpgworldmod.sitting_bibbit.hit": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.grass.hit"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.sitting_bibbit.hit"
+  },
+  "rpgworldmod.bibbit.death": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.sculk_vein.break"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.bibbit.death"
+  },
+
+
+  "rpgworldmod.platinumfish.ambient": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.cod.ambient"
+      }
+    ]
+  },
+  "rpgworldmod.platinumfish.death": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.cod.death"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.platinumfish.death"
+  },
+  "rpgworldmod.platinumfish.hurt": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.cod.hurt"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.platinumfish.hurt"
+  },
+  "rpgworldmod.platinumfish.flop": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.cod.flop"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.platinumfish.flop"
+  },
+
+
+  "rpgworldmod.mossfront.ambient": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.cod.ambient"
+      }
+    ]
+  },
+  "rpgworldmod.mossfront.death": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.moss.break"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.mossfront.death"
+  },
+  "rpgworldmod.mossfront.hurt": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.moss.step"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.mossfront.hurt"
+  },
+  "rpgworldmod.mossfront.flop": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.cod.flop"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.mossfront.flop"
+  },
+
+
+  "rpgworldmod.bhlee.ambient": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.cod.ambient"
+      }
+    ]
+  },
+  "rpgworldmod.bhlee.death": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.cod.death"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.bhlee.death"
+  },
+  "rpgworldmod.bhlee.hurt": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.cod.hurt"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.bhlee.hurt"
+  },
+  "rpgworldmod.bhlee.flop": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.cod.flop"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.bhlee.flop"
+  },
+
+
+  "rpgworldmod.sheentrout.ambient": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.salmon.ambient"
+      }
+    ]
+  },
+  "rpgworldmod.sheentrout.death": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.salmon.death"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.sheentrout.death"
+  },
+  "rpgworldmod.sheentrout.hurt": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.salmon.hurt"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.sheentrout.hurt"
+  },
+  "rpgworldmod.sheentrout.flop": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.salmon.flop"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.sheentrout.flop"
+  },
+
+
+  "rpgworldmod.gasbass.ambient": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.salmon.ambient"
+      }
+    ]
+  },
+  "rpgworldmod.gasbass.death": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.salmon.death"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.gasbass.death"
+  },
+  "rpgworldmod.gasbass.hurt": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.salmon.hurt"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.gasbass.hurt"
+  },
+  "rpgworldmod.gasbass.flop": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.salmon.flop"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.gasbass.flop"
+  },
+
+  "rpgworldmod.bramblefox.hit": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.fox.hurt"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.bramblefox.hit"
+  },
+  "rpgworldmod.bramblefox.death": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.fox.death"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.bramblefox.death"
+  },
+  "rpgworldmod.bramblefox.ambient": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.fox.ambient"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.bramblefox.ambient"
+  },
+  "rpgworldmod.bramblefox.eat": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.fox.eat"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.bramblefox.eat"
+  },
+  "rpgworldmod.bramblefox.spit": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.fox.spit"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.bramblefox.spit"
+  },
+  "rpgworldmod.bramblefox.screech": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.fox.screech"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.bramblefox.screech"
+  },
+  "rpgworldmod.bramblefox.sleep": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.fox.sleep"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.bramblefox.sleep"
+  },
+  "rpgworldmod.bramblefox.sniff": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.fox.sniff"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.bramblefox.sniff"
+  },
+  "rpgworldmod.bramblefox.aggro": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.fox.aggro"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.bramblefox.aggro"
+  },
+
+  
+  
+  "rpgworldmod.hollow_put": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.beehive.enter"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.hollow_put"
+  },
+  "rpgworldmod.hollow_get": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.beehive.exit"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.hollow_get"
+  },
+  "rpgworldmod.burr_spike_hit": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.trident.hit"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.burr_spike_hit"
+  },
+  "rpgworldmod.burr_spike_miss": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.trident.hit"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.burr_spike_miss"
+  },
+  "rpgworldmod.fairapier_seed_throw": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.ender_pearl.throw"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.fairapier_seed_throw"
+  },
+  "rpgworldmod.fairapier_seed_hit": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.trident.hit"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.fairapier_seed_hit"
+  },
+  "rpgworldmod.fairapier_seed_miss": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.crop.break"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.fairapier_seed_miss"
+  },
+  "rpgworldmod.fairapier_wilts": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.composter.ready"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.fairapier_wilts"
+  },
+  "rpgworldmod.mossiosis_converted": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.zombie_villager.converted"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.mossiosis_converted"
+  },
+  "rpgworldmod.arbor_fuel_emulsion": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.honey_bottle.drink"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.arbor_fuel_emulsion"
+  },
+  "rpgworldmod.drill": {
+    "sounds": [
+      "rpgworldmod:drillhog/drill1",
+      "rpgworldmod:drillhog/drill2"
+    ],
+    "subtitle": "subtitles.rpgworldmod.drill"
+  },
+  "rpgworldmod.drill_spear_hit_ground": {
+    "sounds": [
+      "rpgworldmod:drill_spear/hit_block"
+    ],
+    "subtitle": "subtitles.rpgworldmod.drill_spear_hit_ground"
+  },
+  "rpgworldmod.drill_spear_throw": {
+    "sounds": [
+      "rpgworldmod:drill_spear/throw"
+    ],
+    "subtitle": "subtitles.rpgworldmod.drill_spear_throw"
+  },
+  "rpgworldmod.drill_spear_hit": {
+    "sounds": [
+      "rpgworldmod:drill_spear/hit_block"
+    ],
+    "subtitle": "subtitles.rpgworldmod.drill_spear_hit"
+  },
+  "rpgworldmod.drill_spear_return": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.trident.return"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.drill_spear_return"
+  },
+  "rpgworldmod.golden_token_fail": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.medium_amethyst_bud.break"
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "variants": {
+    "facing=up,powered=false": { "model": "rpgworldmod:block/blower" },
+    "facing=down,powered=false": { "model": "rpgworldmod:block/blower", "x": 180 },
+    "facing=north,powered=false":  { "model": "rpgworldmod:block/blower", "x": 90 },
+    "facing=south,powered=false":  { "model": "rpgworldmod:block/blower", "x": -90 },
+    "facing=west,powered=false":    { "model": "rpgworldmod:block/blower", "y": -90, "x": 90 },
+    "facing=east,powered=false":  { "model": "rpgworldmod:block/blower", "y": 90, "x": 90 },
+
+    "facing=up,powered=true": { "model": "rpgworldmod:block/blower_powered" },
+    "facing=down,powered=true": { "model": "rpgworldmod:block/blower_powered", "x": 180 },
+    "facing=north,powered=true":  { "model": "rpgworldmod:block/blower_powered", "x": 90 },
+    "facing=south,powered=true":  { "model": "rpgworldmod:block/blower_powered", "x": -90 },
+    "facing=west,powered=true":    { "model": "rpgworldmod:block/blower_powered", "y": -90, "x": 90 },
+    "facing=east,powered=true":  { "model": "rpgworldmod:block/blower_powered", "y": 90, "x": 90 }
+  }
+}

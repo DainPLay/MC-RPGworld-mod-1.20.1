@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "rpgworldmod:mintal_nugget"
+    },
+    "X": {
+      "item": "rpgworldmod:rie_fruit"
+    }
+  },
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "result": {
+    "item": "rpgworldmod:mint_rie_fruit"
+  },
+  "show_notification": true
+}

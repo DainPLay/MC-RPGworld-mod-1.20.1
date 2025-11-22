@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "rpgworldmod:bhlee"
+  },
+  "result": "rpgworldmod:cooked_bhlee",
+  "cookingtime": 200,
+  "experience": 0.35
+}

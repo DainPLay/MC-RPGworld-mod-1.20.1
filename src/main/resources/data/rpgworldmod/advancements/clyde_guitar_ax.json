@@ -1,0 +1,34 @@
+{
+  "parent": "rpgworldmod:mintal_triangle_used",
+  "criteria": {
+    "clyde_got_guitar_ax": {
+      "conditions": {},
+      "trigger": "rpgworldmod:clyde_got_guitar_ax"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.clyde_guitar_ax.description"
+    },
+    "frame": "challenge",
+    "hidden": true,
+    "icon": {
+      "item": "rpgworldmod:guitar_ax",
+      "nbt": "{Damage:0}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.clyde_guitar_ax.title"
+    }
+  },
+  "requirements": [
+    [
+      "clyde_got_guitar_ax"
+    ]
+  ],
+  "rewards": {
+    "experience": 1000
+  },
+  "sends_telemetry_event": true
+}

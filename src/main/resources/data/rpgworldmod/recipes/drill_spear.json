@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "R": {
+      "tag": "forge:rods/wooden"
+    },
+    "T": {
+      "item": "minecraft:lead"
+    },
+    "X": {
+      "item": "rpgworldmod:drill_tusk"
+    }
+  },
+  "pattern": [
+    "X",
+    "T",
+    "R"
+  ],
+  "result": {
+    "item": "rpgworldmod:drill_spear"
+  },
+  "show_notification": true
+}

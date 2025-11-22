@@ -1,0 +1,12 @@
+// 1.20.1	2025-01-12T21:38:45.9259171	Tags for minecraft:damage_type mod id rpgworldmod
+e858d4e8b24dabf8f29c179fbbae38abedc82bc2 data/minecraft/tags/damage_type/avoids_guardian_thorns.json
+b79828b4ef36dcf0ad4f2b23997f2bd14510c7ee data/minecraft/tags/damage_type/bypasses_armor.json
+6ef6f728fadfd72bca97c23c277c428c7a0660bd data/minecraft/tags/damage_type/bypasses_cooldown.json
+6ef6f728fadfd72bca97c23c277c428c7a0660bd data/minecraft/tags/damage_type/bypasses_effects.json
+6ef6f728fadfd72bca97c23c277c428c7a0660bd data/minecraft/tags/damage_type/bypasses_enchantments.json
+6ef6f728fadfd72bca97c23c277c428c7a0660bd data/minecraft/tags/damage_type/bypasses_resistance.json
+b79828b4ef36dcf0ad4f2b23997f2bd14510c7ee data/minecraft/tags/damage_type/bypasses_shield.json
+e858d4e8b24dabf8f29c179fbbae38abedc82bc2 data/minecraft/tags/damage_type/damages_helmet.json
+37247db826140784cdd2928f1e68b8fe8349816e data/minecraft/tags/damage_type/is_projectile.json
+ae4c105e54fa94f0abb05860e51a83566464c8bb data/minecraft/tags/damage_type/witch_resistant_to.json
+6ca3fe58ffab7eb72436773d37ff6fba11e7b788 data/rpgworldmod/tags/damage_type/is_sound.json

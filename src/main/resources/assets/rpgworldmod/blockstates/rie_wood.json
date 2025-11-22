@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "rpgworldmod:block/rie_wood",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "rpgworldmod:block/rie_wood"
+    },
+    "axis=z": {
+      "model": "rpgworldmod:block/rie_wood",
+      "x": 90
+    }
+  }
+}

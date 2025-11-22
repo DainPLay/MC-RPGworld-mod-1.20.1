@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "rpgworldmod:mintal_ingot"
+    }
+  ],
+  "result": {
+    "item": "rpgworldmod:mintal_nugget",
+    "count": 9
+  }
+}

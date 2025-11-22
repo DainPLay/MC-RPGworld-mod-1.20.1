@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "age=0": {
+      "model": "rpgworldmod:block/shiveralis_stage0"
+    },
+    "age=1": {
+      "model": "rpgworldmod:block/shiveralis_stage1"
+    },
+    "age=2": {
+      "model": "rpgworldmod:block/shiveralis_stage2"
+    },
+    "age=3": {
+      "model": "rpgworldmod:block/shiveralis_stage3"
+    }
+  }
+}

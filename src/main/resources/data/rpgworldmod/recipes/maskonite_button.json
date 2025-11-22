@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "rpgworldmod:maskonite_block"
+    }
+  ],
+  "result": {
+    "item": "rpgworldmod:maskonite_button"
+  }
+}

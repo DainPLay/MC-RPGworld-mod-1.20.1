@@ -1,0 +1,58 @@
+{
+  "variants": {
+    "age=0": [
+      {
+      "model": "rpgworldmod:block/fairapier_0"
+    },
+    {
+      "model": "rpgworldmod:block/fairapier_0",
+      "y": 90
+    }
+      ],
+    "age=1": [
+      {
+        "model": "rpgworldmod:block/fairapier_1"
+      },
+      {
+        "model": "rpgworldmod:block/fairapier_1",
+        "y": 90
+      }
+    ],
+    "age=2": [
+      {
+        "model": "rpgworldmod:block/fairapier_2"
+      },
+      {
+        "model": "rpgworldmod:block/fairapier_2",
+        "y": 90
+      }
+    ],
+    "age=3": [
+      {
+        "model": "rpgworldmod:block/fairapier_3"
+      },
+      {
+        "model": "rpgworldmod:block/fairapier_3",
+        "y": 90
+      }
+    ],
+    "age=4": [
+      {
+        "model": "rpgworldmod:block/fairapier_4"
+      },
+      {
+        "model": "rpgworldmod:block/fairapier_4",
+        "y": 90
+      }
+    ],
+    "age=5": [
+      {
+        "model": "rpgworldmod:block/fairapier_5"
+      },
+      {
+        "model": "rpgworldmod:block/fairapier_5",
+        "y": 90
+      }
+    ]
+  }
+}

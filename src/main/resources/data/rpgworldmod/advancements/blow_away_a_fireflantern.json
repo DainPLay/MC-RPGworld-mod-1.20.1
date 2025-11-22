@@ -1,0 +1,31 @@
+{
+  "parent": "rpgworldmod:root",
+  "criteria": {
+    "blow_away_a_fireflantern": {
+      "conditions": {},
+      "trigger": "rpgworldmod:blow_away_a_fireflantern"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.blow_away_a_fireflantern.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:blower",
+      "nbt": "{Damage:0}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.blow_away_a_fireflantern.title"
+    }
+  },
+  "requirements": [
+    [
+      "blow_away_a_fireflantern"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

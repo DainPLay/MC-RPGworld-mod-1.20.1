@@ -1,0 +1,30 @@
+{
+  "parent": "rpgworldmod:fly_in_oil",
+  "criteria": {
+    "clear_effects_with_cheese": {
+      "conditions": {},
+      "trigger": "rpgworldmod:clear_effects_with_cheese"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.clear_effects_with_cheese.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:cheese_cap"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.clear_effects_with_cheese.title"
+    }
+  },
+  "requirements": [
+    [
+      "clear_effects_with_cheese"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

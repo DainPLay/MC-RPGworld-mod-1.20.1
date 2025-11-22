@@ -1,0 +1,30 @@
+{
+  "parent": "rpgworldmod:root",
+  "criteria": {
+    "get_all_burr_purr_spikes": {
+      "conditions": {},
+      "trigger": "rpgworldmod:get_all_burr_purr_spikes"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.get_all_burr_purr_spikes.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:burr_spike"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.get_all_burr_purr_spikes.title"
+    }
+  },
+  "requirements": [
+    [
+      "get_all_burr_purr_spikes"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

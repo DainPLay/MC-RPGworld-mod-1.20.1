@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "rpgworldmod:block/quartzite_slab"
+    },
+    "type=double": {
+      "model": "rpgworldmod:block/quartzite"
+    },
+    "type=top": {
+      "model": "rpgworldmod:block/quartzite_slab_top"
+    }
+  }
+}

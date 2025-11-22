@@ -1,0 +1,30 @@
+{
+  "parent": "rpgworldmod:root",
+  "criteria": {
+    "fairapier_repaired": {
+      "conditions": {},
+      "trigger": "rpgworldmod:fairapier_repaired"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.fairapier_repaired.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:fairapier_sword"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.fairapier_repaired.title"
+    }
+  },
+  "requirements": [
+    [
+      "fairapier_repaired"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "rpgworldmod:block/shiveralis_stage0"
+  }
+}

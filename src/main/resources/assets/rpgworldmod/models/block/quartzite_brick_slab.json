@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "rpgworldmod:block/quartzite_bricks",
+    "top": "rpgworldmod:block/quartzite_bricks",
+    "side": "rpgworldmod:block/quartzite_bricks"
+  }
+}

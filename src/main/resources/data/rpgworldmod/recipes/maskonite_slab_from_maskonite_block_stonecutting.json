@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "rpgworldmod:maskonite_block"
+  },
+  "result": "rpgworldmod:maskonite_slab",
+  "count": 2
+}

@@ -1,0 +1,61 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_mintal_ingot": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:mintal_ingot"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_burr_spike": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:burr_spike"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_samaraguard": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:samaraguard"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "rpgworldmod:weald_blade"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_mintal_ingot",
+      "has_samaraguard",
+      "has_burr_spike",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "rpgworldmod:weald_blade"
+    ]
+  },
+  "sends_telemetry_event": false
+}

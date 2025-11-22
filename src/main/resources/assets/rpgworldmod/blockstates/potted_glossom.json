@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "rpgworldmod:block/potted_glossom"
+      },
+      {
+        "model": "rpgworldmod:block/potted_glossom",
+        "y": 90
+      },
+      {
+        "model": "rpgworldmod:block/potted_glossom",
+        "y": 180
+      },
+      {
+        "model": "rpgworldmod:block/potted_glossom",
+        "y": 270
+      }
+    ]
+  }
+}

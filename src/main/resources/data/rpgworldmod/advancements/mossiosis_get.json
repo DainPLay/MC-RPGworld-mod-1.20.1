@@ -1,0 +1,34 @@
+{
+  "parent": "rpgworldmod:root",
+  "criteria": {
+    "mossiosis_get": {
+      "conditions": {
+        "effects": {
+          "rpgworldmod:mossiosis": {}
+        }
+      },
+      "trigger": "minecraft:effects_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.mossiosis_get.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:mosshroom"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.mossiosis_get.title"
+    }
+  },
+  "requirements": [
+    [
+      "mossiosis_get"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

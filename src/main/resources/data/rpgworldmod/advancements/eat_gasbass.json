@@ -1,0 +1,36 @@
+{
+  "parent": "rpgworldmod:root",
+  "criteria": {
+    "gasbass": {
+      "conditions": {
+        "item": {
+          "items": [
+            "rpgworldmod:gasbass"
+          ]
+        }
+      },
+      "trigger": "minecraft:consume_item"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.eat_gasbass.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:gasbass"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.eat_gasbass.title"
+    }
+  },
+  "requirements": [
+    [
+      "gasbass"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

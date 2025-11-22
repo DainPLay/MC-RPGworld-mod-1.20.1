@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "rpgworldmod:block/rie_log_top",
+    "front": "rpgworldmod:block/rie_hollow",
+    "side": "rpgworldmod:block/rie_log"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "rpgworldmod:tree_hollow_feature_north",
+  "config": {
+    "state": {
+      "Name": "rpgworldmod:rie_hollow",
+      "Properties": {
+        "facing": "north",
+        "has_contents": "false"
+      }
+    }
+  }
+}

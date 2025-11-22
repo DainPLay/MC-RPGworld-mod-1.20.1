@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "rpgworldmod:block/rie_log",
+    "north": "rpgworldmod:block/rie_log",
+    "south": "rpgworldmod:block/rie_log",
+    "east": "rpgworldmod:block/rie_hollow",
+    "west": "rpgworldmod:block/rie_log",
+    "up": "rpgworldmod:block/rie_log_top",
+    "down": "rpgworldmod:block/rie_log_top"
+  }
+}

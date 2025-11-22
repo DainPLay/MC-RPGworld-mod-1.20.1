@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+    {
+      "model": "rpgworldmod:block/widoweed_0"
+    },
+      {
+        "model": "rpgworldmod:block/widoweed_1"
+      },
+      {
+        "model": "rpgworldmod:block/widoweed_2"
+      },
+      {
+        "model": "rpgworldmod:block/widoweed_3"
+      },
+      {
+        "model": "rpgworldmod:block/widoweed_4"
+      }
+    ]
+  }
+}

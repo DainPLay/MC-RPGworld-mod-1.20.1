@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "rpgworldmod:block/glossom",
+      "y": 90
+    },
+    "facing=east": {
+      "model": "rpgworldmod:block/glossom",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "rpgworldmod:block/glossom",
+      "y": 270
+    },
+    "facing=west": {
+      "model": "rpgworldmod:block/glossom"
+    }
+  }
+}

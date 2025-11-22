@@ -1,0 +1,94 @@
+{
+  "variants": {
+    "facing=north,timestate=0": {
+      "model": "rpgworldmod:block/holts_reflection_morning",
+      "y": 270
+    },
+    "facing=north,timestate=1": {
+      "model": "rpgworldmod:block/holts_reflection_day",
+      "y": 270
+    },
+    "facing=north,timestate=2": {
+      "model": "rpgworldmod:block/holts_reflection_evening",
+      "y": 270
+    },
+    "facing=north,timestate=3": {
+      "model": "rpgworldmod:block/holts_reflection_night",
+      "y": 270
+    },
+    "facing=north,timestate=4": {
+      "model": "rpgworldmod:block/holts_reflection_nether",
+      "y": 270
+    },
+    "facing=north,timestate=5": {
+      "model": "rpgworldmod:block/holts_reflection_end",
+      "y": 270
+    },
+    "facing=east,timestate=0": {
+      "model": "rpgworldmod:block/holts_reflection_morning"
+    },
+    "facing=east,timestate=1": {
+      "model": "rpgworldmod:block/holts_reflection_day"
+    },
+    "facing=east,timestate=2": {
+      "model": "rpgworldmod:block/holts_reflection_evening"
+    },
+    "facing=east,timestate=3": {
+      "model": "rpgworldmod:block/holts_reflection_night"
+    },
+    "facing=east,timestate=4": {
+      "model": "rpgworldmod:block/holts_reflection_nether"
+    },
+    "facing=east,timestate=5": {
+      "model": "rpgworldmod:block/holts_reflection_end"
+    },
+    "facing=south,timestate=0": {
+      "model": "rpgworldmod:block/holts_reflection_morning",
+      "y": 90
+    },
+    "facing=south,timestate=1": {
+      "model": "rpgworldmod:block/holts_reflection_day",
+      "y": 90
+    },
+    "facing=south,timestate=2": {
+      "model": "rpgworldmod:block/holts_reflection_evening",
+      "y": 90
+    },
+    "facing=south,timestate=3": {
+      "model": "rpgworldmod:block/holts_reflection_night",
+      "y": 90
+    },
+    "facing=south,timestate=4": {
+      "model": "rpgworldmod:block/holts_reflection_nether",
+      "y": 90
+    },
+    "facing=south,timestate=5": {
+      "model": "rpgworldmod:block/holts_reflection_end",
+      "y": 90
+    },
+    "facing=west,timestate=0": {
+      "model": "rpgworldmod:block/holts_reflection_morning",
+      "y": 180
+    },
+    "facing=west,timestate=1": {
+      "model": "rpgworldmod:block/holts_reflection_day",
+      "y": 180
+    },
+    "facing=west,timestate=2": {
+      "model": "rpgworldmod:block/holts_reflection_evening",
+      "y": 180
+    },
+    "facing=west,timestate=3": {
+      "model": "rpgworldmod:block/holts_reflection_night",
+      "y": 180
+    },
+    "facing=west,timestate=4": {
+      "model": "rpgworldmod:block/holts_reflection_nether",
+      "y": 180
+    },
+    "facing=west,timestate=5": {
+      "model": "rpgworldmod:block/holts_reflection_end",
+      "y": 180
+    }
+  }
+}

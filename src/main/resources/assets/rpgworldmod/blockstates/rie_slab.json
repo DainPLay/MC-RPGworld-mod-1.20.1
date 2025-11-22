@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "rpgworldmod:block/rie_slab"
+    },
+    "type=double": {
+      "model": "rpgworldmod:block/rie_planks"
+    },
+    "type=top": {
+      "model": "rpgworldmod:block/rie_slab_top"
+    }
+  }
+}

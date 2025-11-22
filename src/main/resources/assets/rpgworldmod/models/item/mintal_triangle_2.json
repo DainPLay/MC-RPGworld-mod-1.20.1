@@ -1,0 +1,6 @@
+{
+  "parent": "rpgworldmod:item/mintal_triangle",
+  "textures": {
+    "layer0": "rpgworldmod:item/mintal_triangle_2"
+  }
+}

@@ -1,0 +1,5 @@
+// 1.20.1	2025-01-02T18:32:38.3088169	Global Loot Modifiers : rpgworldmod
+3fe8b7c53007d5a0298b1ddc212eff5df9219d1c data/forge/loot_modifiers/global_loot_modifiers.json
+67474b69f8b438677d7b92bb0353ba5b78da938b data/rpgworldmod/loot_modifiers/rie_weald_fish.json
+15f74b1bc473ae4191e9fdbdded1f2c73071495d data/rpgworldmod/loot_modifiers/rie_weald_fog_fish.json
+958df57f8f48d1c86a8896a9e54998b4559973a3 data/rpgworldmod/loot_modifiers/rie_weald_fog_fish1.json

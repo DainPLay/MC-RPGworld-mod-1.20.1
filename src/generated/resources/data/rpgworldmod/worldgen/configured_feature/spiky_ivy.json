@@ -1,0 +1,17 @@
+{
+  "type": "rpgworldmod:spiky_ivy_feature",
+  "config": {
+    "state": {
+      "Name": "rpgworldmod:spiky_ivy",
+      "Properties": {
+        "age": "0",
+        "bottom": "true",
+        "east": "false",
+        "north": "false",
+        "south": "false",
+        "up": "false",
+        "west": "false"
+      }
+    }
+  }
+}

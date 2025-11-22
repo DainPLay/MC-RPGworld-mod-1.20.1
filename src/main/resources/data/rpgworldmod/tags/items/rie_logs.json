@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "rpgworldmod:rie_log",
+    "rpgworldmod:rie_wood",
+    "rpgworldmod:stripped_rie_log",
+    "rpgworldmod:stripped_rie_wood",
+    "rpgworldmod:rie_hollow"
+  ]
+}

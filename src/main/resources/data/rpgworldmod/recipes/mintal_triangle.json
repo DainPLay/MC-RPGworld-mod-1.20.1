@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "rpgworldmod:mintal_ingot"
+    },
+    "X": {
+      "item": "minecraft:echo_shard"
+    }
+  },
+  "pattern": [
+    " # ",
+    "# #",
+    "X##"
+  ],
+  "result": {
+    "item": "rpgworldmod:mintal_triangle"
+  },
+  "show_notification": true
+}

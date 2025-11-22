@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/leaves",
+  "textures": {
+    "all": "rpgworldmod:block/rie_leaves"
+  }
+}

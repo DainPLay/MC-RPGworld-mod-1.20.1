@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "rpgworldmod:block/maskonite_slab"
+    },
+    "type=double": {
+      "model": "rpgworldmod:block/maskonite_block"
+    },
+    "type=top": {
+      "model": "rpgworldmod:block/maskonite_slab_top"
+    }
+  }
+}

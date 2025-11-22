@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#",
+    "#"
+  ],
+  "key": {
+    "#": {
+      "item": "rpgworldmod:maskonite_slab"
+    }
+  },
+  "result": {
+    "item": "rpgworldmod:chiseled_maskonite_block"
+  }
+}

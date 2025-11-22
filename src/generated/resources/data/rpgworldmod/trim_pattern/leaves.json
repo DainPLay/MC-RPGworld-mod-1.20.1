@@ -1,0 +1,7 @@
+{
+  "asset_id": "rpgworldmod:leaves",
+  "description": {
+    "translate": "trim_pattern.rpgworldmod.leaves"
+  },
+  "template_item": "rpgworldmod:leaves_armor_trim_smithing_template"
+}

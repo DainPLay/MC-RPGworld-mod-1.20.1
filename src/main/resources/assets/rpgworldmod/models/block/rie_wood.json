@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "rpgworldmod:block/rie_log",
+    "side": "rpgworldmod:block/rie_log"
+  }
+}

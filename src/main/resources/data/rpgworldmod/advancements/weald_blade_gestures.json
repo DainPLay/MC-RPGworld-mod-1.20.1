@@ -1,0 +1,31 @@
+{
+  "parent": "rpgworldmod:get_all_burr_purr_spikes",
+  "criteria": {
+    "weald_blade_gestures": {
+      "conditions": {},
+      "trigger": "rpgworldmod:weald_blade_gestures"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.weald_blade_gestures.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:weald_blade",
+      "nbt": "{Damage:0}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.weald_blade_gestures.title"
+    }
+  },
+  "requirements": [
+    [
+      "weald_blade_gestures"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

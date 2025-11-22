@@ -1,0 +1,237 @@
+{
+  "parent": "rpgworldmod:clear_effects_with_cheese",
+  "criteria": {
+    "projectruffle": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:projectruffle"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "silicina": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:silicina"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "mosshroom": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:mosshroom"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "wild_fairapier": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:wild_fairapier"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "rpgirolle": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:rpgirolle_item"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "cheese_cap": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:cheese_cap"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "widoweed": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:widoweed"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "triplover": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:triplover"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "spiky_ivy": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:spiky_ivy"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "paralily": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:paralily"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "holts_reflection": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:holts_reflection"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "glossom": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:glossom"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "mimossa": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:mimossa"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "typhon": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:typhon"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "shiveralis": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:shiveralis_berries"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.collect_all_rie_weald_flora.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:typhon"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.collect_all_rie_weald_flora.title"
+    }
+  },
+  "requirements": [
+    [
+      "projectruffle"
+      ],[
+      "silicina"
+    ],[
+      "mosshroom"
+    ],[
+      "wild_fairapier"
+    ],[
+      "rpgirolle"
+    ],[
+      "cheese_cap"
+    ],[
+      "widoweed"
+    ],[
+      "triplover"
+    ],[
+      "spiky_ivy"
+    ],[
+      "paralily"
+    ],[
+      "holts_reflection"
+    ],[
+      "glossom"
+    ],[
+      "mimossa"
+    ],[
+      "typhon"
+    ],[
+      "shiveralis"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}

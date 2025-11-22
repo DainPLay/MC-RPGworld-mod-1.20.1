@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "rpgworldmod:rie_pressure_plate",
+    "rpgworldmod:maskonite_pressure_plate",
+    "rpgworldmod:rie_wall_sign",
+    "rpgworldmod:rie_sign"
+  ]
+}

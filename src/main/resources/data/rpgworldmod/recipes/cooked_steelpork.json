@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "rpgworldmod:steelpork"
+  },
+  "result": "rpgworldmod:cooked_steelpork",
+  "cookingtime": 200,
+  "experience": 0.35
+}

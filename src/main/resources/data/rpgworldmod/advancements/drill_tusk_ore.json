@@ -1,0 +1,30 @@
+{
+  "parent": "rpgworldmod:root",
+  "criteria": {
+    "drill_tusk_ore": {
+      "conditions": {},
+      "trigger": "rpgworldmod:drill_tusk_ore"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.drill_tusk_ore.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:drill_tusk"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.drill_tusk_ore.title"
+    }
+  },
+  "requirements": [
+    [
+      "drill_tusk_ore"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

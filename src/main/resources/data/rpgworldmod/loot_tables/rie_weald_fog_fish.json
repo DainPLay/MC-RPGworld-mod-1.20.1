@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:fishing",
+  "pools": [
+    {
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "rpgworldmod:mossfront",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "name": "rpgworldmod:platinumfish",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "rpgworldmod:sheentrout",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "rpgworldmod:bhlee",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "name": "rpgworldmod:gasbass",
+          "weight": 50
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "minecraft:gameplay/fishing/fish"
+}

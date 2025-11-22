@@ -1,0 +1,94 @@
+{
+  "parent": "rpgworldmod:weald_blade_gestures",
+  "criteria": {
+    "rpgworldmod:fireflantern": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "rpgworldmod:fireflantern"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    },
+    "rpgworldmod:burr_purr": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "rpgworldmod:burr_purr"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    },
+    "rpgworldmod:drillhog": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "rpgworldmod:drillhog"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    },
+    "rpgworldmod:mintobat": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "rpgworldmod:mintobat"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.kill_all_rie_weald_mobs.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:iron_sword",
+      "nbt": "{Damage:0}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.kill_all_rie_weald_mobs.title"
+    }
+  },
+  "requirements": [
+    [
+      "rpgworldmod:fireflantern"
+    ],
+    [
+      "rpgworldmod:burr_purr"
+    ],
+    [
+      "rpgworldmod:mintobat"
+    ],
+    [
+      "rpgworldmod:drillhog"
+    ]
+  ],
+  "rewards": {
+  },
+  "sends_telemetry_event": true
+}

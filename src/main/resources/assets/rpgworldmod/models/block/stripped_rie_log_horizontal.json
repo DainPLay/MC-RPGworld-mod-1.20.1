@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column_horizontal",
+  "textures": {
+    "end": "rpgworldmod:block/stripped_rie_log_top",
+    "side": "rpgworldmod:block/stripped_rie_log"
+  }
+}

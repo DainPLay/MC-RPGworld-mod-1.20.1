@@ -1,0 +1,20 @@
+{
+  "type": "rpgworldmod:replace_item",
+  "conditions": [
+    {
+      "condition": "minecraft:location_check",
+      "predicate": {
+        "biome": "rpgworldmod:rie_weald"
+      }
+    },
+    {
+      "condition": "minecraft:weather_check",
+      "raining": true
+    },
+    {
+      "condition": "forge:loot_table_id",
+      "loot_table_id": "minecraft:gameplay/fishing"
+    }
+  ],
+  "lootTable": "rpgworldmod:rie_weald_fog_fishing"
+}

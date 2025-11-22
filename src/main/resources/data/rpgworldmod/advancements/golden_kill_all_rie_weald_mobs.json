@@ -1,0 +1,55 @@
+{
+  "parent": "rpgworldmod:kill_all_rie_weald_mobs",
+  "criteria": {
+    "golden_kill_fireflantern": {
+      "conditions": {},
+      "trigger": "rpgworldmod:golden_kill_fireflantern"
+    },
+    "golden_kill_burr_purr": {
+      "conditions": {},
+      "trigger": "rpgworldmod:golden_kill_burr_purr"
+    },
+    "golden_kill_mintobat": {
+      "conditions": {},
+      "trigger": "rpgworldmod:golden_kill_mintobat"
+    },
+    "golden_kill_drillhog": {
+      "conditions": {},
+      "trigger": "rpgworldmod:golden_kill_drillhog"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.golden_kill_all_rie_weald_mobs.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:golden_sword",
+      "nbt": "{Damage:0}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.golden_kill_all_rie_weald_mobs.title"
+    }
+  },
+  "requirements": [
+    [
+      "golden_kill_fireflantern"
+    ],
+    [
+      "golden_kill_burr_purr"
+    ],
+    [
+      "golden_kill_mintobat"
+    ],
+    [
+      "golden_kill_drillhog"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}

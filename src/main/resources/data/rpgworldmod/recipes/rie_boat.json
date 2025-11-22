@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "boat",
+  "pattern": [
+    "# #",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "rpgworldmod:rie_planks"
+    }
+  },
+  "result": {
+    "item": "rpgworldmod:rie_boat"
+  }
+}

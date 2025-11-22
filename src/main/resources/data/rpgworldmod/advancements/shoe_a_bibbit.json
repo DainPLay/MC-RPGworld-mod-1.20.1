@@ -1,0 +1,31 @@
+{
+  "parent": "rpgworldmod:root",
+  "criteria": {
+    "shoe_a_bibbit": {
+      "conditions": {},
+      "trigger": "rpgworldmod:shoe_a_bibbit"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.shoe_a_bibbit.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:diamond_boots",
+      "nbt": "{Damage:0}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.shoe_a_bibbit.title"
+    }
+  },
+  "requirements": [
+    [
+      "shoe_a_bibbit"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

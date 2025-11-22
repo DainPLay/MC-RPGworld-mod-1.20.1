@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "rpgworldmod:rie_stairs",
+    "rpgworldmod:maskonite_stairs",
+    "rpgworldmod:maskonite_brick_stairs",
+    "rpgworldmod:quartzite_stairs",
+    "rpgworldmod:quartzite_brick_stairs",
+    "rpgworldmod:polished_quartzite_stairs"
+  ]
+}

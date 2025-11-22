@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "T": {
+      "item": "rpgworldmod:quartzite"
+    },
+    "X": {
+      "item": "rpgworldmod:drill_tusk"
+    }
+  },
+  "pattern": [
+    " T ",
+    "TXT",
+    " T "
+  ],
+  "result": {
+    "item": "rpgworldmod:quartzite_drill_tusk"
+  },
+  "show_notification": true
+}

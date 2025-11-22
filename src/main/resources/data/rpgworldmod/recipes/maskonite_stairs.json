@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#  ",
+    "## ",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "rpgworldmod:maskonite_block"
+    }
+  },
+  "result": {
+    "item": "rpgworldmod:maskonite_stairs",
+    "count": 4
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "rpgworldmod:block/flowerbed_4",
+  "textures": {
+    "flowerbed": "rpgworldmod:block/triplover",
+    "stem": "rpgworldmod:block/triplover_stem"
+  }
+}

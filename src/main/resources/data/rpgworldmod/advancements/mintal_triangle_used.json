@@ -1,0 +1,31 @@
+{
+  "parent": "rpgworldmod:root",
+  "criteria": {
+    "mintal_triangle_used": {
+      "conditions": {},
+      "trigger": "rpgworldmod:mintal_triangle_used"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.mintal_triangle_used.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:mintal_triangle",
+      "nbt": "{Damage:0}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.mintal_triangle_used.title"
+    }
+  },
+  "requirements": [
+    [
+      "mintal_triangle_used"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

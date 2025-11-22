@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/outer_stairs",
+  "textures": {
+    "bottom": "rpgworldmod:block/rie_planks",
+    "top": "rpgworldmod:block/rie_planks",
+    "side": "rpgworldmod:block/rie_planks"
+  }
+}

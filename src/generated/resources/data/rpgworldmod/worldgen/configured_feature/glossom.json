@@ -1,0 +1,69 @@
+{
+  "type": "minecraft:no_bonemeal_flower",
+  "config": {
+    "feature": {
+      "feature": {
+        "type": "minecraft:simple_block",
+        "config": {
+          "to_place": {
+            "type": "minecraft:weighted_state_provider",
+            "entries": [
+              {
+                "data": {
+                  "Name": "rpgworldmod:glossom",
+                  "Properties": {
+                    "facing": "north",
+                    "glowing": "false"
+                  }
+                },
+                "weight": 1
+              },
+              {
+                "data": {
+                  "Name": "rpgworldmod:glossom",
+                  "Properties": {
+                    "facing": "south",
+                    "glowing": "false"
+                  }
+                },
+                "weight": 1
+              },
+              {
+                "data": {
+                  "Name": "rpgworldmod:glossom",
+                  "Properties": {
+                    "facing": "east",
+                    "glowing": "false"
+                  }
+                },
+                "weight": 1
+              },
+              {
+                "data": {
+                  "Name": "rpgworldmod:glossom",
+                  "Properties": {
+                    "facing": "west",
+                    "glowing": "false"
+                  }
+                },
+                "weight": 1
+              }
+            ]
+          }
+        }
+      },
+      "placement": [
+        {
+          "type": "minecraft:block_predicate_filter",
+          "predicate": {
+            "type": "minecraft:matching_blocks",
+            "blocks": "minecraft:air"
+          }
+        }
+      ]
+    },
+    "tries": 14,
+    "xz_spread": 2,
+    "y_spread": 2
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "asset_name": "mintal",
+  "description": {
+    "color": "#24E098",
+    "translate": "trim_material.rpgworldmod.mintal"
+  },
+  "ingredient": "rpgworldmod:mintal_ingot",
+  "item_model_index": 0.7
+}

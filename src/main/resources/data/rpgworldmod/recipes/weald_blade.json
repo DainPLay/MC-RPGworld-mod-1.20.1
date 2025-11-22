@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "R": {
+      "item": "rpgworldmod:mintal_ingot"
+    },
+    "T": {
+      "item": "rpgworldmod:burr_spike"
+    },
+    "X": {
+      "item": "rpgworldmod:samaraguard"
+    }
+  },
+  "pattern": [
+    " TT",
+    " XT",
+    "R  "
+  ],
+  "result": {
+    "item": "rpgworldmod:weald_blade"
+  },
+  "show_notification": true
+}

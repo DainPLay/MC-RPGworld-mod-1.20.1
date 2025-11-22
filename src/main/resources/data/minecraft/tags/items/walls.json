@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "rpgworldmod:maskonite_wall",
+    "rpgworldmod:maskonite_brick_wall",
+    "rpgworldmod:quartzite_wall"
+  ]
+}

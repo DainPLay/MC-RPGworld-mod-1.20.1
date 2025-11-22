@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "bark",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "rpgworldmod:rie_log"
+    }
+  },
+  "result": {
+    "item": "rpgworldmod:rie_wood",
+    "count": 3
+  }
+}

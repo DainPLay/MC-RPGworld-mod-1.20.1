@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "#": {
+      "tag": "minecraft:planks"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "T": {
+      "item": "rpgworldmod:samaraguard"
+    },
+    "X": {
+      "item": "rpgworldmod:rie_hollow"
+    }
+  },
+  "pattern": [
+    " T ",
+    "#X#",
+    "#R#"
+  ],
+  "result": {
+    "item": "rpgworldmod:blower"
+  },
+  "show_notification": true
+}

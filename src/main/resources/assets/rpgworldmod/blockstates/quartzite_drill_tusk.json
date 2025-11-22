@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "face=floor,facing=north": { "model": "rpgworldmod:block/quartzite_drill_tusk" },
+    "face=ceiling,facing=north": { "model": "rpgworldmod:block/quartzite_drill_tusk", "x": 180 },
+    "face=floor,facing=south": { "model": "rpgworldmod:block/quartzite_drill_tusk" },
+    "face=ceiling,facing=south": { "model": "rpgworldmod:block/quartzite_drill_tusk", "x": 180 },
+    "face=floor,facing=west": { "model": "rpgworldmod:block/quartzite_drill_tusk" },
+    "face=ceiling,facing=west": { "model": "rpgworldmod:block/quartzite_drill_tusk", "x": 180 },
+    "face=floor,facing=east": { "model": "rpgworldmod:block/quartzite_drill_tusk" },
+    "face=ceiling,facing=east": { "model": "rpgworldmod:block/quartzite_drill_tusk", "x": 180 },
+    "face=wall,facing=north":  { "model": "rpgworldmod:block/quartzite_drill_tusk", "x": 90 },
+    "face=wall,facing=south":  { "model": "rpgworldmod:block/quartzite_drill_tusk", "x": -90 },
+    "face=wall,facing=west":    { "model": "rpgworldmod:block/quartzite_drill_tusk", "y": -90, "x": 90 },
+    "face=wall,facing=east":  { "model": "rpgworldmod:block/quartzite_drill_tusk", "y": 90, "x": 90 }
+  }
+}

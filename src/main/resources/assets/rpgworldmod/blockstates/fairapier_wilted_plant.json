@@ -1,0 +1,31 @@
+{
+  "variants": {
+    "age=0": [
+      {
+        "model": "rpgworldmod:block/fairapier_3"
+      },
+      {
+        "model": "rpgworldmod:block/fairapier_3",
+        "y": 90
+      }
+    ],
+    "age=1": [
+      {
+        "model": "rpgworldmod:block/fairapier_4"
+      },
+      {
+        "model": "rpgworldmod:block/fairapier_4",
+        "y": 90
+      }
+    ],
+    "age=2": [
+      {
+        "model": "rpgworldmod:block/fairapier_5"
+      },
+      {
+        "model": "rpgworldmod:block/fairapier_5",
+        "y": 90
+      }
+    ]
+  }
+}

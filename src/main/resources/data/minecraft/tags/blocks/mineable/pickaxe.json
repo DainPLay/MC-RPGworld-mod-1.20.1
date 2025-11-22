@@ -1,0 +1,32 @@
+{
+  "replace": false,
+  "values": [
+    "rpgworldmod:mintal_block",
+    "rpgworldmod:maskonite_block",
+    "rpgworldmod:maskonite_stairs",
+    "rpgworldmod:maskonite_slab",
+    "rpgworldmod:maskonite_wall",
+    "rpgworldmod:maskonite_pressure_plate",
+    "rpgworldmod:chiseled_maskonite_block",
+    "rpgworldmod:maskonite_bricks",
+    "rpgworldmod:maskonite_brick_stairs",
+    "rpgworldmod:maskonite_brick_slab",
+    "rpgworldmod:maskonite_brick_wall",
+    "rpgworldmod:cracked_maskonite_bricks",
+    "rpgworldmod:maskonite_button",
+    "rpgworldmod:quartzite",
+    "rpgworldmod:quartzite_stairs",
+    "rpgworldmod:quartzite_slab",
+    "rpgworldmod:quartzite_wall",
+    "rpgworldmod:quartzite_bricks",
+    "rpgworldmod:quartzite_brick_stairs",
+    "rpgworldmod:quartzite_brick_slab",
+    "rpgworldmod:polished_quartzite",
+    "rpgworldmod:polished_quartzite_stairs",
+    "rpgworldmod:polished_quartzite_slab",
+    "rpgworldmod:jasper",
+    "rpgworldmod:arbor_fuel_cauldron",
+    "rpgworldmod:drill_tusk",
+    "rpgworldmod:quartzite_drill_tusk"
+  ]
+}

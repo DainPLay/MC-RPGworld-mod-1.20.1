@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "rpgworldmod:rie_slab",
+    "rpgworldmod:maskonite_slab",
+    "rpgworldmod:maskonite_brick_slab",
+    "rpgworldmod:quartzite_slab",
+    "rpgworldmod:quartzite_brick_slab",
+    "rpgworldmod:polished_quartzite_slab"
+  ]
+}

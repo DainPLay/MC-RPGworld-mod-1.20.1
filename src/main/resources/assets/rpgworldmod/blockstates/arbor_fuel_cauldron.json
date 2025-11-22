@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "level=1": {
+      "model": "rpgworldmod:block/arbor_fuel_cauldron_level1"
+    },
+    "level=2": {
+      "model": "rpgworldmod:block/arbor_fuel_cauldron_level2"
+    },
+    "level=3": {
+      "model": "rpgworldmod:block/arbor_fuel_cauldron_full"
+    }
+  }
+}

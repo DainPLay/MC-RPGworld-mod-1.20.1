@@ -1,0 +1,201 @@
+{
+  "carvers": {
+    "air": [
+      "minecraft:cave",
+      "minecraft:cave_extra_underground",
+      "minecraft:canyon"
+    ]
+  },
+  "downfall": 0.7,
+  "effects": {
+    "fog_color": 12638463,
+    "foliage_color": 2141294,
+    "grass_color": 4108897,
+    "mood_sound": {
+      "block_search_extent": 8,
+      "offset": 2.0,
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 6000
+    },
+    "music": {
+      "max_delay": 12000,
+      "min_delay": 1200,
+      "replace_current_music": true,
+      "sound": "rpgworldmod:music.overworld.rie_weald"
+    },
+    "sky_color": 8958463,
+    "water_color": 3902638,
+    "water_fog_color": 1918551
+  },
+  "features": [
+    [],
+    [
+      "minecraft:lake_lava_underground",
+      "minecraft:lake_lava_surface"
+    ],
+    [
+      "minecraft:amethyst_geode",
+      "rpgworldmod:maskonite_placed"
+    ],
+    [
+      "minecraft:monster_room",
+      "minecraft:monster_room_deep"
+    ],
+    [],
+    [],
+    [
+      "minecraft:ore_dirt",
+      "minecraft:ore_gravel",
+      "minecraft:ore_granite_upper",
+      "minecraft:ore_granite_lower",
+      "minecraft:ore_diorite_upper",
+      "minecraft:ore_diorite_lower",
+      "minecraft:ore_andesite_upper",
+      "minecraft:ore_andesite_lower",
+      "minecraft:ore_tuff",
+      "minecraft:ore_coal_upper",
+      "minecraft:ore_coal_lower",
+      "minecraft:ore_iron_upper",
+      "minecraft:ore_iron_middle",
+      "minecraft:ore_iron_small",
+      "minecraft:ore_gold",
+      "minecraft:ore_gold_lower",
+      "minecraft:ore_redstone",
+      "minecraft:ore_redstone_lower",
+      "minecraft:ore_diamond",
+      "minecraft:ore_diamond_large",
+      "minecraft:ore_diamond_buried",
+      "minecraft:ore_lapis",
+      "minecraft:ore_lapis_buried",
+      "minecraft:ore_copper",
+      "minecraft:underwater_magma",
+      "minecraft:disk_sand",
+      "minecraft:disk_clay",
+      "minecraft:disk_gravel"
+    ],
+    [],
+    [
+      "minecraft:spring_water",
+      "minecraft:spring_lava"
+    ],
+    [
+      "minecraft:glow_lichen",
+      "rpgworldmod:patch_moss_rie_placed",
+      "rpgworldmod:fancy_rie_tree_checked",
+      "rpgworldmod:rie_tree_checked",
+      "rpgworldmod:rie_bush_placed",
+      "rpgworldmod:shiveralis_placed",
+      "rpgworldmod:triplover_placed",
+      "rpgworldmod:glossom_placed",
+      "rpgworldmod:fairapier_placed",
+      "rpgworldmod:rie_flower_placed",
+      "rpgworldmod:projectruffle_placed",
+      "rpgworldmod:silicina_placed",
+      "rpgworldmod:holts_reflection_placed",
+      "rpgworldmod:rpgirolle_placed",
+      "rpgworldmod:mimossa_placed",
+      "rpgworldmod:typhon_placed",
+      "rpgworldmod:cheese_cap_placed",
+      "rpgworldmod:mosshroom_placed",
+      "rpgworldmod:patch_paralily_placed",
+      "rpgworldmod:spiky_ivy_placed",
+      "rpgworldmod:tree_hollow_west_placed",
+      "rpgworldmod:tree_hollow_east_placed",
+      "rpgworldmod:tree_hollow_north_placed",
+      "rpgworldmod:tree_hollow_south_placed"
+    ],
+    [
+      "minecraft:freeze_top_layer"
+    ]
+  ],
+  "has_precipitation": false,
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [
+      {
+        "type": "minecraft:bat",
+        "maxCount": 8,
+        "minCount": 8,
+        "weight": 10
+      }
+    ],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "rpgworldmod:bramblefox",
+        "maxCount": 2,
+        "minCount": 1,
+        "weight": 6
+      },
+      {
+        "type": "rpgworldmod:bibbit",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 6
+      }
+    ],
+    "misc": [],
+    "monster": [],
+    "rpgworldmod:rie_monster": [
+      {
+        "type": "rpgworldmod:mintobat",
+        "maxCount": 3,
+        "minCount": 1,
+        "weight": 3
+      },
+      {
+        "type": "rpgworldmod:drillhog",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 3
+      },
+      {
+        "type": "rpgworldmod:fireflantern",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 10
+      },
+      {
+        "type": "rpgworldmod:burr_purr",
+        "maxCount": 3,
+        "minCount": 1,
+        "weight": 6
+      }
+    ],
+    "underground_water_creature": [],
+    "water_ambient": [
+      {
+        "type": "rpgworldmod:platinumfish",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 1
+      },
+      {
+        "type": "rpgworldmod:mossfront",
+        "maxCount": 2,
+        "minCount": 1,
+        "weight": 5
+      },
+      {
+        "type": "rpgworldmod:bhlee",
+        "maxCount": 3,
+        "minCount": 1,
+        "weight": 5
+      },
+      {
+        "type": "rpgworldmod:sheentrout",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 2
+      },
+      {
+        "type": "rpgworldmod:gasbass",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 10
+      }
+    ],
+    "water_creature": []
+  },
+  "temperature": 0.7
+}

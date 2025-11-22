@@ -1,0 +1,26 @@
+{
+	"parent": "minecraft:item/handheld",
+	"loader": "forge:separate_transforms",
+	"base": {
+		"parent": "rpgworldmod:item/weald_blade_in_hand"
+	},
+	"perspectives": {
+		"gui": {
+			"parent": "rpgworldmod:item/weald_blade_2d"
+		},
+		"ground": {
+			"parent": "rpgworldmod:item/weald_blade_2d"
+		},
+		"fixed": {
+			"parent": "rpgworldmod:item/weald_blade_2d"
+		}
+	},
+	"overrides": [
+		{
+			"predicate": {
+				"blocking": 1
+			},
+			"model": "rpgworldmod:item/weald_blade_blocking"
+		}
+	]
+}

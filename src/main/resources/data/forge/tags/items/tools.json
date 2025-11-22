@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "rpgworldmod:maskonite_shovel",
+    "rpgworldmod:maskonite_sword",
+    "rpgworldmod:maskonite_axe",
+    "rpgworldmod:maskonite_pickaxe",
+    "rpgworldmod:maskonite_hoe",
+    "rpgworldmod:fairapier_sword",
+    "rpgworldmod:mintal_triangle",
+    "rpgworldmod:guitar_ax",
+    "rpgworldmod:weald_blade"
+  ]
+}
