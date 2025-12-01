@@ -152,8 +152,8 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     maven {
-        name = 'GeckoLib'
-        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        name = 'backport'
+        url 'https://www.cursemaven.com'
     }
     maven { url = 'https://maven.theillusivec4.top/' }
     // Put repositories for dependencies here
@@ -176,6 +176,8 @@ dependencies {
     compileOnly(fg.deobf("top.theillusivec4.curios:curios-forge:5.4.2+1.20.1:api"))
     // Use the full Curios API jar at runtime
     runtimeOnly(fg.deobf("top.theillusivec4.curios:curios-forge:5.4.2+1.20.1"))
+    runtimeOnly(fg.deobf("curse.maven:backport-417430:7227619"))
+    runtimeOnly(fg.deobf("curse.maven:platform-997634:7227584"))
 
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
