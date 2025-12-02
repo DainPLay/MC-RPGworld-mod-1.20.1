@@ -235,6 +235,7 @@ public class RPGworldMod
             event.accept(ModBlocks.JASPER);
             event.accept(ModBlocks.EMULSION_BLOCK);
             event.accept(ModBlocks.MINTAL_BLOCK);
+            event.accept(ModBlocks.WINGOLD_BLOCK);
             event.accept(ModBlocks.MASKONITE_GLASS);
             event.accept(ModBlocks.MASKONITE_GLASS_PANE);
             event.accept(ModItems.RIE_SIGN);

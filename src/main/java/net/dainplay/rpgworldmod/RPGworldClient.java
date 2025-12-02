@@ -103,6 +103,7 @@ public class RPGworldClient {
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.CHEESE_CAP.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.POTTED_CHEESE_CAP.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.BLOWER.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.WINGOLD_BLOCK.get(), RenderType.cutout());
 
         WoodType.register(ModWoodTypes.RIE_WOOD_TYPE);
         Sheets.addWoodType(ModWoodTypes.RIE_WOOD_TYPE);

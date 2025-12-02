@@ -371,6 +371,8 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> MINTAL_BLOCK = registerBlock("mintal_block",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).mapColor(MapColor.WARPED_STEM).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL)));
+    public static final RegistryObject<Block> WINGOLD_BLOCK = registerBlock("wingold_block",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.GOLD_BLOCK).mapColor(MapColor.GOLD).requiresCorrectToolForDrops().strength(5.0F, 6.0F)));
     public static final RegistryObject<Block> ARBOR_FUEL_CAULDRON = registerBlockWithoutBlockItem("arbor_fuel_cauldron", () -> new ArborFuelCauldron(BlockBehaviour.Properties.copy(Blocks.CAULDRON), ModCauldronInteraction.ARBOR_FUEL));
 
     public static <T extends Block> RegistryObject<T> registerBlockWithoutBlockItem(String name, Supplier<T> block) {

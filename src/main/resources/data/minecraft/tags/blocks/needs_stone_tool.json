@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "rpgworldmod:mintal_block"
+    "rpgworldmod:mintal_block",
+    "rpgworldmod:wingold_block"
   ]
 }
