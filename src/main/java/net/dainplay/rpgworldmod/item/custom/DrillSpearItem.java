@@ -38,7 +38,7 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class DrillSpearItem extends Item implements Vanishable {
+public class DrillSpearItem extends Item implements Vanishable, RPGtooltip {
     private final Multimap<Attribute, AttributeModifier> defaultModifiers;
 
     public DrillSpearItem(Item.Properties pProperties) {
@@ -114,13 +114,6 @@ public class DrillSpearItem extends Item implements Vanishable {
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot pEquipmentSlot) {
         return pEquipmentSlot == EquipmentSlot.MAINHAND ? this.defaultModifiers : super.getDefaultAttributeModifiers(pEquipmentSlot);
     }
-    public MutableComponent getDisplayName() {
-        return Component.translatable(this.getDescriptionId() + ".desc");
-    }
-    @Override
-    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-        pTooltip.add(this.getDisplayName().withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED));
-    }
 
 
     @Override
@@ -140,5 +133,10 @@ public class DrillSpearItem extends Item implements Vanishable {
 
     public int getEnchantmentValue() {
         return 1;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+        RPGappendHoverText(pStack,pLevel,pTooltip,pFlag);
     }
 }

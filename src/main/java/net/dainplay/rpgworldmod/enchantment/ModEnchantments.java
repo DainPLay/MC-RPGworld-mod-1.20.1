@@ -4,6 +4,7 @@ import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.item.custom.DrillSpearItem;
 import net.dainplay.rpgworldmod.item.custom.GuitarAxItem;
 import net.dainplay.rpgworldmod.item.custom.MintalTriangleItem;
+import net.dainplay.rpgworldmod.item.custom.WealdBladeItem;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
@@ -17,6 +18,7 @@ public class ModEnchantments {
             DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, RPGworldMod.MOD_ID);
     public static final EquipmentSlot[] ARMOR_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
     public static final EnchantmentCategory DRILL_SPEAR = EnchantmentCategory.create("drill_spear", (item) -> {return (item instanceof DrillSpearItem); });
+    public static final EnchantmentCategory WEALD_BLADE = EnchantmentCategory.create("weald_blade", (item) -> {return (item instanceof WealdBladeItem); });
     public static final EnchantmentCategory TRIANGLE = EnchantmentCategory.create("triangle", (item) -> {return (item instanceof MintalTriangleItem); });
     public static final EnchantmentCategory GUITAR_AX = EnchantmentCategory.create("guitar_ax", (item) -> {return (item instanceof MintalTriangleItem || item instanceof GuitarAxItem); });
     public static RegistryObject<Enchantment> PITCH =
@@ -42,7 +44,11 @@ public class ModEnchantments {
     public static RegistryObject<Enchantment> COLLECTION =
             ENCHANTMENTS.register("collection",
                     () -> new CollectionEnchantment(Enchantment.Rarity.RARE,
-                            TRIANGLE, EquipmentSlot.MAINHAND));
+                            DRILL_SPEAR, EquipmentSlot.MAINHAND));
+    public static RegistryObject<Enchantment> BLOWING =
+            ENCHANTMENTS.register("blowing",
+                    () -> new BlowingEnchantment(Enchantment.Rarity.RARE,
+                            WEALD_BLADE, EquipmentSlot.MAINHAND));
 
 
     public static void register(IEventBus eventBus) {

@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "rpgworldmod:maskonite_hoe"
+    "rpgworldmod:maskonite_hoe",
+    "rpgworldmod:flint_hoe"
   ]
 }

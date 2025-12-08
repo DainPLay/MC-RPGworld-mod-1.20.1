@@ -8,6 +8,30 @@
   "item.rpgworldmod.maskonite_axe": "Maskonite Axe",
   "item.rpgworldmod.maskonite_shovel": "Maskonite Shovel",
   "item.rpgworldmod.maskonite_hoe": "Maskonite Hoe",
+  "item.rpgworldmod.flint_sword": "Flint Sword",
+  "item.rpgworldmod.flint_pickaxe": "Flint Pickaxe",
+  "item.rpgworldmod.flint_axe": "Flint Axe",
+  "item.rpgworldmod.flint_shovel": "Flint Shovel",
+  "item.rpgworldmod.flint_hoe": "Flint Hoe",
+  "item.rpgworldmod.flint_sword.desc": "Rough",
+  "item.rpgworldmod.flint_pickaxe.desc": "Rough",
+  "item.rpgworldmod.flint_axe.desc": "Rough",
+  "item.rpgworldmod.flint_shovel.desc": "Rough",
+  "item.rpgworldmod.flint_hoe.desc": "Rough",
+  "item.rpgworldmod.flint_sword.features": "Ignites hit targets with a certain chance. Melts mined resources with a certain chance.",
+  "item.rpgworldmod.flint_pickaxe.features": "Ignites hit targets with a certain chance. Melts mined resources with a certain chance.",
+  "item.rpgworldmod.flint_axe.features": "Ignites hit targets with a certain chance. Melts mined resources with a certain chance.",
+  "item.rpgworldmod.flint_shovel.features": "Ignites hit targets with a certain chance. Melts mined resources with a certain chance.",
+  "item.rpgworldmod.flint_hoe.features": "Ignites hit targets with a certain chance. Melts mined resources with a certain chance.",
+    "item.rpgworldmod.weald_blade.features": "The guard spins during use, protecting the owner.",
+  "item.rpgworldmod.weald_blade.features.blowing": "The guard spins during use, generating a blowing air stream.",
+  "item.rpgworldmod.drill_spear.features": "When thrown, destroys a number of blocks in its path.",
+  "item.rpgworldmod.fairapier_sword.features": "Doesn't break. Instead, it withers and can be regrown, retaining all parameters.",
+  "item.rpgworldmod.fairapier_sword_wilted.features": "Doesn't break. Instead, it withers and can be regrown, retaining all parameters.",
+  "item.rpgworldmod.mintal_triangle.features": "Deals sound damage to everyone around.",
+  "item.rpgworldmod.mintal_triangle.features.stereo": "Deals sound damage to all surrounding hostile targets. Hitting the triangle while holding [%s] will also deal sound damage to surrounding players.",
+  "item.rpgworldmod.guitar_ax.features": "Hitting a target deals sound damage to everyone around them. Can be used for harmless play if taken in the offhand.",
+  "item.rpgworldmod.guitar_ax.features.stereo": "Hitting a target deals sound damage to all surrounding hostile targets. Deals sound damage to players only if the hit target is a player. Can be used for harmless play if taken in the offhand.",
 
   "item.rpgworldmod.shiveralis_berries": "Shiveralis Berries",
   "item.rpgworldmod.rie_fruit": "Rie",
@@ -278,6 +302,15 @@
   "enchantment.rpgworldmod.tempo": "Tempo",
   "enchantment.rpgworldmod.soundproof": "Soundproof",
   "enchantment.rpgworldmod.collection": "Collection",
+  "enchantment.rpgworldmod.blowing": "Blowing",
+
+  "enchantment.rpgworldmod.pitch.desc": "Increases the damage and pitch of sonic weapons.",
+  "enchantment.rpgworldmod.crescendo.desc": "Increases the range and volume of sonic weapons.",
+  "enchantment.rpgworldmod.stereo.desc": "Filters the damage dealt by sonic weapons to only harm hostile targets.",
+  "enchantment.rpgworldmod.tempo.desc": "Speeds up reload time for sonic weapons.",
+  "enchantment.rpgworldmod.soundproof.desc": "Significantly reduces incoming sonic damage.",
+  "enchantment.rpgworldmod.collection.desc": "Sends mined resources directly to the owner's inventory.",
+  "enchantment.rpgworldmod.blowing.desc": "Replaces blocking with generating a strong stream of air that blows away everyone in its path.",
 
   "trim_material.rpgworldmod.mintal": "Mintal Material",
 
@@ -354,5 +387,8 @@
   "subtitles.rpgworldmod.sheentrout.flop": "Sheentrout flops",
   "subtitles.rpgworldmod.gasbass.death": "Gasbass dies",
   "subtitles.rpgworldmod.gasbass.hurt": "Gasbass hurts",
-  "subtitles.rpgworldmod.gasbass.flop": "Gasbass flops"
+  "subtitles.rpgworldmod.gasbass.flop": "Gasbass flops",
+
+  "tooltip.rpgworldmod.hold_shift_for_features": "[Hold %s]",
+  "tooltip.rpgworldmod.features": "Features:"
 }

@@ -1,0 +1,17 @@
+{
+  "type": "rpgworldmod:tool_smelting",
+  "conditions": [
+    {
+      "condition": "minecraft:match_tool",
+      "predicate": {
+        "items": [
+          "rpgworldmod:flint_pickaxe",
+          "rpgworldmod:flint_shovel",
+          "rpgworldmod:flint_sword",
+          "rpgworldmod:flint_axe",
+          "rpgworldmod:flint_hoe"
+        ]
+      }
+    }
+  ]
+}

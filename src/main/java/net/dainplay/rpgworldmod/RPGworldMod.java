@@ -286,6 +286,11 @@ public class RPGworldMod
             event.accept(ModItems.MASKONITE_AXE);
             event.accept(ModItems.MASKONITE_HOE);
             event.accept(ModItems.MASKONITE_SWORD);
+            event.accept(ModItems.FLINT_SHOVEL);
+            event.accept(ModItems.FLINT_PICKAXE);
+            event.accept(ModItems.FLINT_AXE);
+            event.accept(ModItems.FLINT_HOE);
+            event.accept(ModItems.FLINT_SWORD);
             event.accept(ModItems.WEALD_BLADE);
             event.accept(ModItems.FAIRAPIER_SWORD);
             event.accept(ModItems.FAIRAPIER_SEED);
@@ -375,6 +380,7 @@ public class RPGworldMod
             event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.TEMPO.get(), ModEnchantments.TEMPO.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.SOUNDPROOF.get(), ModEnchantments.SOUNDPROOF.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.COLLECTION.get(), ModEnchantments.COLLECTION.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.BLOWING.get(), ModEnchantments.BLOWING.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
         }
 
         if(event.getTab() == ModCreativeModeTab.RPGWORLD_SPAWN_EGGS_TAB.get()) {

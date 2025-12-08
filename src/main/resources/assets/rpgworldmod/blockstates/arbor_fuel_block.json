@@ -1,0 +1,9 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "rpgworldmod:block/arbor_fuel_block"
+      }
+    ]
+  }
+}

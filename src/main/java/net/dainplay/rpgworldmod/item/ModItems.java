@@ -45,6 +45,16 @@ public class ModItems {
             () -> new FairapierSwordItem(ModTiers.FAIRAPIER, 3, -1.9f, new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> FAIRAPIER_SWORD_WILTED = ITEMS.register("fairapier_sword_wilted",
             () -> new FairapierSwordWiltedItem(ModBlocks.FAIRAPIER_WILTED_PLANT.get(), new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(1)));
+    public static final RegistryObject<Item> FLINT_SWORD = ITEMS.register("flint_sword",
+            () -> new FlintSwordItem(ModTiers.FLINT, 3, -2.4F, new Item.Properties()));
+    public static final RegistryObject<Item> FLINT_PICKAXE = ITEMS.register("flint_pickaxe",
+            () -> new FlintPickaxeItem(ModTiers.FLINT, 1, -2.8F, new Item.Properties()));
+    public static final RegistryObject<Item> FLINT_AXE = ITEMS.register("flint_axe",
+            () -> new FlintAxeItem(ModTiers.FLINT, 7.0F, -3.2F, new Item.Properties()));
+    public static final RegistryObject<Item> FLINT_SHOVEL = ITEMS.register("flint_shovel",
+            () -> new FlintShovelItem(ModTiers.FLINT, 1.5F, -3.0F, new Item.Properties()));
+    public static final RegistryObject<Item> FLINT_HOE = ITEMS.register("flint_hoe",
+            () -> new FlintHoeItem(ModTiers.FLINT, -1, -2.0F, new Item.Properties()));
 
     public static final RegistryObject<Item> SAMARAGUARD = ITEMS.register("samaraguard",
             () -> new Item(new Item.Properties()));

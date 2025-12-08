@@ -16,6 +16,8 @@ public class ModLootModifiers {
             LOOT_MODIFIER_SERIALIZERS.register("add_item", AddItemModifier.CODEC);
     public static final RegistryObject<Codec<? extends IGlobalLootModifier>> REPLACE_ITEM =
             LOOT_MODIFIER_SERIALIZERS.register("replace_item", ReplaceItemModifier.CODEC);
+    public static final RegistryObject<Codec<SmeltingModifier>> TOOL_SMELTING =
+            LOOT_MODIFIER_SERIALIZERS.register("tool_smelting", () -> SmeltingModifier.CODEC);
 
 
     public static void register(IEventBus eventBus) {

@@ -90,7 +90,7 @@ public class GasbassItem extends Item {
        ItemStack itemstack = super.finishUsingItem(pStack, pLevel, entity);
        emitSmokeParticles(entity);
            return itemstack;
-       }
+   }
 
     private static void emitSmokeParticles(LivingEntity entity) {
         double x = entity.getX();

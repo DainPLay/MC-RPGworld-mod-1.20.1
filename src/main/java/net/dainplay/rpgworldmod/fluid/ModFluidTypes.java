@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.SoundActions;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -36,6 +37,8 @@ public class ModFluidTypes {
                     .fallDistanceModifier(0F)
                     .density(3000)
                     .viscosity(1000)
+                    .pathType(BlockPathTypes.LAVA)
+                    .adjacentPathType(BlockPathTypes.DANGER_OTHER)
                     .supportsBoating(true)
                     .canConvertToSource(false)
                     .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL_LAVA)

@@ -367,7 +367,7 @@ public class ModBlocks {
     public static final RegistryObject<CeilingHangingSignBlock> RIE_HANGING_SIGN = BLOCKS.register("rie_hanging_sign", () -> new ModCeilingHangingSignBlock(BlockBehaviour.Properties.copy(RIE_PLANKS.get()).noCollission().strength(1.0F), ModWoodTypes.RIE_WOOD_TYPE));
     public static final RegistryObject<WallHangingSignBlock> RIE_WALL_HANGING_SIGN = BLOCKS.register("rie_wall_hanging_sign", () -> new ModWallHangingSignBlock(BlockBehaviour.Properties.copy(RIE_PLANKS.get()).noCollission().strength(1.0F), ModWoodTypes.RIE_WOOD_TYPE));
 
-    public static final RegistryObject<LiquidBlock> ARBOR_FUEL_BLOCK = BLOCKS.register("arbor_fuel_block", () -> new FuelLiquidBlock(ModFluids.SOURCE_ARBOR_FUEL, BlockBehaviour.Properties.copy(Blocks.WATER)));
+    public static final RegistryObject<LiquidBlock> ARBOR_FUEL_BLOCK = BLOCKS.register("arbor_fuel_block", () -> new FuelLiquidBlock(ModFluids.SOURCE_ARBOR_FUEL, BlockBehaviour.Properties.copy(Blocks.WATER).strength(100.0F).noLootTable().replaceable().liquid().pushReaction(PushReaction.DESTROY)));
 
     public static final RegistryObject<Block> MINTAL_BLOCK = registerBlock("mintal_block",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).mapColor(MapColor.WARPED_STEM).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL)));

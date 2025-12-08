@@ -45,7 +45,11 @@ public class TrunkDecorator extends TreeDecorator {
             if (context.random().nextFloat() >= this.probability) return;
 
             //initial position on the tree trunk
-            BlockPos logPos = context.logs().get(2);
+        BlockPos logPos = context.logs().get(1);
+
+            if (blockCount > 2) {
+                logPos = context.logs().get(2);
+            }
             //commit and set our new placement position there
             context.setBlock(logPos, this.decoration.getState(context.random(), logPos));
 }

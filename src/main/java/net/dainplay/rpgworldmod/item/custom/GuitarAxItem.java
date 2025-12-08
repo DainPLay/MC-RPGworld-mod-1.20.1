@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class GuitarAxItem extends AxeItem {
+public class GuitarAxItem extends AxeItem implements RPGtooltip {
     protected final RandomSource random = RandomSource.create();
     public GuitarAxItem(Tier pTier, int pAttackDamageModifier, float pAttackSpeedModifier, Properties pProperties) {
         super(pTier, pAttackDamageModifier, pAttackSpeedModifier, pProperties);
@@ -114,10 +114,16 @@ public class GuitarAxItem extends AxeItem {
 
     @Override
     public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-        pTooltip.add(this.getDisplayName().withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED));
+        RPGappendHoverText(pStack,pLevel,pTooltip,pFlag);
     }
 
-    public MutableComponent getDisplayName() {
-        return Component.translatable(this.getDescriptionId() + ".desc");
+    @Override
+    public MutableComponent getDisplayFeatures(ItemStack item) {
+        if(getEnchantmentLevel(item, ModEnchantments.STEREO.get()) > 0) {
+            return Component.translatable(this.getDescriptionId() + ".features.stereo");
+        }
+        else {
+            return Component.translatable(this.getDescriptionId() + ".features");
+        }
     }
 }

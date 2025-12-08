@@ -25,6 +25,8 @@ import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -41,6 +43,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod.EventBusSubscriber(modid = RPGworldMod.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -60,9 +63,10 @@ public class RPGworldClient {
         //Register Armor Renderer for events
         event.registerAbove(VanillaGuiOverlay.PLAYER_HEALTH.id(),RPGworldMod.MOD_ID, new OverlayEventHandler());
     }
+
+    @SuppressWarnings("removal")
     @SubscribeEvent
     public static void clientSetup(final FMLClientSetupEvent event) {
-
         ItemBlockRenderTypes.setRenderLayer(ModFluids.FLOWING_ARBOR_FUEL.get(), RenderType.translucent());
         ItemBlockRenderTypes.setRenderLayer(ModFluids.SOURCE_ARBOR_FUEL.get(), RenderType.translucent());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.EMULSION_BLOCK.get(), RenderType.translucent());
@@ -114,6 +118,22 @@ public class RPGworldClient {
 
 
         event.enqueueWork(() -> {
+
+            ItemProperties.register(ModItems.RPGIROLLE_ITEM.get().asItem(), new ResourceLocation( "token"), (stack, world, entity, seed) -> {
+                if (stack.isEmpty()) {
+                    return 0.0F;
+                }
+                CompoundTag tag = stack.getTag();
+                if (tag != null && tag.contains("Token", Tag.TAG_INT)) {
+                    int tokenValue = tag.getInt("Token");
+                    if (tokenValue == 1) {
+                        return 1.0F;
+                    } else if (tokenValue == 2) {
+                        return 2.0F;
+                    }
+                }
+                return 0.0F;
+            });
             ItemProperties.register(ModItems.WEALD_BLADE.get().asItem(), new ResourceLocation( "blocking"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
             ItemProperties.register(ModItems.DRILL_SPEAR.get().asItem(), new ResourceLocation( "throwing"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
             ItemProperties.register(ModItems.MINTAL_TRIANGLE.get(), new ResourceLocation("vibration"), (itemstack, level, livingEntity, p_174608_) -> livingEntity != null && MintalTriangleItem.getVibes(itemstack)>0 ? (23F-(float)MintalTriangleItem.getVibes(itemstack))/100 : 1.0F);

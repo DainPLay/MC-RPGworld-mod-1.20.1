@@ -7,6 +7,7 @@ import net.dainplay.rpgworldmod.entity.custom.Mintobat;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -47,16 +48,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.world.level.block.Block.dropResources;
 
-public class MintalTriangleItem extends Item implements Vanishable {
+public class MintalTriangleItem extends Item implements Vanishable, RPGtooltip {
     protected final RandomSource random = RandomSource.create();
     public MintalTriangleItem(Properties pProperties) {
         super(pProperties);
     }
-
-    @Override
-    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-        pTooltip.add(this.getDisplayName().withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED));
-    }   /**
+   /**
      * Return the enchantability factor of the item, most of the time is based on material.
      */
     public int getEnchantmentValue() {
@@ -162,7 +159,19 @@ public class MintalTriangleItem extends Item implements Vanishable {
         compoundtag.putInt("vibration", vibes);
     }
 
-    public MutableComponent getDisplayName() {
-        return Component.translatable(this.getDescriptionId() + ".desc");
+    @Override
+    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+        RPGappendHoverText(pStack,pLevel,pTooltip,pFlag);
+    }
+
+    @Override
+    public MutableComponent getDisplayFeatures(ItemStack item) {
+        if(getEnchantmentLevel(item, ModEnchantments.STEREO.get()) > 0) {
+            return Component.translatable(this.getDescriptionId() + ".features.stereo",
+                    Minecraft.getInstance().options.keyShift.getKey().getDisplayName());
+        }
+        else {
+            return Component.translatable(this.getDescriptionId() + ".features");
+        }
     }
 }

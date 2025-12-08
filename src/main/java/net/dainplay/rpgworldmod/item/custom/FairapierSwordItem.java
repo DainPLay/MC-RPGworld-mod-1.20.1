@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class FairapierSwordItem extends SwordItem {
+public class FairapierSwordItem extends SwordItem implements RPGtooltip {
     public FairapierSwordItem(Tier pTier, int pAttackDamageModifier, float pAttackSpeedModifier, Properties pProperties) {
         super(pTier, pAttackDamageModifier, pAttackSpeedModifier, pProperties);
     }
@@ -63,10 +63,6 @@ public class FairapierSwordItem extends SwordItem {
         return true;
     }
     @Override
-    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-        pTooltip.add(this.getDisplayName().withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED));
-    }
-    @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         return enchantment != Enchantments.MENDING && enchantment != Enchantments.SWEEPING_EDGE && super.canApplyAtEnchantingTable(stack, enchantment);
     }
@@ -81,7 +77,8 @@ public class FairapierSwordItem extends SwordItem {
         return net.minecraftforge.common.ToolActions.SWORD_DIG == toolAction;
     }
 
-    public MutableComponent getDisplayName() {
-        return Component.translatable(this.getDescriptionId() + ".desc");
+    @Override
+    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+        RPGappendHoverText(pStack,pLevel,pTooltip,pFlag);
     }
 }

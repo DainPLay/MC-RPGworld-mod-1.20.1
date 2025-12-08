@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "rpgworldmod:maskonite_pickaxe"
+    "rpgworldmod:maskonite_pickaxe",
+    "rpgworldmod:flint_pickaxe"
   ]
 }

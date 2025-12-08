@@ -10,17 +10,14 @@ import net.minecraft.world.level.block.Block;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class FairapierSwordWiltedItem extends ItemNameBlockItem implements Vanishable {
+public class FairapierSwordWiltedItem extends ItemNameBlockItem implements Vanishable, RPGtooltip {
 
     public FairapierSwordWiltedItem(Block p_41579_, Properties p_41580_) {
         super(p_41579_, p_41580_);
     }
+
     @Override
     public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-        pTooltip.add(this.getDisplayName().withStyle(ChatFormatting.DARK_GRAY));
-    }
-
-    public MutableComponent getDisplayName() {
-        return Component.translatable(this.getDescriptionId() + ".desc");
+        RPGappendHoverText(pStack,pLevel,pTooltip,pFlag);
     }
 }

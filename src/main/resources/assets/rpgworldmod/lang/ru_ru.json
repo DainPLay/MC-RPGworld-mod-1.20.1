@@ -8,6 +8,30 @@
   "item.rpgworldmod.maskonite_axe": "Масконитовый топор",
   "item.rpgworldmod.maskonite_shovel": "Масконитовая лопата",
   "item.rpgworldmod.maskonite_hoe": "Масконитовая мотыга",
+  "item.rpgworldmod.flint_sword": "Кремниевый меч",
+  "item.rpgworldmod.flint_pickaxe": "Кремниевая кирка",
+  "item.rpgworldmod.flint_axe": "Кремниевый топор",
+  "item.rpgworldmod.flint_shovel": "Кремниевая лопата",
+  "item.rpgworldmod.flint_hoe": "Кремниевая мотыга",
+  "item.rpgworldmod.flint_sword.desc": "Кривой",
+  "item.rpgworldmod.flint_pickaxe.desc": "Кривая",
+  "item.rpgworldmod.flint_axe.desc": "Кривой",
+  "item.rpgworldmod.flint_shovel.desc": "Кривая",
+  "item.rpgworldmod.flint_hoe.desc": "Кривая",
+  "item.rpgworldmod.flint_sword.features": "Поджигает поражённые цели с некоторым шансом. Плавит добываемые ресурсы с некоторым шансом.",
+  "item.rpgworldmod.flint_pickaxe.features": "Поджигает поражённые цели с некоторым шансом. Плавит добываемые ресурсы с некоторым шансом.",
+  "item.rpgworldmod.flint_axe.features": "Поджигает поражённые цели с некоторым шансом. Плавит добываемые ресурсы с некоторым шансом.",
+  "item.rpgworldmod.flint_shovel.features": "Поджигает поражённые цели с некоторым шансом. Плавит добываемые ресурсы с некоторым шансом.",
+  "item.rpgworldmod.flint_hoe.features": "Поджигает поражённые цели с некоторым шансом. Плавит добываемые ресурсы с некоторым шансом.",
+  "item.rpgworldmod.weald_blade.features": "Гарда вращается при использовании, защищая владельца.",
+  "item.rpgworldmod.weald_blade.features.blowing": "Гарда вращается при использовании, генерируя сдувающий поток воздуха.",
+  "item.rpgworldmod.drill_spear.features": "При метании разрушает сколько-то блоков на своём пути.",
+  "item.rpgworldmod.fairapier_sword.features": "Не ломается. Вместо этого увядает и может быть выращен повторно, сохраняя все параметры.",
+  "item.rpgworldmod.fairapier_sword_wilted.features": "Не ломается. Вместо этого увядает и может быть выращен повторно, сохраняя все параметры.",
+  "item.rpgworldmod.mintal_triangle.features": "Наносит урон звуком всем вокруг.",
+  "item.rpgworldmod.mintal_triangle.features.stereo": "Наносит урон звуком всем окружающим враждебным целям. Удар в треугольник с зажатым [%s] также нанесёт урон звуком окружающим игрокам.",
+  "item.rpgworldmod.guitar_ax.features": "Поражение цели наносит урон звуком всем вокруг. Может быть использована для безобидной игры, если взята во вторую руку.",
+  "item.rpgworldmod.guitar_ax.features.stereo": "Поражение цели наносит урон звуком всем окружающим враждебным целям. Наносит урон звуком игрокам только если поражённая цель это игрок. Может быть использована для безобидной игры, если взята во вторую руку.",
 
   "item.rpgworldmod.shiveralis_berries": "Ягоды трусянки",
   "item.rpgworldmod.rie_fruit": "Рия",
@@ -278,6 +302,15 @@
   "enchantment.rpgworldmod.tempo": "Темп",
   "enchantment.rpgworldmod.soundproof": "Звукоизоляция",
   "enchantment.rpgworldmod.collection": "Коллекционирование",
+  "enchantment.rpgworldmod.blowing": "Надувательство",
+
+  "enchantment.rpgworldmod.pitch.desc": "Увеличивает урон и высоту тона звукового оружия.",
+  "enchantment.rpgworldmod.crescendo.desc": "Увеличивает дальность поражения и громкость звукового оружия.",
+  "enchantment.rpgworldmod.stereo.desc": "Фильтрует наносимый звуковым оружием урон, нанося его только враждебным целям.",
+  "enchantment.rpgworldmod.tempo.desc": "Ускоряет перезагрузку звукового оружия.",
+  "enchantment.rpgworldmod.soundproof.desc": "Значительно понижает входящий звуковой урон.",
+  "enchantment.rpgworldmod.collection.desc": "Направляет добываемые ресурсы сразу в инвентарь владельца.",
+  "enchantment.rpgworldmod.blowing.desc": "Заменяет блокирование генерацией сильного потока воздуха, сдувающего всех на пути.",
 
   "trim_material.rpgworldmod.mintal": "Минталловая",
 
@@ -354,5 +387,8 @@
   "subtitles.rpgworldmod.sheentrout.flop": "Фарфорель плещется",
   "subtitles.rpgworldmod.gasbass.death": "Смокунь погибает",
   "subtitles.rpgworldmod.gasbass.hurt": "Смокунь ранен",
-  "subtitles.rpgworldmod.gasbass.flop": "Смокунь плещется"
+  "subtitles.rpgworldmod.gasbass.flop": "Смокунь плещется",
+
+  "tooltip.rpgworldmod.hold_shift_for_features": "[Зажмите %s]",
+  "tooltip.rpgworldmod.features": "Особенность:"
 }

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "R": {
+      "tag": "forge:rods/wooden"
+    },
+    "X": {
+      "item": "minecraft:flint"
+    }
+  },
+  "pattern": [
+    "XX",
+    "R ",
+    "R "
+  ],
+  "result": {
+    "item": "rpgworldmod:flint_hoe"
+  },
+  "show_notification": true
+}

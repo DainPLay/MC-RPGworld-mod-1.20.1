@@ -2,5 +2,19 @@
   "parent": "item/generated",
   "textures": {
     "layer0": "rpgworldmod:item/rpgirolle"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "token": 1.0
+      },
+      "model": "rpgworldmod:item/rie_weald_silver_token"
+    },
+    {
+      "predicate": {
+        "token": 2.0
+      },
+      "model": "rpgworldmod:item/rie_weald_gold_token"
+    }
+  ]
 }

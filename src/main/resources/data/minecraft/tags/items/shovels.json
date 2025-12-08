@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "rpgworldmod:maskonite_shovel"
+    "rpgworldmod:maskonite_shovel",
+    "rpgworldmod:flint_shovel"
   ]
 }

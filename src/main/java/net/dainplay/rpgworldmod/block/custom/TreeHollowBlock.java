@@ -196,7 +196,7 @@ public class TreeHollowBlock extends BaseEntityBlock {
         if (!pState.is(pNewState.getBlock())) {
             BlockEntity blockentity = pLevel.getBlockEntity(pPos);
             TreeHollowBlockEntity TreeHollowBlockEntity = (TreeHollowBlockEntity)blockentity;
-            if(TreeHollowBlockEntity.getItem(0).getItem() instanceof SpawnEggItem) {
+            if(TreeHollowBlockEntity.getItem(0).getItem() instanceof SpawnEggItem || TreeHollowBlockEntity.getItem(0).isEmpty()) {
                 dropMob(pLevel, pPos,  null);
             }
             else {

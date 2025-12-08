@@ -66,8 +66,8 @@
     "frame": "task",
     "hidden": false,
     "icon": {
-      "item": "minecraft:iron_sword",
-      "nbt": "{Damage:0}"
+      "item": "rpgworldmod:rpgirolle_item",
+      "nbt": "{Token:1}"
     },
     "show_toast": true,
     "title": {
