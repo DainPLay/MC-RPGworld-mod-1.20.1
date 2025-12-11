@@ -27,7 +27,7 @@ mixin {
     add sourceSets.main, "rpgworldmod.refmap.json"
 }
 
-version = '0.9.0-1.20.1'
+version = '0.9.1-1.20.1'
 group = 'net.dainplay.rpgworldmod' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'rpgworldmod'
 
@@ -151,10 +151,6 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    maven {
-        name = 'backport'
-        url 'https://www.cursemaven.com'
-    }
     maven { url = 'https://maven.theillusivec4.top/' }
     // Put repositories for dependencies here
     // ForgeGradle automatically adds the Forge maven and Maven Central for you
@@ -176,8 +172,6 @@ dependencies {
     compileOnly(fg.deobf("top.theillusivec4.curios:curios-forge:5.4.2+1.20.1:api"))
     // Use the full Curios API jar at runtime
     runtimeOnly(fg.deobf("top.theillusivec4.curios:curios-forge:5.4.2+1.20.1"))
-    runtimeOnly(fg.deobf("curse.maven:backport-417430:7227619"))
-    runtimeOnly(fg.deobf("curse.maven:platform-997634:7227584"))
 
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency

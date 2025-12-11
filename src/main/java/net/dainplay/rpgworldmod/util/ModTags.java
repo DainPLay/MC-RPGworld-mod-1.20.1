@@ -13,6 +13,10 @@ import net.minecraftforge.common.Tags;
 
 public class ModTags {
     public static class Blocks {
+        public static final TagKey<Block> STICKY_FOR_MOSQUITOS = forgeTag("sticky_for_mosquitos");
+        private static TagKey<Block> forgeTag (String name) {
+            return BlockTags.create(new ResourceLocation("forge", name));
+        }
     }
     public static class Entity {
         /*public static final TagKey<EntityType<?>> IGNORE_TYPHON = forgeTag("ignore_typhon");

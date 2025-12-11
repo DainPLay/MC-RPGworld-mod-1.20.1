@@ -147,7 +147,13 @@
         "type": "rpgworldmod:drillhog",
         "maxCount": 1,
         "minCount": 1,
-        "weight": 3
+        "weight": 6
+      },
+      {
+        "type": "rpgworldmod:mosquito_swarm",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 6
       },
       {
         "type": "rpgworldmod:fireflantern",

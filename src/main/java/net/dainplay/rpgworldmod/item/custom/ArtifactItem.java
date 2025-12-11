@@ -12,9 +12,10 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class ArtifactItem extends Item {
+public abstract class ArtifactItem extends Item implements RPGtooltip {
 
     public ArtifactItem(Properties properties) {
         super(properties.stacksTo(1));
@@ -59,7 +60,7 @@ public abstract class ArtifactItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag flags) {
-            tooltip.add(Component.translatable(getDescriptionId() + ".tooltip").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED));
+    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+        RPGappendHoverText(pStack,pLevel,pTooltip,pFlag);
     }
 }

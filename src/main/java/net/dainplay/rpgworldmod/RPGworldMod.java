@@ -276,6 +276,7 @@ public class RPGworldMod
             event.accept(ModItems.MOSSFRONT);
             event.accept(ModItems.SHEENTROUT);
             event.accept(ModItems.GASBASS);
+            event.accept(ModItems.MOSQUITO_BOTTLE);
         }
 
         if(event.getTab() == ModCreativeModeTab.RPGWORLD_EQUIPMENT_TAB.get()) {
@@ -303,8 +304,10 @@ public class RPGworldMod
             event.accept(ModItems.SHEENTROUT_BUCKET);
             event.accept(ModItems.GASBASS_BUCKET);
             event.accept(ModItems.ARBOR_FUEL_BUCKET);
+            event.accept(ModItems.MOSQUITO_BOTTLE);
             event.accept(ModItems.BRAMBLEFOX_SCARF);
             event.accept(ModItems.FIG_LEAF);
+            event.accept(ModItems.CHITIN_THIMBLE);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.LONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.STRONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
@@ -370,6 +373,8 @@ public class RPGworldMod
             event.accept(ModItems.MINTAL_INGOT);
             event.accept(ModItems.SAMARAGUARD);
             event.accept(ModItems.BURR_SPIKE);
+            event.accept(ModItems.CHITIN_POWDER);
+            event.accept(ModItems.MOSQUITO_BOTTLE);
             event.accept(ModBlocks.MOSSHROOM);
             event.accept(ModItems.PARALILY_BERRY);
             event.accept(ModItems.MASKONITE_UPGRADE_SMITHING_TEMPLATE);
@@ -487,7 +492,7 @@ public class RPGworldMod
     }
 
     public void enqueueIMC(final InterModEnqueueEvent event) {
-        SlotTypePreset[] types = {SlotTypePreset.NECKLACE, SlotTypePreset.BELT, SlotTypePreset.BACK};
+        SlotTypePreset[] types = {SlotTypePreset.NECKLACE, SlotTypePreset.BELT, SlotTypePreset.BACK, SlotTypePreset.RING};
         for (SlotTypePreset type : types) {
                 InterModComms.sendTo(CuriosApi.MODID, SlotTypeMessage.REGISTER_TYPE, () -> type.getMessageBuilder().build());
             }

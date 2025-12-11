@@ -2,8 +2,10 @@ package net.dainplay.rpgworldmod.item.custom;
 
 import com.google.common.collect.Sets;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
+import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.entity.custom.Fireflantern;
+import net.dainplay.rpgworldmod.entity.custom.MosquitoSwarm;
 import net.dainplay.rpgworldmod.particle.ModParticles;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
@@ -213,6 +215,17 @@ public class WealdBladeItem extends SwordItem implements RPGtooltip {
 
         if(entity instanceof Fireflantern && player instanceof ServerPlayer serverPlayer) {
             ModAdvancements.BLOW_AWAY_A_FIREFLANTERN.trigger(serverPlayer);
+        }
+        if (entity instanceof MosquitoSwarm mosquitoSwarm) {
+                mosquitoSwarm.transformIntoBlock(mosquitoSwarm.getSize());
+        }
+        if (entity instanceof LivingEntity livingEntity && livingEntity.hasEffect(ModEffects.MOSQUITOING.get())) {
+            MosquitoSwarm.spawnBlock(livingEntity,livingEntity.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier());
+            livingEntity.removeEffect(ModEffects.MOSQUITOING.get());
+        }
+        if (player.hasEffect(ModEffects.MOSQUITOING.get())) {
+            MosquitoSwarm.spawnBlock(player,player.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier());
+            player.removeEffect(ModEffects.MOSQUITOING.get());
         }
 
         Vec3 motion = entity.getDeltaMovement();

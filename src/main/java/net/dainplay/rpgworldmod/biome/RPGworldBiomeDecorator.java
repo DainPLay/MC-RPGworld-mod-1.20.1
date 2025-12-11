@@ -72,8 +72,8 @@ public class RPGworldBiomeDecorator {
         spawnSettings.addSpawn(MobCategory.WATER_AMBIENT, new MobSpawnSettings.SpawnerData(ModEntities.SHEENTROUT.get(), 2, 1, 1));
         spawnSettings.addSpawn(MobCategory.WATER_AMBIENT, new MobSpawnSettings.SpawnerData(ModEntities.GASBASS.get(), 10, 1, 1));
         spawnSettings.addSpawn(ModEntities.RIE_MONSTER, new MobSpawnSettings.SpawnerData(ModEntities.MINTOBAT.get(), 3, 1, 3));
-        spawnSettings.addSpawn(ModEntities.RIE_MONSTER, new MobSpawnSettings.SpawnerData(ModEntities.DRILLHOG.get(), 3, 1, 1));
-        //spawnSettings.addSpawn(ModEntities.RIE_MONSTER, new MobSpawnSettings.SpawnerData(ModEntities.MOSQUITO_SWARM.get(), 3, 1, 1));
+        spawnSettings.addSpawn(ModEntities.RIE_MONSTER, new MobSpawnSettings.SpawnerData(ModEntities.DRILLHOG.get(), 6, 1, 1));
+        spawnSettings.addSpawn(ModEntities.RIE_MONSTER, new MobSpawnSettings.SpawnerData(ModEntities.MOSQUITO_SWARM.get(), 6, 1, 1));
         spawnSettings.addSpawn(ModEntities.RIE_MONSTER, new MobSpawnSettings.SpawnerData(ModEntities.FIREFLANTERN.get(), 10, 1, 1));
         spawnSettings.addSpawn(ModEntities.RIE_MONSTER, new MobSpawnSettings.SpawnerData(ModEntities.BURR_PURR.get(), 6, 1, 3));
 

@@ -18,6 +18,9 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> MINTOBAT_HURT;
     public static RegistryObject<SoundEvent> MINTOBAT_DEATH;
     public static RegistryObject<SoundEvent> MINTOBAT_AMBIENT;
+    public static RegistryObject<SoundEvent> MOSQUITO_SWARM_ATTACK;
+    public static RegistryObject<SoundEvent> MOSQUITO_SWARM_DEATH;
+    public static RegistryObject<SoundEvent> MOSQUITO_SWARM_AMBIENT;
     public static RegistryObject<SoundEvent> FIREFLANTERN_FALL;
     public static RegistryObject<SoundEvent> FIREFLANTERN_IMPACT;
     public static RegistryObject<SoundEvent> FIREFLANTERN_DEATH;

@@ -43,6 +43,9 @@ public class ModSounds
         MINTOBAT_HURT = registerSound("rpgworldmod.mintobat.hit");
         MINTOBAT_DEATH = registerSound("rpgworldmod.mintobat.death");
         MINTOBAT_AMBIENT = registerSound("rpgworldmod.mintobat.ambient");
+        MOSQUITO_SWARM_ATTACK = registerSound("rpgworldmod.mosquito_swarm.attack");
+        MOSQUITO_SWARM_DEATH = registerSound("rpgworldmod.mosquito_swarm.death");
+        MOSQUITO_SWARM_AMBIENT = registerSound("rpgworldmod.mosquito_swarm.ambient");
         FIREFLANTERN_FALL = registerSound("rpgworldmod.fireflantern.fall");
         FIREFLANTERN_DEATH = registerSound("rpgworldmod.fireflantern.death");
         FIREFLANTERN_IMPACT = registerSound("rpgworldmod.fireflantern.impact");

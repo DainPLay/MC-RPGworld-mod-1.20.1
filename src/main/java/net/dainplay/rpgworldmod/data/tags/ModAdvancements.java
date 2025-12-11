@@ -19,6 +19,9 @@ public class ModAdvancements {
     public static final GoldenKillFireflanternTrigger GOLDEN_KILL_FIREFLANTERN = CriteriaTriggers.register(new GoldenKillFireflanternTrigger());
     public static final GoldenKillMintobatTrigger GOLDEN_KILL_MINTOBAT = CriteriaTriggers.register(new GoldenKillMintobatTrigger());
     public static final GoldenKillDrillhogTrigger GOLDEN_KILL_DRILLHOG = CriteriaTriggers.register(new GoldenKillDrillhogTrigger());
+    public static final GoldenKillMosquitoSwarmTrigger GOLDEN_KILL_MOSQUITO_SWARM = CriteriaTriggers.register(new GoldenKillMosquitoSwarmTrigger());
+    public static final KillMosquitoSwarmTrigger KILL_MOSQUITO_SWARM = CriteriaTriggers.register(new KillMosquitoSwarmTrigger());
+    public static final ReleaseMosquitosInNetherTrigger RELEASE_MOSQUITOS_IN_NETHER = CriteriaTriggers.register(new ReleaseMosquitosInNetherTrigger());
 
     public static void init() {}
 }

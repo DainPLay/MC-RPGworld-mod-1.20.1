@@ -3,27 +3,22 @@ package net.dainplay.rpgworldmod.block.entity.custom;
 import net.dainplay.rpgworldmod.block.custom.BlowerBlock;
 import net.dainplay.rpgworldmod.block.entity.ModBlockEntities;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
+import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.entity.custom.Fireflantern;
+import net.dainplay.rpgworldmod.entity.custom.MosquitoSwarm;
 import net.dainplay.rpgworldmod.particle.ModParticles;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.core.Direction;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -110,6 +105,13 @@ public class BlowerBlockEntity extends BlockEntity {
             for (ServerPlayer serverplayer : entity.level().getEntitiesOfClass(ServerPlayer.class, new AABB(blowerBlockEntity.worldPosition).inflate(10.0D, 15.0D, 10.0D))) {
                 ModAdvancements.BLOW_AWAY_A_FIREFLANTERN.trigger(serverplayer);
             }
+        }
+        if (entity instanceof MosquitoSwarm mosquitoSwarm) {
+                mosquitoSwarm.transformIntoBlock(mosquitoSwarm.getSize());
+        }
+        if (entity instanceof LivingEntity livingEntity && livingEntity.hasEffect(ModEffects.MOSQUITOING.get())) {
+            MosquitoSwarm.spawnBlock(livingEntity, livingEntity.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier());
+            livingEntity.removeEffect(ModEffects.MOSQUITOING.get());
         }
         Vec3 motion = entity.getDeltaMovement();
         double speed = blowerBlockEntity.getBlowerSpeed() * ((double) blockState.getValue(BlockStateProperties.POWER) / 15D);

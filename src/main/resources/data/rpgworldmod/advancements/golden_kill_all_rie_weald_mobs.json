@@ -16,6 +16,10 @@
     "golden_kill_drillhog": {
       "conditions": {},
       "trigger": "rpgworldmod:golden_kill_drillhog"
+    },
+    "golden_kill_mosquito_swarm": {
+      "conditions": {},
+      "trigger": "rpgworldmod:golden_kill_mosquito_swarm"
     }
   },
   "display": {
@@ -46,10 +50,13 @@
     ],
     [
       "golden_kill_drillhog"
+    ],
+    [
+      "golden_kill_mosquito_swarm"
     ]
   ],
   "rewards": {
-    "experience": 100
+    "experience": 120
   },
   "sends_telemetry_event": true
 }

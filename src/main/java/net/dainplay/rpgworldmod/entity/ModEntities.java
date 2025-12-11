@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 @Mod.EventBusSubscriber(modid = RPGworldMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModEntities {
     public static DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, RPGworldMod.MOD_ID);
-    public static final MobCategory RIE_MONSTER = MobCategory.create("rie_monster", "rpgworldmod:rie_monster", 10, false, false, 128);
+    public static final MobCategory RIE_MONSTER = MobCategory.create("rie_monster", "rpgworldmod:rie_monster", 12, false, false, 128);
 
     public static final RegistryObject<EntityType<ProjectruffleArrowEntity>> PROJECTRUFFLE_ARROW = ENTITY_TYPES.register("projectruffle_arrow",
             () -> EntityType.Builder.of((EntityType.EntityFactory<ProjectruffleArrowEntity>) ProjectruffleArrowEntity::new, MobCategory.MISC)
@@ -53,7 +53,7 @@ public class ModEntities {
     public static final RegistryObject<EntityType<Drillhog>> DRILLHOG = ENTITY_TYPES.register("drillhog",
             () -> EntityType.Builder.of(Drillhog::new, RIE_MONSTER).sized(0.9F, 0.9F).clientTrackingRange(8).build("drillhog"));
     public static final RegistryObject<EntityType<MosquitoSwarm>> MOSQUITO_SWARM = ENTITY_TYPES.register("mosquito_swarm",
-            () -> EntityType.Builder.of(MosquitoSwarm::new, RIE_MONSTER).sized(1.1F, 1.1F).clientTrackingRange(8).build("mosquito_swarm"));
+            () -> EntityType.Builder.of(MosquitoSwarm::new, RIE_MONSTER).sized(0.95F, 0.95F).clientTrackingRange(8).build("mosquito_swarm"));
     public static final RegistryObject<EntityType<Bibbit>> BIBBIT = ENTITY_TYPES.register("bibbit",
             () -> EntityType.Builder.of(Bibbit::new, MobCategory.CREATURE).sized(0.6F, 0.9F).clientTrackingRange(8).build("bibbit"));
     public static final RegistryObject<EntityType<Platinumfish>> PLATINUMFISH = ENTITY_TYPES.register("platinumfish",

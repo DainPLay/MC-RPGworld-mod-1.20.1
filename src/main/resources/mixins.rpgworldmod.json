@@ -18,7 +18,8 @@
     "PistonStructureResolverMixin",
     "PotionUtilsMixin",
     "SonicBoomMixin",
-    "WitchMixin"
+    "WitchMixin",
+    "ThrownPotionMixin"
   ],
   "client": [
     "AbstractContainerScreenMixin",

@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.entity.custom.Fireflantern;
+import net.dainplay.rpgworldmod.entity.custom.Mintobat;
 import net.dainplay.rpgworldmod.entity.custom.MosquitoSwarm;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -17,6 +18,8 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec3;
@@ -64,14 +67,14 @@ public class MosquitoSwarmRenderer extends EntityRenderer<MosquitoSwarm> {
 
         // Render our flat quad
         VertexConsumer consumer = buffer.getBuffer(RenderType.entityTranslucent(getTextureLocation(entity)));
-        renderQuad(poseStack, consumer, packedLight);
+        renderQuad(entity, poseStack, consumer, packedLight);
 
         poseStack.popPose();
     }
 
-    private void renderQuad(PoseStack poseStack, VertexConsumer consumer, int packedLight) {
-        float width = 0.5f; // half width
-        float height = 0.5f; // half height
+    private void renderQuad(MosquitoSwarm entity, PoseStack poseStack, VertexConsumer consumer, int packedLight) {
+        float width = 0.35f+0.05f*entity.getSize(); // half width
+        float height = 0.35f+0.05f*entity.getSize(); // half height
 
         //Define the vertices of the quad in local space
         //  (x, y, z, u, v, normal)
@@ -92,6 +95,9 @@ public class MosquitoSwarmRenderer extends EntityRenderer<MosquitoSwarm> {
         var entry = poseStack.last();
         consumer.vertex(entry.pose(), x, y, z).color(1.0f, 1.0f, 1.0f, 1.0f).uv(u, v)
                 .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(entry.normal(), 0f, 0f, 1.0f).endVertex();
+    }
+    protected void scale(MosquitoSwarm pLivingEntity, PoseStack pMatrixStack, float pPartialTickTime) {
+        pMatrixStack.scale(1.0F*3/pLivingEntity.getSize(), 1.0F*3/pLivingEntity.getSize(), 1.0F*3/pLivingEntity.getSize());
     }
 
 }

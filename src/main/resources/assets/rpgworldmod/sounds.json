@@ -183,6 +183,26 @@
     ],
     "subtitle": "subtitles.rpgworldmod.mintobat.hit"
   },
+  "rpgworldmod.mosquito_swarm.attack": {
+    "sounds": [
+      "rpgworldmod:mosquito_swarm/attack"
+    ],
+    "subtitle": "subtitles.rpgworldmod.mosquito_swarm.attack"
+  },
+  "rpgworldmod.mosquito_swarm.ambient": {
+    "sounds": [
+      "rpgworldmod:mosquito_swarm/ambient1",
+      "rpgworldmod:mosquito_swarm/ambient2"
+    ],
+    "subtitle": "subtitles.rpgworldmod.mosquito_swarm.ambient"
+  },
+  "rpgworldmod.mosquito_swarm.death": {
+    "sounds": [
+      "rpgworldmod:mosquito_swarm/death1",
+      "rpgworldmod:mosquito_swarm/death2"
+    ],
+    "subtitle": "subtitles.rpgworldmod.mosquito_swarm.death"
+  },
   "rpgworldmod.fireflantern.hit": {
     "sounds": [
       {

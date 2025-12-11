@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.effect.ModEffects;
+import net.dainplay.rpgworldmod.entity.custom.Drillhog;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
@@ -14,83 +15,213 @@ import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import java.util.Objects;
 import java.util.Random;
 
+import static java.lang.Math.max;
+
 public class OverlayEventHandler implements IGuiOverlay {
-    public static final ResourceLocation MOSSIOSIS_HEARTS = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/mossiosis_hearts.png");
-    static int renderHeartY = 0;
-    static int regen = -1;
+	public static final ResourceLocation MOSS_HEARTS = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/mossiosis_hearts.png");
+	public static final ResourceLocation MOSQUITO_HEARTS_1 = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/mosquito_hearts_1.png");
+	public static final ResourceLocation MOSQUITO_HEARTS_2 = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/mosquito_hearts_2.png");
+	public static final ResourceLocation MOSQUITO_HEARTS_3 = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/mosquito_hearts_3.png");
+	public static final ResourceLocation MOSQUITO_HEARTS_4 = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/mosquito_hearts_4.png");
+	public static final ResourceLocation MOSQUITO_HEARTS_5 = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/mosquito_hearts_5.png");
+	public static final ResourceLocation MOSQUITO_HEARTS_6 = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/mosquito_hearts_6.png");
+	public static final ResourceLocation MOSQUITO_HEARTS_7 = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/mosquito_hearts_7.png");
+	public static final ResourceLocation MOSQUITO_HEARTS_8 = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/mosquito_hearts_8.png");
 
-    public static void drawTexturedModalRect(GuiGraphics stack, int x, int y, int textureX, int textureY, int width, int height) {
-        stack.blit(MOSSIOSIS_HEARTS,x, y, textureX, textureY, width, height);
-    }
-public static void setRenderHeartY(int value){
-    renderHeartY = value;
-}
-    public static void setRegen(int value){
-        regen = value;
-    }
-    private final static int UNKNOWN_ARMOR_VALUE = -1;
-    private static int previousMossValue = UNKNOWN_ARMOR_VALUE;
+	static int renderHeartY = 0;
+	static int regen = -1;
 
-    private static final Minecraft mc = Minecraft.getInstance();
-    private static MossIcon[] mossIcons;
+	public static void drawMossHeart(GuiGraphics stack, int x, int y, int textureX, int textureY, int width, int height) {
+		stack.blit(MOSS_HEARTS, x, y, textureX, textureY, width, height);
+	}
 
+	public static void drawMosquitoHeart(GuiGraphics stack, int x, int y, int textureX, int textureY, int width, int height) {
+		stack.blit(getTextureLocation(), x, y, textureX, textureY, width, height);
+	}
 
-    public void render(ForgeGui gui, GuiGraphics guiGraphics, float partialTick, int screenWidth, int screenHeight) {
-        if (!mc.options.hideGui && gui.shouldDrawSurvivalElements()) {
-            gui.setupOverlayRenderState(true, false);
-            renderMossBar(gui, guiGraphics, screenWidth, screenHeight);
-        }
-    }
-    private static int calculateMossValue() {
-        if (mc.player != null && mc.player.hasEffect(ModEffects.MOSSIOSIS.get()))
-            return (Objects.requireNonNull(mc.player.getEffect(ModEffects.MOSSIOSIS.get())).getAmplifier()+1) * 6;
-        else return -1;
-    }
+	public static ResourceLocation getTextureLocation() {
+		assert mc.player != null;
+		return switch (mc.player.tickCount % 8) {
+			case 1 -> MOSQUITO_HEARTS_1;
+			case 2 -> MOSQUITO_HEARTS_2;
+			case 3 -> MOSQUITO_HEARTS_3;
+			case 4 -> MOSQUITO_HEARTS_4;
+			case 5 -> MOSQUITO_HEARTS_5;
+			case 6 -> MOSQUITO_HEARTS_6;
+			case 7 -> MOSQUITO_HEARTS_7;
+			default -> MOSQUITO_HEARTS_8;
+		};
+	}
 
-    public static void renderMossBar(ForgeGui gui, GuiGraphics stack, int screenWidth, int screenHeight) {
-        int currentMossValue = calculateMossValue();
-        int xStart = screenWidth / 2 - 91;
-        int health = Mth.ceil(mc.player.getHealth());
+	public static void setRenderHeartY(int value) {
+		renderHeartY = value;
+	}
 
-        if (currentMossValue != previousMossValue) {
-            mossIcons = MossBar.calculateMossIcons(currentMossValue);
-            previousMossValue = currentMossValue;
-        }
-        if (health > 0)
-        for (int mossIconCounter = 0; mossIconCounter < currentMossValue/2; mossIconCounter++) {
-            int xPosition = xStart + mossIconCounter * 8;
-            int yPosition = renderHeartY;
-            if (health <= 4) {
-                yPosition += new Random().nextInt(2);
-            }
-            if (mossIconCounter == regen) {
-                yPosition -= 2;
-            }
-            switch (mossIcons[mossIconCounter].mossIconType) {
-                case NONE:
-                    if (currentMossValue > 20) {
-                        drawTexturedModalRect(stack,xPosition, yPosition, 0, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
-                    }
-                    break;
-                case HALF:
-                    if (currentMossValue > 20) {
-                        drawTexturedModalRect(stack,xPosition + 5, yPosition, 9, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
-                    } else {
-                        drawTexturedModalRect(stack,xPosition + 5, yPosition, 5, 18, 4, 9);
-                    }
-                    break;
-                case FULL:
-                    drawTexturedModalRect(stack,xPosition, yPosition, 0, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
-                    break;
-                default:
-                    break;
-            }
-        }
+	public static void setRegen(int value) {
+		regen = value;
+	}
 
-        color4f(1, 1, 1, 1);
-    }
+	private final static int UNKNOWN_ARMOR_VALUE = -1;
+	private static int previousMossValue = UNKNOWN_ARMOR_VALUE;
+	private static int previousMosquitoValue = UNKNOWN_ARMOR_VALUE;
 
-    private static void color4f(float r, float g, float b, float a){
-        RenderSystem.setShaderColor(r,g, b, a);
-    }
+	private static final Minecraft mc = Minecraft.getInstance();
+	private static MossIcon[] mossIcons = new MossIcon[0];
+	private static MossIcon[] mosquitoIcons = new MossIcon[0];
+
+	public void render(ForgeGui gui, GuiGraphics guiGraphics, float partialTick, int screenWidth, int screenHeight) {
+		if (!mc.options.hideGui && gui.shouldDrawSurvivalElements()) {
+			gui.setupOverlayRenderState(true, false);
+
+			// Проверяем наличие эффектов
+			boolean hasMossiosis = mc.player != null && mc.player.hasEffect(ModEffects.MOSSIOSIS.get());
+			boolean hasMosquitoing = mc.player != null && mc.player.hasEffect(ModEffects.MOSQUITOING.get());
+
+			// Рендерим бары в зависимости от наличия эффектов
+			if (hasMossiosis) {
+				renderMossBar(gui, guiGraphics, screenWidth, screenHeight);
+			}
+			if (hasMosquitoing) {
+				renderMosquitoBar(gui, guiGraphics, screenWidth, screenHeight);
+			}
+		}
+	}
+
+	private static int calculateMossValue() {
+		if (mc.player != null && mc.player.hasEffect(ModEffects.MOSSIOSIS.get()))
+			return (Objects.requireNonNull(mc.player.getEffect(ModEffects.MOSSIOSIS.get())).getAmplifier() + 1) * 6;
+		else return -1;
+	}
+
+	private static int calculateMosquitoValue() {
+		if (mc.player != null && mc.player.hasEffect(ModEffects.MOSQUITOING.get()))
+			return Mth.ceil(mc.player.getHealth());
+		else return -1;
+	}
+
+	public static void renderMossBar(ForgeGui gui, GuiGraphics stack, int screenWidth, int screenHeight) {
+		int currentMossValue = calculateMossValue();
+
+		// Если эффекта нет, не рисуем ничего
+		if (currentMossValue <= 0) {
+			return;
+		}
+
+		int xStart = screenWidth / 2 - 91;
+		int health = Mth.ceil(mc.player.getHealth());
+
+		if (currentMossValue != previousMossValue) {
+			mossIcons = MossBar.calculateMossIcons(currentMossValue);
+			previousMossValue = currentMossValue;
+		}
+
+		// Проверяем, что массив проинициализирован
+		if (mossIcons == null || mossIcons.length == 0) {
+			return;
+		}
+
+		// Ограничиваем количество сердец 10
+		int heartsToDraw = (currentMossValue + 1) / 2 + (currentMossValue + 1) % 2;
+
+		// Определяем позицию Y в зависимости от наличия mossBar
+		int yPosition = renderHeartY;
+
+		if (health > 0) {
+			for (int i = heartsToDraw - 1; i >= 0; i--) {
+				int xPosition = xStart + (i % 10) * 8;
+				int currentY = yPosition - max(3,(11 - Mth.ceil(mc.player.getMaxHealth()) / 20)) * (i / 10);
+
+				if (health <= 4) {
+					currentY += new Random().nextInt(2);
+				}
+				if (i == regen) {
+					currentY -= 2;
+				}
+
+				// Безопасный доступ к массиву
+				if (i < mossIcons.length) {
+					switch (mossIcons[i].mossIconType) {
+						case NONE:
+							drawMossHeart(stack, xPosition, currentY, 0, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
+							break;
+						case HALF:
+							drawMossHeart(stack, xPosition, currentY, 9, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
+							break;
+						case FULL:
+							drawMossHeart(stack, xPosition, currentY, 0, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
+							break;
+						default:
+							break;
+					}
+				}
+			}
+		}
+
+		color4f(1, 1, 1, 1);
+	}
+
+	public static void renderMosquitoBar(ForgeGui gui, GuiGraphics stack, int screenWidth, int screenHeight) {
+		int currentMosquitoValue = calculateMosquitoValue();
+
+		// Если эффекта нет, не рисуем ничего
+		if (currentMosquitoValue <= 0) {
+			return;
+		}
+
+		int xStart = screenWidth / 2 - 91;
+		int health = Mth.ceil(mc.player.getHealth());
+
+		if (currentMosquitoValue != previousMosquitoValue) {
+			mosquitoIcons = MossBar.calculateMossIcons(currentMosquitoValue);
+			previousMosquitoValue = currentMosquitoValue;
+		}
+
+		// Проверяем, что массив проинициализирован
+		if (mosquitoIcons == null || mosquitoIcons.length == 0) {
+			return;
+		}
+
+		// Ограничиваем количество сердец 10
+		int heartsToDraw = currentMosquitoValue / 2 + currentMosquitoValue % 2;
+
+		// Определяем позицию Y в зависимости от наличия mossBar
+		int yPosition = renderHeartY;
+
+		if (health > 0) {
+			for (int i = heartsToDraw - 1; i >= 0; i--) {
+				int xPosition = xStart + (i % 10) * 8;
+				int currentY = yPosition - max(3,(11 - Mth.ceil(mc.player.getMaxHealth()) / 20)) * (i / 10);
+
+				if (health <= 4) {
+					currentY += new Random().nextInt(2);
+				}
+				if (i == regen) {
+					currentY -= 2;
+				}
+
+				// Безопасный доступ к массиву
+				if (i < mosquitoIcons.length) {
+					switch (mosquitoIcons[i].mossIconType) {
+						case NONE:
+							drawMosquitoHeart(stack, xPosition, currentY, 0, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
+							break;
+						case HALF:
+							drawMosquitoHeart(stack, xPosition, currentY, 9, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
+							break;
+						case FULL:
+							drawMosquitoHeart(stack, xPosition, currentY, 0, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
+							break;
+						default:
+							break;
+					}
+				}
+			}
+		}
+
+		color4f(1, 1, 1, 1);
+	}
+
+	private static void color4f(float r, float g, float b, float a) {
+		RenderSystem.setShaderColor(r, g, b, a);
+	}
 }

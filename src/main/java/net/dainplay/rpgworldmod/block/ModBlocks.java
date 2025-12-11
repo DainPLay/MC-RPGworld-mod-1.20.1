@@ -375,6 +375,8 @@ public class ModBlocks {
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.GOLD_BLOCK).mapColor(MapColor.GOLD).requiresCorrectToolForDrops().strength(5.0F, 6.0F)));
     public static final RegistryObject<Block> ARBOR_FUEL_CAULDRON = registerBlockWithoutBlockItem("arbor_fuel_cauldron", () -> new ArborFuelCauldron(BlockBehaviour.Properties.copy(Blocks.CAULDRON), ModCauldronInteraction.ARBOR_FUEL));
 
+    public static final RegistryObject<Block> MOSQUITOS = registerBlockWithoutBlockItem("mosquitos", () -> new MosquitosBlock(BlockBehaviour.Properties.of().mapColor(MapColor.NONE).replaceable().noCollission().strength(0.2F).sound(SoundType.FROGSPAWN).pushReaction(PushReaction.DESTROY)));
+
     public static <T extends Block> RegistryObject<T> registerBlockWithoutBlockItem(String name, Supplier<T> block) {
         return BLOCKS.register(name, block);
     }

@@ -56,6 +56,10 @@
         ]
       },
       "trigger": "minecraft:player_killed_entity"
+    },
+    "kill_mosquito_swarm": {
+      "conditions": {},
+      "trigger": "rpgworldmod:kill_mosquito_swarm"
     }
   },
   "display": {
@@ -86,6 +90,9 @@
     ],
     [
       "rpgworldmod:drillhog"
+    ],
+    [
+      "kill_mosquito_swarm"
     ]
   ],
   "rewards": {

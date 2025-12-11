@@ -1,0 +1,30 @@
+{
+  "parent": "rpgworldmod:root",
+  "criteria": {
+    "release_mosquitos_in_nether": {
+      "conditions": {},
+      "trigger": "rpgworldmod:release_mosquitos_in_nether"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.release_mosquitos_in_nether.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:mosquito_bottle"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.release_mosquitos_in_nether.title"
+    }
+  },
+  "requirements": [
+    [
+      "release_mosquitos_in_nether"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

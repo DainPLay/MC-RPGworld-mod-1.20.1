@@ -18,6 +18,7 @@ public class ModDamageTypes {
     public static final ResourceKey<DamageType> BURR_SPIKE = create("burr_spike");
     public static final ResourceKey<DamageType> SPIKY_IVY = create("spiky_ivy");
     public static final ResourceKey<DamageType> MOSSIOSIS = create("mossiosis");
+    public static final ResourceKey<DamageType> MOSQUITOS = create("mosquitos");
     public static final ResourceKey<DamageType> SCREAM = create("scream");
     public static final ResourceKey<DamageType> DING = create("ding");
 
@@ -43,6 +44,7 @@ public class ModDamageTypes {
         context.register(BURR_SPIKE, new DamageType("burr_spike", 0.0F));
         context.register(SPIKY_IVY, new DamageType("spiky_ivy", 0.0F));
         context.register(MOSSIOSIS, new DamageType("mossiosis", 0.0F));
+        context.register(MOSQUITOS, new DamageType("mosquitos", 0.0F));
         context.register(SCREAM, new DamageType("scream", 0.0F));
         context.register(DING, new DamageType("ding", 0.0F));
     }

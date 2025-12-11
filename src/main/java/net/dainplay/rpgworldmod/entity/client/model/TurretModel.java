@@ -47,19 +47,19 @@ public class TurretModel extends HumanoidModel<LivingEntity> {
     }
 
 
-    private static MeshDefinition createBelt(CubeListBuilder charm) {
+    private static MeshDefinition create(CubeListBuilder clb) {
         MeshDefinition mesh = createMesh(CubeDeformation.NONE, 0);
 
         mesh.getRoot().addOrReplaceChild(
                 "body",
-                charm,
+                clb,
                 PartPose.ZERO
         );
 
         return mesh;
     }
 
-    public static MeshDefinition createCloudInABottle() {
+    public static MeshDefinition createTurret() {
         CubeListBuilder turret = CubeListBuilder.create();
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
@@ -77,7 +77,7 @@ public class TurretModel extends HumanoidModel<LivingEntity> {
                 .texOffs(12, 46).mirror().addBox(-4.5F, -8.0F, 6.15F, 1.0F, 9.0F, 5.0F, new CubeDeformation(0.25F)).mirror(false)
                 .texOffs(10, 41).addBox(-0.5F, -1.5F, 4.65F, 1.0F, 2.0F, 2.0F, new CubeDeformation(0.25F))
                 .texOffs(46, 39).addBox(0.0F, -5.0F, 2.15F, 0.0F, 16.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
-        MeshDefinition mesh = createBelt(turret);
+        MeshDefinition mesh = create(turret);
         return mesh;
     }
 }

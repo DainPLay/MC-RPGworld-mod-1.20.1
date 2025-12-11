@@ -78,6 +78,10 @@ public class ModItems {
             () -> new FairapierSeedItem(ModBlocks.FAIRAPIER_PLANT.get(), new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> BURR_SPIKE = ITEMS.register("burr_spike",
             () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> CHITIN_POWDER = ITEMS.register("chitin_powder",
+            () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> MOSQUITO_BOTTLE = ITEMS.register("mosquito_bottle",
+            () -> new MosquitoBottleItem(new Item.Properties()));
     public static final RegistryObject<Item> SHIVERALIS_BERRIES = ITEMS.register("shiveralis_berries",
             () -> new ItemNameBlockItem(ModBlocks.SHIVERALIS.get(), new Item.Properties().food(ModFoods.SHIVERALIS_BERRIES)));
     public static final RegistryObject<Item> PARALILY = ITEMS.register("paralily",
@@ -134,10 +138,11 @@ public class ModItems {
     public static final RegistryObject<Item> DRILLHOG_SPAWN_EGG = ITEMS.register("drillhog_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.DRILLHOG, 0x835853, 0xEBE1BE, new Item.Properties()));
     public static final RegistryObject<Item> MOSQUITO_SWARM_SPAWN_EGG = ITEMS.register("mosquito_swarm_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.MOSQUITO_SWARM, 0x000000, 0x383838, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(ModEntities.MOSQUITO_SWARM, 0x4D7575, 0x648C8C, new Item.Properties()));
     public static final RegistryObject<CurioItem> BRAMBLEFOX_SCARF = ITEMS.register("bramblefox_scarf", () -> new CurioItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<CurioItem> FIG_LEAF = ITEMS.register("fig_leaf", () -> new CurioItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<CurioItem> PORTABLE_TURRET = ITEMS.register("portable_turret", () -> new CurioItem(new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<ChitinThimbleItem> CHITIN_THIMBLE = ITEMS.register("chitin_thimble", () -> new ChitinThimbleItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> MUSIC_DISC_HOWLING = ITEMS.register("music_disc_howling", () -> new RecordItem(12, RPGSounds.MUSIC_DISC_HOWLING.get(), new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 184 * 20));
 
     public static final RegistryObject<Item> ARBOR_FUEL_BUCKET = ITEMS.register("arbor_fuel_bucket", () -> new FuelBucketItem(ModFluids.SOURCE_ARBOR_FUEL, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
