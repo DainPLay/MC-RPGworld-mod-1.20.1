@@ -18,39 +18,17 @@ import java.util.Random;
 import static java.lang.Math.max;
 
 public class OverlayEventHandler implements IGuiOverlay {
-	public static final ResourceLocation MOSS_HEARTS = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/mossiosis_hearts.png");
-	public static final ResourceLocation MOSQUITO_HEARTS_1 = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/mosquito_hearts_1.png");
-	public static final ResourceLocation MOSQUITO_HEARTS_2 = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/mosquito_hearts_2.png");
-	public static final ResourceLocation MOSQUITO_HEARTS_3 = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/mosquito_hearts_3.png");
-	public static final ResourceLocation MOSQUITO_HEARTS_4 = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/mosquito_hearts_4.png");
-	public static final ResourceLocation MOSQUITO_HEARTS_5 = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/mosquito_hearts_5.png");
-	public static final ResourceLocation MOSQUITO_HEARTS_6 = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/mosquito_hearts_6.png");
-	public static final ResourceLocation MOSQUITO_HEARTS_7 = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/mosquito_hearts_7.png");
-	public static final ResourceLocation MOSQUITO_HEARTS_8 = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/mosquito_hearts_8.png");
+	public static final ResourceLocation ICONS = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/icons.png");
 
 	static int renderHeartY = 0;
 	static int regen = -1;
 
 	public static void drawMossHeart(GuiGraphics stack, int x, int y, int textureX, int textureY, int width, int height) {
-		stack.blit(MOSS_HEARTS, x, y, textureX, textureY, width, height);
+		stack.blit(ICONS, x, y, textureX, textureY, width, height);
 	}
 
 	public static void drawMosquitoHeart(GuiGraphics stack, int x, int y, int textureX, int textureY, int width, int height) {
-		stack.blit(getTextureLocation(), x, y, textureX, textureY, width, height);
-	}
-
-	public static ResourceLocation getTextureLocation() {
-		assert mc.player != null;
-		return switch (mc.player.tickCount % 8) {
-			case 1 -> MOSQUITO_HEARTS_1;
-			case 2 -> MOSQUITO_HEARTS_2;
-			case 3 -> MOSQUITO_HEARTS_3;
-			case 4 -> MOSQUITO_HEARTS_4;
-			case 5 -> MOSQUITO_HEARTS_5;
-			case 6 -> MOSQUITO_HEARTS_6;
-			case 7 -> MOSQUITO_HEARTS_7;
-			default -> MOSQUITO_HEARTS_8;
-		};
+		stack.blit(ICONS, x, y, textureX+((mc.player.tickCount % 8 +1) * 18), textureY, width, height);
 	}
 
 	public static void setRenderHeartY(int value) {
