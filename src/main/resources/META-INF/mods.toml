@@ -27,15 +27,11 @@ displayName="RPGworld" #mandatory
 # A URL for the "homepage" for this mod, displayed in the mod UI
 #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-logoFile="examplemod.png" #optional
-# A text field displayed in the mod UI
-credits="Thanks for this example mod goes to Java" #optional
+logoFile="assets/rpgworldmod/textures/misc/mod_logo.png" #optional
 # A text field displayed in the mod UI
 authors="Dain_PLay" #optional
 # The description text for the mod (multi line!) (#mandatory)
-description='''
-RPGcraft
-'''
+description='''A world that §mhas§r will have everything'''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 
 [[dependencies.rpgworldmod]]

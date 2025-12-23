@@ -70,7 +70,7 @@ public class RPGworldBiomeDecorator {
         spawnSettings.addSpawn(MobCategory.WATER_AMBIENT, new MobSpawnSettings.SpawnerData(ModEntities.MOSSFRONT.get(), 5, 1, 2));
         spawnSettings.addSpawn(MobCategory.WATER_AMBIENT, new MobSpawnSettings.SpawnerData(ModEntities.BHLEE.get(), 5, 1, 3));
         spawnSettings.addSpawn(MobCategory.WATER_AMBIENT, new MobSpawnSettings.SpawnerData(ModEntities.SHEENTROUT.get(), 2, 1, 1));
-        spawnSettings.addSpawn(MobCategory.WATER_AMBIENT, new MobSpawnSettings.SpawnerData(ModEntities.GASBASS.get(), 10, 1, 1));
+        spawnSettings.addSpawn(MobCategory.WATER_AMBIENT, new MobSpawnSettings.SpawnerData(ModEntities.GASBASS.get(), 4, 1, 1));
         spawnSettings.addSpawn(ModEntities.RIE_MONSTER, new MobSpawnSettings.SpawnerData(ModEntities.MINTOBAT.get(), 3, 1, 3));
         spawnSettings.addSpawn(ModEntities.RIE_MONSTER, new MobSpawnSettings.SpawnerData(ModEntities.DRILLHOG.get(), 6, 1, 1));
         spawnSettings.addSpawn(ModEntities.RIE_MONSTER, new MobSpawnSettings.SpawnerData(ModEntities.MOSQUITO_SWARM.get(), 6, 1, 1));
@@ -107,10 +107,10 @@ public class RPGworldBiomeDecorator {
         biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.PATCH_PARALILY_PLACED_KEY);
         biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.SPIKY_IVY_PLACED_KEY);
 
-        biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.TREE_HOLLOW_WEST_PLACED_KEY);
-        biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.TREE_HOLLOW_EAST_PLACED_KEY);
-        biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.TREE_HOLLOW_NORTH_PLACED_KEY);
-        biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.TREE_HOLLOW_SOUTH_PLACED_KEY);
+        biomeFeatures.addFeature(GenerationStep.Decoration.TOP_LAYER_MODIFICATION , ModPlacedFeatures.TREE_HOLLOW_WEST_PLACED_KEY);
+        biomeFeatures.addFeature(GenerationStep.Decoration.TOP_LAYER_MODIFICATION , ModPlacedFeatures.TREE_HOLLOW_EAST_PLACED_KEY);
+        biomeFeatures.addFeature(GenerationStep.Decoration.TOP_LAYER_MODIFICATION , ModPlacedFeatures.TREE_HOLLOW_NORTH_PLACED_KEY);
+        biomeFeatures.addFeature(GenerationStep.Decoration.TOP_LAYER_MODIFICATION , ModPlacedFeatures.TREE_HOLLOW_SOUTH_PLACED_KEY);
 
         return biome(false, 0.7F, 0.7F, ColorConstants.RIE_WEALD_WATER, ColorConstants.RIE_WEALD_WATERFOG, ColorConstants.RIE_WEALD_FOLIAGE_COLOR, ColorConstants.RIE_WEALD_GRASS_COLOR, spawnSettings, biomeFeatures);
     }

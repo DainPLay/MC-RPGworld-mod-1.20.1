@@ -3,6 +3,7 @@ package net.dainplay.rpgworldmod.data;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.biome.BiomeRegistry;
 import net.dainplay.rpgworldmod.damage.ModDamageTypes;
+import net.dainplay.rpgworldmod.item.ModBannerPatterns;
 import net.dainplay.rpgworldmod.trim.ModTrimMaterials;
 import net.dainplay.rpgworldmod.trim.ModTrimPatterns;
 import net.dainplay.rpgworldmod.world.feature.ModConfiguredFeatures;

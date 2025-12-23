@@ -1,4 +1,5 @@
 {
+	"format_version": "1.21.11",
 	"credit": "Made with Blockbench",
 	"ambientocclusion": false,
 	"textures": {
@@ -8,29 +9,29 @@
 	},
 	"elements": [
 		{
-			"from": [8, 0, 0.8],
-			"to": [8, 16, 15.2],
+			"from": [8, -1, 0.8],
+			"to": [8, 15, 15.2],
 			"shade": false,
-			"rotation": {"angle": 45, "axis": "y", "origin": [8, 8, 8], "rescale": true},
+			"rotation": {"angle": 45, "axis": "y", "origin": [8, 7, 8], "rescale": true},
 			"faces": {
 				"east": {"uv": [16, 0, 0, 16], "texture": "#cross"},
 				"west": {"uv": [0, 0, 16, 16], "texture": "#cross"}
 			}
 		},
 		{
-			"from": [8, 0, 0.8],
-			"to": [8, 16, 15.2],
+			"from": [8, -1, 0.8],
+			"to": [8, 15, 15.2],
 			"shade": false,
-			"rotation": {"angle": -45, "axis": "y", "origin": [8, 8, 8], "rescale": true},
+			"rotation": {"angle": -45, "axis": "y", "origin": [8, 7, 8], "rescale": true},
 			"faces": {
 				"east": {"uv": [16, 0, 0, 16], "texture": "#cross"},
 				"west": {"uv": [0, 0, 16, 16], "texture": "#cross"}
 			}
 		},
 		{
-			"from": [2, 4, 8],
-			"to": [7, 9, 8],
-			"rotation": {"angle": -45, "axis": "z", "origin": [0, 0, 0]},
+			"from": [2, 3, 8],
+			"to": [7, 8, 8],
+			"rotation": {"angle": -45, "axis": "z", "origin": [0, -1, 0]},
 			"faces": {
 				"north": {"uv": [5, 11, 0, 16], "rotation": 270, "texture": "#2"},
 				"east": {"uv": [0, 0, 16, 0], "rotation": 90, "texture": "#2"},

@@ -40,7 +40,7 @@ public class ChitinThimbleItem extends CurioItem {
 			}
 
 		for (MosquitoSwarm swarm : player.level().getEntitiesOfClass(MosquitoSwarm.class, new AABB(player.blockPosition()).inflate(25.0F))) {
-			if(swarm.getSize() >= 3) swarmIsNear = true;
+			if(swarm.getOwner() != null && swarm.getOwner() == player && swarm.getSize() >= 3) swarmIsNear = true;
 		}
 		BlockState playerState = level.getBlockState(player.blockPosition());
 

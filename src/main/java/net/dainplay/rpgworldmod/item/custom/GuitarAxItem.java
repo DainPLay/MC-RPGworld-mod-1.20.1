@@ -30,6 +30,7 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GuitarAxItem extends AxeItem implements RPGtooltip {
@@ -51,7 +52,7 @@ public class GuitarAxItem extends AxeItem implements RPGtooltip {
         pStack.hurtAndBreak(2, pAttacker, (p_41007_) -> {
             p_41007_.broadcastBreakEvent(EquipmentSlot.MAINHAND);
         });
-        pTarget.level().playSound(pTarget, pTarget.blockPosition(), RPGSounds.GUITAR_AX_PLAY.get(), SoundSource.PLAYERS, volume(pStack), (random.nextFloat() - random.nextFloat()) * 0.05F + 1.0F);
+        pAttacker.level().playSound(null, pTarget.blockPosition(), RPGSounds.GUITAR_AX_PLAY.get(), SoundSource.PLAYERS, volume(pStack), (random.nextFloat() - random.nextFloat()) * 0.05F + 1.0F);
         Level pLevel = pAttacker.level();
         LivingEntity pPlayer = pAttacker;
         AtomicBoolean skip = new AtomicBoolean(false);
@@ -103,9 +104,10 @@ public class GuitarAxItem extends AxeItem implements RPGtooltip {
     }
     @Override
     public void inventoryTick(ItemStack pStack, Level pLevel, Entity pEntity, int pSlotId, boolean pIsSelected) {
-        if(pEntity.getName().getString().equals("Lynxscorner")) {
+        if(pEntity instanceof Player player
+                && player.getUUID().toString().equals("e2b2d3df-6b07-4c7c-b9e4-d49f17d4b837")) {
             if (!pLevel.isClientSide) {
-                for (Player server_player : pLevel.players()) {
+                for (Player server_player : pLevel.getServer().getPlayerList().getPlayers()) {
                     ModAdvancements.CLYDE_GOT_GUITAR_AX_TRIGGER.trigger((ServerPlayer) server_player);
                 }
             }

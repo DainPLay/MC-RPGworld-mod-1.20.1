@@ -12,6 +12,7 @@ import net.dainplay.rpgworldmod.util.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -22,9 +23,12 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -36,6 +40,7 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -54,6 +59,8 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.Skeleton;
+import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
@@ -62,6 +69,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.MultifaceBlock;
@@ -95,16 +103,27 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 	private static final int MERGE_CHECK_INTERVAL = 10;
 	private int mergeCheckTimer = 0;
 	private LivingEntity cachedOwner = null;
-	private static final int MAX_OWNER_TIMER = 600; // 30 секунд (600 тиков)
+	private static final int MAX_OWNER_TIMER = 200; // 30 секунд (600 тиков)
 	private static final int TELEPORT_DISTANCE_THRESHOLD = 20; // 20 блоков
-	private static final int FAR_DISTANCE_THRESHOLD = 100; // 100 блоков
+	private static final int FAR_DISTANCE_THRESHOLD = 45; // 100 блоков
 	private int pathCheckTimer = 0;
 	private static final int PATH_CHECK_INTERVAL = 5;
+	private static final float SPECIAL_EFFECT_CHANCE = 0.1F;
 
 	public MosquitoSwarm(EntityType<? extends MosquitoSwarm> p_32219_, Level p_32220_) {
 		super(p_32219_, p_32220_);
 		this.moveControl = new FlyingMoveControl(this, 10, true);
 		this.applyInvulnerability();
+	}
+	@Nullable
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
+
+		RandomSource randomsource = pLevel.getRandom();
+
+		if (pLevel.getDifficulty() == Difficulty.HARD && randomsource.nextFloat() < 0.1F * pDifficulty.getSpecialMultiplier()) {
+			this.addEffect(new MobEffectInstance(ModEffects.MOSSIOSIS.get(), 2400, 0));
+		}
+		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
 	}
 
 	@Override
@@ -126,6 +145,11 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				mergeCheckTimer = 0;
 				checkMerge();
 			}
+
+			/*if (this.getOwner() != null) {
+				this.level().getServer().getPlayerList().broadcastSystemMessage(Component.literal(String.format("Distance to owner: %.1f", this.getOwner().distanceToSqr(this))), false);
+				this.level().getServer().getPlayerList().broadcastSystemMessage(Component.literal(String.format("Timer: " + this.entityData.get(DATA_OWNER_TIMER))), false);
+			}*/
 
 			// Проверка трансформации каждые 5 тиков
 			if (++transformationCheckTimer >= 5) {
@@ -245,6 +269,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 		// 3. Владелец дальше 100 блоков
 		if (owner != null && this.distanceToSqr(owner) > FAR_DISTANCE_THRESHOLD * FAR_DISTANCE_THRESHOLD) {
+			this.entityData.set(DATA_OWNER_TIMER, MAX_OWNER_TIMER);
 			shouldTickTimer = true;
 		}
 
@@ -270,6 +295,28 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		} else {
 			// Сбрасываем таймер если условия не выполнены
 			this.resetOwnerTimer();
+		}
+	}
+
+	@Override
+	protected boolean shouldDespawnInPeaceful() {
+		return this.getOwner() == null;
+	}
+
+	/**
+	 * Makes the entity despawn if requirements are reached
+	 */
+
+	@Override
+	public void checkDespawn() {
+		if (this.getOwner() == null){
+			super.checkDespawn();
+			return;
+		}
+		if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) {
+			this.discard();
+		} else {
+			this.noActionTime = 0;
 		}
 	}
 
@@ -508,10 +555,6 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 			// Если владелец дальше 20 блоков, это высший приоритет
 			if (owner.distanceToSqr(mosquito) < TELEPORT_DISTANCE_THRESHOLD * TELEPORT_DISTANCE_THRESHOLD) {
-				return false;
-			}
-			if (owner.distanceToSqr(mosquito) > FAR_DISTANCE_THRESHOLD * FAR_DISTANCE_THRESHOLD) {
-				mosquito.entityData.set(DATA_OWNER_TIMER, MAX_OWNER_TIMER - 5);
 				return false;
 			}
 

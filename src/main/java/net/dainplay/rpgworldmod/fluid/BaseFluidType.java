@@ -18,51 +18,18 @@ import java.util.function.Consumer;
 public class BaseFluidType extends FluidType {
     private final ResourceLocation stillTexture;
     private final ResourceLocation flowingTexture;
-    private final ResourceLocation overlayTexture;
     private final ResourceLocation renderOverlayTexture;
     private final int tintColor;
     private final Vector3f fogColor;
 
-    /**
-     * Default constructor.
-     *
-     * @param properties           the general properties of the fluid type
-     * @param renderOverlayTexture
-     */
-
     public BaseFluidType(final ResourceLocation stillTexture, final ResourceLocation flowingTexture, final ResourceLocation overlayTexture,
-                         final int tintColor, final Vector3f fogColor, final Properties properties, ResourceLocation renderOverlayTexture) {
+                         final int tintColor, final Vector3f fogColor, final Properties properties) {
         super(properties);
         this.stillTexture = stillTexture;
         this.flowingTexture = flowingTexture;
-        this.overlayTexture = overlayTexture;
         this.tintColor = tintColor;
         this.fogColor = fogColor;
-        this.renderOverlayTexture = renderOverlayTexture;
-    }
-
-    public ResourceLocation getStillTexture() {
-        return stillTexture;
-    }
-
-    public ResourceLocation getFlowingTexture() {
-        return flowingTexture;
-    }
-
-    public int getTintColor() {
-        return tintColor;
-    }
-
-    public ResourceLocation getOverlayTexture() {
-        return overlayTexture;
-    }
-    public ResourceLocation getRenderOverlayTexture()
-    {
-        return renderOverlayTexture;
-    }
-
-    public Vector3f getFogColor() {
-        return fogColor;
+        this.renderOverlayTexture = overlayTexture;
     }
 
     @Override
@@ -76,11 +43,6 @@ public class BaseFluidType extends FluidType {
             @Override
             public ResourceLocation getFlowingTexture() {
                 return flowingTexture;
-            }
-
-            @Override
-            public @Nullable ResourceLocation getOverlayTexture() {
-                return overlayTexture;
             }
 
             @Override

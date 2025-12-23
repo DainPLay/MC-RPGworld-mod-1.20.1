@@ -1,7 +1,30 @@
 package net.dainplay.rpgworldmod.block;
 
 import net.dainplay.rpgworldmod.RPGworldMod;
-import net.dainplay.rpgworldmod.block.custom.*;
+import net.dainplay.rpgworldmod.block.custom.ArborFuelCauldron;
+import net.dainplay.rpgworldmod.block.custom.BlowerBlock;
+import net.dainplay.rpgworldmod.block.custom.DrillTuskBlock;
+import net.dainplay.rpgworldmod.block.custom.FairapierPlantBlock;
+import net.dainplay.rpgworldmod.block.custom.FairapierWiltedPlantBlock;
+import net.dainplay.rpgworldmod.block.custom.FuelLiquidBlock;
+import net.dainplay.rpgworldmod.block.custom.GlossomBlock;
+import net.dainplay.rpgworldmod.block.custom.HoltsReflectionBlock;
+import net.dainplay.rpgworldmod.block.custom.ModCeilingHangingSignBlock;
+import net.dainplay.rpgworldmod.block.custom.ModFlammableRotatedPillarBlock;
+import net.dainplay.rpgworldmod.block.custom.ModStandingSignBlock;
+import net.dainplay.rpgworldmod.block.custom.ModWallHangingSignBlock;
+import net.dainplay.rpgworldmod.block.custom.ModWallSignBlock;
+import net.dainplay.rpgworldmod.block.custom.MosquitosBlock;
+import net.dainplay.rpgworldmod.block.custom.ParalilyBlock;
+import net.dainplay.rpgworldmod.block.custom.QuartziteBlock;
+import net.dainplay.rpgworldmod.block.custom.QuartziteDrillTuskBlock;
+import net.dainplay.rpgworldmod.block.custom.QuartziteSlabBlock;
+import net.dainplay.rpgworldmod.block.custom.QuartziteWallBlock;
+import net.dainplay.rpgworldmod.block.custom.ShiveralisPlantBlock;
+import net.dainplay.rpgworldmod.block.custom.SpikyIvyBlock;
+import net.dainplay.rpgworldmod.block.custom.TreeHollowBlock;
+import net.dainplay.rpgworldmod.block.custom.TyphonBlock;
+import net.dainplay.rpgworldmod.block.custom.WidoweedBlock;
 import net.dainplay.rpgworldmod.block.entity.ModWoodTypes;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.fluid.ModFluids;
@@ -9,18 +32,34 @@ import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.world.feature.tree.RieTreeGrower;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.cauldron.CauldronInteraction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.CeilingHangingSignBlock;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.FlowerBlock;
+import net.minecraft.world.level.block.FlowerPotBlock;
+import net.minecraft.world.level.block.GlassBlock;
+import net.minecraft.world.level.block.IronBarsBlock;
+import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.PinkPetalsBlock;
+import net.minecraft.world.level.block.PressurePlateBlock;
+import net.minecraft.world.level.block.SaplingBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.WallBlock;
+import net.minecraft.world.level.block.WallHangingSignBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
@@ -367,7 +406,22 @@ public class ModBlocks {
     public static final RegistryObject<CeilingHangingSignBlock> RIE_HANGING_SIGN = BLOCKS.register("rie_hanging_sign", () -> new ModCeilingHangingSignBlock(BlockBehaviour.Properties.copy(RIE_PLANKS.get()).noCollission().strength(1.0F), ModWoodTypes.RIE_WOOD_TYPE));
     public static final RegistryObject<WallHangingSignBlock> RIE_WALL_HANGING_SIGN = BLOCKS.register("rie_wall_hanging_sign", () -> new ModWallHangingSignBlock(BlockBehaviour.Properties.copy(RIE_PLANKS.get()).noCollission().strength(1.0F), ModWoodTypes.RIE_WOOD_TYPE));
 
-    public static final RegistryObject<LiquidBlock> ARBOR_FUEL_BLOCK = BLOCKS.register("arbor_fuel_block", () -> new FuelLiquidBlock(ModFluids.SOURCE_ARBOR_FUEL, BlockBehaviour.Properties.copy(Blocks.WATER).strength(100.0F).noLootTable().replaceable().liquid().pushReaction(PushReaction.DESTROY)));
+    public static final RegistryObject<LiquidBlock> ARBOR_FUEL_BLOCK = BLOCKS.register("arbor_fuel_block", () -> new FuelLiquidBlock(ModFluids.SOURCE_ARBOR_FUEL, BlockBehaviour.Properties.copy(Blocks.WATER).strength(100.0F).noLootTable().replaceable().liquid().pushReaction(PushReaction.DESTROY).noOcclusion()) {
+        @Override
+        public boolean isFlammable(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
+            return true;
+        }
+
+        @Override
+        public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
+            return 300;
+        }
+
+        @Override
+        public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
+            return 50;
+        }
+    });
 
     public static final RegistryObject<Block> MINTAL_BLOCK = registerBlock("mintal_block",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).mapColor(MapColor.WARPED_STEM).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL)));

@@ -5,19 +5,19 @@ import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.block.entity.ModBlockEntities;
 import net.dainplay.rpgworldmod.data.tags.ActionRewardHandler;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
-import net.dainplay.rpgworldmod.effect.FuelingEffect;
 import net.dainplay.rpgworldmod.effect.FuelingHandler;
 import net.dainplay.rpgworldmod.effect.ModEffects;
-import net.dainplay.rpgworldmod.effect.MossiosisEffect;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.entity.ModEntities;
 import net.dainplay.rpgworldmod.entity.projectile.BurrSpikeEntity;
 import net.dainplay.rpgworldmod.entity.projectile.FairapierSeedEntity;
 import net.dainplay.rpgworldmod.entity.projectile.ProjectruffleArrowEntity;
+import net.dainplay.rpgworldmod.event.ModEvents;
 import net.dainplay.rpgworldmod.features.RPGFeatureModifiers;
 import net.dainplay.rpgworldmod.fluid.ModFluidTypes;
 import net.dainplay.rpgworldmod.fluid.ModFluids;
 import net.dainplay.rpgworldmod.fluid.RPGFluidRegistry;
+import net.dainplay.rpgworldmod.item.ModBannerPatterns;
 import net.dainplay.rpgworldmod.item.ModCreativeModeTab;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.WealdBladeItem;
@@ -25,11 +25,18 @@ import net.dainplay.rpgworldmod.loot.ModLootModifiers;
 import net.dainplay.rpgworldmod.particle.ModParticles;
 import net.dainplay.rpgworldmod.potion.ModPotions;
 import net.dainplay.rpgworldmod.sounds.ModSounds;
-import net.dainplay.rpgworldmod.util.*;
+import net.dainplay.rpgworldmod.util.AIHandler;
+import net.dainplay.rpgworldmod.util.CauldronInteractionHandler;
+import net.dainplay.rpgworldmod.util.DrillTuskHandler;
+import net.dainplay.rpgworldmod.util.FoodSmokeParticlesHandler;
+import net.dainplay.rpgworldmod.util.KillEntityHandler;
+import net.dainplay.rpgworldmod.util.ProperBrewingRecipe;
+import net.dainplay.rpgworldmod.util.TriangleAnimationHandler;
+import net.dainplay.rpgworldmod.util.TweakReloadManager;
+import net.dainplay.rpgworldmod.util.WaterBucketInteractionHandler;
 import net.dainplay.rpgworldmod.world.feature.RPGFeatures;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Position;
 import net.minecraft.core.dispenser.AbstractProjectileDispenseBehavior;
 import net.minecraft.core.registries.Registries;
@@ -37,37 +44,34 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.SuspiciousStewItem;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ComposterBlock;
+import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.world.level.block.FlowerPotBlock;
+import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.entity.player.ItemFishedEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
@@ -77,6 +81,7 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import terrablender.api.Regions;
@@ -114,6 +119,7 @@ public class RPGworldMod
         ModParticles.PARTICLE_TYPES.register(eventBus);
         RPGFeatures.FEATURES.register(eventBus);
         RPGFeatureModifiers.TREE_DECORATORS.register(eventBus);
+        ModBannerPatterns.BANNER_PATTERNS.register(eventBus);
         ModSounds.setup();
         ModAdvancements.init();
         eventBus.addListener(this::setup);
@@ -124,9 +130,7 @@ public class RPGworldMod
         MinecraftForge.EVENT_BUS.addListener(this::onLivingHurt);
         MinecraftForge.EVENT_BUS.addListener(this::onItemFished);
 
-
         SOUND_EVENT_REGISTER.register(eventBus);
-
 
         MinecraftForge.EVENT_BUS.register(new TweakReloadManager());
         MinecraftForge.EVENT_BUS.register(new AIHandler());
@@ -139,6 +143,7 @@ public class RPGworldMod
         MinecraftForge.EVENT_BUS.register(FoodSmokeParticlesHandler.class);
         MinecraftForge.EVENT_BUS.register(DrillTuskHandler.class);
         MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(new ModEvents());
 
 
 
@@ -292,6 +297,7 @@ public class RPGworldMod
             event.accept(ModItems.FLINT_AXE);
             event.accept(ModItems.FLINT_HOE);
             event.accept(ModItems.FLINT_SWORD);
+            event.accept(ModItems.GUITAR_AX);
             event.accept(ModItems.WEALD_BLADE);
             event.accept(ModItems.FAIRAPIER_SWORD);
             event.accept(ModItems.FAIRAPIER_SEED);
@@ -305,9 +311,8 @@ public class RPGworldMod
             event.accept(ModItems.GASBASS_BUCKET);
             event.accept(ModItems.ARBOR_FUEL_BUCKET);
             event.accept(ModItems.MOSQUITO_BOTTLE);
-            event.accept(ModItems.BRAMBLEFOX_SCARF);
-            event.accept(ModItems.FIG_LEAF);
             event.accept(ModItems.CHITIN_THIMBLE);
+            event.accept(ModItems.CHITIN_POWDER);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.LONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.STRONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
@@ -317,9 +322,11 @@ public class RPGworldMod
             event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.LONG_ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
 
+            event.accept(ModItems.BRAMBLEFOX_SCARF);
+            event.accept(ModItems.FIG_LEAF);
             event.accept(ModItems.MUSIC_DISC_HOWLING);
+            event.accept(ModItems.RIE_WEALD_BANNER_PATTERN);
             event.accept(ModItems.PORTABLE_TURRET);
-            event.accept(ModItems.GUITAR_AX);
         }
 
         if(event.getTab() == ModCreativeModeTab.RPGWORLD_FOODS_AND_DRINKS_TAB.get()) {
@@ -379,6 +386,7 @@ public class RPGworldMod
             event.accept(ModItems.PARALILY_BERRY);
             event.accept(ModItems.MASKONITE_UPGRADE_SMITHING_TEMPLATE);
             event.accept(ModItems.LEAVES_ARMOR_TRIM_SMITHING_TEMPLATE);
+            event.accept(ModItems.RIE_WEALD_BANNER_PATTERN);
             event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.PITCH.get(), ModEnchantments.PITCH.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CRESCENDO.get(), ModEnchantments.CRESCENDO.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.STEREO.get(), ModEnchantments.STEREO.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
@@ -403,6 +411,7 @@ public class RPGworldMod
             event.accept(ModItems.GASBASS_SPAWN_EGG);
         }
     }
+
     private void setup(final FMLCommonSetupEvent event)
     {
         event.enqueueWork(() -> {

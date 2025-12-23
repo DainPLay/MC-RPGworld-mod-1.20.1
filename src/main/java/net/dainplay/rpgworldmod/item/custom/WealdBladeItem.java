@@ -77,6 +77,10 @@ public class WealdBladeItem extends SwordItem implements RPGtooltip {
     public void onUseTick(Level pLevel, LivingEntity pLivingEntity, ItemStack pStack, int pRemainingUseDuration) {
         super.onUseTick(pLevel, pLivingEntity, pStack, pRemainingUseDuration);
 
+        if (pLivingEntity.hasEffect(ModEffects.MOSQUITOING.get())) {
+            MosquitoSwarm.spawnBlock(pLivingEntity,pLivingEntity.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier());
+            pLivingEntity.removeEffect(ModEffects.MOSQUITOING.get());
+        }
         if (pLivingEntity instanceof Player player && getEnchantmentLevel(pStack, ModEnchantments.BLOWING.get()) > 0) {
             // Постоянное сдувание каждый тик
             blowEntities(pLevel, player);
@@ -102,8 +106,6 @@ public class WealdBladeItem extends SwordItem implements RPGtooltip {
     }
 
     private void blowEntities(Level level, Player player) {
-        if (level.isClientSide) return;
-
         Vec3 blowDirection = getHorizontalBlowDirection(player);
 
         // Создаем AABB для сканирования сущностей ТОЛЬКО перед игроком
@@ -223,10 +225,6 @@ public class WealdBladeItem extends SwordItem implements RPGtooltip {
             MosquitoSwarm.spawnBlock(livingEntity,livingEntity.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier());
             livingEntity.removeEffect(ModEffects.MOSQUITOING.get());
         }
-        if (player.hasEffect(ModEffects.MOSQUITOING.get())) {
-            MosquitoSwarm.spawnBlock(player,player.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier());
-            player.removeEffect(ModEffects.MOSQUITOING.get());
-        }
 
         Vec3 motion = entity.getDeltaMovement();
 
@@ -240,7 +238,13 @@ public class WealdBladeItem extends SwordItem implements RPGtooltip {
     }
 
     private void spawnBlowParticles(Level level, Player player) {
-        SimpleParticleType particleType = ModParticles.LEAVES.get();
+        SimpleParticleType particleType;
+
+        if (level.random.nextFloat() < 0.1f) {
+            particleType = ModParticles.LEAVES.get(); // Частица листа
+        } else {
+            particleType = ModParticles.AIR.get(); // Частица воздуха
+        }
 
         // Получаем направление взгляда игрока (горизонтальное)
         Vec3 direction = getHorizontalBlowDirection(player);

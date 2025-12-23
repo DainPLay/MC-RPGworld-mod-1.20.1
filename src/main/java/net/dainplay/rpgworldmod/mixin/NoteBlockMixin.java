@@ -2,25 +2,19 @@ package net.dainplay.rpgworldmod.mixin;
 
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.damage.ModDamageTypes;
-import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.entity.custom.Mintobat;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ambient.Bat;
-import net.minecraft.world.entity.animal.horse.SkeletonHorse;
-import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.NoteBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.vibrations.VibrationSystem;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -31,7 +25,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(NoteBlock.class)
 public class NoteBlockMixin {
-    protected final RandomSource random = RandomSource.create();
     public double getDistance(Entity target, BlockPos pos2) {
         double x1 = target.getX();
         double y1 = target.getY();
@@ -49,7 +42,7 @@ public class NoteBlockMixin {
     @Inject(method = "playNote", at = @At(value = "HEAD"), cancellable = true)
     private void playNoteMintal(Entity pEntity, BlockState pState, Level pLevel, BlockPos pPos, CallbackInfo ci) {
         if (pLevel.getBlockState(pPos.above()).isAir() && pLevel.getBlockState(pPos.below()).getBlock() == ModBlocks.MINTAL_BLOCK.get()) {
-            pLevel.playSound(null, pPos, RPGSounds.TRIANGLE_DING.get(), SoundSource.BLOCKS, 1F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
+            pLevel.playSound(null, pPos, RPGSounds.TRIANGLE_DING.get(), SoundSource.BLOCKS, 1F, (pLevel.random.nextFloat() - pLevel.random.nextFloat()) * 0.2F + 1.0F);
             ((ServerLevel)pLevel).sendParticles(ParticleTypes.SONIC_BOOM, pPos.getX()+0.5D, pPos.getY()+1D, pPos.getZ()+0.5D, 1, 0.0D, 0.0D, 0.0D, 0.0D);
             AABB damageArea = new AABB(pPos).inflate(16D);
 

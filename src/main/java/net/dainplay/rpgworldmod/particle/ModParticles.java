@@ -1,6 +1,7 @@
 package net.dainplay.rpgworldmod.particle;
 
 import net.dainplay.rpgworldmod.RPGworldMod;
+import net.dainplay.rpgworldmod.particle.custom.AirParticle;
 import net.dainplay.rpgworldmod.particle.custom.LeavesParticle;
 import net.dainplay.rpgworldmod.particle.custom.MosquitosParticles;
 import net.dainplay.rpgworldmod.particle.custom.QuartziteParticles;
@@ -22,12 +23,14 @@ public class ModParticles {
 
     public static final RegistryObject<SimpleParticleType> QUARTZITE_SHINE_PARTICLES = PARTICLE_TYPES.register("quartzine_shine_particles",() -> new SimpleParticleType(true));
     public static final RegistryObject<SimpleParticleType> LEAVES = PARTICLE_TYPES.register("leaves",() -> new SimpleParticleType(true));
+    public static final RegistryObject<SimpleParticleType> AIR = PARTICLE_TYPES.register("air",() -> new SimpleParticleType(true));
     public static final RegistryObject<SimpleParticleType> MOSQUITOS = PARTICLE_TYPES.register("mosquitos",() -> new SimpleParticleType(true));
 
     @SubscribeEvent
     public static void registerFactories(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(ModParticles.QUARTZITE_SHINE_PARTICLES.get(), QuartziteParticles.Provider::new);
         event.registerSpriteSet(ModParticles.LEAVES.get(), LeavesParticle.Provider::new);
+        event.registerSpriteSet(ModParticles.AIR.get(), AirParticle.Provider::new);
         event.registerSpriteSet(ModParticles.MOSQUITOS.get(), MosquitosParticles.Provider::new);
     }
 }

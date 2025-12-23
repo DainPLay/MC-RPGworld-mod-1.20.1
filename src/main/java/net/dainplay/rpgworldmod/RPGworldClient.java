@@ -69,6 +69,7 @@ public class RPGworldClient {
     public static void clientSetup(final FMLClientSetupEvent event) {
         ItemBlockRenderTypes.setRenderLayer(ModFluids.FLOWING_ARBOR_FUEL.get(), RenderType.translucent());
         ItemBlockRenderTypes.setRenderLayer(ModFluids.SOURCE_ARBOR_FUEL.get(), RenderType.translucent());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.ARBOR_FUEL_BLOCK.get(), RenderType.translucent());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.EMULSION_BLOCK.get(), RenderType.translucent());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.MASKONITE_GLASS.get(), RenderType.translucent());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.MASKONITE_GLASS_PANE.get(), RenderType.translucent());
@@ -131,6 +132,8 @@ public class RPGworldClient {
                         return 1.0F;
                     } else if (tokenValue == 2) {
                         return 2.0F;
+                    } else if (tokenValue == 3) {
+                        return 3.0F;
                     }
                 }
                 return 0.0F;
@@ -139,73 +142,12 @@ public class RPGworldClient {
             ItemProperties.register(ModItems.DRILL_SPEAR.get().asItem(), new ResourceLocation( "throwing"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
             ItemProperties.register(ModItems.MINTAL_TRIANGLE.get(), new ResourceLocation("vibration"), (itemstack, level, livingEntity, p_174608_) -> livingEntity != null && MintalTriangleItem.getVibes(itemstack)>0 ? (23F-(float)MintalTriangleItem.getVibes(itemstack))/100 : 1.0F);
             ItemProperties.register(Items.CROSSBOW, new ResourceLocation("projectruffle"), (p_174605_, p_174606_, p_174607_, p_174608_) -> p_174607_ != null && CrossbowItem.isCharged(p_174605_) && CrossbowItem.containsChargedProjectile(p_174605_, ModItems.PROJECTRUFFLE_ITEM.get()) ? 1.0F : 0.0F);
-
-            ItemProperties.register(Items.BOW,
-                    new ResourceLocation("projectruffle"), (stack, level, living, id) -> {
-                        float result = 0.0F;
-                        if (living instanceof Player) {
-                            if (living.getItemInHand(InteractionHand.MAIN_HAND).getItem() == Items.BOW) {
-                                for (int i = 0; i < ((Player) living).getInventory().getContainerSize(); ++i) {
-                                    if (ModItems.PROJECTRUFFLE_ITEM.get() == (((Player) living).getInventory().getItem(i)).getItem()) {
-                                        result = 1.0F;
-                                        break;
-                                        //return result;
-                                    }
-                                    if (Items.ARROW == (((Player) living).getInventory().getItem(i)).getItem()) {
-                                        result = 0.0F;
-                                        break;
-                                        //return result;
-                                    }
-                                    if (Items.TIPPED_ARROW == (((Player) living).getInventory().getItem(i)).getItem()) {
-                                        result = 0.0F;
-                                        break;
-                                        //return result;
-                                    }
-                                    if (Items.SPECTRAL_ARROW == (((Player) living).getInventory().getItem(i)).getItem()) {
-                                        result = 0.0F;
-                                        break;
-                                        //return result;
-                                    }
-                                }
-                                if (living.getOffhandItem().getItem() == Items.ARROW) result = 0.0F;
-                                if (living.getOffhandItem().getItem() == Items.TIPPED_ARROW) result = 0.0F;
-                                if (living.getOffhandItem().getItem() == Items.SPECTRAL_ARROW) result = 0.0F;
-                                if (living.getOffhandItem().getItem() == ModItems.PROJECTRUFFLE_ITEM.get())
-                                    result = 1.0F;
-                            }
-                            if (living.getItemInHand(InteractionHand.OFF_HAND).getItem() == Items.BOW) {
-                                for (int i = 0; i < ((Player) living).getInventory().getContainerSize(); ++i) {
-                                    if (ModItems.PROJECTRUFFLE_ITEM.get() == (((Player) living).getInventory().getItem(i)).getItem()) {
-                                        result = 1.0F;
-                                        break;
-                                        //return result;
-                                    }
-                                    if (Items.ARROW == (((Player) living).getInventory().getItem(i)).getItem()) {
-                                        result = 0.0F;
-                                        break;
-                                        //return result;
-                                    }
-                                    if (Items.TIPPED_ARROW == (((Player) living).getInventory().getItem(i)).getItem()) {
-                                        result = 0.0F;
-                                        break;
-                                        //return result;
-                                    }
-                                    if (Items.SPECTRAL_ARROW == (((Player) living).getInventory().getItem(i)).getItem()) {
-                                        result = 0.0F;
-                                        break;
-                                        //return result;
-                                    }
-                                }
-                                if (living.getItemInHand(InteractionHand.MAIN_HAND).getItem() == Items.ARROW) result = 0.0F;
-                                if (living.getItemInHand(InteractionHand.MAIN_HAND).getItem() == Items.TIPPED_ARROW) result = 0.0F;
-                                if (living.getItemInHand(InteractionHand.MAIN_HAND).getItem() == Items.SPECTRAL_ARROW) result = 0.0F;
-                                if (living.getItemInHand(InteractionHand.MAIN_HAND).getItem() == ModItems.PROJECTRUFFLE_ITEM.get())
-                                    result = 1.0F;
-                            }
-                        }
-                        return result;
-                    });
+            ItemProperties.register(Items.BOW, new ResourceLocation("projectruffle"), (stack, level, living, id) -> {
+                if (stack.hasTag() && stack.getTag().contains("UsingProjectruffle")) {
+                    return stack.getTag().getBoolean("UsingProjectruffle") ? 1.0F : 0.0F;
+                }
+                return 0.0F;
+            });
         });
-
     }
 }

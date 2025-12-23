@@ -1,5 +1,5 @@
 {
-  "parent": "rpgworldmod:root",
+  "parent": "rpgworldmod:find_rie_weald",
   "criteria": {
     "release_mosquitos_in_nether": {
       "conditions": {},

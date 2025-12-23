@@ -1,4 +1,4 @@
-// 1.20.1	2025-12-10T17:09:58.8729813	Registries
+// 1.20.1	2025-12-22T11:02:43.4018398	Registries
 121735c6130e035c30f2237589573dcc7be465f7 data/rpgworldmod/damage_type/burr_spike.json
 6f9914ff666f6b60934d30c915ed6849cfc7792e data/rpgworldmod/damage_type/ding.json
 995f5ea194d343db1d00c385a5e20786a6d40b86 data/rpgworldmod/damage_type/fairapier_seed.json
@@ -9,7 +9,7 @@ d72358ea4a37a59ed948d45092394f3b3fc4712e data/rpgworldmod/damage_type/spiky_ivy.
 c09a26b4f7ae72db493501bdd2ff8dbbc029b757 data/rpgworldmod/damage_type/widoweed.json
 4ad496819df5b9a249e400d8b95cdca9a3181609 data/rpgworldmod/trim_material/mintal.json
 be748624bdf4acbabcbfd362e488c40ca7064d66 data/rpgworldmod/trim_pattern/leaves.json
-a365556c194d1b1bc21a04f9d7b9410416ba1afa data/rpgworldmod/worldgen/biome/rie_weald.json
+269f75d4a42098880f6d67ef8363281fa027d470 data/rpgworldmod/worldgen/biome/rie_weald.json
 3bf7706ae7413512f21bdcbc38b1d1cea2bf45f8 data/rpgworldmod/worldgen/configured_feature/bibbit_hollow_east_fancy_rie_tree.json
 0551afaf86bd082921950da8fbdf7ca7f7dd26e9 data/rpgworldmod/worldgen/configured_feature/bibbit_hollow_east_rie_tree.json
 15bd23cc655c846b6d568f17ee72c3f85ed2b3c1 data/rpgworldmod/worldgen/configured_feature/bibbit_hollow_north_fancy_rie_tree.json

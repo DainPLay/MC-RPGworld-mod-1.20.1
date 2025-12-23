@@ -50,6 +50,7 @@ import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.*;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -254,11 +255,18 @@ public class Bibbit extends PathfinderMob {
 
         @Override
         public boolean canUse() {
+            if (this.mob.isInWater() && this.mob.getFluidHeight(FluidTags.WATER) > 0.25D || this.mob.isInLava() || this.mob.isInFluidType()
+                    || !this.mob.level().getBlockState(this.mob.getOnPos(1)).getFluidState().isEmpty()) return false;
             return this.mob.getLastHurtByMob() != null || this.mob.getLastAttacker() != null || was_crouching;
         }
 
         @Override
         public boolean canContinueToUse() {
+
+            if (this.mob.isInWater() && this.mob.getFluidHeight(FluidTags.WATER) > 0.25D || this.mob.isInLava() || this.mob.isInFluidType()) {
+                timer = duration;
+            }
+
             return timer < duration;
         }
 
@@ -602,7 +610,7 @@ public class Bibbit extends PathfinderMob {
          * method as well.
          */
         public boolean canUse() {
-            return Bibbit.this.isInWater() && Bibbit.this.getFluidHeight(FluidTags.WATER) > 0.25D || Bibbit.this.isInLava();
+            return Bibbit.this.isInWater() && Bibbit.this.getFluidHeight(FluidTags.WATER) > 0.25D || Bibbit.this.isInLava() || Bibbit.this.isInFluidType();
         }
     }
 

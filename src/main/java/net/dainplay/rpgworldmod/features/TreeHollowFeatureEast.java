@@ -1,18 +1,13 @@
 package net.dainplay.rpgworldmod.features;
 
 import com.mojang.serialization.Codec;
-import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.block.custom.TreeHollowBlock;
 import net.dainplay.rpgworldmod.block.entity.custom.TreeHollowBlockEntity;
-import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.world.RPGLootTables;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -24,7 +19,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import java.util.List;
-import java.util.Random;
 
 import static net.dainplay.rpgworldmod.block.custom.TreeHollowBlock.FACING;
 

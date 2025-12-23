@@ -1,0 +1,34 @@
+{
+  "parent": "rpgworldmod:find_rie_weald",
+  "criteria": {
+    "find_rie_weald_first": {
+      "conditions": {},
+      "trigger": "rpgworldmod:find_rie_weald_first"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.find_rie_weald_first.description"
+    },
+    "frame": "challenge",
+    "hidden": true,
+    "icon": {
+      "item": "rpgworldmod:rie_sapling"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.find_rie_weald_first.title"
+    }
+  },
+  "requirements": [
+    [
+      "find_rie_weald_first"
+    ]
+  ],
+  "rewards": {
+    "experience": 100,
+    "loot": ["rpgworldmod:rie_weald_banner_pattern"]
+  },
+  "sends_telemetry_event": true
+}

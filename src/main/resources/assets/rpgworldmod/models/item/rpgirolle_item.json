@@ -15,6 +15,12 @@
         "token": 2.0
       },
       "model": "rpgworldmod:item/rie_weald_gold_token"
+    },
+    {
+      "predicate": {
+        "token": 3.0
+      },
+      "model": "rpgworldmod:item/mod_icon"
     }
   ]
 }

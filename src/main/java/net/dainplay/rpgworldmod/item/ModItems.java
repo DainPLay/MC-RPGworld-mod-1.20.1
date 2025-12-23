@@ -7,11 +7,13 @@ import net.dainplay.rpgworldmod.fluid.ModFluids;
 import net.dainplay.rpgworldmod.item.custom.*;
 import net.dainplay.rpgworldmod.entity.custom.ModBoat;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
+import net.dainplay.rpgworldmod.util.ModTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BannerPatternTags;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.ForgeSpawnEggItem;
@@ -144,6 +146,7 @@ public class ModItems {
     public static final RegistryObject<CurioItem> PORTABLE_TURRET = ITEMS.register("portable_turret", () -> new CurioItem(new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<ChitinThimbleItem> CHITIN_THIMBLE = ITEMS.register("chitin_thimble", () -> new ChitinThimbleItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> MUSIC_DISC_HOWLING = ITEMS.register("music_disc_howling", () -> new RecordItem(12, RPGSounds.MUSIC_DISC_HOWLING.get(), new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 184 * 20));
+    public static final RegistryObject<Item> RIE_WEALD_BANNER_PATTERN = ITEMS.register("rie_weald_banner_pattern",  () -> new BannerPatternItem(ModTags.BannerPatterns.PATTERN_ITEM_RIE_WEALD, (new Item.Properties()).stacksTo(1).rarity(Rarity.EPIC)));
 
     public static final RegistryObject<Item> ARBOR_FUEL_BUCKET = ITEMS.register("arbor_fuel_bucket", () -> new FuelBucketItem(ModFluids.SOURCE_ARBOR_FUEL, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
     public static final RegistryObject<Item> PLATINUMFISH = ITEMS.register("platinumfish",

@@ -48,7 +48,7 @@ public class ModFluidTypes {
 
     private static RegistryObject<FluidType> register(String name, FluidType.Properties properties) {
         return FLUID_TYPES.register(name, () -> new BaseFluidType(ARBOR_FUEL_STILL_RL, ARBOR_FUEL_FLOWING_RL, ARBOR_FUEL_OVERLAY_RL,
-                0xFFB18448, new Vector3f(177f / 255f, 132f / 255f, 72f / 255f), properties, ARBOR_FUEL_OVERLAY_RL)
+                0xFFB18448, new Vector3f(177f / 255f, 132f / 255f, 72f / 255f), properties)
         {
             @Override
             public double motionScale(Entity entity)

@@ -1,5 +1,5 @@
 {
-  "parent": "rpgworldmod:root",
+  "parent": "rpgworldmod:find_rie_weald",
   "criteria": {
     "fairapier_repaired": {
       "conditions": {},

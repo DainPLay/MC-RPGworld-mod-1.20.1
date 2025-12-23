@@ -27,7 +27,7 @@
         {
           "type": "minecraft:item",
           "name": "rpgworldmod:gasbass",
-          "weight": 50
+          "weight": 90
         }
       ],
       "rolls": 1

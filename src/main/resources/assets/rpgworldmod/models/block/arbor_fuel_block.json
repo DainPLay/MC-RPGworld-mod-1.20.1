@@ -1,5 +1,6 @@
 {
   "textures": {
     "particle": "rpgworldmod:block/arbor_fuel_still"
-  }
+  },
+  "render_type": "minecraft:cutout"
 }

@@ -70,7 +70,13 @@ public class BlowerBlockEntity extends BlockEntity {
     }
 
     private static void spawnParticles(Level pLevel, BlockPos pPos, Direction facing, int speed, int power) {
-        SimpleParticleType particleType = ModParticles.LEAVES.get();
+        SimpleParticleType particleType;
+
+        if (pLevel.random.nextFloat() < 0.1f) {
+            particleType = ModParticles.LEAVES.get(); // Частица листа
+        } else {
+            particleType = ModParticles.AIR.get(); // Частица воздуха
+        }
 
         double xOffset = 0.5;
         double yOffset = 0.5;
@@ -88,6 +94,7 @@ public class BlowerBlockEntity extends BlockEntity {
                 xSpeed, ySpeed, zSpeed
         );
     }
+
     protected static void moveEntities(Level pLevel, BlockPos pPos, BlockState pState, BlowerBlockEntity blowerBlockEntity, AABB scan) {
         List<Entity> newList = Stream.concat(pLevel.getEntitiesOfClass(Entity.class, scan).stream(), pLevel.getEntitiesOfClass(Entity.class, ((BlowerBlock)pState.getBlock()).getAlignedBlockAABB(pLevel, pPos, pState)).stream()).toList();
         for (Entity entity : newList) {

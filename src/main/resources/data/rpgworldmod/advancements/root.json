@@ -21,16 +21,17 @@
     "announce_to_chat": false,
     "background": "rpgworldmod:textures/block/maskonite_bricks.png",
     "description": {
-      "translate": "advancements.rpgworldmod.rie_weald.description"
+      "translate": "advancements.rpgworldmod.rpgworld.description"
     },
     "frame": "task",
     "hidden": false,
     "icon": {
-      "item": "rpgworldmod:rie_sapling"
+      "item": "rpgworldmod:rpgirolle_item",
+      "nbt": "{Token:3}"
     },
     "show_toast": false,
     "title": {
-      "translate": "advancements.rpgworldmod.rie_weald.title"
+      "translate": "advancements.rpgworldmod.rpgworld.title"
     }
   },
   "requirements": [

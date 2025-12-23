@@ -22,6 +22,7 @@ public class ModAdvancements {
     public static final GoldenKillMosquitoSwarmTrigger GOLDEN_KILL_MOSQUITO_SWARM = CriteriaTriggers.register(new GoldenKillMosquitoSwarmTrigger());
     public static final KillMosquitoSwarmTrigger KILL_MOSQUITO_SWARM = CriteriaTriggers.register(new KillMosquitoSwarmTrigger());
     public static final ReleaseMosquitosInNetherTrigger RELEASE_MOSQUITOS_IN_NETHER = CriteriaTriggers.register(new ReleaseMosquitosInNetherTrigger());
+    public static final FindRieWealdFirstTrigger FIND_RIE_WEALD_FIRST = CriteriaTriggers.register(new FindRieWealdFirstTrigger());
 
     public static void init() {}
 }

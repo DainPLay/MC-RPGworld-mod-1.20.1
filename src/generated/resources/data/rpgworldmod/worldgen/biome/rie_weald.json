@@ -98,14 +98,14 @@
       "rpgworldmod:cheese_cap_placed",
       "rpgworldmod:mosshroom_placed",
       "rpgworldmod:patch_paralily_placed",
-      "rpgworldmod:spiky_ivy_placed",
+      "rpgworldmod:spiky_ivy_placed"
+    ],
+    [
+      "minecraft:freeze_top_layer",
       "rpgworldmod:tree_hollow_west_placed",
       "rpgworldmod:tree_hollow_east_placed",
       "rpgworldmod:tree_hollow_north_placed",
       "rpgworldmod:tree_hollow_south_placed"
-    ],
-    [
-      "minecraft:freeze_top_layer"
     ]
   ],
   "has_precipitation": false,
@@ -198,7 +198,7 @@
         "type": "rpgworldmod:gasbass",
         "maxCount": 1,
         "minCount": 1,
-        "weight": 10
+        "weight": 4
       }
     ],
     "water_creature": []
