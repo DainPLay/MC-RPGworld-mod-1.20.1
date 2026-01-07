@@ -7,8 +7,10 @@ import net.dainplay.rpgworldmod.entity.projectile.FairapierSeedEntity;
 import net.dainplay.rpgworldmod.entity.projectile.ProjectruffleArrowEntity;
 import net.dainplay.rpgworldmod.entity.projectile.ThrownDrillSpear;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Cod;
 import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -54,6 +56,8 @@ public class ModEntities {
             () -> EntityType.Builder.of(Drillhog::new, RIE_MONSTER).sized(0.9F, 0.9F).clientTrackingRange(8).build("drillhog"));
     public static final RegistryObject<EntityType<MosquitoSwarm>> MOSQUITO_SWARM = ENTITY_TYPES.register("mosquito_swarm",
             () -> EntityType.Builder.of(MosquitoSwarm::new, RIE_MONSTER).sized(0.95F, 0.95F).clientTrackingRange(8).build("mosquito_swarm"));
+    public static final RegistryObject<EntityType<Razorleaf>> RAZORLEAF = ENTITY_TYPES.register("razorleaf",
+            () -> EntityType.Builder.of(Razorleaf::new, RIE_MONSTER).sized(1.8F, 2F).clientTrackingRange(8).build("razorleaf"));
     public static final RegistryObject<EntityType<Bibbit>> BIBBIT = ENTITY_TYPES.register("bibbit",
             () -> EntityType.Builder.of(Bibbit::new, MobCategory.CREATURE).sized(0.6F, 0.9F).clientTrackingRange(8).build("bibbit"));
     public static final RegistryObject<EntityType<Platinumfish>> PLATINUMFISH = ENTITY_TYPES.register("platinumfish",
@@ -77,6 +81,7 @@ public class ModEntities {
         event.register(FIREFLANTERN.get(), SpawnPlacements.Type.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Fireflantern::checkFireflanternSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(BURR_PURR.get(), SpawnPlacements.Type.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Burr_purr::checkBurr_purrSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(DRILLHOG.get(), SpawnPlacements.Type.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Drillhog::checkDrillhogSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
+        event.register(RAZORLEAF.get(), SpawnPlacements.Type.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Razorleaf::checkRazorleafSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(MOSQUITO_SWARM.get(), SpawnPlacements.Type.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MosquitoSwarm::checkMosquitoSwarmSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(PLATINUMFISH.get(), SpawnPlacements.Type.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(MOSSFRONT.get(), SpawnPlacements.Type.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);

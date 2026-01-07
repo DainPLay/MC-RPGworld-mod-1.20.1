@@ -22,6 +22,7 @@ import net.dainplay.rpgworldmod.item.ModCreativeModeTab;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.WealdBladeItem;
 import net.dainplay.rpgworldmod.loot.ModLootModifiers;
+import net.dainplay.rpgworldmod.mana.ModMessages;
 import net.dainplay.rpgworldmod.particle.ModParticles;
 import net.dainplay.rpgworldmod.potion.ModPotions;
 import net.dainplay.rpgworldmod.sounds.ModSounds;
@@ -103,8 +104,9 @@ public class RPGworldMod
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> RPGworldClient::new);
 
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        ModEntities.ENTITY_TYPES.register(eventBus);
+        ModMessages.register();
 
+        ModEntities.ENTITY_TYPES.register(eventBus);
 
         ModCreativeModeTab.register(eventBus);
         ModEffects.register(eventBus);
@@ -144,8 +146,6 @@ public class RPGworldMod
         MinecraftForge.EVENT_BUS.register(DrillTuskHandler.class);
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new ModEvents());
-
-
 
     }
     public void onItemFished(ItemFishedEvent event) {
@@ -215,6 +215,10 @@ public class RPGworldMod
             event.accept(ModBlocks.RIE_TRAPDOOR);
             event.accept(ModBlocks.RIE_PRESSURE_PLATE);
             event.accept(ModBlocks.RIE_BUTTON);
+            event.accept(ModBlocks.LIVING_WOOD_LOG);
+            event.accept(ModBlocks.LIVING_WOOD_WOOD);
+            event.accept(ModBlocks.STRIPPED_LIVING_WOOD_LOG);
+            event.accept(ModBlocks.STRIPPED_LIVING_WOOD_WOOD);
             event.accept(ModBlocks.CHISELED_MASKONITE_BLOCK);
             event.accept(ModBlocks.MASKONITE_BLOCK);
             event.accept(ModBlocks.MASKONITE_STAIRS);
@@ -267,6 +271,8 @@ public class RPGworldMod
             event.accept(ModBlocks.GLOSSOM);
             event.accept(ModBlocks.MIMOSSA);
             event.accept(ModBlocks.TYPHON);
+            event.accept(ModBlocks.RAZORLEAF_BUD);
+            event.accept(ModBlocks.YOUNG_RAZORLEAF);
             event.accept(ModItems.FAIRAPIER_SEED);
             event.accept(ModItems.RIE_FRUIT);
             event.accept(ModItems.BRAMBLEFOX_BERRIES);
@@ -310,6 +316,13 @@ public class RPGworldMod
             event.accept(ModItems.SHEENTROUT_BUCKET);
             event.accept(ModItems.GASBASS_BUCKET);
             event.accept(ModItems.ARBOR_FUEL_BUCKET);
+            event.accept(ModItems.EMBER_GEM);
+            event.accept(ModItems.FIREPROOF_SKIRT);
+            event.accept(ModItems.LIVING_WOOD_HELMET);
+            event.accept(ModItems.LIVING_WOOD_CHESTPLATE);
+            event.accept(ModItems.LIVING_WOOD_LEGGINGS);
+            event.accept(ModItems.LIVING_WOOD_BOOTS);
+            event.accept(ModItems.LAPIS_CHARM);
             event.accept(ModItems.MOSQUITO_BOTTLE);
             event.accept(ModItems.CHITIN_THIMBLE);
             event.accept(ModItems.CHITIN_POWDER);
@@ -375,6 +388,7 @@ public class RPGworldMod
 
         if(event.getTab() == ModCreativeModeTab.RPGWORLD_MATERIALS_TAB.get()) {
             event.accept(ModBlocks.MASKONITE_BLOCK);
+            event.accept(ModItems.DRIED_WIDOWEED);
             event.accept(ModItems.TYPHON_DYE);
             event.accept(ModItems.MINTAL_NUGGET);
             event.accept(ModItems.MINTAL_INGOT);
@@ -382,6 +396,8 @@ public class RPGworldMod
             event.accept(ModItems.BURR_SPIKE);
             event.accept(ModItems.CHITIN_POWDER);
             event.accept(ModItems.MOSQUITO_BOTTLE);
+            event.accept(ModItems.FIREPROOF_PETALS);
+            event.accept(ModItems.EMBER_GEM);
             event.accept(ModBlocks.MOSSHROOM);
             event.accept(ModItems.PARALILY_BERRY);
             event.accept(ModItems.MASKONITE_UPGRADE_SMITHING_TEMPLATE);
@@ -404,6 +420,7 @@ public class RPGworldMod
             event.accept(ModItems.BURR_PURR_SPAWN_EGG);
             event.accept(ModItems.DRILLHOG_SPAWN_EGG);
             event.accept(ModItems.MOSQUITO_SWARM_SPAWN_EGG);
+            event.accept(ModItems.RAZORLEAF_SPAWN_EGG);
             event.accept(ModItems.PLATINUMFISH_SPAWN_EGG);
             event.accept(ModItems.BHLEE_SPAWN_EGG);
             event.accept(ModItems.MOSSFRONT_SPAWN_EGG);
@@ -427,6 +444,7 @@ public class RPGworldMod
             ComposterBlock.COMPOSTABLES.put(ModBlocks.HOLTS_REFLECTION.get().asItem(), 0.65F);
             ComposterBlock.COMPOSTABLES.put(ModBlocks.GLOSSOM.get().asItem(), 0.65F);
             ComposterBlock.COMPOSTABLES.put(ModBlocks.SILICINA.get().asItem(), 0.65F);
+            ComposterBlock.COMPOSTABLES.put(ModBlocks.RAZORLEAF_BUD.get().asItem(), 0.65F);
             ComposterBlock.COMPOSTABLES.put(ModBlocks.TRIPLOVER.get().asItem(), 0.3F);
             ComposterBlock.COMPOSTABLES.put(ModBlocks.WILD_FAIRAPIER.get().asItem(), 0.65F);
             ComposterBlock.COMPOSTABLES.put(ModBlocks.MIMOSSA.get().asItem(), 0.65F);
@@ -502,9 +520,13 @@ public class RPGworldMod
 
     public void enqueueIMC(final InterModEnqueueEvent event) {
         SlotTypePreset[] types = {SlotTypePreset.NECKLACE, SlotTypePreset.BELT, SlotTypePreset.BACK, SlotTypePreset.RING};
+        SlotTypePreset[] cosmeticTypes = {SlotTypePreset.NECKLACE, SlotTypePreset.BELT, SlotTypePreset.BACK};
         for (SlotTypePreset type : types) {
                 InterModComms.sendTo(CuriosApi.MODID, SlotTypeMessage.REGISTER_TYPE, () -> type.getMessageBuilder().build());
             }
+        for (SlotTypePreset type : cosmeticTypes) {
+            InterModComms.sendTo(CuriosApi.MODID, SlotTypeMessage.REGISTER_TYPE, () -> type.getMessageBuilder().cosmetic().build());
+        }
     }
 
 }

@@ -40,8 +40,8 @@ public class LayerMoss extends RenderLayer {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            VertexConsumer ivertexbuilder = bufferIn.getBuffer(RenderType.entityCutoutNoCull(new ResourceLocation(RPGworldMod.MOD_ID, "textures/entity/mossiosis_overlay.png")));
-            if(sootn != 1)  ivertexbuilder = bufferIn.getBuffer(RenderType.entityCutoutNoCull(new ResourceLocation(RPGworldMod.MOD_ID, "textures/entity/mossiosis_overlay_half.png")));
+            VertexConsumer ivertexbuilder = bufferIn.getBuffer(RenderType.entityCutout(new ResourceLocation(RPGworldMod.MOD_ID, "textures/entity/mossiosis_overlay.png")));
+            if(sootn != 1)  ivertexbuilder = bufferIn.getBuffer(RenderType.entityCutout(new ResourceLocation(RPGworldMod.MOD_ID, "textures/entity/mossiosis_overlay_half.png")));
             float alpha = 1F;
             matrixStackIn.pushPose();
             this.getParentModel().renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, LivingEntityRenderer.getOverlayCoords((LivingEntity)entity, 0), 1, 1, 1, alpha);

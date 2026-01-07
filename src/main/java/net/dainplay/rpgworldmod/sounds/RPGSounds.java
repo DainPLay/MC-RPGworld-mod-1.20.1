@@ -18,6 +18,15 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> MINTOBAT_HURT;
     public static RegistryObject<SoundEvent> MINTOBAT_DEATH;
     public static RegistryObject<SoundEvent> MINTOBAT_AMBIENT;
+    public static RegistryObject<SoundEvent> RAZORLEAF_HURT;
+    public static RegistryObject<SoundEvent> RAZORLEAF_DEATH;
+    public static RegistryObject<SoundEvent> RAZORLEAF_ATTACK;
+    public static RegistryObject<SoundEvent> RAZORLEAF_FIRE;
+    public static RegistryObject<SoundEvent> RAZORLEAF_EXTINGUISH;
+    public static RegistryObject<SoundEvent> RAZORLEAF_SPIN;
+    public static RegistryObject<SoundEvent> RAZORLEAF_BITE;
+    public static RegistryObject<SoundEvent> RAZORLEAF_EAT;
+    public static RegistryObject<SoundEvent> RAZORLEAF_SPIT;
     public static RegistryObject<SoundEvent> MOSQUITO_SWARM_ATTACK;
     public static RegistryObject<SoundEvent> MOSQUITO_SWARM_DEATH;
     public static RegistryObject<SoundEvent> MOSQUITO_SWARM_AMBIENT;
@@ -81,4 +90,11 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> DRILL_SPEAR_THROW;
     public static RegistryObject<SoundEvent> DRILL_SPEAR_RETURN;
     public static RegistryObject<SoundEvent> GOLDEN_TOKEN_FAIL;
+    public static RegistryObject<SoundEvent> ARMOR_EQUIP_LIVING_WOOD;
+    public static RegistryObject<SoundEvent> ARMOR_EQUIP_FIREPROOF_SKIRT;
+    public static RegistryObject<SoundEvent> EMBER_GEM_SNAP;
+    public static RegistryObject<SoundEvent> EMBER_GEM_IGNITE_BLOCK;
+    public static RegistryObject<SoundEvent> EMBER_GEM_IGNITE_ENTITY;
+    public static RegistryObject<SoundEvent> EMBER_GEM_EXTINGUISH;
+    public static RegistryObject<SoundEvent> INHALE;
 }

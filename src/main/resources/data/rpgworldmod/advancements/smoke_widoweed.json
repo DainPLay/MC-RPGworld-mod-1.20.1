@@ -1,0 +1,30 @@
+{
+  "parent": "rpgworldmod:get_depressed",
+  "criteria": {
+    "smoke_widoweed": {
+      "conditions": {},
+      "trigger": "rpgworldmod:smoke_widoweed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.smoke_widoweed.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:dried_widoweed"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.smoke_widoweed.title"
+    }
+  },
+  "requirements": [
+    [
+      "smoke_widoweed"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

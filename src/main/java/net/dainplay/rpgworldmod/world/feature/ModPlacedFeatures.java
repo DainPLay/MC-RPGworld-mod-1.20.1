@@ -54,6 +54,7 @@ public class ModPlacedFeatures {
     public static final ResourceKey<PlacedFeature> SILICINA_PLACED_KEY = createKey("silicina_placed");
     public static final ResourceKey<PlacedFeature> PATCH_PARALILY_PLACED_KEY = createKey("patch_paralily_placed");
     public static final ResourceKey<PlacedFeature> HOLTS_REFLECTION_PLACED_KEY = createKey("holts_reflection_placed");
+    public static final ResourceKey<PlacedFeature> RAZORLEAF_BUD_PLACED_KEY = createKey("razorleaf_bud_placed");
     public static final ResourceKey<PlacedFeature> MASKONITE_PLACED_KEY = createKey("maskonite_placed");
     public static final ResourceKey<PlacedFeature> RIE_BUSH_PLACED_KEY = createKey("rie_bush_placed");
     public static final ResourceKey<PlacedFeature> SPIKY_IVY_PLACED_KEY = createKey("spiky_ivy_placed");
@@ -121,6 +122,8 @@ public class ModPlacedFeatures {
         register(context, SILICINA_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.SILICINA_KEY), RarityFilter.onAverageOnceEvery(6),
                 InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome());
         register(context, HOLTS_REFLECTION_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.HOLTS_REFLECTION_KEY), RarityFilter.onAverageOnceEvery(6),
+                InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome());
+        register(context, RAZORLEAF_BUD_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.RAZORLEAF_BUD_KEY), RarityFilter.onAverageOnceEvery(8),
                 InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome());
         register(context, RPGIROLLE_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.RPGIROLLE_KEY), RarityFilter.onAverageOnceEvery(8),
                 InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome());

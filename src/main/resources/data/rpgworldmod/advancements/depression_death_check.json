@@ -1,0 +1,30 @@
+{
+  "criteria": {
+    "depression_death_check": {
+      "conditions": {},
+      "trigger": "rpgworldmod:depression_death_check"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.rpgworldmod.depression_death_check.description"
+    },
+    "frame": "task",
+    "hidden": true,
+    "icon": {
+      "item": "rpgworldmod:rpgirolle_item",
+      "nbt": "{Token:4}"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.rpgworldmod.depression_death_check.title"
+    }
+  },
+  "requirements": [
+    [
+      "depression_death_check"
+    ]
+  ],
+  "sends_telemetry_event": false
+}

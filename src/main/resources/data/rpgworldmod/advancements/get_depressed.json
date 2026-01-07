@@ -1,0 +1,31 @@
+{
+  "parent": "rpgworldmod:defeat_razorleaf",
+  "criteria": {
+    "get_depressed": {
+      "conditions": {},
+      "trigger": "rpgworldmod:get_depressed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.get_depressed.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:rpgirolle_item",
+      "nbt": "{Token:4}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.get_depressed.title"
+    }
+  },
+  "requirements": [
+    [
+      "get_depressed"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

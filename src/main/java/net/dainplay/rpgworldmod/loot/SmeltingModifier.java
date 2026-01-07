@@ -3,12 +3,19 @@ package net.dainplay.rpgworldmod.loot;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
+import net.dainplay.rpgworldmod.item.ModItems;
+import net.dainplay.rpgworldmod.item.custom.FlintShovelItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -48,6 +55,11 @@ public class SmeltingModifier extends LootModifier {
 
 		for (ItemStack stack : generatedLoot) {
 			boolean shouldSmelt = shouldSmeltItem(stack, context, chance);
+			if (tool.getItem() instanceof FlintShovelItem && stack.getItem() == Items.FLINT) {
+				Entity instigator = context.getParamOrNull(LootContextParams.THIS_ENTITY);
+				if (instigator != null && instigator instanceof ServerPlayer player)
+					ModAdvancements.DIG_FLINT_WITH_FLINT.trigger(player);
+			}
 
 			if (shouldSmelt) {
 				ItemStack smelted = context.getLevel().getRecipeManager()

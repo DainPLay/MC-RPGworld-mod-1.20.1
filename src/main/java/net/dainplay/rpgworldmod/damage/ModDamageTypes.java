@@ -21,6 +21,7 @@ public class ModDamageTypes {
     public static final ResourceKey<DamageType> MOSQUITOS = create("mosquitos");
     public static final ResourceKey<DamageType> SCREAM = create("scream");
     public static final ResourceKey<DamageType> DING = create("ding");
+    public static final ResourceKey<DamageType> SWALLOW = create("swallow");
 
     public static ResourceKey<DamageType> create(String name) {
         return ResourceKey.create(Registries.DAMAGE_TYPE, RPGworldMod.prefix(name));
@@ -47,5 +48,6 @@ public class ModDamageTypes {
         context.register(MOSQUITOS, new DamageType("mosquitos", 0.0F));
         context.register(SCREAM, new DamageType("scream", 0.0F));
         context.register(DING, new DamageType("ding", 0.0F));
+        context.register(SWALLOW, new DamageType("swallow", 0.0F));
     }
 }

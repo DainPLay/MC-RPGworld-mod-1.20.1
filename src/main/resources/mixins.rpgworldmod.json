@@ -18,14 +18,15 @@
     "PistonStructureResolverMixin",
     "PotionUtilsMixin",
     "SonicBoomMixin",
-    "WitchMixin",
-    "ThrownPotionMixin"
+    "ThrownPotionMixin",
+    "WitchMixin"
   ],
   "client": [
     "AbstractContainerScreenMixin",
     "ForgeGuiMixin",
     "GuiMixin",
     "InventoryScreenMixin",
+    "ItemInHandLayerMixin",
     "ItemInHandRendererMixin",
     "LevelRendererMixin",
     "LivingEntityRendererMixin",

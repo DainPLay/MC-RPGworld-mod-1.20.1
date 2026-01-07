@@ -58,6 +58,12 @@
               },
               {
                 "data": {
+                  "Name": "rpgworldmod:razorleaf_bud"
+                },
+                "weight": 1
+              },
+              {
+                "data": {
                   "Name": "rpgworldmod:holts_reflection",
                   "Properties": {
                     "facing": "north",

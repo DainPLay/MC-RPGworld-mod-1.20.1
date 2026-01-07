@@ -24,14 +24,15 @@ public class DamageTypeTagGenerator extends TagsProvider<DamageType> {
 	protected void addTags(HolderLookup.Provider provider) {
 		this.tag(DamageTypeTags.BYPASSES_ARMOR).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS);
 		this.tag(DamageTypeTags.BYPASSES_ENCHANTMENTS).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.MOSQUITOS);
-		this.tag(DamageTypeTags.BYPASSES_COOLDOWN).add(ModDamageTypes.MOSSIOSIS);
+		this.tag(DamageTypeTags.BYPASSES_COOLDOWN).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.SWALLOW);
+		this.tag(DamageTypeTags.IS_FIRE).add(ModDamageTypes.SWALLOW);
+		this.tag(DamageTypeTags.BYPASSES_INVULNERABILITY).add(ModDamageTypes.SWALLOW);
 		this.tag(DamageTypeTags.BYPASSES_EFFECTS).add(ModDamageTypes.MOSSIOSIS);
 		this.tag(DamageTypeTags.BYPASSES_RESISTANCE).add(ModDamageTypes.MOSSIOSIS);
-		this.tag(DamageTypeTags.BYPASSES_SHIELD).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS);
+		this.tag(DamageTypeTags.BYPASSES_SHIELD).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS, ModDamageTypes.SWALLOW);
 		this.tag(DamageTypeTags.DAMAGES_HELMET).add(ModDamageTypes.SCREAM, ModDamageTypes.DING);
-		this.tag(DamageTypeTags.IS_PROJECTILE).add(ModDamageTypes.FAIRAPIER_SEED);
-		this.tag(DamageTypeTags.IS_PROJECTILE).add(ModDamageTypes.BURR_SPIKE);
-		this.tag(DamageTypeTags.AVOIDS_GUARDIAN_THORNS).add(ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS);
+		this.tag(DamageTypeTags.IS_PROJECTILE).add(ModDamageTypes.FAIRAPIER_SEED,ModDamageTypes.BURR_SPIKE);
+		this.tag(DamageTypeTags.AVOIDS_GUARDIAN_THORNS).add(ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS,ModDamageTypes.FAIRAPIER_SEED,ModDamageTypes.BURR_SPIKE);
 		this.tag(DamageTypeTags.WITCH_RESISTANT_TO).add(ModDamageTypes.SCREAM, ModDamageTypes.DING);
 		this.tag(DamageTypeTags.WITCH_RESISTANT_TO).add(ModDamageTypes.SCREAM, ModDamageTypes.DING);
 		this.tag(IS_SOUND).add(ModDamageTypes.SCREAM, ModDamageTypes.DING, DamageTypes.SONIC_BOOM);

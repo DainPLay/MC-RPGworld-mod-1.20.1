@@ -20,9 +20,16 @@ public class ModAdvancements {
     public static final GoldenKillMintobatTrigger GOLDEN_KILL_MINTOBAT = CriteriaTriggers.register(new GoldenKillMintobatTrigger());
     public static final GoldenKillDrillhogTrigger GOLDEN_KILL_DRILLHOG = CriteriaTriggers.register(new GoldenKillDrillhogTrigger());
     public static final GoldenKillMosquitoSwarmTrigger GOLDEN_KILL_MOSQUITO_SWARM = CriteriaTriggers.register(new GoldenKillMosquitoSwarmTrigger());
+    public static final GoldenKillRazorleafTrigger GOLDEN_KILL_RAZORLEAF = CriteriaTriggers.register(new GoldenKillRazorleafTrigger());
     public static final KillMosquitoSwarmTrigger KILL_MOSQUITO_SWARM = CriteriaTriggers.register(new KillMosquitoSwarmTrigger());
     public static final ReleaseMosquitosInNetherTrigger RELEASE_MOSQUITOS_IN_NETHER = CriteriaTriggers.register(new ReleaseMosquitosInNetherTrigger());
     public static final FindRieWealdFirstTrigger FIND_RIE_WEALD_FIRST = CriteriaTriggers.register(new FindRieWealdFirstTrigger());
+    public static final DigFlintWithFlintTrigger DIG_FLINT_WITH_FLINT = CriteriaTriggers.register(new DigFlintWithFlintTrigger());
+    public static final GetDepressedTrigger GET_DEPRESSED_TRIGGER = CriteriaTriggers.register(new GetDepressedTrigger());
+    public static final SmokeWidoweedTrigger SMOKE_WIDOWEED_TRIGGER = CriteriaTriggers.register(new SmokeWidoweedTrigger());
+    public static final DepressionDeathCheck DEPRESSION_DEATH_CHECK = CriteriaTriggers.register(new DepressionDeathCheck());
+    public static final FeedZombieToRazorleafTrigger FEED_ZOMBIE_TO_RAZORLEAF_TRIGGER = CriteriaTriggers.register(new FeedZombieToRazorleafTrigger());
+    public static final GetEatenByRazorleafWearingSkirtTrigger GET_EATEN_BY_RAZORLEAF_WEARING_SKIRT_TRIGGER = CriteriaTriggers.register(new GetEatenByRazorleafWearingSkirtTrigger());
 
     public static void init() {}
 }

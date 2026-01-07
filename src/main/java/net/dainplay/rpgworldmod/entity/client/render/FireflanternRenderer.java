@@ -25,6 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 
 public class FireflanternRenderer extends MobRenderer<Fireflantern, FireflanternModel<Fireflantern>> {
@@ -82,23 +83,28 @@ public class FireflanternRenderer extends MobRenderer<Fireflantern, Fireflantern
         pPoseStack.pushPose();
         pPoseStack.translate(0.0F, 0.5F, 0.0F);
 
-        Player player = Minecraft.getInstance().player;
-        if(player == null) {
-            pPoseStack.popPose();
-            return;
-        }
-        Vec3 playerPos = player.getEyePosition(pPartialTicks);
+        // Получаем камеру клиента
+        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Vec3 cameraPos = camera.getPosition();
+
+        // Получаем вектор взгляда камеры как Vector3f и преобразуем в Vec3
+        Vector3f lookVector3f = camera.getLookVector();
+        Vec3 cameraLookDir = new Vec3(lookVector3f.x(), lookVector3f.y(), lookVector3f.z());
+
         Vec3 entityPos = pEntity.position().add(0, 0.5F, 0);
-        Vec3 cameraLookDir = player.getViewVector(pPartialTicks).normalize();
 
-        // Calculate the backward offset
-        float backwardOffset = 0.5f; // Adjust this value to control the distance
-        Vec3 backwardOffsetVector = cameraLookDir.scale(backwardOffset);
+        // Вычисляем направление от моба к камере
+        Vec3 toCamera = cameraPos.subtract(entityPos).normalize();
 
-        // Calculate the target position for the beams' center
+        // Для размещения лучей позади моба относительно камеры
+        // Используем обратное направление (от камеры к мобу)
+        float backwardOffset = -0.5f;
+        Vec3 backwardOffsetVector = cameraLookDir.scale(-backwardOffset);
+
+        // Вычисляем целевую позицию для лучей (позади моба относительно камеры)
         Vec3 targetPos = entityPos.add(backwardOffsetVector);
 
-        float animationProgress = (pEntity.tickCount + pPartialTicks) / 200.0F;
+        float animationProgress = (pEntity.tickCount + pPartialTicks) * 0.005F;
 
         int beamCount = 10;
         for (int i = 0; i < beamCount; i++) {
@@ -106,17 +112,19 @@ public class FireflanternRenderer extends MobRenderer<Fireflantern, Fireflantern
 
             pPoseStack.translate(targetPos.x - entityPos.x, targetPos.y - entityPos.y, targetPos.z - entityPos.z);
 
-            // Calculate the vector from the entity to the player
-            Vec3 directionToPlayer = playerPos.subtract(targetPos).normalize();
-            double horizontalAngleToPlayer = Math.toDegrees(Math.atan2(directionToPlayer.x, directionToPlayer.z));
-            double verticalAngleToPlayer = Math.toDegrees(Math.asin(directionToPlayer.y));
-
-            // Calculate the angle of the vector with the X-axis in degrees
+            // Направляем лучи на камеру
+            Vec3 directionToCamera = cameraPos.subtract(targetPos).normalize();
+            double horizontalAngleToCamera = Math.toDegrees(Math.atan2(directionToCamera.x, directionToCamera.z));
+            double verticalAngleToCamera = Math.toDegrees(Math.asin(directionToCamera.y));
 
             float angle = animationProgress * 360F + (360f / beamCount) * i;
-            pPoseStack.mulPose(Axis.YP.rotationDegrees((float) horizontalAngleToPlayer));
-            pPoseStack.mulPose(Axis.XP.rotationDegrees((float) -verticalAngleToPlayer));
-            pPoseStack.mulPose(Axis.ZP.rotationDegrees(angle));
+
+            // Поворачиваем лучи чтобы смотреть на камеру
+            float depthOffset = i * 0.01f;
+            pPoseStack.mulPose(Axis.YP.rotationDegrees((float) horizontalAngleToCamera));
+            pPoseStack.mulPose(Axis.XP.rotationDegrees((float) -verticalAngleToCamera));
+            pPoseStack.mulPose(Axis.ZP.rotationDegrees(angle + depthOffset));
+
             float f3 = 2.1F;
             float f4 = 2.0F;
             Matrix4f matrix4f = pPoseStack.last().pose();

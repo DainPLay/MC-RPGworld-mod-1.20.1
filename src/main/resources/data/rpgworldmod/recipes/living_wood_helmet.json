@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "L": {
+      "tag": "rpgworldmod:living_wood_logs"
+    }
+  },
+  "pattern": [
+    "LLL",
+    "L L"
+  ],
+  "result": {
+    "item": "rpgworldmod:living_wood_helmet"
+  },
+  "show_notification": true
+}

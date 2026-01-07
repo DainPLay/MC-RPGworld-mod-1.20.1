@@ -13,7 +13,6 @@ import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.BannerPatternTags;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.ForgeSpawnEggItem;
@@ -57,7 +56,19 @@ public class ModItems {
             () -> new FlintShovelItem(ModTiers.FLINT, 1.5F, -3.0F, new Item.Properties()));
     public static final RegistryObject<Item> FLINT_HOE = ITEMS.register("flint_hoe",
             () -> new FlintHoeItem(ModTiers.FLINT, -1, -2.0F, new Item.Properties()));
+    public static final RegistryObject<ArmorItem> LIVING_WOOD_HELMET = ITEMS.register("living_wood_helmet",
+            () -> new LivingWoodArmorItem(ModArmorMaterials.LIVING_WOOD, ArmorItem.Type.HELMET, new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<ArmorItem> LIVING_WOOD_CHESTPLATE = ITEMS.register("living_wood_chestplate",
+            () -> new LivingWoodArmorItem(ModArmorMaterials.LIVING_WOOD, ArmorItem.Type.CHESTPLATE, new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<ArmorItem> LIVING_WOOD_LEGGINGS = ITEMS.register("living_wood_leggings",
+            () -> new LivingWoodArmorItem(ModArmorMaterials.LIVING_WOOD, ArmorItem.Type.LEGGINGS, new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<ArmorItem> LIVING_WOOD_BOOTS = ITEMS.register("living_wood_boots",
+            () -> new LivingWoodArmorItem(ModArmorMaterials.LIVING_WOOD, ArmorItem.Type.BOOTS, new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> FIREPROOF_SKIRT = ITEMS.register("fireproof_skirt",
+            () -> new FireproofSkirtItem(new Item.Properties().durability(432).rarity(Rarity.UNCOMMON).fireResistant()));
 
+    public static final RegistryObject<Item> DRIED_WIDOWEED = ITEMS.register("dried_widoweed",
+            () -> new DriedWidoweedItem(new Item.Properties()));
     public static final RegistryObject<Item> SAMARAGUARD = ITEMS.register("samaraguard",
             () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> MINTAL_INGOT = ITEMS.register("mintal_ingot",
@@ -82,6 +93,10 @@ public class ModItems {
             () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> CHITIN_POWDER = ITEMS.register("chitin_powder",
             () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> EMBER_GEM = ITEMS.register("ember_gem",
+            () -> new EmberGemItem(new Item.Properties().fireResistant().rarity(Rarity.UNCOMMON).stacksTo(1), 5, -65536, "textures/entity/spells/spark", 2, 6));
+    public static final RegistryObject<Item> FIREPROOF_PETALS = ITEMS.register("fireproof_petals",
+            () -> new Item(new Item.Properties().fireResistant()));
     public static final RegistryObject<Item> MOSQUITO_BOTTLE = ITEMS.register("mosquito_bottle",
             () -> new MosquitoBottleItem(new Item.Properties()));
     public static final RegistryObject<Item> SHIVERALIS_BERRIES = ITEMS.register("shiveralis_berries",
@@ -141,6 +156,10 @@ public class ModItems {
             () -> new ForgeSpawnEggItem(ModEntities.DRILLHOG, 0x835853, 0xEBE1BE, new Item.Properties()));
     public static final RegistryObject<Item> MOSQUITO_SWARM_SPAWN_EGG = ITEMS.register("mosquito_swarm_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.MOSQUITO_SWARM, 0x4D7575, 0x648C8C, new Item.Properties()));
+    public static final RegistryObject<Item> RAZORLEAF_SPAWN_EGG = ITEMS.register("razorleaf_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.RAZORLEAF, 0xD2443F, 0x587E3C, new Item.Properties()));
+    public static final RegistryObject<CurioItem> LAPIS_CHARM = ITEMS.register("lapis_charm",
+            () -> new CurioItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<CurioItem> BRAMBLEFOX_SCARF = ITEMS.register("bramblefox_scarf", () -> new CurioItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<CurioItem> FIG_LEAF = ITEMS.register("fig_leaf", () -> new CurioItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<CurioItem> PORTABLE_TURRET = ITEMS.register("portable_turret", () -> new CurioItem(new Item.Properties().rarity(Rarity.RARE)));

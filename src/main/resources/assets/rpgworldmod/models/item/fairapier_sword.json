@@ -2,5 +2,19 @@
   "parent": "item/handheld",
   "textures": {
     "layer0": "rpgworldmod:item/fairapier_sword"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "growing": 1.0
+      },
+      "model": "rpgworldmod:item/fairapier_sword_growing_1"
+    },
+    {
+      "predicate": {
+        "growing": 2.0
+      },
+      "model": "rpgworldmod:item/fairapier_sword_growing_2"
+    }
+  ]
 }

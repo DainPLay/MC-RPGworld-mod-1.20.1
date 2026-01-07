@@ -43,14 +43,27 @@ public class ModSounds
         MINTOBAT_HURT = registerSound("rpgworldmod.mintobat.hit");
         MINTOBAT_DEATH = registerSound("rpgworldmod.mintobat.death");
         MINTOBAT_AMBIENT = registerSound("rpgworldmod.mintobat.ambient");
+
+        RAZORLEAF_HURT = registerSound("rpgworldmod.razorleaf.hurt");
+        RAZORLEAF_DEATH = registerSound("rpgworldmod.razorleaf.death");
+        RAZORLEAF_ATTACK = registerSound("rpgworldmod.razorleaf.attack");
+        RAZORLEAF_FIRE = registerSound("rpgworldmod.razorleaf.fire");
+        RAZORLEAF_EXTINGUISH = registerSound("rpgworldmod.razorleaf.extinguish");
+        RAZORLEAF_SPIN = registerSound("rpgworldmod.razorleaf.spin");
+        RAZORLEAF_BITE = registerSound("rpgworldmod.razorleaf.bite");
+        RAZORLEAF_EAT = registerSound("rpgworldmod.razorleaf.eat");
+        RAZORLEAF_SPIT = registerSound("rpgworldmod.razorleaf.spit");
+
         MOSQUITO_SWARM_ATTACK = registerSound("rpgworldmod.mosquito_swarm.attack");
         MOSQUITO_SWARM_DEATH = registerSound("rpgworldmod.mosquito_swarm.death");
         MOSQUITO_SWARM_AMBIENT = registerSound("rpgworldmod.mosquito_swarm.ambient");
+
         FIREFLANTERN_FALL = registerSound("rpgworldmod.fireflantern.fall");
         FIREFLANTERN_DEATH = registerSound("rpgworldmod.fireflantern.death");
         FIREFLANTERN_IMPACT = registerSound("rpgworldmod.fireflantern.impact");
         FIREFLANTERN_AMBIENT = registerSound("rpgworldmod.fireflantern.ambient");
         FIREFLANTERN_HURT = registerSound("rpgworldmod.fireflantern.hit");
+
         TRIANGLE_DING = registerSound("rpgworldmod.triangle_ding");
         GUITAR_AX_PLAY = registerSound("rpgworldmod.guitar_ax_play");
 
@@ -111,6 +124,16 @@ public class ModSounds
         DRILL_SPEAR_RETURN = registerSound("rpgworldmod.drill_spear_return");
 
         GOLDEN_TOKEN_FAIL = registerSound("rpgworldmod.golden_token_fail");
+
+        ARMOR_EQUIP_LIVING_WOOD = registerSound("rpgworldmod.armor_equip_living_wood");
+        ARMOR_EQUIP_FIREPROOF_SKIRT = registerSound("rpgworldmod.armor_equip_fireproof_skirt");
+
+        EMBER_GEM_SNAP = registerSound("rpgworldmod.ember_gem_snap");
+        EMBER_GEM_IGNITE_BLOCK = registerSound("rpgworldmod.ember_gem_ignite_block");
+        EMBER_GEM_IGNITE_ENTITY = registerSound("rpgworldmod.ember_gem_ignite_entity");
+        EMBER_GEM_EXTINGUISH = registerSound("rpgworldmod.ember_gem_extinguish");
+
+        INHALE = registerSound("rpgworldmod.inhale");
     }
 
     private static RegistryObject<SoundEvent> registerSound(String name)

@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "rpgworldmod:living_wood_log",
+    "rpgworldmod:living_wood_wood",
+    "rpgworldmod:stripped_living_wood_log",
+    "rpgworldmod:stripped_living_wood_wood"
+  ]
+}

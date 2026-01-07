@@ -674,10 +674,134 @@
   },
   "rpgworldmod.golden_token_fail": {
     "sounds": [
+      "rpgworldmod:mcc_trash"
+    ]
+  },
+  "rpgworldmod.armor_equip_living_wood": {
+    "sounds": [
       {
         "type": "event",
-        "name": "block.medium_amethyst_bud.break"
+        "name": "item.armor.equip_turtle"
       }
-    ]
+    ],
+    "subtitle": "subtitles.rpgworldmod.armor_equip_living_wood"
+  },
+  "rpgworldmod.armor_equip_fireproof_skirt": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.armor.equip_elytra"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.armor_equip_fireproof_skirt"
+  },
+  "rpgworldmod.ember_gem_ignite_block": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.flintandsteel.use"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.ember_gem_ignite_block"
+  },
+  "rpgworldmod.ember_gem_ignite_entity": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.firecharge.use"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.ember_gem_ignite_entity"
+  },
+  "rpgworldmod.ember_gem_extinguish": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.fire.extinguish"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.ember_gem_extinguish"
+  },
+  "rpgworldmod.ember_gem_snap": {
+    "sounds": [
+      "rpgworldmod:ember_gem/snap"
+    ],
+    "subtitle": "subtitles.rpgworldmod.ember_gem_snap"
+  },
+  "rpgworldmod.inhale": {
+    "sounds": [
+      "rpgworldmod:inhale"
+    ],
+    "subtitle": "subtitles.rpgworldmod.inhale"
+  },
+  "rpgworldmod.razorleaf.hurt": {
+    "sounds": [
+      "rpgworldmod:razorleaf/hurt1",
+      "rpgworldmod:razorleaf/hurt2",
+      "rpgworldmod:razorleaf/hurt3",
+      "rpgworldmod:razorleaf/hurt4"
+    ],
+    "subtitle": "subtitles.rpgworldmod.razorleaf.hurt"
+  },
+  "rpgworldmod.razorleaf.death": {
+    "sounds": [
+      "rpgworldmod:razorleaf/death1",
+      "rpgworldmod:razorleaf/death2",
+      "rpgworldmod:razorleaf/death3",
+      "rpgworldmod:razorleaf/death4"
+    ],
+    "subtitle": "subtitles.rpgworldmod.razorleaf.death"
+  },
+  "rpgworldmod.razorleaf.attack": {
+    "sounds": [
+      "rpgworldmod:razorleaf/attack1",
+      "rpgworldmod:razorleaf/attack2",
+      "rpgworldmod:razorleaf/attack3",
+      "rpgworldmod:razorleaf/attack4",
+      "rpgworldmod:razorleaf/attack5"
+    ],
+    "subtitle": "subtitles.rpgworldmod.razorleaf.attack"
+  },
+  "rpgworldmod.razorleaf.fire": {
+    "sounds": [
+      "rpgworldmod:razorleaf/fire"
+    ],
+    "subtitle": "subtitles.rpgworldmod.razorleaf.fire"
+  },
+  "rpgworldmod.razorleaf.extinguish": {
+    "sounds": [
+      "rpgworldmod:razorleaf/extinguish"
+    ],
+    "subtitle": "subtitles.rpgworldmod.razorleaf.extinguish"
+  },
+  "rpgworldmod.razorleaf.spin": {
+    "sounds": [
+      "rpgworldmod:razorleaf/spin1",
+      "rpgworldmod:razorleaf/spin2",
+      "rpgworldmod:razorleaf/spin3",
+      "rpgworldmod:razorleaf/spin4",
+      "rpgworldmod:razorleaf/spin5",
+      "rpgworldmod:razorleaf/spin6",
+      "rpgworldmod:razorleaf/spin7"
+    ],
+    "subtitle": "subtitles.rpgworldmod.razorleaf.spin"
+  },
+  "rpgworldmod.razorleaf.bite": {
+    "sounds": [
+      "rpgworldmod:razorleaf/bite"
+    ],
+    "subtitle": "subtitles.rpgworldmod.razorleaf.bite"
+  },
+  "rpgworldmod.razorleaf.eat": {
+    "sounds": [
+      "rpgworldmod:razorleaf/eat"
+    ],
+    "subtitle": "subtitles.rpgworldmod.razorleaf.eat"
+  },
+  "rpgworldmod.razorleaf.spit": {
+    "sounds": [
+      "rpgworldmod:razorleaf/spit"
+    ],
+    "subtitle": "subtitles.rpgworldmod.razorleaf.spit"
   }
 }

@@ -1,0 +1,31 @@
+{
+  "parent": "rpgworldmod:defeat_razorleaf",
+  "criteria": {
+    "get_eaten_by_razorleaf_wearing_skirt": {
+      "conditions": {},
+      "trigger": "rpgworldmod:get_eaten_by_razorleaf_wearing_skirt"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.get_eaten_by_razorleaf_wearing_skirt.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:fireproof_skirt",
+      "nbt": "{Damage:0}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.get_eaten_by_razorleaf_wearing_skirt.title"
+    }
+  },
+  "requirements": [
+    [
+      "get_eaten_by_razorleaf_wearing_skirt"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

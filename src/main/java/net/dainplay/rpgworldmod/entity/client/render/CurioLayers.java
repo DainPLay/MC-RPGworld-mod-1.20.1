@@ -2,6 +2,7 @@ package net.dainplay.rpgworldmod.entity.client.render;
 
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.entity.client.model.BeltModel;
+import net.dainplay.rpgworldmod.entity.client.model.CharmModel;
 import net.dainplay.rpgworldmod.entity.client.model.ScarfModel;
 import net.dainplay.rpgworldmod.entity.client.model.ThimbleModel;
 import net.dainplay.rpgworldmod.entity.client.model.TurretModel;
@@ -18,6 +19,7 @@ public class CurioLayers {
     public static final ModelLayerLocation
 
             SCARF = createLayerLocation("scarf"),
+            CHARM = createLayerLocation("charm"),
             BELT = createLayerLocation("belt"),
             TURRET = createLayerLocation("turret"),
             THIMBLE = createLayerLocation("thimble");
@@ -37,6 +39,7 @@ public class CurioLayers {
     public static void register(EntityRenderersEvent.RegisterLayerDefinitions event) {
 
         register(event, SCARF, layer(ScarfModel.createScarf(), 28, 16));
+        register(event, CHARM, layer(CharmModel.createCharm(), 32, 32));
         register(event, BELT, layer(BeltModel.createBelt(), 28, 16));
         register(event, TURRET, layer(TurretModel.createTurret(), 64, 64));
         register(event, THIMBLE, layer(ThimbleModel.createThimble(), 16, 16));

@@ -1,54 +1,49 @@
 package net.dainplay.rpgworldmod;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.datafixers.util.Pair;
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.block.entity.ModBlockEntities;
 import net.dainplay.rpgworldmod.block.entity.ModWoodTypes;
-import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
-import net.dainplay.rpgworldmod.effect.ModEffects;
+import net.dainplay.rpgworldmod.entity.client.model.SkirtModel;
 import net.dainplay.rpgworldmod.entity.client.render.CurioLayers;
 import net.dainplay.rpgworldmod.entity.client.render.CurioRenderers;
+import net.dainplay.rpgworldmod.entity.client.render.SkirtArmorLayer;
 import net.dainplay.rpgworldmod.fluid.ModFluids;
+import net.dainplay.rpgworldmod.gui.ManaOverlayEventHandler;
 import net.dainplay.rpgworldmod.gui.OverlayEventHandler;
 import net.dainplay.rpgworldmod.item.ModItems;
+import net.dainplay.rpgworldmod.item.custom.FireproofSkirtItem;
 import net.dainplay.rpgworldmod.item.custom.MintalTriangleItem;
-import net.dainplay.rpgworldmod.particle.ModParticles;
 import net.dainplay.rpgworldmod.util.EnchantedBlockRenderer;
-import net.minecraft.client.model.BoatModel;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.client.renderer.item.ItemPropertyFunction;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
-import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod.EventBusSubscriber(modid = RPGworldMod.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class RPGworldClient {
-
 
     public RPGworldClient() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -61,7 +56,16 @@ public class RPGworldClient {
     }
     public void guiSetup(final RegisterGuiOverlaysEvent event) {
         //Register Armor Renderer for events
-        event.registerAbove(VanillaGuiOverlay.PLAYER_HEALTH.id(),RPGworldMod.MOD_ID, new OverlayEventHandler());
+        event.registerAbove(VanillaGuiOverlay.PLAYER_HEALTH.id(),RPGworldMod.MOD_ID+"_hearts_overlay", new OverlayEventHandler());
+        event.registerAbove(VanillaGuiOverlay.FOOD_LEVEL.id(),RPGworldMod.MOD_ID+"_mana_overlay", new ManaOverlayEventHandler());
+    }
+
+    @SubscribeEvent
+    public static void addEntityRendererLayers(EntityRenderersEvent.AddLayers event) {
+        EntityRenderDispatcher dispatcher = Minecraft.getInstance()
+                .getEntityRenderDispatcher();
+        SkirtArmorLayer.registerOnAll(dispatcher, new SkirtModel(event.getEntityModels().bakeLayer(SkirtModel.LAYER_LOCATION)));
+
     }
 
     @SuppressWarnings("removal")
@@ -92,6 +96,8 @@ public class RPGworldClient {
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.PARALILY.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.PROJECTRUFFLE.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.SILICINA.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.RAZORLEAF_BUD.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.YOUNG_RAZORLEAF.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.POTTED_PROJECTRUFFLE.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.HOLTS_REFLECTION.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOSSOM.get(), RenderType.cutout());
@@ -109,7 +115,12 @@ public class RPGworldClient {
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.POTTED_CHEESE_CAP.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.BLOWER.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.WINGOLD_BLOCK.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.LIVING_WOOD_LOG.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.LIVING_WOOD_WOOD.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.STRIPPED_LIVING_WOOD_LOG.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.STRIPPED_LIVING_WOOD_WOOD.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.MOSQUITOS.get(), RenderType.cutout());
+
 
         WoodType.register(ModWoodTypes.RIE_WOOD_TYPE);
         Sheets.addWoodType(ModWoodTypes.RIE_WOOD_TYPE);
@@ -120,6 +131,22 @@ public class RPGworldClient {
 
 
         event.enqueueWork(() -> {
+
+            ItemProperties.register(ModItems.FAIRAPIER_SWORD.get().asItem(), new ResourceLocation( "growing"), (stack, world, entity, seed) -> {
+                if (stack.isEmpty()) {
+                    return 0.0F;
+                }
+                CompoundTag tag = stack.getTag();
+                if (tag != null && tag.contains("Growing", Tag.TAG_INT)) {
+                    int growingValue = tag.getInt("Growing");
+                    if (growingValue == 1) {
+                        return 1.0F;
+                    } else if (growingValue == 2) {
+                        return 2.0F;
+                    }
+                }
+                return 0.0F;
+            });
 
             ItemProperties.register(ModItems.RPGIROLLE_ITEM.get().asItem(), new ResourceLocation( "token"), (stack, world, entity, seed) -> {
                 if (stack.isEmpty()) {
@@ -134,12 +161,15 @@ public class RPGworldClient {
                         return 2.0F;
                     } else if (tokenValue == 3) {
                         return 3.0F;
+                    } else if (tokenValue == 4) {
+                        return 4.0F;
                     }
                 }
                 return 0.0F;
             });
             ItemProperties.register(ModItems.WEALD_BLADE.get().asItem(), new ResourceLocation( "blocking"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
             ItemProperties.register(ModItems.DRILL_SPEAR.get().asItem(), new ResourceLocation( "throwing"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
+            ItemProperties.register(ModItems.FIREPROOF_SKIRT.get().asItem(), new ResourceLocation( "broken"), (stack, world, entity, seed) -> FireproofSkirtItem.isFireproof(stack) ? 0.0F : 1.0F);
             ItemProperties.register(ModItems.MINTAL_TRIANGLE.get(), new ResourceLocation("vibration"), (itemstack, level, livingEntity, p_174608_) -> livingEntity != null && MintalTriangleItem.getVibes(itemstack)>0 ? (23F-(float)MintalTriangleItem.getVibes(itemstack))/100 : 1.0F);
             ItemProperties.register(Items.CROSSBOW, new ResourceLocation("projectruffle"), (p_174605_, p_174606_, p_174607_, p_174608_) -> p_174607_ != null && CrossbowItem.isCharged(p_174605_) && CrossbowItem.containsChargedProjectile(p_174605_, ModItems.PROJECTRUFFLE_ITEM.get()) ? 1.0F : 0.0F);
             ItemProperties.register(Items.BOW, new ResourceLocation("projectruffle"), (stack, level, living, id) -> {
@@ -147,6 +177,9 @@ public class RPGworldClient {
                     return stack.getTag().getBoolean("UsingProjectruffle") ? 1.0F : 0.0F;
                 }
                 return 0.0F;
+            });
+            ItemProperties.register(ModItems.DRIED_WIDOWEED.get().asItem(), new ResourceLocation("smoking"), (p_234978_, p_234979_, p_234980_, p_234981_) -> {
+                return p_234980_ != null && p_234980_.isUsingItem() && p_234980_.getUseItem() == p_234978_ ? 1.0F : 0.0F;
             });
         });
     }

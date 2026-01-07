@@ -1,16 +1,20 @@
 package net.dainplay.rpgworldmod.entity.custom;
 
+import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.damage.ModDamageTypes;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -203,12 +207,34 @@ public class Mintobat extends Monster {
         this.entityData.set(DATA_FLAGS_ID, b0);
     }
 
+
+    public static boolean hasGoldenKill(ServerPlayer player) {
+        PlayerAdvancements advancements = player.getAdvancements();
+
+        Advancement advancement = player.server.getAdvancements().getAdvancement(RPGworldMod.prefix("golden_kill_all_rie_weald_mobs"));
+        AdvancementProgress progress = advancements.getOrStartProgress(advancement);
+
+        if (progress.isDone()) {
+            return true;
+        }
+
+        Iterable<String> completedCriteria = progress.getCompletedCriteria();
+
+        for (String criterionId : completedCriteria) {
+            if (criterionId.equals("golden_kill_mintobat")) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     @Override
     public boolean doHurtTarget(Entity pEntity) {
-        if(pEntity instanceof Player player)
+        if(pEntity instanceof ServerPlayer player && !hasGoldenKill(player))
             if(!player.isDamageSourceBlocked(this.level().damageSources().mobAttack(this)) && !this.entityData.get(DATA_DEALT_DAMAGE)) {
                 this.entityData.set(DATA_DEALT_DAMAGE, true);
-                this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+                this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
             }
         return super.doHurtTarget(pEntity);
     }
@@ -312,10 +338,10 @@ public class Mintobat extends Monster {
                                             if (isEyeInAnyFluid(target) && !isEyeInAnyFluid(this.mintobat)) scaledDamage /= 4;
                                             (target).hurt(ModDamageTypes.getEntityDamageSource(this.mintobat.level(), ModDamageTypes.SCREAM, this.mintobat), (float) scaledDamage);
 
-                                            if(target instanceof Player player)
+                                            if(target instanceof ServerPlayer player && !hasGoldenKill(player))
                                                 if(!player.isDamageSourceBlocked(this.mintobat.level().damageSources().mobAttack(this.mintobat)) && !this.mintobat.entityData.get(DATA_DEALT_DAMAGE)) {
                                                     this.mintobat.entityData.set(DATA_DEALT_DAMAGE, true);
-                                                    this.mintobat.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 1.0F, (this.mintobat.random.nextFloat() - this.mintobat.random.nextFloat()) * 0.2F + 1.0F);
+                                                    this.mintobat.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
                                                 }
                                         }
                                     });

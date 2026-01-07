@@ -18,7 +18,7 @@ public class MintobatRenderer extends MobRenderer<Mintobat, MintobatModel<Mintob
     public static final ResourceLocation TEXTURE_SCREAM = new ResourceLocation(RPGworldMod.MOD_ID, "textures/entity/mintobat/mintobat_scream.png");
 
     public MintobatRenderer(EntityRendererProvider.Context context) {
-        super(context, new MintobatModel<>(context.bakeLayer(MintobatModel.LAYER_LOCATION)), 0.25F);
+        super(context, new MintobatModel<>(context.bakeLayer(MintobatModel.LAYER_LOCATION)), 0.8F);
     }
     public ResourceLocation getTextureLocation(Mintobat pEntity) {
         return pEntity.isCharged() ? TEXTURE_SCREAM : TEXTURE;

@@ -147,9 +147,10 @@ public class FairapierWiltedPlantBlock extends BaseEntityBlock implements net.mi
         if (state.getBlock() != this) return defaultBlockState();
         return state;
     }
-    public IntegerProperty getAgeProperty() {
+    public static IntegerProperty getAgeProperty() {
         return AGE;
     }
+
     public static BooleanProperty getIsEnchantedProperty() {
         return IS_ENCHANTED;
     }

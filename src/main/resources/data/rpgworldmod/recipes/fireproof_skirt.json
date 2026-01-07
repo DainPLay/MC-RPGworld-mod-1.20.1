@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "item": "rpgworldmod:fireproof_petals"
+    },
+    "V": {
+      "item": "minecraft:vine"
+    }
+  },
+  "pattern": [
+    "PVP",
+    "PPP"
+  ],
+  "result": {
+    "item": "rpgworldmod:fireproof_skirt"
+  },
+  "show_notification": true
+}

@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#rpgworldmod:rie_logs"
+    "#rpgworldmod:rie_logs",
+    "#rpgworldmod:living_wood_logs"
   ]
 }

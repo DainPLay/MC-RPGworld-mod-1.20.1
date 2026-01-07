@@ -20,6 +20,10 @@
     "golden_kill_mosquito_swarm": {
       "conditions": {},
       "trigger": "rpgworldmod:golden_kill_mosquito_swarm"
+    },
+    "golden_kill_razorleaf": {
+      "conditions": {},
+      "trigger": "rpgworldmod:golden_kill_razorleaf"
     }
   },
   "display": {
@@ -53,6 +57,9 @@
     ],
     [
       "golden_kill_mosquito_swarm"
+    ],
+    [
+      "golden_kill_razorleaf"
     ]
   ],
   "rewards": {

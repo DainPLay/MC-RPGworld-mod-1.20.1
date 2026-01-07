@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import top.theillusivec4.curios.api.SlotContext;
@@ -50,12 +51,13 @@ public class ChitinThimbleItem extends CurioItem {
 				&& !swarmIsNear
 				&& playerState.getFluidState().isEmpty()
 				&& !playerState.is(BlockTags.FIRE)
+				&& !playerState.is(Blocks.NETHER_PORTAL)
 				&& !playerState.is(ModTags.Blocks.STICKY_FOR_MOSQUITOS)
 				&& !hasStickyBlockNearby(player)
 				&& level.dimension() != Level.NETHER
 		) {
-			player.getCooldowns().addCooldown(stack.getItem(), 200);
 			if (!level.isClientSide) {
+				player.getCooldowns().addCooldown(stack.getItem(), 200);
 				ServerLevel serverLevel = (ServerLevel) level;
 
 				MosquitoSwarm swarm = new MosquitoSwarm(ModEntities.MOSQUITO_SWARM.get(), level);

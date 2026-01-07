@@ -86,6 +86,17 @@ public class GasbassItem extends Item {
                     return new PortalInfo(new Vec3(teleportPosX, teleportPosY, teleportPosZ),
                             Vec3.ZERO, entity.getYRot(), entity.getXRot());
                 }
+                @Override
+                public Entity placeEntity(Entity entity, ServerLevel currentWorld, ServerLevel destWorld, float yaw,
+                                          Function<Boolean, Entity> repositionEntity) {
+                    // Всегда отключаем создание портала/платформы
+                    return repositionEntity.apply(false);
+                }
+                @Override
+                public boolean playTeleportSound(ServerPlayer player, ServerLevel sourceWorld, ServerLevel destWorld)
+                {
+                    return false;
+                }
             };
 
             if (entity instanceof ServerPlayer serverplayer) {
@@ -132,23 +143,15 @@ public class GasbassItem extends Item {
     private BlockPos findNearestRieWeald(LivingEntity entity, ServerLevel level) {
         BlockPos entityPos = entity.blockPosition();
 
-        // Определяем предикат для поиска биома
-        Predicate<Holder<Biome>> biomePredicate = holder -> {
-            // Проверка по ключу биома
-            return holder.unwrapKey()
-                    .map(key -> key.equals(RIE_WEALD_KEY))
-                    .orElse(false);
+        Predicate<Holder<Biome>> biomePredicate = holder -> holder.unwrapKey()
+                .map(key -> key.equals(RIE_WEALD_KEY))
+                .orElse(false);
 
-            // Альтернативно, если используете тег:
-            // return holder.is(RIE_WEALD_TAG);
-        };
+        // Сначала пробуем поискать ближе к игроку
+        int horizontalRadius = 1000; // Уменьшили радиус для первого поиска
+        int verticalRadius = 100;
+        int resolution = 4; // Увеличили разрешение для более точного поиска
 
-        // Параметры поиска (можно настроить по необходимости)
-        int horizontalRadius = 10000; // Радиус поиска по горизонтали
-        int verticalRadius = 100;     // Радиус поиска по вертикали
-        int resolution = 8;           // Разрешение поиска (чем меньше, тем точнее, но медленнее)
-
-        // Ищем ближайший биом
         Pair<BlockPos, Holder<Biome>> result = level.findClosestBiome3d(
                 biomePredicate,
                 entityPos,
@@ -157,22 +160,104 @@ public class GasbassItem extends Item {
                 resolution
         );
 
+        // Если не нашли в ближайшем радиусе, ищем дальше, но с другой стратегией
+        if (result == null) {
+            horizontalRadius = 10000;
+            resolution = 16; // Уменьшаем разрешение для дальнего поиска
+            result = level.findClosestBiome3d(
+                    biomePredicate,
+                    entityPos,
+                    horizontalRadius,
+                    verticalRadius,
+                    resolution
+            );
+        }
+
         if (result != null) {
             BlockPos biomePos = result.getFirst();
 
-            // Находим поверхность в этой позиции
-            int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                    biomePos.getX(), biomePos.getZ());
+            // Для дальних биомов делаем дополнительную проверку высоты
+            if (Math.abs(entityPos.getX() - biomePos.getX()) > 500 ||
+                    Math.abs(entityPos.getZ() - biomePos.getZ()) > 500) {
 
-            // Проверяем, что позиция безопасна
-            if (surfaceY > level.getMinBuildHeight() && surfaceY < level.getMaxBuildHeight()) {
-                return new BlockPos(biomePos.getX(), surfaceY, biomePos.getZ());
+                // Для дальних биомов используем более надежный способ получения высоты
+                return findSafeSurfacePosition(level, biomePos);
             } else {
-                return new BlockPos(biomePos.getX(), biomePos.getY(), biomePos.getZ());
+                // Для близких биомов используем обычный способ
+                int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, biomePos.getX(), biomePos.getZ());
+
+                if (surfaceY > level.getMinBuildHeight() && surfaceY < level.getMaxBuildHeight()) {
+                    return new BlockPos(biomePos.getX(), surfaceY, biomePos.getZ());
+                } else {
+                    // Если не получили корректную высоту, ищем безопасную позицию
+                    return findSafeSurfacePosition(level, biomePos);
+                }
             }
         }
 
         return null;
+    }
+
+    /**
+     * Находит безопасную поверхностную позицию для телепортации
+     */
+    private BlockPos findSafeSurfacePosition(ServerLevel level, BlockPos targetPos) {
+        // Получаем высоту поверхности с использованием нескольких методов для надежности
+        int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, targetPos.getX(), targetPos.getZ());
+
+        // Проверяем, является ли поверхность безопасной
+        if (surfaceY <= level.getMinBuildHeight() + 1) {
+            // Если поверхность слишком низкая, пробуем MOTION_BLOCKING
+            surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, targetPos.getX(), targetPos.getZ());
+        }
+
+        // Проверяем, что позиция безопасна для появления
+        if (surfaceY <= level.getMinBuildHeight() + 1) {
+            // Если все еще низко, ищем безопасную позицию вручную
+            return findManualSurfacePosition(level, targetPos);
+        }
+
+        // Убедимся, что игрок появится на безопасной высоте
+        BlockPos spawnPos = new BlockPos(targetPos.getX(), surfaceY, targetPos.getZ());
+
+        // Проверяем, что блок под ногами твердый
+        if (!level.getBlockState(spawnPos.below()).isSolid()) {
+            // Если нет, ищем ближайший твердый блок сверху
+            for (int y = spawnPos.getY(); y > level.getMinBuildHeight(); y--) {
+                BlockPos checkPos = new BlockPos(targetPos.getX(), y, targetPos.getZ());
+                if (level.getBlockState(checkPos).isSolid() &&
+                        level.isEmptyBlock(checkPos.above()) &&
+                        level.isEmptyBlock(checkPos.above(2))) {
+                    return checkPos.above();
+                }
+            }
+        }
+
+        return spawnPos;
+    }
+
+    /**
+     * Ручной поиск безопасной поверхности
+     */
+    private BlockPos findManualSurfacePosition(ServerLevel level, BlockPos targetPos) {
+        // Начинаем с максимальной высоты и идем вниз, пока не найдем безопасное место
+        for (int y = level.getMaxBuildHeight() - 1; y > level.getMinBuildHeight(); y--) {
+            BlockPos checkPos = new BlockPos(targetPos.getX(), y, targetPos.getZ());
+            BlockPos belowPos = checkPos.below();
+
+            // Проверяем условия для безопасного появления:
+            // 1. Блок под ногами должен быть твердым
+            // 2. Место появления должно быть пустым
+            // 3. Над головой должно быть свободное пространство
+            if (level.getBlockState(belowPos).isSolid() &&
+                    level.isEmptyBlock(checkPos) &&
+                    level.isEmptyBlock(checkPos.above())) {
+                return checkPos;
+            }
+        }
+
+        // Если ничего не нашли, возвращаем позицию на Y=64 (средняя безопасная высота)
+        return new BlockPos(targetPos.getX(), Math.max(64, level.getMinBuildHeight() + 1), targetPos.getZ());
     }
 
     private static void emitSmokeParticles(LivingEntity entity) {

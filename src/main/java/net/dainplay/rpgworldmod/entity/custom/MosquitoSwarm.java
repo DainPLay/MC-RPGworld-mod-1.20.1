@@ -1,5 +1,6 @@
 package net.dainplay.rpgworldmod.entity.custom;
 
+import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.biome.BiomeRegistry;
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
@@ -9,6 +10,8 @@ import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.particle.ModParticles;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.dainplay.rpgworldmod.util.ModTags;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -16,6 +19,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.OldUsersConverter;
@@ -115,6 +119,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		this.moveControl = new FlyingMoveControl(this, 10, true);
 		this.applyInvulnerability();
 	}
+
 	@Nullable
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
 
@@ -122,6 +127,9 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 		if (pLevel.getDifficulty() == Difficulty.HARD && randomsource.nextFloat() < 0.1F * pDifficulty.getSpecialMultiplier()) {
 			this.addEffect(new MobEffectInstance(ModEffects.MOSSIOSIS.get(), 2400, 0));
+		}
+		if (pLevel.getDifficulty() == Difficulty.HARD && randomsource.nextFloat() < 0.1F * pDifficulty.getSpecialMultiplier()) {
+			this.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 1200, 0));
 		}
 		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
 	}
@@ -181,11 +189,38 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				// Если очень близко к цели (вплотную), накладываем эффект отравления
 				if (distance < 1.5) {
 					applyEffect(target);
-					this.dealtDamage();
+
+					if (target instanceof ServerPlayer player && !hasGoldenKill(player))
+						if (!this.entityData.get(DATA_DEALT_DAMAGE)) {
+							this.entityData.set(DATA_DEALT_DAMAGE, true);
+							this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
+						}
 					this.proceedKill();
 				}
 			}
 		}
+	}
+
+
+	public boolean hasGoldenKill(ServerPlayer player) {
+		PlayerAdvancements advancements = player.getAdvancements();
+
+		Advancement advancement = player.server.getAdvancements().getAdvancement(RPGworldMod.prefix("golden_kill_all_rie_weald_mobs"));
+		AdvancementProgress progress = advancements.getOrStartProgress(advancement);
+
+		if (progress.isDone()) {
+			return true;
+		}
+
+		Iterable<String> completedCriteria = progress.getCompletedCriteria();
+
+		for (String criterionId : completedCriteria) {
+			if (criterionId.equals("golden_kill_mosquito_swarm")) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	// Новый метод для проверки пути к цели
@@ -309,7 +344,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 	@Override
 	public void checkDespawn() {
-		if (this.getOwner() == null){
+		if (this.getOwner() == null) {
 			super.checkDespawn();
 			return;
 		}
@@ -1537,7 +1572,11 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 	public boolean doHurtTarget(Entity pEntity) {
 		if (pEntity instanceof LivingEntity livingEntity && attackCooldown == 0) {
 			applyEffect(livingEntity);
-			this.dealtDamage();
+			if (pEntity instanceof ServerPlayer player && !hasGoldenKill(player))
+				if (!this.entityData.get(DATA_DEALT_DAMAGE)) {
+					this.entityData.set(DATA_DEALT_DAMAGE, true);
+					this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
+				}
 			this.proceedKill();
 			return true;
 		}
@@ -1567,6 +1606,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 	public void dealtDamage() {
 		this.entityData.set(DATA_DEALT_DAMAGE, true);
+
 	}
 
 	public void setSize(int size) {
@@ -1685,10 +1725,11 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 	}
 
 	public boolean hurt(DamageSource pSource, float pAmount) {
-		if (pSource == this.damageSources().genericKill()) {
+		if (pSource == this.damageSources().genericKill() || pSource.isCreativePlayer()) {
 			transformIntoBlock(this.getSize());
 			return super.hurt(pSource, pAmount);
-		} else return false;
+		}
+		return false;
 	}
 
 	@Override

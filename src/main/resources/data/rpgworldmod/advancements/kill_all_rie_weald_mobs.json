@@ -1,5 +1,5 @@
 {
-  "parent": "rpgworldmod:weald_blade_gestures",
+  "parent": "rpgworldmod:defeat_razorleaf",
   "criteria": {
     "rpgworldmod:fireflantern": {
       "conditions": {
@@ -57,6 +57,20 @@
       },
       "trigger": "minecraft:player_killed_entity"
     },
+    "rpgworldmod:razorleaf": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "rpgworldmod:razorleaf"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    },
     "kill_mosquito_swarm": {
       "conditions": {},
       "trigger": "rpgworldmod:kill_mosquito_swarm"
@@ -90,6 +104,9 @@
     ],
     [
       "rpgworldmod:drillhog"
+    ],
+    [
+      "rpgworldmod:razorleaf"
     ],
     [
       "kill_mosquito_swarm"

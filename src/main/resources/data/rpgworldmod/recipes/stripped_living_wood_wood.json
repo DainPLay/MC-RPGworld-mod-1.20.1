@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "bark",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "rpgworldmod:stripped_living_wood_log"
+    }
+  },
+  "result": {
+    "item": "rpgworldmod:stripped_living_wood_wood",
+    "count": 3
+  }
+}

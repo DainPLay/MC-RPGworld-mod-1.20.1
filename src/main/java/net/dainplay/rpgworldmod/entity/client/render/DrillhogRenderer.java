@@ -1,16 +1,11 @@
 package net.dainplay.rpgworldmod.entity.client.render;
 
 import net.dainplay.rpgworldmod.RPGworldMod;
-import net.dainplay.rpgworldmod.entity.client.model.Burr_purrModel;
 import net.dainplay.rpgworldmod.entity.client.model.DrillhogModel;
-import net.dainplay.rpgworldmod.entity.custom.Burr_purr;
 import net.dainplay.rpgworldmod.entity.custom.Drillhog;
-import net.dainplay.rpgworldmod.entity.custom.Fireflantern;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
-
-import static net.dainplay.rpgworldmod.entity.custom.Burr_purr.DATA_IS_SPINNING;
 
 
 public class DrillhogRenderer extends MobRenderer<Drillhog, DrillhogModel<Drillhog>> {

@@ -22,6 +22,7 @@ public class KillEntityHandler {
 
         if (!(entity instanceof Mintobat)
         && !(entity instanceof Burr_purr)
+                && !(entity instanceof Razorleaf)
                 && !(entity instanceof Fireflantern)
                 && !(entity instanceof Drillhog)) {
             return;

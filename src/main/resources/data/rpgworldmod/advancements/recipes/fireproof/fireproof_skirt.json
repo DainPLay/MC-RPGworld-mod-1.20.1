@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_fireproof_petals": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:fireproof_petals"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "rpgworldmod:fireproof_skirt"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_fireproof_petals",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "rpgworldmod:fireproof_skirt"
+    ]
+  },
+  "sends_telemetry_event": false
+}

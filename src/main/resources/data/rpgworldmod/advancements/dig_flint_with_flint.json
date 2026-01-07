@@ -1,0 +1,31 @@
+{
+  "parent": "rpgworldmod:root",
+  "criteria": {
+    "dig_flint_with_flint": {
+      "conditions": {},
+      "trigger": "rpgworldmod:dig_flint_with_flint"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.dig_flint_with_flint.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:flint_shovel",
+      "nbt": "{Damage:0}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.dig_flint_with_flint.title"
+    }
+  },
+  "requirements": [
+    [
+      "dig_flint_with_flint"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

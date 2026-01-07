@@ -83,14 +83,16 @@ public class MintalTriangleItem extends Item implements Vanishable, RPGtooltip {
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
         ItemStack itemstack = pPlayer.getItemInHand(pUsedHand);
         AtomicInteger entities_hit = new AtomicInteger();
-        entities_hit.set(0);
+        if(!pLevel.isClientSide) {
+            entities_hit.set(0);
             pPlayer.getCooldowns().addCooldown(this, cooldown(itemstack));
             pPlayer.awardStat(Stats.ITEM_USED.get(this));
             itemstack.hurtAndBreak(1, pPlayer, (p_43296_) -> {
                 p_43296_.broadcastBreakEvent(pUsedHand);
             });
             setVibes(itemstack, 23);
-        if(!pLevel.isClientSide) ModAdvancements.MINTAL_TRIANGLE_USED.trigger((ServerPlayer) pPlayer);
+            ModAdvancements.MINTAL_TRIANGLE_USED.trigger((ServerPlayer) pPlayer);
+        }
         pLevel.playSound(pPlayer, pPlayer.blockPosition(), RPGSounds.TRIANGLE_DING.get(), SoundSource.PLAYERS, volume(itemstack), (random.nextFloat() - random.nextFloat()) * 0.05F + 1.0F + pitch(itemstack));
 
         AtomicBoolean skip = new AtomicBoolean(false);

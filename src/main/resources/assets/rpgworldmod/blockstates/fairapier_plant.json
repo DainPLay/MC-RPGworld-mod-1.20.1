@@ -29,28 +29,28 @@
     ],
     "age=3": [
       {
-        "model": "rpgworldmod:block/fairapier_3"
+        "model": "rpgworldmod:block/fairapier_brand_new_3"
       },
       {
-        "model": "rpgworldmod:block/fairapier_3",
+        "model": "rpgworldmod:block/fairapier_brand_new_3",
         "y": 90
       }
     ],
     "age=4": [
       {
-        "model": "rpgworldmod:block/fairapier_4"
+        "model": "rpgworldmod:block/fairapier_brand_new_4"
       },
       {
-        "model": "rpgworldmod:block/fairapier_4",
+        "model": "rpgworldmod:block/fairapier_brand_new_4",
         "y": 90
       }
     ],
     "age=5": [
       {
-        "model": "rpgworldmod:block/fairapier_5"
+        "model": "rpgworldmod:block/fairapier_brand_new_5"
       },
       {
-        "model": "rpgworldmod:block/fairapier_5",
+        "model": "rpgworldmod:block/fairapier_brand_new_5",
         "y": 90
       }
     ]

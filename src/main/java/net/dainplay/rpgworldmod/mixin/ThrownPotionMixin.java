@@ -2,6 +2,7 @@ package net.dainplay.rpgworldmod.mixin;
 
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.entity.custom.MosquitoSwarm;
+import net.dainplay.rpgworldmod.entity.custom.Razorleaf;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrownPotion;
 import net.minecraft.world.phys.AABB;
@@ -29,6 +30,10 @@ public abstract class ThrownPotionMixin {
 
         for(MosquitoSwarm mosquitoSwarm : potion.level().getEntitiesOfClass(MosquitoSwarm.class, aabb)) {
             mosquitoSwarm.transformIntoBlock(mosquitoSwarm.getSize());
+        }
+
+        for(Razorleaf razorleaf : potion.level().getEntitiesOfClass(Razorleaf.class, aabb)) {
+            razorleaf.turnToBlock();
         }
     }
 }

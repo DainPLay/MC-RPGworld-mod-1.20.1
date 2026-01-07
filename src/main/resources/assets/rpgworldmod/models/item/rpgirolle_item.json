@@ -21,6 +21,12 @@
         "token": 3.0
       },
       "model": "rpgworldmod:item/mod_icon"
+    },
+    {
+      "predicate": {
+        "token": 4.0
+      },
+      "model": "rpgworldmod:item/mana_star"
     }
   ]
 }

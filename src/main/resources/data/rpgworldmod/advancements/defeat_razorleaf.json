@@ -1,0 +1,40 @@
+{
+  "parent": "rpgworldmod:find_rie_weald",
+  "criteria": {
+    "razorleaf": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "rpgworldmod:razorleaf"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.defeat_razorleaf.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:young_razorleaf"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.defeat_razorleaf.title"
+    }
+  },
+  "requirements": [
+    [
+      "razorleaf"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

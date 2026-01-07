@@ -1,0 +1,7 @@
+{
+	"parent": "rpgworldmod:block/living_wood_wood_2",
+	"textures": {
+		"side": "rpgworldmod:block/stripped_living_wood_log",
+		"particle": "rpgworldmod:block/stripped_living_wood_log"
+	}
+}

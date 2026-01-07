@@ -195,7 +195,8 @@ public class SpikyIvyBlock extends Block implements BonemealableBlock {
     private boolean connectsTo(BlockState pState) {
         return (pState.getBlock() == ModBlocks.SPIKY_IVY.get()
                 || pState.is(BlockTags.DIRT)
-                || pState.is(Blocks.FARMLAND));
+                || pState.is(Blocks.FARMLAND)
+                || pState.is(ModBlocks.YOUNG_RAZORLEAF.get()));
     }
 
     @Override
@@ -367,7 +368,15 @@ public class SpikyIvyBlock extends Block implements BonemealableBlock {
     @Override
     @Deprecated
     public void entityInside(BlockState pState, Level pLevel, BlockPos pPos, Entity pEntity) {
-        if (!(pEntity instanceof ItemEntity) && !pEntity.isCrouching() && pEntity.getType() != ModEntities.BRAMBLEFOX.get() && pEntity.getType() != ModEntities.MINTOBAT.get() && pEntity.getType() != ModEntities.BIBBIT.get() && pEntity.getType() != ModEntities.BURR_PURR.get() && pEntity.getType() != ModEntities.DRILLHOG.get() && pEntity.getType() != ModEntities.MOSQUITO_SWARM.get()) {
+        if (!(pEntity instanceof ItemEntity)
+                && !pEntity.isCrouching()
+                && pEntity.getType() != ModEntities.BRAMBLEFOX.get()
+                && pEntity.getType() != ModEntities.MINTOBAT.get()
+                && pEntity.getType() != ModEntities.BIBBIT.get()
+                && pEntity.getType() != ModEntities.BURR_PURR.get()
+                && pEntity.getType() != ModEntities.DRILLHOG.get()
+                && pEntity.getType() != ModEntities.MOSQUITO_SWARM.get()
+                && pEntity.getType() != ModEntities.RAZORLEAF.get()) {
             if(pEntity.getBoundingBox().intersects(getAlignedBlockAABB(pLevel, pPos, pState).inflate(0.01D))) {
                 pEntity.hurt(ModDamageTypes.getDamageSource(pLevel, ModDamageTypes.SPIKY_IVY), 2.5F);
                 pEntity.makeStuckInBlock(pState, new Vec3(0.25D, 1.0F, 0.25D));

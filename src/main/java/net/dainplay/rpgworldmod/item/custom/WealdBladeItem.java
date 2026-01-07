@@ -77,7 +77,7 @@ public class WealdBladeItem extends SwordItem implements RPGtooltip {
     public void onUseTick(Level pLevel, LivingEntity pLivingEntity, ItemStack pStack, int pRemainingUseDuration) {
         super.onUseTick(pLevel, pLivingEntity, pStack, pRemainingUseDuration);
 
-        if (pLivingEntity.hasEffect(ModEffects.MOSQUITOING.get())) {
+        if (pLivingEntity.hasEffect(ModEffects.MOSQUITOING.get()) && getEnchantmentLevel(pStack, ModEnchantments.BLOWING.get()) > 0) {
             MosquitoSwarm.spawnBlock(pLivingEntity,pLivingEntity.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier());
             pLivingEntity.removeEffect(ModEffects.MOSQUITOING.get());
         }

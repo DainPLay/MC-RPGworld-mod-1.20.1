@@ -20,7 +20,11 @@ public interface RPGtooltip {
 
         if (Minecraft.getInstance().player == null)
             return;
-
+        if(pStack.getItem() instanceof ManaCostItem item) {
+            MutableComponent costText = Component.translatable("tooltip.rpgworldmod.cost_text").withStyle(ChatFormatting.WHITE);
+            costText.append(Component.translatable("tooltip.rpgworldmod.cost_number", item.getManaCost()).withStyle(ChatFormatting.BLUE));
+            pTooltip.add(costText);
+        }
         if (InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), Minecraft.getInstance().options.keyShift.getKey().getValue())) {
             // При зажатом Shift: заголовок белый, текст особенностей серый с переносами
             List<Component> featureLines = this.getDisplayFeaturesWithLineBreaks(pStack);

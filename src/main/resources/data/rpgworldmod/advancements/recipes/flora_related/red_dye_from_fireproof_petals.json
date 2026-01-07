@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "rpgworldmod:red_dye_from_fireproof_petals"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_wither_rose": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:fireproof_petals"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_wither_rose",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "rpgworldmod:red_dye_from_fireproof_petals"
+    ]
+  },
+  "sends_telemetry_event": false
+}

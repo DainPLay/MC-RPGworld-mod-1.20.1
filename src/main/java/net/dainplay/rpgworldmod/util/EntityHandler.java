@@ -17,6 +17,7 @@ public class EntityHandler {
         event.put(ModEntities.BURR_PURR.get(), Burr_purr.createAttributes().build());
         event.put(ModEntities.DRILLHOG.get(), Drillhog.createAttributes().build());
         event.put(ModEntities.MOSQUITO_SWARM.get(), MosquitoSwarm.createAttributes().build());
+        event.put(ModEntities.RAZORLEAF.get(), Razorleaf.createAttributes().build());
         event.put(ModEntities.BIBBIT.get(), Bibbit.createAttributes().build());
         event.put(ModEntities.PLATINUMFISH.get(), Platinumfish.createAttributes().build());
         event.put(ModEntities.MOSSFRONT.get(), Mossfront.createAttributes().build());

@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "rpgworldmod:living_wood_helmet",
+    "rpgworldmod:living_wood_chestplate",
+    "rpgworldmod:living_wood_leggings",
+    "rpgworldmod:living_wood_boots"
+  ]
+}

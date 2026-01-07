@@ -6,6 +6,7 @@ import net.dainplay.rpgworldmod.util.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -35,13 +36,14 @@ import javax.annotation.Nullable;
 public class WidoweedBlock extends BushBlock {
     protected static final float AABB_OFFSET = 6.0F;
     protected RandomSource random = RandomSource.create();
-    protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
+    protected static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
 
     public WidoweedBlock(Properties properties) {
         super(properties);
     }
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        return SHAPE;
+        Vec3 vec3 = pState.getOffset(pLevel, pPos);
+        return SHAPE.move(vec3.x, vec3.y, vec3.z);
     }
 
     @Override
@@ -61,10 +63,9 @@ public class WidoweedBlock extends BushBlock {
             pEntity.makeStuckInBlock(pState, new Vec3(0.25D, 1.0F, 0.25D));
             pLevel.addParticle(ParticleTypes.HAPPY_VILLAGER, (double)pPos.getX() + 0.5D, (double)pPos.getY() + 0.5D, (double)pPos.getZ() + 0.5D, 0.0D, 0.0D, 0.0D);
         }
-        else if (pEntity instanceof ItemEntity) {
-            if (((ItemEntity)pEntity).getItem().is(ModTags.Items.WIDOWEED_CONSUMABLE)) {
-                pEntity.hurt(ModDamageTypes.getDamageSource(pLevel, ModDamageTypes.WIDOWEED), 2.5F);
-                pLevel.addParticle(ParticleTypes.HAPPY_VILLAGER, (double)pPos.getX() + 0.5D, (double)pPos.getY() + 0.5D, (double)pPos.getZ() + 0.5D, 0.0D, 0.0D, 0.0D);
+        else if (pEntity instanceof ItemEntity item && item.getItem().is(ModTags.Items.WIDOWEED_CONSUMABLE)) {
+                item.hurt(ModDamageTypes.getDamageSource(pLevel, ModDamageTypes.WIDOWEED), 2.5F);
+                if(pLevel instanceof ServerLevel serverLevel) serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER, pPos.getX()+0.5f, pPos.getY()+0.5f, pPos.getZ()+0.5f, 8, serverLevel.getRandom().nextFloat()/5, serverLevel.getRandom().nextFloat()/5, serverLevel.getRandom().nextFloat()/5, 0.0f);
                 if((pLevel.getBlockState(pPos.south()).getBlock() == Blocks.AIR || pLevel.getBlockState(pPos.south()).is(BlockTags.REPLACEABLE)) && random.nextInt(2) > 0 && this.canSurvive(pLevel.getBlockState(pPos.south()), pLevel, pPos.south())) pLevel.setBlockAndUpdate(pPos.south(), ModBlocks.WIDOWEED.get().defaultBlockState());
                 if((pLevel.getBlockState(pPos.north()).getBlock() == Blocks.AIR || pLevel.getBlockState(pPos.north()).is(BlockTags.REPLACEABLE)) && random.nextInt(2) > 0 && this.canSurvive(pLevel.getBlockState(pPos.north()), pLevel, pPos.north())) pLevel.setBlockAndUpdate(pPos.north(), ModBlocks.WIDOWEED.get().defaultBlockState());
                 if((pLevel.getBlockState(pPos.west()).getBlock() == Blocks.AIR || pLevel.getBlockState(pPos.west()).is(BlockTags.REPLACEABLE)) && random.nextInt(2) > 0 && this.canSurvive(pLevel.getBlockState(pPos.west()), pLevel, pPos.west())) pLevel.setBlockAndUpdate(pPos.west(), ModBlocks.WIDOWEED.get().defaultBlockState());
@@ -79,8 +80,6 @@ public class WidoweedBlock extends BushBlock {
                 if((pLevel.getBlockState(pPos.north().above()).getBlock() == Blocks.AIR || pLevel.getBlockState(pPos.north().above()).is(BlockTags.REPLACEABLE)) && random.nextInt(2) > 0 && this.canSurvive(pLevel.getBlockState(pPos.north().above()), pLevel, pPos.north().above())) pLevel.setBlockAndUpdate(pPos.north().above(), ModBlocks.WIDOWEED.get().defaultBlockState());
                 if((pLevel.getBlockState(pPos.west().above()).getBlock() == Blocks.AIR || pLevel.getBlockState(pPos.west().above()).is(BlockTags.REPLACEABLE)) && random.nextInt(2) > 0 && this.canSurvive(pLevel.getBlockState(pPos.west().above()), pLevel, pPos.west().above())) pLevel.setBlockAndUpdate(pPos.west().above(), ModBlocks.WIDOWEED.get().defaultBlockState());
                 if((pLevel.getBlockState(pPos.east().above()).getBlock() == Blocks.AIR || pLevel.getBlockState(pPos.east().above()).is(BlockTags.REPLACEABLE)) && random.nextInt(2) > 0 && this.canSurvive(pLevel.getBlockState(pPos.east().above()), pLevel, pPos.east().above())) pLevel.setBlockAndUpdate(pPos.east().above(), ModBlocks.WIDOWEED.get().defaultBlockState());
-            }
-
         }
     }
 

@@ -1,10 +1,8 @@
 package net.dainplay.rpgworldmod.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.effect.ModEffects;
-import net.dainplay.rpgworldmod.entity.custom.Drillhog;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
@@ -39,13 +37,13 @@ public class OverlayEventHandler implements IGuiOverlay {
 		regen = value;
 	}
 
-	private final static int UNKNOWN_ARMOR_VALUE = -1;
-	private static int previousMossValue = UNKNOWN_ARMOR_VALUE;
-	private static int previousMosquitoValue = UNKNOWN_ARMOR_VALUE;
+	private final static int UNKNOWN_VALUE = -1;
+	private static int previousMossValue = UNKNOWN_VALUE;
+	private static int previousMosquitoValue = UNKNOWN_VALUE;
 
 	private static final Minecraft mc = Minecraft.getInstance();
-	private static MossIcon[] mossIcons = new MossIcon[0];
-	private static MossIcon[] mosquitoIcons = new MossIcon[0];
+	private static HeartIcon[] heartIcons = new HeartIcon[0];
+	private static HeartIcon[] mosquitoIcons = new HeartIcon[0];
 
 	public void render(ForgeGui gui, GuiGraphics guiGraphics, float partialTick, int screenWidth, int screenHeight) {
 		if (!mc.options.hideGui && gui.shouldDrawSurvivalElements()) {
@@ -69,6 +67,7 @@ public class OverlayEventHandler implements IGuiOverlay {
 		if (mc.player != null && mc.player.hasEffect(ModEffects.MOSSIOSIS.get()))
 			return (Objects.requireNonNull(mc.player.getEffect(ModEffects.MOSSIOSIS.get())).getAmplifier() + 1) * 6;
 		else return -1;
+
 	}
 
 	private static int calculateMosquitoValue() {
@@ -89,12 +88,12 @@ public class OverlayEventHandler implements IGuiOverlay {
 		int health = Mth.ceil(mc.player.getHealth());
 
 		if (currentMossValue != previousMossValue) {
-			mossIcons = MossBar.calculateMossIcons(currentMossValue);
+			heartIcons = HeartsBar.calculateHeartIcons(currentMossValue);
 			previousMossValue = currentMossValue;
 		}
 
 		// Проверяем, что массив проинициализирован
-		if (mossIcons == null || mossIcons.length == 0) {
+		if (heartIcons == null || heartIcons.length == 0) {
 			return;
 		}
 
@@ -117,8 +116,8 @@ public class OverlayEventHandler implements IGuiOverlay {
 				}
 
 				// Безопасный доступ к массиву
-				if (i < mossIcons.length) {
-					switch (mossIcons[i].mossIconType) {
+				if (i < heartIcons.length) {
+					switch (heartIcons[i].heartIconType) {
 						case NONE:
 							drawMossHeart(stack, xPosition, currentY, 0, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
 							break;
@@ -150,7 +149,7 @@ public class OverlayEventHandler implements IGuiOverlay {
 		int health = Mth.ceil(mc.player.getHealth());
 
 		if (currentMosquitoValue != previousMosquitoValue) {
-			mosquitoIcons = MossBar.calculateMossIcons(currentMosquitoValue);
+			mosquitoIcons = HeartsBar.calculateHeartIcons(currentMosquitoValue);
 			previousMosquitoValue = currentMosquitoValue;
 		}
 
@@ -179,7 +178,7 @@ public class OverlayEventHandler implements IGuiOverlay {
 
 				// Безопасный доступ к массиву
 				if (i < mosquitoIcons.length) {
-					switch (mosquitoIcons[i].mossIconType) {
+					switch (mosquitoIcons[i].heartIconType) {
 						case NONE:
 							drawMosquitoHeart(stack, xPosition, currentY, 0, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
 							break;

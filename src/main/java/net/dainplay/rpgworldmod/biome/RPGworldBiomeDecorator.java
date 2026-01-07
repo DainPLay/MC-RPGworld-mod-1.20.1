@@ -99,6 +99,7 @@ public class RPGworldBiomeDecorator {
         biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.PROJECTRUFFLE_PLACED_KEY);
         biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.SILICINA_PLACED_KEY);
         biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.HOLTS_REFLECTION_PLACED_KEY);
+        biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.RAZORLEAF_BUD_PLACED_KEY);
         biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.RPGIROLLE_PLACED_KEY);
         biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.MIMOSSA_PLACED_KEY);
         biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.TYPHON_PLACED_KEY);

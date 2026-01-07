@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 public class HoltsReflectionBlock extends BaseEntityBlock implements net.minecraftforge.common.IPlantable {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final IntegerProperty TIMESTATE = IntegerProperty.create("timestate", 0, 5);
-    protected static final VoxelShape SHAPE = Block.box(5.0D, 0.0D, 5.0D, 11.0D, 10.0D, 11.0D);
+    protected static final VoxelShape SHAPE = Block.box(5.0D, 0.0D, 5.0D, 11.0D, 13.0D, 11.0D);
     protected static final float AABB_OFFSET = 3.0F;
     public HoltsReflectionBlock(Properties properties) {
         super(properties);

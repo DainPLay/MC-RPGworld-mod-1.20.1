@@ -33,10 +33,15 @@ public class ModTags {
 
     public static class Items {
 
+        public static final TagKey<Item> EXTINGUISH_RAZORLEAF = forgeTag("extinguish_razorleaf");
         public static final TagKey<Item> WIDOWEED_CONSUMABLE = forgeTag("widoweed_consumable");
         public static final TagKey<Item> BRAMBLEFOX_FOOD = forgeTag("bramblefox_food");
+        public static final TagKey<Item> LIVING_WOOD_LOGS = modTag("living_wood_logs");
         private static TagKey<Item> forgeTag (String name) {
             return ItemTags.create(new ResourceLocation("forge", name));
+        }
+        private static TagKey<Item> modTag (String name) {
+            return ItemTags.create(new ResourceLocation(RPGworldMod.MOD_ID, name));
         }
     }
 

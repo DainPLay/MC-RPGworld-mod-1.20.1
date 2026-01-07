@@ -1,0 +1,46 @@
+{
+  "variants": {
+    "axis=x": [
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_1", "x": 90, "y": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_2", "x": 90, "y": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_3", "x": 90, "y": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_4", "x": 90, "y": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_5", "x": 90, "y": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_6", "x": 90, "y": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_7", "x": 90, "y": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_8", "x": 90, "y": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_9", "x": 90, "y": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_10", "x": 90, "y": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_11", "x": 90, "y": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_12", "x": 90, "y": 90 }
+    ],
+    "axis=y": [
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_1" },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_2" },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_3" },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_4" },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_5" },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_6" },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_7" },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_8" },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_9" },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_10" },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_11" },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_12" }
+    ],
+    "axis=z": [
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_1", "x": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_2", "x": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_3", "x": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_4", "x": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_5", "x": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_6", "x": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_7", "x": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_8", "x": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_9", "x": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_10", "x": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_11", "x": 90 },
+      { "model": "rpgworldmod:block/stripped_living_wood_wood_12", "x": 90 }
+    ]
+  }
+}

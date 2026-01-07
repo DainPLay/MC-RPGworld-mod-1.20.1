@@ -97,7 +97,7 @@ public class GuitarAxItem extends AxeItem implements RPGtooltip {
         if(pUsedHand.equals(InteractionHand.OFF_HAND)) {
             pLevel.playSound(pPlayer, pPlayer.blockPosition(), RPGSounds.GUITAR_AX_PLAY.get(), SoundSource.PLAYERS, volume(itemstack), (random.nextFloat() - random.nextFloat()) * 0.05F + 1.0F);
             if(!pLevel.isClientSide) ((ServerLevel) pLevel).sendParticles(ParticleTypes.SONIC_BOOM, pPlayer.getX(), pPlayer.getY(0.5D), pPlayer.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
-            pPlayer.getCooldowns().addCooldown(this, 50);
+            if(!pLevel.isClientSide) pPlayer.getCooldowns().addCooldown(this, 50);
             pPlayer.swing(InteractionHand.MAIN_HAND);
         }
         return InteractionResultHolder.fail(itemstack);

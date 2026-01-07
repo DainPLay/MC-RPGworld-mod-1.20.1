@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
 public class GlossomBlock extends BaseEntityBlock implements net.minecraftforge.common.IPlantable, SuspiciousEffectHolder {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty GLOWING = BooleanProperty.create("glowing");
-    protected static final VoxelShape SHAPE = Block.box(5.0D, 0.0D, 5.0D, 11.0D, 10.0D, 11.0D);
+    protected static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 12.0D, 12.0D);
     private final MobEffect suspiciousStewEffect;
     private final int effectDuration;
 

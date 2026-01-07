@@ -49,6 +49,7 @@ public class DataGenerators {
 		DatapackBuiltinEntriesProvider datapackProvider = new RegistryDataGenerator(output, provider);
 		CompletableFuture<HolderLookup.Provider> lookupProvider = datapackProvider.getRegistryProvider();
 		generator.addProvider(event.includeServer(), datapackProvider);
+		generator.addProvider(event.includeClient(), new ItemModelGenerator(output, helper));
 		generator.addProvider(event.includeServer(), new DamageTypeTagGenerator(output, lookupProvider, helper));
 		generator.addProvider(true, new PackMetadataGenerator(output).add(PackMetadataSection.TYPE, new PackMetadataSection(
 						Component.literal("Resources for RPGworld mod"),

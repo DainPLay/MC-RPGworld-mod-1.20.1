@@ -1,0 +1,33 @@
+{
+  "parent": "rpgworldmod:defeat_razorleaf",
+  "criteria": {
+    "feed_zombie_to_razorleaf": {
+      "conditions": {},
+      "trigger": "rpgworldmod:feed_zombie_to_razorleaf"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.feed_zombie_to_razorleaf.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:zombie_head"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.feed_zombie_to_razorleaf.title"
+    }
+  },
+  "requirements": [
+    [
+      "feed_zombie_to_razorleaf"
+    ]
+  ],
+  "rewards": {
+    "experience": 35
+  },
+  "sends_telemetry_event": true
+}
