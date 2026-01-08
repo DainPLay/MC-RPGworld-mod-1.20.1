@@ -803,5 +803,17 @@
       "rpgworldmod:razorleaf/spit"
     ],
     "subtitle": "subtitles.rpgworldmod.razorleaf.spit"
+  },
+  "rpgworldmod.fire_catcher_hungry": {
+    "sounds": [
+      "rpgworldmod:fire_catcher/hungry"
+    ],
+    "subtitle": "subtitles.rpgworldmod.fire_catcher_hungry"
+  },
+  "rpgworldmod.fire_catcher_not_hungry": {
+    "sounds": [
+      "rpgworldmod:fire_catcher/not_hungry"
+    ],
+    "subtitle": "subtitles.rpgworldmod.fire_catcher_not_hungry"
   }
 }

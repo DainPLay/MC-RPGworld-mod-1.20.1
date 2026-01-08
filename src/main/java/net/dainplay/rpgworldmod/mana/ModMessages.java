@@ -1,8 +1,10 @@
 package net.dainplay.rpgworldmod.mana;
 
 import net.dainplay.rpgworldmod.RPGworldMod;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
@@ -50,6 +52,13 @@ public class ModMessages {
 				.encoder(SyncEntityMotionPacket::toBytes)
 				.consumerMainThread(SyncEntityMotionPacket::handle)
 				.add();
+
+		// Регистрация нового пакета для частиц огня
+		net.messageBuilder(FireExtinguishParticlesPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(FireExtinguishParticlesPacket::new)
+				.encoder(FireExtinguishParticlesPacket::toBytes)
+				.consumerMainThread(FireExtinguishParticlesPacket::handle)
+				.add();
 	}
 
 	public static <MSG> void sendToServer(MSG message) {
@@ -62,5 +71,12 @@ public class ModMessages {
 
 	public static <MSG> void sendToClients(MSG message) {
 		INSTANCE.send(PacketDistributor.ALL.noArg(), message);
+	}
+
+	// Новый метод для отправки пакета конкретному игроку
+	public static <MSG> void sendToNearbyPlayers(MSG message, Level level, BlockPos pos, double radius) {
+		INSTANCE.send(PacketDistributor.NEAR.with(
+				() -> new PacketDistributor.TargetPoint(pos.getX(), pos.getY(), pos.getZ(), radius, level.dimension())
+		), message);
 	}
 }

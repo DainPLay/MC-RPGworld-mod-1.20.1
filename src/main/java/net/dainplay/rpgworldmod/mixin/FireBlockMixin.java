@@ -22,14 +22,11 @@ public class FireBlockMixin {
 
         FireCatcherManager manager = FireCatcherManager.get(level);
         if (manager.isChunkProtected(chunkX, chunkZ, level.dimension())) {
-            // В обычном режиме отменяем распространение огня
-            if (!manager.isFireAllowed(chunkX, chunkZ, level.dimension())) {
-                ci.cancel();
-            }
+            // Отменяем тики огня в обоих режимах
+            ci.cancel();
         }
     }
 
-    // Используем onPlace вместо onBlockAdded
     @Inject(method = "onPlace", at = @At("HEAD"))
     private void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState,
                          boolean isMoving, CallbackInfo ci) {
@@ -40,10 +37,8 @@ public class FireBlockMixin {
 
         FireCatcherManager manager = FireCatcherManager.get(level);
         if (manager.isChunkProtected(chunkX, chunkZ, level.dimension())) {
-            // Если чанк защищён в обычном режиме, предотвращаем появление огня
-            if (!manager.isFireAllowed(chunkX, chunkZ, level.dimension())) {
-                level.removeBlock(pos, false);
-            }
+            // Удаляем огонь, если чанк защищён в любом режиме
+            level.removeBlock(pos, false);
         }
     }
 }

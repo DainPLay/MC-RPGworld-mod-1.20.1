@@ -1,0 +1,30 @@
+{
+  "parent": "rpgworldmod:defeat_razorleaf",
+  "criteria": {
+    "switch_fire_cather_to_hungry_mode": {
+      "conditions": {},
+      "trigger": "rpgworldmod:switch_fire_cather_to_hungry_mode"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.switch_fire_cather_to_hungry_mode.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:fire_catcher"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.switch_fire_cather_to_hungry_mode.title"
+    }
+  },
+  "requirements": [
+    [
+      "switch_fire_cather_to_hungry_mode"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

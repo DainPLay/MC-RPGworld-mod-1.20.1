@@ -2,11 +2,15 @@ package net.dainplay.rpgworldmod.item.custom;
 
 import net.dainplay.rpgworldmod.block.custom.FireCatcherBlock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Equipable;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -14,7 +18,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.gameevent.GameEvent;
 
-public class FireCatcherItem extends BlockItem {
+import javax.annotation.Nullable;
+import java.util.List;
+
+public class FireCatcherItem extends BlockItem implements RPGtooltip {
     public FireCatcherItem(Block block, Properties properties) {
         super(block, properties);
     }
@@ -66,5 +73,10 @@ public class FireCatcherItem extends BlockItem {
         }
 
         return InteractionResult.sidedSuccess(level.isClientSide());
+    }
+
+    @Override
+    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+        RPGappendHoverText(pStack,pLevel,pTooltip,pFlag);
     }
 }

@@ -29,6 +29,7 @@ public class ModAdvancements {
     public static final SmokeWidoweedTrigger SMOKE_WIDOWEED_TRIGGER = CriteriaTriggers.register(new SmokeWidoweedTrigger());
     public static final DepressionDeathCheck DEPRESSION_DEATH_CHECK = CriteriaTriggers.register(new DepressionDeathCheck());
     public static final FeedZombieToRazorleafTrigger FEED_ZOMBIE_TO_RAZORLEAF_TRIGGER = CriteriaTriggers.register(new FeedZombieToRazorleafTrigger());
+    public static final SwitchFireCatherToHungryModeTrigger SWITCH_FIRE_CATCHER_TO_HUNGRY_MODE_TRIGGER = CriteriaTriggers.register(new SwitchFireCatherToHungryModeTrigger());
     public static final GetEatenByRazorleafWearingSkirtTrigger GET_EATEN_BY_RAZORLEAF_WEARING_SKIRT_TRIGGER = CriteriaTriggers.register(new GetEatenByRazorleafWearingSkirtTrigger());
 
     public static void init() {}

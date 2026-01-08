@@ -180,6 +180,18 @@
         ]
       },
       "trigger": "minecraft:inventory_changed"
+    },
+    "razorleaf_bud": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:razorleaf_bud"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
     }
   },
   "display": {
@@ -228,6 +240,8 @@
       "typhon"
     ],[
       "shiveralis"
+    ],[
+      "razorleaf_bud"
     ]
   ],
   "rewards": {

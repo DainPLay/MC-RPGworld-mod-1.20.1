@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "Y": {
+      "item": "rpgworldmod:young_razorleaf"
+    },
+    "S": {
+      "item": "rpgworldmod:spiky_ivy"
+    },
+    "F": {
+      "item": "rpgworldmod:fireproof_petals"
+    }
+  },
+  "pattern": [
+    "SYS",
+    "FSF",
+    " F "
+  ],
+  "result": {
+    "item": "rpgworldmod:fire_catcher"
+  },
+  "show_notification": true
+}

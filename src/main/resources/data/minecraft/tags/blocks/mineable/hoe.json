@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
-    "rpgworldmod:rie_leaves"
+    "rpgworldmod:rie_leaves",
+    "rpgworldmod:young_razorleaf",
+    "rpgworldmod:fire_catcher"
   ]
 }

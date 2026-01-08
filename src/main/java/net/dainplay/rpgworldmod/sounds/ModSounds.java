@@ -134,6 +134,9 @@ public class ModSounds
         EMBER_GEM_EXTINGUISH = registerSound("rpgworldmod.ember_gem_extinguish");
 
         INHALE = registerSound("rpgworldmod.inhale");
+
+        FIRE_CATCHER_HUNGRY = registerSound("rpgworldmod.fire_catcher_hungry");
+        FIRE_CATCHER_NOT_HUNGRY = registerSound("rpgworldmod.fire_catcher_not_hungry");
     }
 
     private static RegistryObject<SoundEvent> registerSound(String name)

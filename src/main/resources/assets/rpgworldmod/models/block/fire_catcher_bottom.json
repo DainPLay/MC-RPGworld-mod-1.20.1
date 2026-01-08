@@ -1,6 +1,31 @@
 {
-  "parent": "rpgworldmod:block/cross",
-  "textures": {
-    "cross": "rpgworldmod:block/fire_catcher_bottom"
-  }
+	"format_version": "1.21.11",
+	"credit": "Made with Blockbench",
+	"ambientocclusion": false,
+	"textures": {
+		"particle": "rpgworldmod:block/fire_catcher_bottom",
+		"cross": "rpgworldmod:block/fire_catcher_bottom"
+	},
+	"elements": [
+		{
+			"from": [2.8, 6, 8],
+			"to": [13.2, 16, 8],
+			"shade": false,
+			"rotation": {"angle": 45, "axis": "y", "origin": [8, 8, 8], "rescale": true},
+			"faces": {
+				"north": {"uv": [14, 0, 2, 10], "texture": "#cross"},
+				"south": {"uv": [2, 0, 14, 10], "texture": "#cross"}
+			}
+		},
+		{
+			"from": [8, 6, 2.8],
+			"to": [8, 16, 13.2],
+			"shade": false,
+			"rotation": {"angle": 45, "axis": "y", "origin": [8, 8, 8], "rescale": true},
+			"faces": {
+				"east": {"uv": [14, 0, 2, 10], "texture": "#cross"},
+				"west": {"uv": [2, 0, 14, 10], "texture": "#cross"}
+			}
+		}
+	]
 }

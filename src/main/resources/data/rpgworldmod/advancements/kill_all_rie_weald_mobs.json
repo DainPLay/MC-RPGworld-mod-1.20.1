@@ -81,7 +81,7 @@
     "description": {
       "translate": "advancements.rpgworldmod.kill_all_rie_weald_mobs.description"
     },
-    "frame": "task",
+    "frame": "goal",
     "hidden": false,
     "icon": {
       "item": "rpgworldmod:rpgirolle_item",

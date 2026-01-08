@@ -175,11 +175,17 @@
   "block.rpgworldmod.mintal_block": "Mintal Block",
   "block.rpgworldmod.wingold_block": "Wingold Block",
   "block.rpgworldmod.blower": "Blower",
+  "block.rpgworldmod.blower.desc": "The Blowest",
+  "block.rpgworldmod.blower.features": "Generates a blowing air stream, the power of which depends on the strength of the redstone signal given to it.",
   "block.rpgworldmod.emulsion_block": "Emulsion Block",
   "block.rpgworldmod.arbor_fuel_block": "Arbor Fuel",
   "block.rpgworldmod.drill_tusk": "Drill Tusk",
   "block.rpgworldmod.quartzite_drill_tusk": "Quartzite Drill Tusk",
+  "block.rpgworldmod.quartzite_drill_tusk.desc": "New car shine",
+  "block.rpgworldmod.quartzite_drill_tusk.features": "Mining blocks using a piston will have a silk touch effect.",
   "block.rpgworldmod.fire_catcher": "Flame Catcher",
+  "block.rpgworldmod.fire_catcher.desc": "You are Venus, I'm earth",
+  "block.rpgworldmod.fire_catcher.features": "Installed under the ceiling. Prevents fire spread within a radius of 5x5 chunks and extinguishes it if switched to hungry mode.",
 
   "fluid_type.rpgworldmod.arbor_fuel_fluid": "Arbor Fuel",
 
@@ -483,6 +489,9 @@
   "subtitles.rpgworldmod.ember_gem_extinguish": "Spark goes out",
 
   "subtitles.rpgworldmod.inhale": "Player inhales",
+
+  "subtitles.rpgworldmod.fire_catcher_hungry": "Flame Catcher gets hungry",
+  "subtitles.rpgworldmod.fire_catcher_not_hungry": "Flame Catcher is no longer hungry",
 
   "subtitles.rpgworldmod.platinumfish.death": "Platinumfish dies",
   "subtitles.rpgworldmod.platinumfish.hurt": "Platinumfish hurts",

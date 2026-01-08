@@ -97,4 +97,6 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> EMBER_GEM_IGNITE_ENTITY;
     public static RegistryObject<SoundEvent> EMBER_GEM_EXTINGUISH;
     public static RegistryObject<SoundEvent> INHALE;
+    public static RegistryObject<SoundEvent> FIRE_CATCHER_HUNGRY;
+    public static RegistryObject<SoundEvent> FIRE_CATCHER_NOT_HUNGRY;
 }

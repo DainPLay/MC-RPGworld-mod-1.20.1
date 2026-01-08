@@ -1,5 +1,5 @@
-// 1.20.1	2026-01-05T19:52:01.743617	Tags for minecraft:damage_type mod id rpgworldmod
-7cf17819c7d3ffeee9051590b06e4fc509275541 data/minecraft/tags/damage_type/avoids_guardian_thorns.json
+// 1.20.1	2026-01-08T22:28:47.4047232	Tags for minecraft:damage_type mod id rpgworldmod
+e470523c55ae92fa0de6f2ca18f957759aee632d data/minecraft/tags/damage_type/avoids_guardian_thorns.json
 6f1a3d4604a06c0a0938f4cd30b16d4094742b91 data/minecraft/tags/damage_type/bypasses_armor.json
 8e9ffd6e8b02f614a808b5fbe13ad6980f9ab267 data/minecraft/tags/damage_type/bypasses_cooldown.json
 6ef6f728fadfd72bca97c23c277c428c7a0660bd data/minecraft/tags/damage_type/bypasses_effects.json

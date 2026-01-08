@@ -32,6 +32,7 @@ import net.dainplay.rpgworldmod.block.entity.ModWoodTypes;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.fluid.ModFluids;
 import net.dainplay.rpgworldmod.item.ModItems;
+import net.dainplay.rpgworldmod.item.custom.TooltipBlockItem;
 import net.dainplay.rpgworldmod.world.feature.tree.RieTreeGrower;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -90,9 +91,9 @@ public class ModBlocks {
 
 	public static final RegistryObject<Block> DRILL_TUSK = registerBlock("drill_tusk",
 			() -> new DrillTuskBlock(BlockBehaviour.Properties.copy(Blocks.BONE_BLOCK).noOcclusion()));
-	public static final RegistryObject<Block> QUARTZITE_DRILL_TUSK = registerBlock("quartzite_drill_tusk",
+	public static final RegistryObject<Block> QUARTZITE_DRILL_TUSK = registerBlockWithTooltip("quartzite_drill_tusk",
 			() -> new QuartziteDrillTuskBlock(BlockBehaviour.Properties.copy(Blocks.BONE_BLOCK).mapColor(MapColor.QUARTZ).sound(SoundType.STONE).noOcclusion()));
-	public static final RegistryObject<Block> BLOWER = registerFuelBlock("blower",
+	public static final RegistryObject<Block> BLOWER = registerFuelBlockWithTooltip("blower",
 			() -> new BlowerBlock(BlockBehaviour.Properties.copy(Blocks.PISTON).sound(SoundType.WOOD).strength(2.0f).mapColor(MapColor.GLOW_LICHEN)) {
 				@Override
 				public boolean isFlammable(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
@@ -498,6 +499,12 @@ public class ModBlocks {
 		return toReturn;
 	}
 
+	public static <T extends Block> RegistryObject<T> registerBlockWithTooltip(String name, Supplier<T> block) {
+		RegistryObject<T> toReturn = BLOCKS.register(name, block);
+		registerBlockItemWithTooltip(name, toReturn);
+		return toReturn;
+	}
+
 	public static <T extends Block> RegistryObject<T> registerFuelBlock(String name, Supplier<T> block, int burntime) {
 		RegistryObject<T> toReturn = BLOCKS.register(name, block);
 		ModItems.ITEMS.register(name, () -> new BlockItem(toReturn.get(), new Item.Properties()) {
@@ -509,8 +516,23 @@ public class ModBlocks {
 		return toReturn;
 	}
 
+	public static <T extends Block> RegistryObject<T> registerFuelBlockWithTooltip(String name, Supplier<T> block, int burntime) {
+		RegistryObject<T> toReturn = BLOCKS.register(name, block);
+		ModItems.ITEMS.register(name, () -> new TooltipBlockItem(toReturn.get(), new Item.Properties()) {
+			@Override
+			public int getBurnTime(ItemStack itemstack, @Nullable RecipeType<?> recipeType) {
+				return burntime;
+			}
+		});
+		return toReturn;
+	}
+
 	public static <T extends Block> RegistryObject<Item> registerBlockItem(String name, RegistryObject<T> block) {
 		return ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+	}
+
+	public static <T extends Block> RegistryObject<Item> registerBlockItemWithTooltip(String name, RegistryObject<T> block) {
+		return ModItems.ITEMS.register(name, () -> new TooltipBlockItem(block.get(), new Item.Properties()));
 	}
 
 	public static void register(IEventBus eventbus) {

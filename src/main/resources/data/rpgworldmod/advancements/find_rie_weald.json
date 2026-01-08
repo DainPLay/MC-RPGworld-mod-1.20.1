@@ -23,7 +23,7 @@
     "description": {
       "translate": "advancements.rpgworldmod.rie_weald.description"
     },
-    "frame": "task",
+    "frame": "goal",
     "hidden": false,
     "icon": {
       "item": "rpgworldmod:rie_sapling"

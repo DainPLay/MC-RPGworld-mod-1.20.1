@@ -251,9 +251,9 @@ public class RPGworldMod
             event.accept(ModItems.RIE_HANGING_SIGN);
             event.accept(ModBlocks.RIE_HOLLOW);
             event.accept(ModBlocks.BLOWER);
-            event.accept(ModItems.FIRE_CATCHER_ITEM);
             event.accept(ModBlocks.DRILL_TUSK);
             event.accept(ModBlocks.QUARTZITE_DRILL_TUSK);
+            event.accept(ModItems.FIRE_CATCHER_ITEM);
         }
 
         if(event.getTab() == ModCreativeModeTab.RPGWORLD_FLORA_TAB.get()) {
@@ -395,6 +395,7 @@ public class RPGworldMod
             event.accept(ModItems.MINTAL_INGOT);
             event.accept(ModItems.SAMARAGUARD);
             event.accept(ModItems.BURR_SPIKE);
+            event.accept(ModBlocks.DRILL_TUSK);
             event.accept(ModItems.CHITIN_POWDER);
             event.accept(ModItems.MOSQUITO_BOTTLE);
             event.accept(ModItems.FIREPROOF_PETALS);

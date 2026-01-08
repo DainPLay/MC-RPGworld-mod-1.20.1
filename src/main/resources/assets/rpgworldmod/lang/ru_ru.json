@@ -175,11 +175,17 @@
   "block.rpgworldmod.mintal_block": "Блок минталла",
   "block.rpgworldmod.wingold_block": "Блок крылатуни",
   "block.rpgworldmod.blower": "Сдуватель",
+  "block.rpgworldmod.blower.desc": "Главный воздыхатель",
+  "block.rpgworldmod.blower.features": "Генерирует сдувающий поток воздуха, мощность которого зависит от силы поданного ему сигнала редстоуна.",
   "block.rpgworldmod.emulsion_block": "Блок эмульсии",
   "block.rpgworldmod.arbor_fuel_block": "Древесное горючее",
   "block.rpgworldmod.drill_tusk": "Бивень с резьбой",
   "block.rpgworldmod.quartzite_drill_tusk": "Кварцитовый бивень с резьбой",
+  "block.rpgworldmod.quartzite_drill_tusk.desc": "Блестяще!",
+  "block.rpgworldmod.quartzite_drill_tusk.features": "Добыча блоков при помощи поршня будет иметь эффект шёлкового касания.",
   "block.rpgworldmod.fire_catcher": "Огнеловка",
+  "block.rpgworldmod.fire_catcher.desc": "Ты Венера, я Земля",
+  "block.rpgworldmod.fire_catcher.features": "Устанавливается под потолок. Блокирует распространение огня в радиусе 5x5 чанков и тушит его, если переключена в голодный режим.",
 
   "fluid_type.rpgworldmod.arbor_fuel_fluid": "Древесное горючее",
 
@@ -483,6 +489,9 @@
   "subtitles.rpgworldmod.ember_gem_extinguish": "Искра гаснет",
 
   "subtitles.rpgworldmod.inhale": "Игрок вдыхает",
+
+  "subtitles.rpgworldmod.fire_catcher_hungry": "Огнеловка проголодалась",
+  "subtitles.rpgworldmod.fire_catcher_not_hungry": "Огнеловка больше не голодная",
 
   "subtitles.rpgworldmod.platinumfish.death": "Платиновая рыбка погибает",
   "subtitles.rpgworldmod.platinumfish.hurt": "Платиновая рыбка ранена",
