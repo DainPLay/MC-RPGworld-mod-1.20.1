@@ -35,14 +35,7 @@ public class FireCatcherBlockEntity extends BlockEntity {
 
             // Обновляем систему защиты
             FireCatcherManager manager = FireCatcherManager.get(level);
-
-            // Если состояние изменилось, используем специальный метод
-            if (wasHungry != isHungry) {
-                manager.updateFireCatcherState(worldPosition, wasHungry, isHungry, level.dimension(), (ServerLevel) level);
-                wasHungry = isHungry;
-            } else {
-                manager.updateFireCatcher(worldPosition, isHungry, level.dimension());
-            }
+            manager.updateFireCatcher(worldPosition, isHungry, level.dimension());
 
             // Если голодный, тушим огонь в чанках
             if (isHungry && tickCounter % 40 == 0) {

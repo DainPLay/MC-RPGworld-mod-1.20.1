@@ -19,16 +19,15 @@ import java.util.*;
 
 public class FireCatcherManager extends SavedData {
     private static final String DATA_NAME = "fire_catcher_data";
-    private static final int CHUNK_RADIUS = 2; // 5x5 чанков (радиус 2 от центра)
+    private static final int CHUNK_RADIUS = 2;
 
     private final Map<ResourceKey<Level>, DimensionData> dimensionData = new HashMap<>();
 
-    // Структура для хранения данных измерения
-    private static class DimensionData {
-        // Карта: позиция FireCatcher -> информация о нём
-        final Map<BlockPos, FireCatcherInfo> fireCatchers = new HashMap<>();
+    // Очередь для восстановления тиков - чтобы не лагать при удалении
+    private final Map<ResourceKey<Level>, Set<Long>> pendingRestoration = new HashMap<>();
 
-        // Карта: ключ чанка -> тип защиты (0 - нет, 1 - обычный, 2 - голодный)
+    private static class DimensionData {
+        final Map<BlockPos, FireCatcherInfo> fireCatchers = new HashMap<>();
         final Map<Long, Byte> chunkProtection = new HashMap<>();
     }
 
@@ -55,6 +54,29 @@ public class FireCatcherManager extends SavedData {
         return storage.computeIfAbsent(FireCatcherManager::load, FireCatcherManager::new, DATA_NAME);
     }
 
+    // Вызывается из ServerTickEvent
+    public void serverTick(ServerLevel level) {
+        ResourceKey<Level> dimension = level.dimension();
+
+        if (pendingRestoration.containsKey(dimension)) {
+            Set<Long> chunksToRestore = pendingRestoration.get(dimension);
+
+            // Обрабатываем только несколько чанков за тик, чтобы не лагать
+            int processed = 0;
+            Iterator<Long> iterator = chunksToRestore.iterator();
+            while (iterator.hasNext() && processed < 2) {
+                long chunkKey = iterator.next();
+                restoreFireInChunk(level, chunkKey);
+                iterator.remove();
+                processed++;
+            }
+
+            if (chunksToRestore.isEmpty()) {
+                pendingRestoration.remove(dimension);
+            }
+        }
+    }
+
     public void addFireCatcher(BlockPos pos, boolean isHungry, ResourceKey<Level> dimension) {
         DimensionData data = dimensionData.computeIfAbsent(dimension, k -> new DimensionData());
 
@@ -70,14 +92,18 @@ public class FireCatcherManager extends SavedData {
         DimensionData data = dimensionData.get(dimension);
 
         if (data != null && data.fireCatchers.containsKey(pos)) {
-            FireCatcherInfo info = data.fireCatchers.get(pos);
-            if (info.isHungry != isHungry) {
-                info = new FireCatcherInfo(isHungry);
-                calculateProtectedChunks(pos, info.protectedChunks);
-                data.fireCatchers.put(pos, info);
-                updateChunkProtection(data);
-                setDirty();
+            FireCatcherInfo oldInfo = data.fireCatchers.get(pos);
+
+            // Если меняемся с обычного на голодный, восстанавливаем тики перед сменой
+            if (!oldInfo.isHungry && isHungry) {
+                scheduleChunkRestoration(dimension, oldInfo.protectedChunks);
             }
+
+            FireCatcherInfo newInfo = new FireCatcherInfo(isHungry);
+            calculateProtectedChunks(pos, newInfo.protectedChunks);
+            data.fireCatchers.put(pos, newInfo);
+            updateChunkProtection(data);
+            setDirty();
         }
     }
 
@@ -85,23 +111,40 @@ public class FireCatcherManager extends SavedData {
         DimensionData data = dimensionData.get(dimension);
 
         if (data != null) {
+            FireCatcherInfo info = data.fireCatchers.get(pos);
+
+            // Если Fire Catcher был в обычном режиме, восстанавливаем тики
+            if (info != null && !info.isHungry) {
+                scheduleChunkRestoration(dimension, info.protectedChunks);
+            }
+
             data.fireCatchers.remove(pos);
             updateChunkProtection(data);
             setDirty();
         }
     }
 
-    public void updateFireCatcherState(BlockPos pos, boolean oldIsHungry, boolean newIsHungry, ResourceKey<Level> dimension, ServerLevel level) {
-        DimensionData data = dimensionData.get(dimension);
+    private void scheduleChunkRestoration(ResourceKey<Level> dimension, Set<Long> chunks) {
+        pendingRestoration.computeIfAbsent(dimension, k -> new HashSet<>()).addAll(chunks);
+    }
 
-        if (data != null && data.fireCatchers.containsKey(pos)) {
-            FireCatcherInfo info = data.fireCatchers.get(pos);
+    private void restoreFireInChunk(ServerLevel level, long chunkKey) {
+        int chunkX = (int)(chunkKey >> 32);
+        int chunkZ = (int)(chunkKey & 0xFFFFFFFFL);
 
-            info = new FireCatcherInfo(newIsHungry);
-            calculateProtectedChunks(pos, info.protectedChunks);
-            data.fireCatchers.put(pos, info);
-            updateChunkProtection(data);
-            setDirty();
+        if (!level.hasChunk(chunkX, chunkZ)) return;
+
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                for (int y = level.getMinBuildHeight(); y < level.getMaxBuildHeight(); y++) {
+                    pos.set(chunkX * 16 + x, y, chunkZ * 16 + z);
+                    if (level.getBlockState(pos).getBlock() == Blocks.FIRE) {
+                        // Просто запланируем новый тик - старый будет перезаписан
+                        level.scheduleTick(pos, Blocks.FIRE, level.getRandom().nextInt(10) + 10);
+                    }
+                }
+            }
         }
     }
 
@@ -131,20 +174,21 @@ public class FireCatcherManager extends SavedData {
         if (data != null) {
             FireCatcherInfo info = data.fireCatchers.get(fireCatcherPos);
             if (info != null && info.isHungry) {
-                for (long chunkKey : info.protectedChunks) {
-                    extinguishFireInChunk(level, chunkKey);
-                }
+                extinguishFireInChunks(level, info.protectedChunks);
             }
         }
     }
 
-    private void extinguishFireInChunk(ServerLevel level, long chunkKey) {
-        if (level == null) return;
+    private void extinguishFireInChunks(ServerLevel level, Set<Long> chunkKeys) {
+        for (long chunkKey : chunkKeys) {
+            extinguishFireInChunk(level, chunkKey);
+        }
+    }
 
+    private void extinguishFireInChunk(ServerLevel level, long chunkKey) {
         int chunkX = (int)(chunkKey >> 32);
         int chunkZ = (int)(chunkKey & 0xFFFFFFFFL);
 
-        // Проверяем, загружен ли чанк
         if (!level.hasChunk(chunkX, chunkZ)) return;
 
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
@@ -202,7 +246,6 @@ public class FireCatcherManager extends SavedData {
             CompoundTag dimTag = dimensionsTag.getCompound(dimKey);
             CompoundTag catchersTag = dimTag.getCompound("FireCatchers");
 
-            // Загружаем Fire Catcher'ы
             for (String posKey : catchersTag.getAllKeys()) {
                 CompoundTag catcherTag = catchersTag.getCompound(posKey);
                 BlockPos pos = BlockPos.of(catcherTag.getLong("Pos"));
