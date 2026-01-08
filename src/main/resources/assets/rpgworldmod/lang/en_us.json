@@ -132,6 +132,7 @@
   "block.minecraft.banner.rpgworldmod.rie_weald.red": "Red Rie Weald",
   "block.minecraft.banner.rpgworldmod.rie_weald.white": "White Rie Weald",
   "block.minecraft.banner.rpgworldmod.rie_weald.yellow": "Yellow Rie Weald",
+  "item.rpgworldmod.fire_catcher": "Flame Catcher",
 
   "item.rpgworldmod.platinumfish": "Platinumfish",
   "item.rpgworldmod.mossfront": "Mossfront",
@@ -178,6 +179,7 @@
   "block.rpgworldmod.arbor_fuel_block": "Arbor Fuel",
   "block.rpgworldmod.drill_tusk": "Drill Tusk",
   "block.rpgworldmod.quartzite_drill_tusk": "Quartzite Drill Tusk",
+  "block.rpgworldmod.fire_catcher": "Flame Catcher",
 
   "fluid_type.rpgworldmod.arbor_fuel_fluid": "Arbor Fuel",
 
@@ -380,6 +382,8 @@
   "advancements.rpgworldmod.get_depressed.description": "Get depressed by spending all your mana",
   "advancements.rpgworldmod.smoke_widoweed.title": "Don't Do Drugs, Kids",
   "advancements.rpgworldmod.smoke_widoweed.description": "Cure depression by drying and smoking Widoweed",
+  "advancements.rpgworldmod.switch_fire_cather_to_hungry_mode.title": "Venus Firetrap",
+  "advancements.rpgworldmod.switch_fire_cather_to_hungry_mode.description": "Place Flame Catcher and switch it to hungry mode",
 
   "enchantment.rpgworldmod.pitch": "Pitch",
   "enchantment.rpgworldmod.crescendo": "Crescendo",

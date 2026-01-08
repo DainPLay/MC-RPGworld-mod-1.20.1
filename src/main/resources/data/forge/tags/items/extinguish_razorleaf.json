@@ -7,6 +7,10 @@
     "minecraft:snow_block",
     "minecraft:snow",
     "minecraft:powder_snow_bucket",
-    "minecraft:milk_bucket"
+    "minecraft:milk_bucket",
+    "rpgworldmod:mintal_ingot",
+    "rpgworldmod:mintal_nugget",
+    "rpgworldmod:mintal_block",
+    "rpgworldmod:mint_rie_fruit"
   ]
 }

@@ -24,6 +24,12 @@ public class ModBlockEntities {
 
     public static final RegistryObject<BlockEntityType<BlowerBlockEntity>> BLOWER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("blower",
             () -> BlockEntityType.Builder.of(BlowerBlockEntity::new, ModBlocks.BLOWER.get()).build(null));
+    public static final RegistryObject<BlockEntityType<FireCatcherBlockEntity>> FIRE_CATCHER =
+            BLOCK_ENTITY_TYPES.register("fire_catcher",
+                    () -> BlockEntityType.Builder.of(
+                            FireCatcherBlockEntity::new,
+                            ModBlocks.FIRE_CATCHER.get()
+                    ).build(null));
 
     public static final RegistryObject<BlockEntityType<TreeHollowBlockEntity>> TREE_HOLLOW_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("tree_hollow_block_entity", () ->
             BlockEntityType.Builder.of(TreeHollowBlockEntity::new, ModBlocks.RIE_HOLLOW.get()).build(null));

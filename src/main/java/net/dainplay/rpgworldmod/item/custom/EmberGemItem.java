@@ -463,10 +463,12 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 				fakeFireball.setOwner(owner);
 				fakeFireball.setSecondsOnFire(1);
 				if (entity instanceof LivingEntity livingEntity &&
-						!entity.getUUID().equals(projectile.ownerId) && !entity.fireImmune() && (owner == null || entity.hurt(owner.damageSources().fireball(fakeFireball, owner), 1F))) {
+						!entity.getUUID().equals(projectile.ownerId) && !entity.fireImmune()) {
 
 					// Поджигаем существо на 5 секунд (100 тиков)
 					livingEntity.setSecondsOnFire(5);
+					if(owner != null)
+						entity.hurt(owner.damageSources().fireball(fakeFireball, owner), 1F);
 
 					// Звук и частицы
 					level.playSound(null, entity.getX(), entity.getY(), entity.getZ(),

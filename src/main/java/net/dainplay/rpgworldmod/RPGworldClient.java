@@ -120,6 +120,7 @@ public class RPGworldClient {
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.STRIPPED_LIVING_WOOD_LOG.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.STRIPPED_LIVING_WOOD_WOOD.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.MOSQUITOS.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.FIRE_CATCHER.get(), RenderType.cutout());
 
 
         WoodType.register(ModWoodTypes.RIE_WOOD_TYPE);

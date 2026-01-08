@@ -132,6 +132,7 @@
   "block.minecraft.banner.rpgworldmod.rie_weald.red": "Красная рийская дубрава",
   "block.minecraft.banner.rpgworldmod.rie_weald.white": "Белая рийская дубрава",
   "block.minecraft.banner.rpgworldmod.rie_weald.yellow": "Жёлтая рийская дубрава",
+  "item.rpgworldmod.fire_catcher": "Огнеловка",
 
   "item.rpgworldmod.platinumfish": "Платиновая рыбка",
   "item.rpgworldmod.mossfront": "Мохолобик",
@@ -178,6 +179,7 @@
   "block.rpgworldmod.arbor_fuel_block": "Древесное горючее",
   "block.rpgworldmod.drill_tusk": "Бивень с резьбой",
   "block.rpgworldmod.quartzite_drill_tusk": "Кварцитовый бивень с резьбой",
+  "block.rpgworldmod.fire_catcher": "Огнеловка",
 
   "fluid_type.rpgworldmod.arbor_fuel_fluid": "Древесное горючее",
 
@@ -380,6 +382,8 @@
   "advancements.rpgworldmod.get_depressed.description": "Впадите в депрессию, потратив всю свою ману",
   "advancements.rpgworldmod.smoke_widoweed.title": "Наркотики - это плохо",
   "advancements.rpgworldmod.smoke_widoweed.description": "Выйдете из депрессии, высушив и скурив траву-мораву",
+  "advancements.rpgworldmod.switch_fire_cather_to_hungry_mode.title": "Венерина огнеловка",
+  "advancements.rpgworldmod.switch_fire_cather_to_hungry_mode.description": "Разместите огнеловку и переключите её в голодный режим",
 
   "enchantment.rpgworldmod.pitch": "Частота",
   "enchantment.rpgworldmod.crescendo": "Крещендо",

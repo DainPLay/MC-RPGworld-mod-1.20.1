@@ -1,0 +1,6 @@
+{
+  "parent": "rpgworldmod:block/cross",
+  "textures": {
+    "cross": "rpgworldmod:block/fire_catcher_bottom"
+  }
+}

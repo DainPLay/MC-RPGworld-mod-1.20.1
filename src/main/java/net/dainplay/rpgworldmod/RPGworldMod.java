@@ -251,6 +251,7 @@ public class RPGworldMod
             event.accept(ModItems.RIE_HANGING_SIGN);
             event.accept(ModBlocks.RIE_HOLLOW);
             event.accept(ModBlocks.BLOWER);
+            event.accept(ModItems.FIRE_CATCHER_ITEM);
             event.accept(ModBlocks.DRILL_TUSK);
             event.accept(ModBlocks.QUARTZITE_DRILL_TUSK);
         }

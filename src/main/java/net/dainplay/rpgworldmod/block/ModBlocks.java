@@ -6,6 +6,7 @@ import net.dainplay.rpgworldmod.block.custom.BlowerBlock;
 import net.dainplay.rpgworldmod.block.custom.DrillTuskBlock;
 import net.dainplay.rpgworldmod.block.custom.FairapierPlantBlock;
 import net.dainplay.rpgworldmod.block.custom.FairapierWiltedPlantBlock;
+import net.dainplay.rpgworldmod.block.custom.FireCatcherBlock;
 import net.dainplay.rpgworldmod.block.custom.FuelLiquidBlock;
 import net.dainplay.rpgworldmod.block.custom.GlossomBlock;
 import net.dainplay.rpgworldmod.block.custom.HoltsReflectionBlock;
@@ -108,6 +109,13 @@ public class ModBlocks {
 					return 5;
 				}
 			}, 300);
+	public static final RegistryObject<Block> FIRE_CATCHER = BLOCKS.register("fire_catcher",
+			() -> new FireCatcherBlock(BlockBehaviour.Properties.copy(Blocks.MOSS_BLOCK)
+					.mapColor(MapColor.CRIMSON_NYLIUM)
+					.noOcclusion()
+					.noCollission()
+					.lightLevel(state -> state.getValue(FireCatcherBlock.HUNGRY) ? 7 : 0)
+					.pushReaction(PushReaction.DESTROY)));
 	public static final RegistryObject<Block> JASPER = registerBlock("jasper",
 			() -> new Block(BlockBehaviour.Properties.copy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_RED).strength(1.6f).requiresCorrectToolForDrops()));
 	public static final RegistryObject<Block> EMULSION_BLOCK = registerBlock("emulsion_block",

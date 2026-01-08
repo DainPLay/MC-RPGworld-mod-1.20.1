@@ -167,6 +167,9 @@ public class ModItems {
     public static final RegistryObject<Item> MUSIC_DISC_HOWLING = ITEMS.register("music_disc_howling", () -> new RecordItem(12, RPGSounds.MUSIC_DISC_HOWLING.get(), new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 184 * 20));
     public static final RegistryObject<Item> RIE_WEALD_BANNER_PATTERN = ITEMS.register("rie_weald_banner_pattern",  () -> new BannerPatternItem(ModTags.BannerPatterns.PATTERN_ITEM_RIE_WEALD, (new Item.Properties()).stacksTo(1).rarity(Rarity.EPIC)));
 
+    public static final RegistryObject<Item> FIRE_CATCHER_ITEM = ITEMS.register("fire_catcher",
+            () -> new FireCatcherItem(ModBlocks.FIRE_CATCHER.get(),new Item.Properties().fireResistant().rarity(Rarity.UNCOMMON)));
+
     public static final RegistryObject<Item> ARBOR_FUEL_BUCKET = ITEMS.register("arbor_fuel_bucket", () -> new FuelBucketItem(ModFluids.SOURCE_ARBOR_FUEL, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
     public static final RegistryObject<Item> PLATINUMFISH = ITEMS.register("platinumfish",
             () -> new Item(new Item.Properties()));

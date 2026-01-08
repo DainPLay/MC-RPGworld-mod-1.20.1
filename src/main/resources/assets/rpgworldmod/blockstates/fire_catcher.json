@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "half=top,hungry=false": {
+      "model": "rpgworldmod:block/fire_catcher_top"
+    },
+    "half=top,hungry=true": {
+      "model": "rpgworldmod:block/fire_catcher_top_hungry"
+    },
+    "half=bottom,hungry=false": {
+      "model": "rpgworldmod:block/fire_catcher_bottom"
+    },
+    "half=bottom,hungry=true": {
+      "model": "rpgworldmod:block/fire_catcher_bottom"
+    }
+  }
+}

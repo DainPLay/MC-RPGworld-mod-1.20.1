@@ -115,10 +115,13 @@ public class Razorleaf extends Monster {
 	public static final EntityDataAccessor<Float> DATA_PULL_DIRECTION_Y = SynchedEntityData.defineId(Razorleaf.class, EntityDataSerializers.FLOAT);
 	public static final EntityDataAccessor<Float> DATA_PULL_DIRECTION_Z = SynchedEntityData.defineId(Razorleaf.class, EntityDataSerializers.FLOAT);
 	private static final EntityDataAccessor<Boolean> DATA_DEALT_DAMAGE = SynchedEntityData.defineId(Razorleaf.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Boolean> DATA_CAN_SEE_TARGET = SynchedEntityData.defineId(Razorleaf.class, EntityDataSerializers.BOOLEAN);
 
 	private int tongueCooldown = 0;
 	private int fireCooldown = 0;
 	private int randomSeed = 0;
+	private int lastVisibilityCheckTick = 0;
+	private static final int VISIBILITY_CHECK_INTERVAL = 5; // Проверка видимости каждые 5 тиков
 
 	private ItemStack heldItem = ItemStack.EMPTY;
 	private int tongueRetractTimer = 0;
@@ -231,6 +234,7 @@ public class Razorleaf extends Monster {
 		this.entityData.define(DATA_PULL_DIRECTION_Y, 0f);
 		this.entityData.define(DATA_PULL_DIRECTION_Z, 0f);
 		this.entityData.define(DATA_DEALT_DAMAGE, false);
+		this.entityData.define(DATA_CAN_SEE_TARGET, false);
 	}
 
 	public static AttributeSupplier.Builder createAttributes() {
@@ -249,7 +253,6 @@ public class Razorleaf extends Monster {
 	@Override
 	public void tick() {
 		super.tick();
-
 
 		if (this.level().isClientSide) {
 			this.randomSeed = this.entityData.get(DATA_RANDOM_SEED);
@@ -440,7 +443,48 @@ public class Razorleaf extends Monster {
 		}
 	}
 
+	// Новый метод для проверки видимости цели
+	private boolean canSeeTarget(Entity target) {
+		if (target == null) return false;
+
+		// Проверяем только каждые N тиков для оптимизации
+		if (this.tickCount - lastVisibilityCheckTick < VISIBILITY_CHECK_INTERVAL) {
+			return this.entityData.get(DATA_CAN_SEE_TARGET);
+		}
+
+		lastVisibilityCheckTick = this.tickCount;
+		boolean canSee = false;
+
+		if (target instanceof LivingEntity) {
+			// Для живых существ используем стандартную проверку видимости
+			canSee = this.hasLineOfSight((LivingEntity) target);
+		} else {
+			// Для предметов и других сущностей используем проверку прямой видимости
+			Vec3 eyePos = this.getEyePosition();
+			Vec3 targetPos = target.getBoundingBox().getCenter();
+
+			// Проверяем, нет ли препятствий между Razorleaf и целью
+			BlockHitResult hitResult = this.level().clip(new ClipContext(
+					eyePos,
+					targetPos,
+					ClipContext.Block.VISUAL,
+					ClipContext.Fluid.NONE,
+					this
+			));
+
+			canSee = hitResult.getType() == HitResult.Type.MISS;
+		}
+
+		this.entityData.set(DATA_CAN_SEE_TARGET, canSee);
+		return canSee;
+	}
+
 	private void tongueAttack(Entity entity) {
+		if (entity == null || !canSeeTarget(entity)) {
+			setState(State.IDLE);
+			return;
+		}
+
 		if (entity instanceof LivingEntity livingEntity) this.setTarget(livingEntity);
 		else this.setTarget(null);
 		setAttackType(ATTACK_TONGUE);
@@ -456,6 +500,11 @@ public class Razorleaf extends Monster {
 	}
 
 	private void startAttack(Player player) {
+		if (player == null || !canSeeTarget(player)) {
+			setState(State.IDLE);
+			return;
+		}
+
 		this.setTarget(player);
 		boolean useTongue = getRandom().nextFloat() < 0.5f && tongueCooldown <= 0;
 
@@ -476,6 +525,11 @@ public class Razorleaf extends Monster {
 	}
 
 	private void startFireBreath(Player player) {
+		if (player == null || !canSeeTarget(player)) {
+			setState(State.IDLE);
+			return;
+		}
+
 		this.setTarget(player);
 		setAttackType(ATTACK_FIRE);
 		setState(State.ATTACKING);
@@ -485,6 +539,16 @@ public class Razorleaf extends Monster {
 
 	private void handleTongueAttack(Entity entity) {
 		int attackTimer = getAttackTimer();
+
+		// Проверяем видимость цели в начале атаки и периодически во время атаки
+		if ((attackTimer == 1 || attackTimer % 10 == 0) && entity != null && !canSeeTarget(entity)) {
+			// Если потеряли видимость цели, прерываем атаку
+			clearTongueTarget();
+			setState(State.IDLE);
+			setAttackTimer(0);
+			return;
+		}
+
 		if (attackTimer > 1 && attackTimer <= 30) {
 			List<ItemEntity> items = this.level().getEntitiesOfClass(ItemEntity.class,
 					this.getBoundingBox());
@@ -496,7 +560,7 @@ public class Razorleaf extends Monster {
 		if (attackTimer == 1) {
 			this.playSound(RPGSounds.RAZORLEAF_ATTACK.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
 			this.playSound(RPGSounds.RAZORLEAF_EAT.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
-			if (entity != null) {
+			if (entity != null && canSeeTarget(entity)) {
 				setTongueTarget(entity);
 			} else {
 				List<ItemEntity> items = this.level().getEntitiesOfClass(ItemEntity.class,
@@ -507,7 +571,7 @@ public class Razorleaf extends Monster {
 
 				for (ItemEntity item : items) {
 					double distance = this.distanceToSqr(item);
-					if (distance < closestItemDistance) {
+					if (distance < closestItemDistance && canSeeTarget(item)) {
 						closestItemDistance = distance;
 						nearestItem = item;
 					}
@@ -518,12 +582,16 @@ public class Razorleaf extends Monster {
 			}
 		} else if (attackTimer < 22) {
 			Entity target = getTongueTargetEntity();
-			if (target != null) {
+			if (target != null && canSeeTarget(target)) {
 				setForcedLookTarget(target.position());
+			} else {
+				// Если потеряли видимость, прерываем атаку
+				clearTongueTarget();
+				setState(State.IDLE);
 			}
 		} else if (attackTimer <= 30) {
 			Entity target = getTongueTargetEntity();
-			if (target != null) {
+			if (target != null && canSeeTarget(target)) {
 				Vec3 targetPos = target.position();
 				Vec3 pullDirection = targetPos.vectorTo(this.position()).normalize();
 
@@ -571,6 +639,11 @@ public class Razorleaf extends Monster {
 						}
 					}
 				}
+			} else {
+				// Если потеряли видимость цели, прерываем атаку
+				setPullDirection(Vec3.ZERO);
+				clearTongueTarget();
+				setState(State.IDLE);
 			}
 		} else if (attackTimer == 31) {
 			// Сбрасываем направление притягивания
@@ -744,10 +817,18 @@ public class Razorleaf extends Monster {
 	private void handleFireBreath(LivingEntity entity) {
 		int attackTimer = getAttackTimer();
 
+		// Проверяем видимость цели в начале атаки и периодически во время атаки
+		if ((attackTimer == 1 || attackTimer % 10 == 0) && (entity == null || !canSeeTarget(entity))) {
+			// Если потеряли видимость цели, прерываем атаку
+			setState(State.IDLE);
+			setAttackTimer(0);
+			return;
+		}
+
 		if (attackTimer < 20) {
 			if (attackTimer == 1)
 				this.playSound(RPGSounds.RAZORLEAF_ATTACK.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
-			if (entity != null) {
+			if (entity != null && canSeeTarget(entity)) {
 				setForcedLookTarget(entity.position().add(0, entity.getEyeHeight() * 0.5, 0));
 			}
 		} else if (attackTimer < 60) {
@@ -761,11 +842,11 @@ public class Razorleaf extends Monster {
 
 			if (attackTimer == 21)
 				this.playSound(RPGSounds.RAZORLEAF_FIRE.get(), 1.0F, 1F);
-			if (entity != null) {
+			if (entity != null && canSeeTarget(entity)) {
 				setForcedLookTarget(entity.position().add(0, entity.getEyeHeight() * 0.5, 0));
 			}
 			if (attackTimer % 3 == 0) {
-				if (entity != null) {
+				if (entity != null && canSeeTarget(entity)) {
 					createFireProjectile(entity);
 				}
 			}
@@ -778,13 +859,31 @@ public class Razorleaf extends Monster {
 	private void handlePetalSpin() {
 		int attackTimer = getAttackTimer();
 
+		// Для спин-атаки проверяем видимость игрока в начале
 		if (attackTimer == 1) {
+			Player targetPlayer = null;
+			for (Player player : this.level().getEntitiesOfClass(Player.class,
+					new AABB(this.blockPosition()).inflate(4.0))) {
+				if (this.distanceTo(player) <= 4.0 && canSeeTarget(player)) {
+					targetPlayer = player;
+					break;
+				}
+			}
+
+			if (targetPlayer == null) {
+				setState(State.IDLE);
+				setAttackTimer(0);
+				return;
+			}
+
 			this.playSound(RPGSounds.RAZORLEAF_ATTACK.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
 			this.playSound(RPGSounds.RAZORLEAF_SPIN.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
 		} else if (attackTimer < 20) {
+			boolean hitAnyPlayer = false;
 			for (Player player : this.level().getEntitiesOfClass(Player.class,
 					new AABB(this.blockPosition()).inflate(4.0))) {
-				if (this.distanceTo(player) <= 4.0) {
+				if (this.distanceTo(player) <= 4.0 && canSeeTarget(player)) {
+					hitAnyPlayer = true;
 					if (player.hurt(this.damageSources().mobAttack(this), 5.0F))
 						if (player instanceof ServerPlayer serverPlayer && !hasGoldenKill(serverPlayer))
 							if (!serverPlayer.fireImmune() && !this.entityData.get(DATA_DEALT_DAMAGE)) {
@@ -809,6 +908,13 @@ public class Razorleaf extends Monster {
 					}
 				}
 			}
+
+			// Если не попали ни в одного видимого игрока, прерываем атаку
+			if (!hitAnyPlayer && attackTimer > 10) {
+				setState(State.IDLE);
+				setAttackTimer(0);
+				return;
+			}
 		} else if (attackTimer >= 20) {
 			setState(State.IDLE);
 			setAttackTimer(0);
@@ -816,6 +922,9 @@ public class Razorleaf extends Monster {
 	}
 
 	private void createFireProjectile(LivingEntity target) {
+		if (target == null || !canSeeTarget(target)) {
+			return;
+		}
 
 		Vec3 direction = target.position()
 				.add(0, target.getBbHeight() * 0.5, 0)
@@ -1077,20 +1186,16 @@ public class Razorleaf extends Monster {
 			fakeFireball.setOwner(this);
 			fakeFireball.setSecondsOnFire(1);
 			if (entity instanceof LivingEntity livingEntity &&
-					entity != this && !entity.fireImmune() && entity.hurt(this.damageSources().fireball(fakeFireball, this), 1.0F)) {
+					entity != this && !entity.fireImmune()) {
 
 				// Поджигаем существо на 5 секунд (100 тиков)
 				livingEntity.setSecondsOnFire(8);
-				if (entity instanceof ServerPlayer player && !hasGoldenKill(player))
-					if (!player.fireImmune() && !this.entityData.get(DATA_DEALT_DAMAGE)) {
-						this.entityData.set(DATA_DEALT_DAMAGE, true);
-						this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
-					}
-
-				if (level instanceof ServerLevel serverLevel) {
-					serverLevel.sendParticles(ParticleTypes.FLAME,
-							entity.getX(), entity.getY() + entity.getBbHeight() / 2, entity.getZ(),
-							15, 0.5, 0.5, 0.5, 0.05);
+				if (entity.hurt(this.damageSources().fireball(fakeFireball, this), 1.0F)) {
+					if (entity instanceof ServerPlayer player && !hasGoldenKill(player))
+						if (!player.fireImmune() && !this.entityData.get(DATA_DEALT_DAMAGE)) {
+							this.entityData.set(DATA_DEALT_DAMAGE, true);
+							this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
+						}
 				}
 				return true;
 			}
@@ -1380,6 +1485,7 @@ public class Razorleaf extends Monster {
 		}
 		compound.putBoolean("HasItemInMouth", hasItemInMouth());
 		compound.putBoolean("Dealt damage", this.entityData.get(DATA_DEALT_DAMAGE));
+		compound.putBoolean("CanSeeTarget", this.entityData.get(DATA_CAN_SEE_TARGET));
 	}
 
 	@Override
@@ -1400,6 +1506,7 @@ public class Razorleaf extends Monster {
 		}
 		setHasItemInMouth(compound.getBoolean("HasItemInMouth"));
 		this.entityData.set(DATA_DEALT_DAMAGE, compound.getBoolean("Dealt damage"));
+		this.entityData.set(DATA_CAN_SEE_TARGET, compound.getBoolean("CanSeeTarget"));
 	}
 
 	@Override
