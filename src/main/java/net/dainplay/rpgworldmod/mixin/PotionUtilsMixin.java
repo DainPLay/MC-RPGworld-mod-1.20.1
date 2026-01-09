@@ -31,7 +31,7 @@ public abstract class PotionUtilsMixin {
         // Check if the item corresponds to the one you want to modify the tooltip for
         for(MobEffectInstance mobeffectinstance : pEffects) {
             MobEffect mobeffect = mobeffectinstance.getEffect();
-            if(mobeffect == ModEffects.MOSSIOSIS.get() || mobeffect == ModEffects.PARALYSIS.get() || mobeffect == ModEffects.FUELING.get()) {
+            if(mobeffect == ModEffects.MOSSIOSIS.get() || mobeffect == ModEffects.PARALYSIS.get() || mobeffect == ModEffects.FUELING.get() || mobeffect == ModEffects.PARANOIA.get()) {
                 pTooltips.remove(pTooltips.size() - 1);
                 pTooltips.remove(pTooltips.size() - 1);
             }

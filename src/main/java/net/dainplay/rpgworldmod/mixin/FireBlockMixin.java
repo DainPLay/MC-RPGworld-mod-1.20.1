@@ -2,6 +2,7 @@ package net.dainplay.rpgworldmod.mixin;
 
 import net.dainplay.rpgworldmod.util.FireCatcherManager;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
@@ -21,8 +22,9 @@ public class FireBlockMixin {
         int chunkZ = pos.getZ() >> 4;
 
         FireCatcherManager manager = FireCatcherManager.get(level);
+
+        // В голодном режиме отменяем все тики огня
         if (manager.isChunkProtected(chunkX, chunkZ, level.dimension())) {
-            // Отменяем тики огня в обоих режимах
             ci.cancel();
         }
     }
@@ -36,9 +38,34 @@ public class FireBlockMixin {
         int chunkZ = pos.getZ() >> 4;
 
         FireCatcherManager manager = FireCatcherManager.get(level);
-        if (manager.isChunkProtected(chunkX, chunkZ, level.dimension())) {
-            // Удаляем огонь, если чанк защищён в любом режиме
+
+        // В голодном режиме не позволяем огню появляться
+        if (!manager.isFireAllowedToExist(chunkX, chunkZ, level.dimension())) {
+            BlockPos fireCatcherPos = manager.findNearestHungryFireCatcher(pos, level.dimension());
             level.removeBlock(pos, false);
+            manager.sendFireExtinguishParticles((ServerLevel)level, fireCatcherPos, pos);
+        }
+    }
+
+    @Inject(
+            method = "tryCatchFire",
+            at = @At("HEAD"),
+            cancellable = true,
+            remap = false
+    )
+    private void onTryCatchFire(Level level, BlockPos pos, int p_53434_, RandomSource randomSource,
+                                int p_53436_, Direction face, CallbackInfo ci) {
+        // Проверяем, защищён ли чанк, в который пытается распространиться огонь
+        if (!level.isClientSide()) {
+            int chunkX = pos.getX() >> 4;
+            int chunkZ = pos.getZ() >> 4;
+
+            FireCatcherManager manager = FireCatcherManager.get(level);
+
+            // Отменяем распространение огня в обоих режимах
+            if (!manager.isFireAllowedToSpread(chunkX, chunkZ, level.dimension())) {
+                ci.cancel();
+            }
         }
     }
 }

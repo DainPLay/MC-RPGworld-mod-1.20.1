@@ -2,11 +2,13 @@ package net.dainplay.rpgworldmod.mixin;
 
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.damage.ModDamageTypes;
+import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.entity.custom.Mintobat;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -42,6 +44,7 @@ public class NoteBlockMixin {
     @Inject(method = "playNote", at = @At(value = "HEAD"), cancellable = true)
     private void playNoteMintal(Entity pEntity, BlockState pState, Level pLevel, BlockPos pPos, CallbackInfo ci) {
         if (pLevel.getBlockState(pPos.above()).isAir() && pLevel.getBlockState(pPos.below()).getBlock() == ModBlocks.MINTAL_BLOCK.get()) {
+            if (pEntity instanceof ServerPlayer serverPlayer) ModAdvancements.MINTAL_BLOCK_NOTE_TRIGGER.trigger(serverPlayer);
             pLevel.playSound(null, pPos, RPGSounds.TRIANGLE_DING.get(), SoundSource.BLOCKS, 1F, (pLevel.random.nextFloat() - pLevel.random.nextFloat()) * 0.2F + 1.0F);
             ((ServerLevel)pLevel).sendParticles(ParticleTypes.SONIC_BOOM, pPos.getX()+0.5D, pPos.getY()+1D, pPos.getZ()+0.5D, 1, 0.0D, 0.0D, 0.0D, 0.0D);
             AABB damageArea = new AABB(pPos).inflate(16D);

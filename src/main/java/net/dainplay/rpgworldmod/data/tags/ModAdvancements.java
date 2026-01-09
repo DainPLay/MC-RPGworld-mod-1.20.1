@@ -31,6 +31,10 @@ public class ModAdvancements {
     public static final FeedZombieToRazorleafTrigger FEED_ZOMBIE_TO_RAZORLEAF_TRIGGER = CriteriaTriggers.register(new FeedZombieToRazorleafTrigger());
     public static final SwitchFireCatherToHungryModeTrigger SWITCH_FIRE_CATCHER_TO_HUNGRY_MODE_TRIGGER = CriteriaTriggers.register(new SwitchFireCatherToHungryModeTrigger());
     public static final GetEatenByRazorleafWearingSkirtTrigger GET_EATEN_BY_RAZORLEAF_WEARING_SKIRT_TRIGGER = CriteriaTriggers.register(new GetEatenByRazorleafWearingSkirtTrigger());
+    public static final MintalBlockNoteTrigger MINTAL_BLOCK_NOTE_TRIGGER = CriteriaTriggers.register(new MintalBlockNoteTrigger());
+    public static final MossiosisFoxTransformTrigger MOSSIOSIS_FOX_TRANSFORM_TRIGGER = CriteriaTriggers.register(new MossiosisFoxTransformTrigger());
+    public static final MossiosisBatTransformTrigger MOSSIOSIS_BAT_TRANSFORM_TRIGGER = CriteriaTriggers.register(new MossiosisBatTransformTrigger());
+    public static final MossiosisFishTransformTrigger MOSSIOSIS_FISH_TRANSFORM_TRIGGER = CriteriaTriggers.register(new MossiosisFishTransformTrigger());
 
     public static void init() {}
 }

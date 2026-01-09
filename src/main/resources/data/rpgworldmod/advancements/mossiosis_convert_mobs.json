@@ -1,0 +1,47 @@
+{
+  "parent": "rpgworldmod:mossiosis_get",
+  "criteria": {
+    "mossiosis_fish_transform": {
+      "conditions": {},
+      "trigger": "rpgworldmod:mossiosis_fish_transform"
+    },
+    "mossiosis_fox_transform": {
+      "conditions": {},
+      "trigger": "rpgworldmod:mossiosis_fox_transform"
+    },
+    "mossiosis_bat_transform": {
+      "conditions": {},
+      "trigger": "rpgworldmod:mossiosis_bat_transform"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.mossiosis_convert_mobs.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:mossfront"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.mossiosis_convert_mobs.title"
+    }
+  },
+  "requirements": [
+    [
+      "mossiosis_fish_transform"
+    ],
+    [
+      "mossiosis_fox_transform"
+    ],
+    [
+      "mossiosis_bat_transform"
+    ]
+  ],
+  "rewards": {
+    "experience": 65
+  },
+  "sends_telemetry_event": true
+}

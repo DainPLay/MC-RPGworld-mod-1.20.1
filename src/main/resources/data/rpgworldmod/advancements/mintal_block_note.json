@@ -1,0 +1,30 @@
+{
+  "parent": "rpgworldmod:mintal_triangle_used",
+  "criteria": {
+    "mintal_block_note": {
+      "conditions": {},
+      "trigger": "rpgworldmod:mintal_block_note"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.mintal_block_note.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:mintal_block"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.mintal_block_note.title"
+    }
+  },
+  "requirements": [
+    [
+      "mintal_block_note"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

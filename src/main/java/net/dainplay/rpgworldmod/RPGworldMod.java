@@ -272,6 +272,7 @@ public class RPGworldMod
             event.accept(ModBlocks.GLOSSOM);
             event.accept(ModBlocks.MIMOSSA);
             event.accept(ModBlocks.TYPHON);
+            event.accept(ModBlocks.STAREBLOSSOM);
             event.accept(ModBlocks.RAZORLEAF_BUD);
             event.accept(ModBlocks.YOUNG_RAZORLEAF);
             event.accept(ModItems.FAIRAPIER_SEED);
@@ -335,6 +336,9 @@ public class RPGworldMod
             event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.STRONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.LONG_ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.LONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.STRONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
 
             event.accept(ModItems.BRAMBLEFOX_SCARF);
             event.accept(ModItems.FIG_LEAF);
@@ -359,6 +363,7 @@ public class RPGworldMod
             event.accept(ModItems.GASBASS);
             ItemStack itemstack = new ItemStack(Items.SUSPICIOUS_STEW);
             SuspiciousStewItem.saveMobEffect(itemstack, ModEffects.MOSSIOSIS.get(), 320);
+            SuspiciousStewItem.saveMobEffect(itemstack, ModEffects.PARANOIA.get(), 240);
             event.accept(itemstack, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.LONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
@@ -368,6 +373,9 @@ public class RPGworldMod
             event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.STRONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.LONG_ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.LONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.STRONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.LONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.STRONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
@@ -376,6 +384,9 @@ public class RPGworldMod
             event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.STRONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.LONG_ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.LONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.STRONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.LONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.STRONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
@@ -384,6 +395,9 @@ public class RPGworldMod
             event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.STRONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.LONG_ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.LONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.STRONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
 
         }
 
@@ -450,6 +464,7 @@ public class RPGworldMod
             ComposterBlock.COMPOSTABLES.put(ModBlocks.TRIPLOVER.get().asItem(), 0.3F);
             ComposterBlock.COMPOSTABLES.put(ModBlocks.WILD_FAIRAPIER.get().asItem(), 0.65F);
             ComposterBlock.COMPOSTABLES.put(ModBlocks.MIMOSSA.get().asItem(), 0.65F);
+            ComposterBlock.COMPOSTABLES.put(ModBlocks.STAREBLOSSOM.get().asItem(), 0.65F);
             ComposterBlock.COMPOSTABLES.put(ModBlocks.TYPHON.get().asItem(), 0.65F);
             ComposterBlock.COMPOSTABLES.put(ModBlocks.PARALILY.get().asItem(), 0.65F);
             ComposterBlock.COMPOSTABLES.put(ModBlocks.SPIKY_IVY.get().asItem(), 0.5F);
@@ -470,6 +485,7 @@ public class RPGworldMod
             ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.GLOSSOM.getId(), ModBlocks.POTTED_GLOSSOM);
             ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.MOSSHROOM.getId(), ModBlocks.POTTED_MOSSHROOM);
             ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.CHEESE_CAP.getId(), ModBlocks.POTTED_CHEESE_CAP);
+            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.STAREBLOSSOM.getId(), ModBlocks.POTTED_STAREBLOSSOM);
             DispenserBlock.registerBehavior(ModItems.PROJECTRUFFLE_ITEM.get(), new AbstractProjectileDispenseBehavior() {
                 protected Projectile getProjectile(Level p_123407_, Position p_123408_, ItemStack p_123409_) {
                     ProjectruffleArrowEntity arrow = new ProjectruffleArrowEntity(ModEntities.PROJECTRUFFLE_ARROW.get(), p_123408_.x(), p_123408_.y(), p_123408_.z(), p_123407_);
@@ -501,6 +517,10 @@ public class RPGworldMod
             BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.MOSSIOSIS_POTION.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_MOSSIOSIS_POTION.get())));
             BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.MOSSIOSIS_POTION.get())), Ingredient.of(Items.GLOWSTONE_DUST), createPotion(ModPotions.STRONG_MOSSIOSIS_POTION.get())));
             BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.ARBOR_FUEL_BOTTLE.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_ARBOR_FUEL_BOTTLE.get())));
+            BrewingRecipeRegistry.addRecipe(Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD)), Ingredient.of(Items.ENDER_EYE), PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARANOIA_POTION.get()));
+            //BrewingRecipeRegistry.addRecipe(new ModBrewingRecipe(Potions.AWKWARD, ModBlocks.MOSSHROOM.get().asItem(), ModPotions.PARANOIA_POTION.get()));
+            BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.PARANOIA_POTION.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_PARANOIA_POTION.get())));
+            BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.PARANOIA_POTION.get())), Ingredient.of(Items.GLOWSTONE_DUST), createPotion(ModPotions.STRONG_PARANOIA_POTION.get())));
         });
 
 

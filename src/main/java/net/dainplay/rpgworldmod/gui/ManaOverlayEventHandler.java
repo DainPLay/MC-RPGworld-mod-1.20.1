@@ -3,6 +3,7 @@ package net.dainplay.rpgworldmod.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.item.custom.ManaCostItem;
+import net.dainplay.rpgworldmod.mana.ClientIsManaRegenBlockedData;
 import net.dainplay.rpgworldmod.mana.ClientManaData;
 import net.dainplay.rpgworldmod.mana.ClientMaxManaData;
 import net.minecraft.client.Minecraft;
@@ -141,7 +142,7 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		return ClientManaData.get() < ClientMaxManaData.get() ||
 				System.currentTimeMillis() < fullManaDisplayTime ||
 				showManaBar ||
-				hasManaCostItem;
+				hasManaCostItem || ClientIsManaRegenBlockedData.get() > 0;
 	}
 
 	private static void updateManaBlink() {
@@ -296,7 +297,7 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 			int xPosition = xStart + (i % 10) * 8;
 			int currentY = yPosition - max(3, (12 - ClientMaxManaData.get() / 50)) * (i / 10);
 
-			if (mana <= 10) {
+			if (mana <= 10 || ClientIsManaRegenBlockedData.get() > 0) {
 				currentY += randomOffset[i];
 			}
 			if (i == regen) {
@@ -306,13 +307,21 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 			// Определяем смещение по Y для текстуры
 			int textureYOffset = 0;
 
-			// Подсветка при восстановлении кратной 5 маны (все иконки)
-			if (restoreBlink && isBlinking) {
-				textureYOffset = 10; // Осветленная версия для всех иконок
-			}
-			// Мигание при полном восстановлении (только 200 мс)
-			else if (fullManaBlink && currentTime < fullManaBlinkEndTime && isBlinking) {
-				textureYOffset = 10; // Осветленная версия
+			// Если восстановление маны заблокировано, используем другой Y-сдвиг (20)
+			if (ClientIsManaRegenBlockedData.get() > 0) {
+				textureYOffset = 20; // Используем текстуры с Y=20
+				if (restoreBlink && isBlinking) {
+					textureYOffset = 60;
+				} else if (fullManaBlink && currentTime < fullManaBlinkEndTime && isBlinking) {
+					textureYOffset = 60;
+				}
+			} else {
+				// Оригинальная логика для мигания
+				if (restoreBlink && isBlinking) {
+					textureYOffset = 10;
+				} else if (fullManaBlink && currentTime < fullManaBlinkEndTime && isBlinking) {
+					textureYOffset = 10;
+				}
 			}
 
 			if (i < manaIcons.length) {
@@ -375,7 +384,7 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 			int xPosition = xStart + (i % 10) * 8;
 			int currentY = yPosition - max(3, (12 - maxManaValue / 50)) * (i / 10);
 
-			if (mana <= 10) {
+			if (mana <= 10 || ClientIsManaRegenBlockedData.get() > 0) {
 				currentY += randomOffset[i];
 			}
 			if (i == regen) {
@@ -494,7 +503,7 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 			int currentY = yPosition - max(3, (12 - maxManaValue / 50)) * (i / 10);
 
 
-			if (calculateManaValue() <= 10) {
+			if (calculateManaValue() <= 10 || ClientIsManaRegenBlockedData.get() > 0) {
 				currentY += randomOffset[i];
 			}
 			// Определяем количество маны в текущей иконке
@@ -613,7 +622,7 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 				int currentY = yPosition - max(3, (12 - maxManaValue / 50)) * (iconIndex / 10);
 
 
-				if (calculateManaValue() <= 10) {
+				if (calculateManaValue() <= 10 || ClientIsManaRegenBlockedData.get() > 0) {
 					currentY += randomOffset[iconIndex];
 				}
 
@@ -641,7 +650,7 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 				int currentY = yPosition - max(3, (12 - maxManaValue / 50)) * (iconIndex / 10);
 
 
-				if (calculateManaValue() <= 10) {
+				if (calculateManaValue() <= 10 || ClientIsManaRegenBlockedData.get() > 0) {
 					currentY += randomOffset[iconIndex];
 				}
 

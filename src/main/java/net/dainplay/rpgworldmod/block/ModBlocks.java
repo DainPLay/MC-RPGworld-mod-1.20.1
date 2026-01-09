@@ -24,6 +24,8 @@ import net.dainplay.rpgworldmod.block.custom.QuartziteWallBlock;
 import net.dainplay.rpgworldmod.block.custom.RazorleafBudBlock;
 import net.dainplay.rpgworldmod.block.custom.ShiveralisPlantBlock;
 import net.dainplay.rpgworldmod.block.custom.SpikyIvyBlock;
+import net.dainplay.rpgworldmod.block.custom.StareblossomBlock;
+import net.dainplay.rpgworldmod.block.custom.StareblossomPotBlock;
 import net.dainplay.rpgworldmod.block.custom.TreeHollowBlock;
 import net.dainplay.rpgworldmod.block.custom.TyphonBlock;
 import net.dainplay.rpgworldmod.block.custom.WidoweedBlock;
@@ -213,6 +215,8 @@ public class ModBlocks {
 					return SHAPE.move(vec3.x, vec3.y, vec3.z);
 				}
 			});
+	public static final RegistryObject<Block> STAREBLOSSOM = registerBlock("stareblossom",
+			() -> new StareblossomBlock(ModEffects.PARANOIA, 16, BlockBehaviour.Properties.copy(Blocks.DANDELION).noOcclusion().offsetType(BlockBehaviour.OffsetType.NONE)));
 	public static final RegistryObject<Block> TYPHON = registerBlock("typhon",
 			() -> new TyphonBlock(MobEffects.NIGHT_VISION, 3, BlockBehaviour.Properties.copy(Blocks.DANDELION).noOcclusion()) {
 
@@ -229,6 +233,8 @@ public class ModBlocks {
 			() -> new ParalilyBlock(BlockBehaviour.Properties.copy(Blocks.LILY_PAD).instabreak().sound(SoundType.LILY_PAD).mapColor(MapColor.COLOR_ORANGE).noOcclusion()));
 	public static final RegistryObject<Block> POTTED_MIMOSSA = registerBlockWithoutBlockItem("potted_mimossa",
 			() -> new FlowerPotBlock(ModBlocks.MIMOSSA.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION).noOcclusion()));
+	public static final RegistryObject<Block> POTTED_STAREBLOSSOM = registerBlockWithoutBlockItem("potted_stareblossom",
+			() -> new StareblossomPotBlock(ModBlocks.STAREBLOSSOM.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION).noOcclusion()));
 	public static final RegistryObject<Block> POTTED_TYPHON = registerBlockWithoutBlockItem("potted_typhon",
 			() -> new FlowerPotBlock(ModBlocks.TYPHON.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION).noOcclusion()));
 	public static final RegistryObject<Block> MOSSHROOM = registerBlock("mosshroom",

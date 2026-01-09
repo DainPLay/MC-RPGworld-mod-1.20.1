@@ -185,7 +185,7 @@
   "block.rpgworldmod.quartzite_drill_tusk.features": "Mining blocks using a piston will have a silk touch effect.",
   "block.rpgworldmod.fire_catcher": "Flame Catcher",
   "block.rpgworldmod.fire_catcher.desc": "You are Venus, I'm earth",
-  "block.rpgworldmod.fire_catcher.features": "Installed under the ceiling. Prevents fire spread within a radius of 5x5 chunks and extinguishes it if switched to hungry mode.",
+  "block.rpgworldmod.fire_catcher.features": "Installed under the ceiling. Prevents fire griefing within a radius of 5x5 chunks and extinguishes it if switched to hungry mode.",
 
   "fluid_type.rpgworldmod.arbor_fuel_fluid": "Arbor Fuel",
 
@@ -231,9 +231,11 @@
   "block.rpgworldmod.young_razorleaf": "Young Razorleaf",
   "block.rpgworldmod.triplover": "Triplover",
   "block.rpgworldmod.mimossa": "Mimossa",
+  "block.rpgworldmod.stareblossom": "Stareblossom",
   "block.rpgworldmod.typhon": "Typhon",
   "block.rpgworldmod.glossom": "Glossom",
   "block.rpgworldmod.potted_mimossa": "Potted Mimossa",
+  "block.rpgworldmod.potted_stareblossom": "Potted Stareblossom",
   "block.rpgworldmod.paralily": "Paralily",
   "block.rpgworldmod.potted_paralily": "Potted Paralily",
   "block.rpgworldmod.cheese_cap": "Cheese Cap",
@@ -275,6 +277,8 @@
   "effect.rpgworldmod.mosquitoing.description": "The target is covered in mosquitoes and takes damage over time. The interval of damage received is shorter as the effect level increases.",
   "effect.rpgworldmod.fueling": "Fueling",
   "effect.rpgworldmod.fueling.description": "The target is covered in oil and its density is lower than that of water. Taking damage sets target on fire.",
+  "effect.rpgworldmod.paranoia": "Paranoia",
+  "effect.rpgworldmod.paranoia.description": "Disables natural mana regeneration and drains mana.",
 
   "item.minecraft.potion.effect.paralysis_potion": "Nerve Paralysis Potion",
   "item.minecraft.potion.effect.long_paralysis_potion": "Nerve Paralysis Potion",
@@ -308,6 +312,18 @@
   "item.minecraft.lingering_potion.effect.long_fueling_potion": "Lingering Potion of Fueling",
   "item.minecraft.tipped_arrow.effect.fueling_potion": "Arrow of Fueling",
   "item.minecraft.tipped_arrow.effect.long_fueling_potion": "Arrow of Fueling",
+  "item.minecraft.potion.effect.paranoia_potion": "Paranoia Potion",
+  "item.minecraft.potion.effect.long_paranoia_potion": "Paranoia Potion",
+  "item.minecraft.potion.effect.strong_paranoia_potion": "Paranoia Potion",
+  "item.minecraft.splash_potion.effect.strong_paranoia_potion": "Splash Potion of Paranoia",
+  "item.minecraft.splash_potion.effect.long_paranoia_potion": "Splash Potion of Paranoia",
+  "item.minecraft.splash_potion.effect.paranoia_potion": "Splash Potion of Paranoia",
+  "item.minecraft.lingering_potion.effect.paranoia_potion": "Lingering Potion of Paranoia",
+  "item.minecraft.lingering_potion.effect.long_paranoia_potion": "Lingering Potion of Paranoia",
+  "item.minecraft.lingering_potion.effect.strong_paranoia_potion": "Lingering Potion of Paranoia",
+  "item.minecraft.tipped_arrow.effect.paranoia_potion": "Arrow of Paranoia",
+  "item.minecraft.tipped_arrow.effect.long_paranoia_potion": "Arrow of Paranoia",
+  "item.minecraft.tipped_arrow.effect.strong_paranoia_potion": "Arrow of Paranoia",
 
   "death.attack.widoweed": "%1$s was consumed by widoweed",
   "death.attack.widoweed.player": "%1$s was consumed by widoweed whilst trying to escape %2$s",
@@ -390,6 +406,10 @@
   "advancements.rpgworldmod.smoke_widoweed.description": "Cure depression by drying and smoking Widoweed",
   "advancements.rpgworldmod.switch_fire_cather_to_hungry_mode.title": "Venus Firetrap",
   "advancements.rpgworldmod.switch_fire_cather_to_hungry_mode.description": "Place Flame Catcher and switch it to hungry mode",
+  "advancements.rpgworldmod.mintal_block_note.title": "First Call",
+  "advancements.rpgworldmod.mintal_block_note.description": "Play a Note block placed on a Mintal block",
+  "advancements.rpgworldmod.mossiosis_convert_mobs.title": "Same Mosstake",
+  "advancements.rpgworldmod.mossiosis_convert_mobs.description": "Infect cod, fox and bat with mossiosis",
 
   "enchantment.rpgworldmod.pitch": "Pitch",
   "enchantment.rpgworldmod.crescendo": "Crescendo",
@@ -510,6 +530,7 @@
   "subtitles.rpgworldmod.gasbass.flop": "Gasbass flops",
 
   "mana.rpgworldmod.depression_respawn": "Death in depression resets your spawn point",
+  "mana.rpgworldmod.paranoia_wake_up": "You may not rest now; You are being watched",
 
   "tooltip.rpgworldmod.hold_shift_for_features": "[Hold %s]",
   "tooltip.rpgworldmod.features": "Features:",

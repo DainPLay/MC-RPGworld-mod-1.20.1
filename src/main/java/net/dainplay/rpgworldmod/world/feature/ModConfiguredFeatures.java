@@ -74,6 +74,7 @@ public class ModConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?, ?>> PATCH_PARALILY_KEY = registerKey("patch_paralily");
     public static final ResourceKey<ConfiguredFeature<?, ?>> HOLTS_REFLECTION_KEY = registerKey("holts_reflection");
     public static final ResourceKey<ConfiguredFeature<?, ?>> RAZORLEAF_BUD_KEY = registerKey("razorleaf_bud");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> STAREBLOSSOM_KEY = registerKey("stareblossom");
     public static final ResourceKey<ConfiguredFeature<?, ?>> MASKONITE_KEY = registerKey("maskonite");
     public static final ResourceKey<ConfiguredFeature<?, ?>> RIE_BUSH_KEY = registerKey("rie_bush");
     public static final ResourceKey<ConfiguredFeature<?, ?>> SPIKY_IVY_KEY = registerKey("spiky_ivy");
@@ -179,6 +180,7 @@ public class ModConfiguredFeatures {
                         .add(ModBlocks.CHEESE_CAP.get().defaultBlockState(), 6)
                         .add(ModBlocks.MOSSHROOM.get().defaultBlockState(), 6)
                         .add(ModBlocks.RAZORLEAF_BUD.get().defaultBlockState(), 1)
+                        .add(ModBlocks.STAREBLOSSOM.get().defaultBlockState(), 2)
                         .add(ModBlocks.HOLTS_REFLECTION.get().defaultBlockState().setValue(HoltsReflectionBlock.FACING, Direction.NORTH), 1)
                         .add(ModBlocks.HOLTS_REFLECTION.get().defaultBlockState().setValue(HoltsReflectionBlock.FACING, Direction.SOUTH), 1)
                         .add(ModBlocks.HOLTS_REFLECTION.get().defaultBlockState().setValue(HoltsReflectionBlock.FACING, Direction.EAST), 1)
@@ -263,6 +265,9 @@ public class ModConfiguredFeatures {
         register(context, RAZORLEAF_BUD_KEY, Feature.NO_BONEMEAL_FLOWER,
                 new RandomPatchConfiguration(10, 0, 2, PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK,
                         new SimpleBlockConfiguration(BlockStateProvider.simple((ModBlocks.RAZORLEAF_BUD.get()))))));
+        register(context, STAREBLOSSOM_KEY, Feature.NO_BONEMEAL_FLOWER,
+                new RandomPatchConfiguration(10, 0, 2, PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK,
+                        new SimpleBlockConfiguration(BlockStateProvider.simple((ModBlocks.STAREBLOSSOM.get()))))));
         register(context, MASKONITE_KEY, Feature.FOREST_ROCK, new BlockStateConfiguration(ModBlocks.MASKONITE_BLOCK.get().defaultBlockState()));
         register(context, RIE_BUSH_KEY, Feature.TREE, (new TreeConfiguration.TreeConfigurationBuilder(BlockStateProvider.simple(ModBlocks.RIE_LOG.get()), new StraightTrunkPlacer(1, 0, 0), BlockStateProvider.simple(ModBlocks.RIE_LEAVES.get()), new BushFoliagePlacer(ConstantInt.of(2), ConstantInt.of(1), 2), new TwoLayersFeatureSize(0, 0, 0))).build());
         register(context, SPIKY_IVY_KEY, RPGFeatures.SPIKY_IVY.get(), new BlockStateConfiguration(ModBlocks.SPIKY_IVY.get().defaultBlockState()));

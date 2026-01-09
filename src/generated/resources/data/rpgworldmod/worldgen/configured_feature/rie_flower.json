@@ -64,6 +64,15 @@
               },
               {
                 "data": {
+                  "Name": "rpgworldmod:stareblossom",
+                  "Properties": {
+                    "signal": "0"
+                  }
+                },
+                "weight": 2
+              },
+              {
+                "data": {
                   "Name": "rpgworldmod:holts_reflection",
                   "Properties": {
                     "facing": "north",

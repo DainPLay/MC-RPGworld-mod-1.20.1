@@ -6,6 +6,7 @@ import net.dainplay.rpgworldmod.data.tags.DepressionDeathCheck;
 import net.dainplay.rpgworldmod.data.tags.GetDepressedTrigger;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.data.tags.WealdBladeGesturesTrigger;
+import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.mana.ClientManaData;
 import net.dainplay.rpgworldmod.mana.ClientMaxManaData;
@@ -36,7 +37,9 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.level.SleepFinishedTimeEvent;
 import net.minecraftforge.event.village.VillagerTradesEvent;
@@ -104,24 +107,43 @@ public class ModEvents {
 	@SubscribeEvent
 	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
 		if (event.player instanceof ServerPlayer serverPlayer) {
-			if (serverPlayer.getAdvancements().getOrStartProgress(serverPlayer.getServer().getAdvancements().getAdvancement(DepressionDeathCheck.ID)).isDone() && !serverPlayer.isDeadOrDying()) {
+			/*if (serverPlayer.getAdvancements().getOrStartProgress(serverPlayer.getServer().getAdvancements().getAdvancement(DepressionDeathCheck.ID)).isDone() && !serverPlayer.isDeadOrDying()) {
 				Advancement advancement = serverPlayer.server.getAdvancements().getAdvancement(DepressionDeathCheck.ID);
 				AdvancementProgress progress = serverPlayer.getAdvancements().getOrStartProgress(advancement);
 				for (String criterion : progress.getCompletedCriteria()) {
 					serverPlayer.getAdvancements().revoke(advancement, criterion);
 				}
-			}
+			}*/
 			serverPlayer.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+
+				if (serverPlayer.isSleeping() && mana.getManaRegenBlocked() > 0) {
+					// Будим игрока
+					serverPlayer.stopSleeping();
+					serverPlayer.displayClientMessage(
+							Component.translatable("mana.rpgworldmod.paranoia_wake_up"),
+							true
+					);
+				}
+
 				int regenSpeed = 50;
 				if (ModItems.LAPIS_CHARM.get().isEquippedBy(serverPlayer) && serverPlayer.totalExperience >= 3)
 					regenSpeed = (int) (regenSpeed * 0.6F);
-				if (event.phase == TickEvent.Phase.START && mana.getMana() > 0 && mana.getMana() < mana.getMaxMana() && serverPlayer.tickCount % regenSpeed == 0) {
+
+				// Проверяем, не заблокировано ли восстановление маны
+				if (event.phase == TickEvent.Phase.START && mana.getManaRegenBlocked() <= 0 &&
+						mana.getMana() > 0 && mana.getMana() < mana.getMaxMana() &&
+						serverPlayer.tickCount % regenSpeed == 0) {
+
 					if (ModItems.LAPIS_CHARM.get().isEquippedBy(serverPlayer) && mana.getMana() < mana.getMaxMana()) {
 						serverPlayer.giveExperiencePoints(-1);
 						mana.addMana(serverPlayer, 1);
-					} else
+					} else {
 						mana.addMana(serverPlayer, 1);
+					}
 				}
+				if (event.phase == TickEvent.Phase.START && mana.getManaRegenBlocked() > 0)
+					mana.setManaRegenBlocked(serverPlayer, mana.getManaRegenBlocked() - 1);
+
 				mana.recalculateMaxMana(serverPlayer);
 				//serverPlayer.sendSystemMessage(Component.literal("Мана: " + mana.getMana() + "/" + mana.getMaxMana()));
 			});
@@ -196,4 +218,23 @@ public class ModEvents {
 		}
 	}
 
+
+	// Отменяем возможность лечь спать при отравлении
+	@SubscribeEvent
+	public static void onPlayerTrySleep(PlayerSleepInBedEvent event) {
+
+		if (event.getEntity() instanceof ServerPlayer player) {
+			player.getServer().execute(() -> {
+				player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+					if (mana.getManaRegenBlocked() > 0) {
+						event.setResult(Player.BedSleepingProblem.OTHER_PROBLEM);
+						player.displayClientMessage(
+								Component.translatable("mana.rpgworldmod.paranoia_wake_up"),
+								true
+						);
+					}
+				});
+			});
+		}
+	}
 }

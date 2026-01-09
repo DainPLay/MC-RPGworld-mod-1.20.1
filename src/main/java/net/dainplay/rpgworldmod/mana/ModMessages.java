@@ -41,6 +41,12 @@ public class ModMessages {
 				.consumerMainThread(MaxManaDataSyncS2CPacket::handle)
 				.add();
 
+		net.messageBuilder(IsManaRegenBlockedDataSyncS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(IsManaRegenBlockedDataSyncS2CPacket::new)
+				.encoder(IsManaRegenBlockedDataSyncS2CPacket::toBytes)
+				.consumerMainThread(IsManaRegenBlockedDataSyncS2CPacket::handle)
+				.add();
+
 		net.messageBuilder(SyncRazorleafDataPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
 				.decoder(SyncRazorleafDataPacket::new)
 				.encoder(SyncRazorleafDataPacket::toBytes)

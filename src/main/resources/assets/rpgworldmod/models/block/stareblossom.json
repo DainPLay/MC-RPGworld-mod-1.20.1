@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "rpgworldmod:block/stareblossom_stem",
+    "particle": "rpgworldmod:block/stareblossom"
+  }
+}

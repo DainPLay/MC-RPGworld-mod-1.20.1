@@ -32,6 +32,13 @@ public class ModPotions {
     public static final RegistryObject<Potion> LONG_ARBOR_FUEL_BOTTLE = POTIONS.register("long_fueling_potion",
             () -> new Potion(new MobEffectInstance(ModEffects.FUELING.get(), 1800, 0)));
 
+    public static final RegistryObject<Potion> PARANOIA_POTION = POTIONS.register("paranoia_potion",
+            () -> new Potion(new MobEffectInstance(ModEffects.PARANOIA.get(), 900, 0)));
+    public static final RegistryObject<Potion> LONG_PARANOIA_POTION = POTIONS.register("long_paranoia_potion",
+            () -> new Potion(new MobEffectInstance(ModEffects.PARANOIA.get(), 1800, 0)));
+    public static final RegistryObject<Potion> STRONG_PARANOIA_POTION = POTIONS.register("strong_paranoia_potion",
+            () -> new Potion(new MobEffectInstance(ModEffects.PARANOIA.get(), 432, 1)));
+
 
     public static void register(IEventBus eventBus) {
         POTIONS.register(eventBus);

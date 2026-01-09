@@ -28,8 +28,9 @@ public interface LevelAccessorMixin {
             int chunkZ = pos.getZ() >> 4;
 
             FireCatcherManager manager = FireCatcherManager.get(serverLevel);
-            if (manager.isChunkProtected(chunkX, chunkZ, serverLevel.dimension())) {
-                // Отменяем запланированные тики огня в обоих режимах
+
+            // Отменяем запланированные тики в голодном режиме
+            if (manager.isHungryMode(chunkX, chunkZ, serverLevel.dimension())) {
                 ci.cancel();
             }
         }
@@ -47,8 +48,9 @@ public interface LevelAccessorMixin {
             int chunkZ = pos.getZ() >> 4;
 
             FireCatcherManager manager = FireCatcherManager.get(serverLevel);
-            if (manager.isChunkProtected(chunkX, chunkZ, serverLevel.dimension())) {
-                // Отменяем запланированные тики огня в обоих режимах
+
+            // Отменяем запланированные тики в голодном режиме
+            if (manager.isHungryMode(chunkX, chunkZ, serverLevel.dimension())) {
                 ci.cancel();
             }
         }

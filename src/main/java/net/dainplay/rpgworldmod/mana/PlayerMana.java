@@ -10,7 +10,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 public class PlayerMana {
 	private int mana;
 	private int max_mana;
-	private final int MIN_MANA = 0;
+	private int isManaRegenBlocked; // Новое поле для блокировки восстановления маны
 
 	public int getMana() {
 		return mana;
@@ -49,19 +49,34 @@ public class PlayerMana {
 		return max_mana;
 	}
 
+	// Методы для управления блокировкой восстановления маны
+	public void setManaRegenBlocked(ServerPlayer player, int ticks) {
+		if (this.isManaRegenBlocked != ticks) {
+			this.isManaRegenBlocked = ticks;
+			ModMessages.sendToPlayer(new IsManaRegenBlockedDataSyncS2CPacket(isManaRegenBlocked), player);
+		}
+	}
+
+	public int getManaRegenBlocked() {
+		return isManaRegenBlocked;
+	}
+
 	public void copyFrom(PlayerMana source) {
 		mana = source.mana;
 		max_mana = source.max_mana;
+		isManaRegenBlocked = source.isManaRegenBlocked;
 	}
 
 	public void saveNBTData (CompoundTag nbt) {
 		nbt.putInt("rpgworld_mana", mana);
 		nbt.putInt("rpgworld_max_mana", max_mana);
+		nbt.putInt("rpgworld_mana_regen_blocked", isManaRegenBlocked);
 	}
 
 	public void loadNBTData (CompoundTag nbt) {
 		mana = nbt.getInt("rpgworld_mana");
 		max_mana = nbt.getInt("rpgworld_max_mana");
+		isManaRegenBlocked = nbt.getInt("rpgworld_mana_regen_blocked");
 	}
 
 }

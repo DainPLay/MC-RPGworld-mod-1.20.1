@@ -2,7 +2,6 @@ package net.dainplay.rpgworldmod.util;
 
 import net.dainplay.rpgworldmod.mana.FireExtinguishParticlesPacket;
 import net.dainplay.rpgworldmod.mana.ModMessages;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
@@ -19,6 +18,7 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -87,6 +87,14 @@ public class FireCatcherManager extends SavedData {
         data.fireCatchers.put(pos, info);
         updateChunkProtection(data);
         setDirty();
+
+        // Немедленно тушим огонь, если голодный
+        if (isHungry) {
+            ServerLevel level = getServerLevel(dimension);
+            if (level != null) {
+                extinguishFireInChunks(level, info.protectedChunks, pos);
+            }
+        }
     }
 
     public void updateFireCatcher(BlockPos pos, boolean isHungry, ResourceKey<Level> dimension) {
@@ -105,6 +113,14 @@ public class FireCatcherManager extends SavedData {
             data.fireCatchers.put(pos, newInfo);
             updateChunkProtection(data);
             setDirty();
+
+            // Немедленно тушим огонь, если стал голодным
+            if (isHungry) {
+                ServerLevel level = getServerLevel(dimension);
+                if (level != null) {
+                    extinguishFireInChunks(level, newInfo.protectedChunks, pos);
+                }
+            }
         }
     }
 
@@ -157,21 +173,38 @@ public class FireCatcherManager extends SavedData {
         return protection != null && protection > 0;
     }
 
-    public boolean isFireAllowed(int chunkX, int chunkZ, ResourceKey<Level> dimension) {
+    public boolean isFireAllowedToSpread(int chunkX, int chunkZ, ResourceKey<Level> dimension) {
         DimensionData data = dimensionData.get(dimension);
         if (data == null) return true;
 
         long chunkKey = getChunkKey(chunkX, chunkZ);
         Byte protection = data.chunkProtection.get(chunkKey);
 
-        // Возвращаем true только если чанк не защищён (ни в обычном, ни в голодном режиме)
+        // Возвращаем false, если чанк защищён (в любом режиме)
         return protection == null;
     }
 
-    private void extinguishFireInChunks(ServerLevel level, Set<Long> chunkKeys, BlockPos fireCatcherPos) {
-        for (long chunkKey : chunkKeys) {
-            extinguishFireInChunk(level, chunkKey, fireCatcherPos);
-        }
+    public boolean isFireAllowedToExist(int chunkX, int chunkZ, ResourceKey<Level> dimension) {
+        DimensionData data = dimensionData.get(dimension);
+        if (data == null) return true;
+
+        long chunkKey = getChunkKey(chunkX, chunkZ);
+        Byte protection = data.chunkProtection.get(chunkKey);
+
+        // В обычном режиме (защита 1) огонь может существовать
+        // В голодном режиме (защита 2) огонь не может существовать
+        return protection == null || protection == 1;
+    }
+
+    public boolean isHungryMode(int chunkX, int chunkZ, ResourceKey<Level> dimension) {
+        DimensionData data = dimensionData.get(dimension);
+        if (data == null) return false;
+
+        long chunkKey = getChunkKey(chunkX, chunkZ);
+        Byte protection = data.chunkProtection.get(chunkKey);
+
+        // Возвращаем true, если режим голодный (защита 2)
+        return protection != null && protection == 2;
     }
 
     public void extinguishFireInProtectedChunks(BlockPos fireCatcherPos, ResourceKey<Level> dimension, ServerLevel level) {
@@ -184,6 +217,42 @@ public class FireCatcherManager extends SavedData {
         }
     }
 
+    @Nullable
+    public BlockPos findNearestHungryFireCatcher(BlockPos firePos, ResourceKey<Level> dimension) {
+        DimensionData data = dimensionData.get(dimension);
+        if (data == null) return null;
+
+        int chunkX = firePos.getX() >> 4;
+        int chunkZ = firePos.getZ() >> 4;
+        long chunkKey = getChunkKey(chunkX, chunkZ);
+
+        BlockPos nearest = null;
+        double minDistance = Double.MAX_VALUE;
+
+        for (Map.Entry<BlockPos, FireCatcherInfo> entry : data.fireCatchers.entrySet()) {
+            FireCatcherInfo info = entry.getValue();
+            if (info.isHungry && info.protectedChunks.contains(chunkKey)) {
+                double distance = entry.getKey().distSqr(firePos);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearest = entry.getKey();
+                }
+            }
+        }
+
+        return nearest;
+    }
+
+    private ServerLevel getServerLevel(ResourceKey<Level> dimension) {
+        return net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
+    }
+
+    private void extinguishFireInChunks(ServerLevel level, Set<Long> chunkKeys, BlockPos fireCatcherPos) {
+        for (long chunkKey : chunkKeys) {
+            extinguishFireInChunk(level, chunkKey, fireCatcherPos);
+        }
+    }
+
     private void extinguishFireInChunk(ServerLevel level, long chunkKey, BlockPos fireCatcherPos) {
         int chunkX = (int)(chunkKey >> 32);
         int chunkZ = (int)(chunkKey & 0xFFFFFFFFL);
@@ -191,6 +260,8 @@ public class FireCatcherManager extends SavedData {
         if (!level.hasChunk(chunkX, chunkZ)) return;
 
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        Vec3 catcherPos = new Vec3(fireCatcherPos.getX() + 0.5, fireCatcherPos.getY() + 0.5, fireCatcherPos.getZ() + 0.5);
+
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 for (int y = level.getMinBuildHeight(); y < level.getMaxBuildHeight(); y++) {
@@ -206,7 +277,7 @@ public class FireCatcherManager extends SavedData {
         }
     }
 
-    private void sendFireExtinguishParticles(ServerLevel level, BlockPos fireCatcherPos, BlockPos firePos) {
+    public void sendFireExtinguishParticles(ServerLevel level, BlockPos fireCatcherPos, BlockPos firePos) {
         // Отправляем пакет всем игрокам в радиусе 64 блоков
         ModMessages.sendToNearbyPlayers(
                 new FireExtinguishParticlesPacket(fireCatcherPos, firePos),

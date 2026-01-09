@@ -157,6 +157,18 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
+    "stareblossom": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:stareblossom"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
     "typhon": {
       "conditions": {
         "items": [
@@ -236,6 +248,8 @@
       "glossom"
     ],[
       "mimossa"
+    ],[
+      "stareblossom"
     ],[
       "typhon"
     ],[

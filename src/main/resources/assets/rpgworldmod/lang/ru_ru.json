@@ -185,7 +185,7 @@
   "block.rpgworldmod.quartzite_drill_tusk.features": "Добыча блоков при помощи поршня будет иметь эффект шёлкового касания.",
   "block.rpgworldmod.fire_catcher": "Огнеловка",
   "block.rpgworldmod.fire_catcher.desc": "Ты Венера, я Земля",
-  "block.rpgworldmod.fire_catcher.features": "Устанавливается под потолок. Блокирует распространение огня в радиусе 5x5 чанков и тушит его, если переключена в голодный режим.",
+  "block.rpgworldmod.fire_catcher.features": "Устанавливается под потолок. Блокирует сгорание блоков в радиусе 5x5 чанков и тушит его, если переключена в голодный режим.",
 
   "fluid_type.rpgworldmod.arbor_fuel_fluid": "Древесное горючее",
 
@@ -231,9 +231,11 @@
   "block.rpgworldmod.young_razorleaf": "Молодой бритволист",
   "block.rpgworldmod.triplover": "Тревер",
   "block.rpgworldmod.mimossa": "Мшимоза",
+  "block.rpgworldmod.stareblossom": "Обуцвет",
   "block.rpgworldmod.typhon": "Тифон",
   "block.rpgworldmod.glossom": "Люмоцвет",
   "block.rpgworldmod.potted_mimossa": "Мшимоза в горшке",
+  "block.rpgworldmod.potted_stareblossom": "Обуцвет в горшке",
   "block.rpgworldmod.paralily": "Паралилия",
   "block.rpgworldmod.potted_paralily": "Паралилия в горшке",
   "block.rpgworldmod.cheese_cap": "Сырядовка",
@@ -275,6 +277,8 @@
   "effect.rpgworldmod.mosquitoing.description": "Цель покрыта москитами и получает урон с течением времени. Интервал получения урона меньше с повышением уровня эффекта.",
   "effect.rpgworldmod.fueling": "Горючесть",
   "effect.rpgworldmod.fueling.description": "Цель облита маслом и её плотность ниже плотности воды. Получение урона поджигает.",
+  "effect.rpgworldmod.paranoia": "Паранойя",
+  "effect.rpgworldmod.paranoia.description": "Отключает естественную регенерацию маны и истощает ману.",
 
   "item.minecraft.potion.effect.paralysis_potion": "Зелье нервного паралича",
   "item.minecraft.potion.effect.long_paralysis_potion": "Зелье нервного паралича",
@@ -308,6 +312,18 @@
   "item.minecraft.lingering_potion.effect.long_fueling_potion": "Туманное зелье горючести",
   "item.minecraft.tipped_arrow.effect.fueling_potion": "Стрела горючести",
   "item.minecraft.tipped_arrow.effect.long_fueling_potion": "Стрела горючести",
+  "item.minecraft.potion.effect.paranoia_potion": "Зелье паранойи",
+  "item.minecraft.potion.effect.long_paranoia_potion": "Зелье паранойи",
+  "item.minecraft.potion.effect.strong_paranoia_potion": "Зелье паранойи",
+  "item.minecraft.splash_potion.effect.strong_paranoia_potion": "Взрывное зелье паранойи",
+  "item.minecraft.splash_potion.effect.long_paranoia_potion": "Взрывное зелье паранойи",
+  "item.minecraft.splash_potion.effect.paranoia_potion": "Взрывное зелье паранойи",
+  "item.minecraft.lingering_potion.effect.paranoia_potion": "Туманное зелье паранойи",
+  "item.minecraft.lingering_potion.effect.long_paranoia_potion": "Туманное зелье паранойи",
+  "item.minecraft.lingering_potion.effect.strong_paranoia_potion": "Туманное зелье паранойи",
+  "item.minecraft.tipped_arrow.effect.paranoia_potion": "Стрела паранойи",
+  "item.minecraft.tipped_arrow.effect.long_paranoia_potion": "Стрела паранойи",
+  "item.minecraft.tipped_arrow.effect.strong_paranoia_potion": "Стрела паранойи",
 
   "death.attack.widoweed": "%1$s был поглощён травой-моравой",
   "death.attack.widoweed.player": "%1$s был поглощён травой-моравой, пытаясь убежать от %2$s",
@@ -390,6 +406,10 @@
   "advancements.rpgworldmod.smoke_widoweed.description": "Выйдете из депрессии, высушив и скурив траву-мораву",
   "advancements.rpgworldmod.switch_fire_cather_to_hungry_mode.title": "Венерина огнеловка",
   "advancements.rpgworldmod.switch_fire_cather_to_hungry_mode.description": "Разместите огнеловку и переключите её в голодный режим",
+  "advancements.rpgworldmod.mintal_block_note.title": "Первый звоночек",
+  "advancements.rpgworldmod.mintal_block_note.description": "Сыграйте на нотном блоке, стоящем на блоке минталла",
+  "advancements.rpgworldmod.mossiosis_convert_mobs.title": "Помохите!",
+  "advancements.rpgworldmod.mossiosis_convert_mobs.description": "Заразите мохотрихозом треску, лису и летучую мышь",
 
   "enchantment.rpgworldmod.pitch": "Частота",
   "enchantment.rpgworldmod.crescendo": "Крещендо",
@@ -510,6 +530,7 @@
   "subtitles.rpgworldmod.gasbass.flop": "Смокунь плещется",
 
   "mana.rpgworldmod.depression_respawn": "Смерть в депрессии сбрасывает вашу точку возрождения",
+  "mana.rpgworldmod.paranoia_wake_up": "Вы не можете уснуть, за вами следят",
 
   "tooltip.rpgworldmod.hold_shift_for_features": "[Зажмите %s]",
   "tooltip.rpgworldmod.features": "Особенность:",

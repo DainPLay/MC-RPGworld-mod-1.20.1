@@ -24,6 +24,9 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> MOSQUITOING = MOB_EFFECTS.register("mosquitoing",
             () -> new MosquitoingEffect(MobEffectCategory.HARMFUL, 0x00000000));
 
+    public static final RegistryObject<MobEffect> PARANOIA = MOB_EFFECTS.register("paranoia",
+            () -> new ParanoiaEffect(MobEffectCategory.HARMFUL, 11699890));
+
     public static void register(IEventBus eventBus) {
         MOB_EFFECTS.register(eventBus);
     }
