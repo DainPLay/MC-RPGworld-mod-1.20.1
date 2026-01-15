@@ -3,14 +3,13 @@ package net.dainplay.rpgworldmod.entity;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.entity.custom.*;
 import net.dainplay.rpgworldmod.entity.projectile.BurrSpikeEntity;
+import net.dainplay.rpgworldmod.entity.projectile.EntRieFruitProjectile;
+import net.dainplay.rpgworldmod.entity.projectile.EntRootsEntity;
 import net.dainplay.rpgworldmod.entity.projectile.FairapierSeedEntity;
 import net.dainplay.rpgworldmod.entity.projectile.ProjectruffleArrowEntity;
 import net.dainplay.rpgworldmod.entity.projectile.ThrownDrillSpear;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Cod;
 import net.minecraft.world.entity.animal.WaterAnimal;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -39,11 +38,30 @@ public class ModEntities {
             () -> EntityType.Builder.of((EntityType.EntityFactory<ThrownDrillSpear>) ThrownDrillSpear::new, MobCategory.MISC)
                     .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20).build("drill_spear_projectile"));
 
+    public static final RegistryObject<EntityType<EntRieFruitProjectile>> ENT_RIE_FRUIT_PROJECTILE =
+            ENTITY_TYPES.register("ent_rie_fruit_projectile", () ->
+                    EntityType.Builder.<EntRieFruitProjectile>of(EntRieFruitProjectile::new, MobCategory.MISC)
+                            .sized(0.75f, 0.75f)
+                            .clientTrackingRange(4)
+                            .updateInterval(10)
+                            .build("ent_rie_fruit_projectile"));
+
+    public static final RegistryObject<EntityType<EntRootsEntity>> ENT_ROOTS =
+            ENTITY_TYPES.register("ent_roots", () ->
+                    EntityType.Builder.<EntRootsEntity>of(EntRootsEntity::new, MobCategory.MISC)
+                            .sized(0.5f, 0.5f)
+                            .clientTrackingRange(6)
+                            .updateInterval(2)
+                            .build("ent_roots"));
+
     public static final RegistryObject<EntityType<ModBoat>> MODBOAT = ENTITY_TYPES.register("modboat",
             () -> EntityType.Builder.of((EntityType.EntityFactory<ModBoat>) ModBoat::new, MobCategory.MISC).sized(1.375F, 0.5625F).clientTrackingRange(10).build("modboat"));
-
     public static final RegistryObject<EntityType<ModChestBoat>> MODCHESTBOAT = ENTITY_TYPES.register("modchestboat",
             () -> EntityType.Builder.of((EntityType.EntityFactory<ModChestBoat>) ModChestBoat::new, MobCategory.MISC).sized(1.375F, 0.5625F).clientTrackingRange(10).build("modboat"));
+
+    public static final RegistryObject<EntityType<TireSwingEntity>> TIRE_SWING = ENTITY_TYPES.register("tire_swing",
+            () -> EntityType.Builder.of(TireSwingEntity::new, MobCategory.MISC).sized(0.875F, 0.875F).clientTrackingRange(10).build("tire_swing"));
+
     public static final RegistryObject<EntityType<Bramblefox>> BRAMBLEFOX = ENTITY_TYPES.register("bramblefox",
             () -> EntityType.Builder.of(Bramblefox::new, MobCategory.CREATURE).sized(0.6F, 0.7F).clientTrackingRange(8).build("bramblefox"));
     public static final RegistryObject<EntityType<Mintobat>> MINTOBAT = ENTITY_TYPES.register("mintobat",

@@ -80,6 +80,7 @@
   "item.rpgworldmod.burr_purr_spawn_egg": "Burr-Purr Spawn Egg",
   "item.rpgworldmod.drillhog_spawn_egg": "Drillhog Spawn Egg",
   "item.rpgworldmod.razorleaf_spawn_egg": "Razorleaf Spawn Egg",
+  "item.rpgworldmod.ent_spawn_egg": "Ent Spawn Egg",
   "item.rpgworldmod.bibbit_spawn_egg": "Bibbit Spawn Egg",
   "item.rpgworldmod.platinumfish_spawn_egg": "Platinumfish Spawn Egg",
   "item.rpgworldmod.mossfront_spawn_egg": "Mossfront Spawn Egg",
@@ -113,6 +114,8 @@
   "item.rpgworldmod.guitar_ax.desc": "What da dog doin'?",
   "item.rpgworldmod.music_disc_howling": "Music Disc",
   "item.rpgworldmod.music_disc_howling.desc": "Lupus Nocte - Howling",
+  "item.rpgworldmod.music_disc_tire": "Music Disc",
+  "item.rpgworldmod.music_disc_tire.desc": "Denis Kotenko - Dark Electronic Cinematic 01",
   "item.rpgworldmod.arbor_fuel_bucket": "Arbor Fuel Bucket",
   "item.rpgworldmod.rie_weald_banner_pattern": "Banner Pattern",
   "item.rpgworldmod.rie_weald_banner_pattern.desc": "Rie Weald",
@@ -211,6 +214,10 @@
   "block.rpgworldmod.rie_pressure_plate": "Rie Pressure Plate",
   "block.rpgworldmod.rie_sign": "Rie Sign",
   "block.rpgworldmod.rie_hanging_sign": "Rie Hanging Sign",
+  "block.rpgworldmod.ent_face": "Ent Hollow",
+  "block.rpgworldmod.tire": "Tire",
+  "block.rpgworldmod.tire.desc": "For square wheel",
+  "block.rpgworldmod.tire.features": "Bounces entities up. If placed vertically, also bounces sideways. Two tires bounce more.",
   
   "block.rpgworldmod.shiveralis": "Shiveralis",
   "block.rpgworldmod.potted_shiveralis": "Potted Shiveralis",
@@ -342,6 +349,12 @@
   "death.attack.ding.player": "%1$s's eardrums burst from escaping %2$s",
   "death.attack.swallow": "%1$s was swallowed alive",
   "death.attack.swallow.player": "%1$s was swallowed alive by %2$s",
+  "death.attack.ent_rie_fruit": "%1$s got squished by falling rie",
+  "death.attack.ent_rie_fruit.item": "%1$s got squished by falling rie",
+  "death.attack.ent_snap": "%1$s got trapped in Ent's hollow",
+  "death.attack.ent_snap.item": "%1$s got trapped in Ent's hollow",
+  "death.attack.ent_roots": "%1$s was slain by Ent's roots",
+  "death.attack.ent_roots.item": "%1$s was slain by Ent's roots",
 
   "upgrade.minecraft.maskonite_upgrade": "Maskonite Upgrade",
   "trim_pattern.rpgworldmod.leaves": "Leaves Armor Trim",
@@ -410,6 +423,12 @@
   "advancements.rpgworldmod.mintal_block_note.description": "Play a Note block placed on a Mintal block",
   "advancements.rpgworldmod.mossiosis_convert_mobs.title": "Same Mosstake",
   "advancements.rpgworldmod.mossiosis_convert_mobs.description": "Infect cod, fox and bat with mossiosis",
+  "advancements.rpgworldmod.defeat_ent.title": "Dead Ent",
+  "advancements.rpgworldmod.defeat_ent.description": "Defeat Ent by destroying its hollow",
+  "advancements.rpgworldmod.feed_tire_to_razorleaf.title": "Get Tired, Razordweeb",
+  "advancements.rpgworldmod.feed_tire_to_razorleaf.description": "Feed Tire to Razorleaf",
+  "advancements.rpgworldmod.ride_tire_swing.title": "The Meaning of Life",
+  "advancements.rpgworldmod.ride_tire_swing.description": "Cure depression by swinging on a tire leashed to the fence above it",
 
   "enchantment.rpgworldmod.pitch": "Pitch",
   "enchantment.rpgworldmod.crescendo": "Crescendo",
@@ -512,6 +531,19 @@
 
   "subtitles.rpgworldmod.fire_catcher_hungry": "Flame Catcher gets hungry",
   "subtitles.rpgworldmod.fire_catcher_not_hungry": "Flame Catcher is no longer hungry",
+
+  "subtitles.rpgworldmod.rie_fruit_splat": "Rie splats down",
+  "subtitles.rpgworldmod.ent_roots": "Ent roots spread",
+
+  "subtitles.rpgworldmod.ent.wake_up": "Ent awakens",
+  "subtitles.rpgworldmod.ent.sleep": "Ent curdles",
+  "subtitles.rpgworldmod.ent.death": "Ent dies",
+  "subtitles.rpgworldmod.ent.attack": "Ent creaks",
+  "subtitles.rpgworldmod.ent.shake": "Ent rustling leaves",
+  "subtitles.rpgworldmod.ent.open_hollow": "Ent hollow opens",
+  "subtitles.rpgworldmod.ent.close_hollow": "Ent hollow shuts",
+
+  "subtitles.rpgworldmod.tire.bounce": "Tire vibrates",
 
   "subtitles.rpgworldmod.platinumfish.death": "Platinumfish dies",
   "subtitles.rpgworldmod.platinumfish.hurt": "Platinumfish hurts",

@@ -94,6 +94,7 @@ public class ModSounds
         MOSSIOSIS_CONVERTED = registerSound("rpgworldmod.mossiosis_converted");
 
         MUSIC_DISC_HOWLING = registerSound("rpgworldmod.music_disc_howling");
+        MUSIC_DISC_TIRE = registerSound("rpgworldmod.music_disc_tire");
 
         PLATINUMFISH_AMBIENT = registerSound("rpgworldmod.platinumfish.ambient");
         PLATINUMFISH_DEATH = registerSound("rpgworldmod.platinumfish.death");
@@ -137,6 +138,25 @@ public class ModSounds
 
         FIRE_CATCHER_HUNGRY = registerSound("rpgworldmod.fire_catcher_hungry");
         FIRE_CATCHER_NOT_HUNGRY = registerSound("rpgworldmod.fire_catcher_not_hungry");
+
+        RIE_FRUIT_SPLAT = registerSound("rpgworldmod.rie_fruit_splat");
+        ENT_ROOTS = registerSound("rpgworldmod.ent_roots");
+
+        ENT_WAKE_UP = registerSound("rpgworldmod.ent.wake_up");
+        ENT_SLEEP = registerSound("rpgworldmod.ent.sleep");
+        ENT_DEATH = registerSound("rpgworldmod.ent.death");
+        ENT_ATTACK = registerSound("rpgworldmod.ent.attack");
+        ENT_ATTRACT = registerSound("rpgworldmod.ent.attract");
+        ENT_SHAKE = registerSound("rpgworldmod.ent.shake");
+        ENT_OPEN_HOLLOW = registerSound("rpgworldmod.ent.open_hollow");
+        ENT_CLOSE_HOLLOW = registerSound("rpgworldmod.ent.close_hollow");
+
+        TIRE_BREAK = registerSound("rpgworldmod.block.tire.break");
+        TIRE_STEP = registerSound("rpgworldmod.block.tire.step");
+        TIRE_PLACE = registerSound("rpgworldmod.block.tire.place");
+        TIRE_HIT = registerSound("rpgworldmod.block.tire.hit");
+        TIRE_FALL = registerSound("rpgworldmod.block.tire.fall");
+        TIRE_BOUNCE = registerSound("rpgworldmod.block.tire.bounce");
     }
 
     private static RegistryObject<SoundEvent> registerSound(String name)

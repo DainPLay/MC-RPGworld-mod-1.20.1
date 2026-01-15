@@ -1,6 +1,6 @@
 package net.dainplay.rpgworldmod.item.custom;
 
-import net.dainplay.rpgworldmod.mana.PlayerManaProvider;
+import net.dainplay.rpgworldmod.network.PlayerManaProvider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;

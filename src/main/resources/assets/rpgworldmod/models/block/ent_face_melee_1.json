@@ -1,0 +1,8 @@
+{
+  "parent": "rpgworldmod:block/ent_face",
+  "textures": {
+    "top": "rpgworldmod:block/living_wood_log_top",
+    "front": "rpgworldmod:block/ent_face_idle_attack_5",
+    "side": "rpgworldmod:block/rie_log"
+  }
+}

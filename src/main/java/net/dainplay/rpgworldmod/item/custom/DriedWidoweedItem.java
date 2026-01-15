@@ -1,9 +1,10 @@
 package net.dainplay.rpgworldmod.item.custom;
 
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
-import net.dainplay.rpgworldmod.mana.PlayerManaProvider;
+import net.dainplay.rpgworldmod.network.PlayerManaProvider;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -17,7 +18,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
@@ -58,7 +58,8 @@ public class DriedWidoweedItem extends Item {
 			}
 		}
 		if (entity instanceof Player player) {
-			spawnBreathParticles(level, player);
+			if(level.isClientSide()) spawnBreathParticles(level, player);
+			else createSyncedParticles((ServerLevel)level, player);
 			player.getCooldowns().addCooldown(this, 20);
 			player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 160, 0));
 		}
@@ -69,6 +70,34 @@ public class DriedWidoweedItem extends Item {
 		// Создаем частицы дыма во время использования
 
 		return stack;
+	}
+
+	private void createSyncedParticles(ServerLevel level, Player player) {
+		Vec3 headPos = new Vec3(player.getX(), player.getEyeY(), player.getZ());
+		Vec3 look = player.getLookAngle().normalize();
+		Vec3 forward = look.scale(FORWARD_OFFSET);
+		Vec3 down = new Vec3(0, -DOWN_OFFSET, 0);
+		Vec3 spawnPos = headPos.add(forward).add(down);
+
+		RandomSource random = level.random;
+		DustParticleOptions particle = new DustParticleOptions(BREATH_COLOR, BREATH_SIZE);
+
+		// Создаем частицы с небольшим разбросом и скоростью
+		for (int i = 0; i < 12; i++) {
+			// Небольшой разброс позиции
+			double spreadX = (random.nextDouble() - 0.5) * 0.1;
+			double spreadY = (random.nextDouble() - 0.5) * 0.05;
+			double spreadZ = (random.nextDouble() - 0.5) * 0.1;
+
+			// Небольшая общая скорость в направлении взгляда
+			double speed = 0.02 + random.nextDouble() * 0.01;
+
+			level.sendParticles(particle,
+					spawnPos.x, spawnPos.y, spawnPos.z,
+					1, // количество частиц
+					spreadX, spreadY, spreadZ, // разброс позиции
+					speed); // общая скорость
+		}
 	}
 
 	// Метод для спавна частиц дыхания (вызывается на сервере)

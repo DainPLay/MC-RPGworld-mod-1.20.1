@@ -1,5 +1,5 @@
 {
-  "parent": "rpgworldmod:defeat_razorleaf",
+  "parent": "rpgworldmod:root",
   "criteria": {
     "get_depressed": {
       "conditions": {},

@@ -1,0 +1,33 @@
+{
+  "parent": "rpgworldmod:defeat_ent",
+  "criteria": {
+    "feed_tire_to_razorleaf": {
+      "conditions": {},
+      "trigger": "rpgworldmod:feed_tire_to_razorleaf"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.feed_tire_to_razorleaf.description"
+    },
+    "frame": "challenge",
+    "hidden": true,
+    "icon": {
+      "item": "rpgworldmod:tire"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.feed_tire_to_razorleaf.title"
+    }
+  },
+  "requirements": [
+    [
+      "feed_tire_to_razorleaf"
+    ]
+  ],
+  "rewards": {
+    "experience": 65
+  },
+  "sends_telemetry_event": true
+}

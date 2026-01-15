@@ -81,6 +81,10 @@
     [
       "minecraft:glow_lichen",
       "rpgworldmod:patch_moss_rie_placed",
+      "rpgworldmod:ent_face_south_checked",
+      "rpgworldmod:ent_face_east_checked",
+      "rpgworldmod:ent_face_north_checked",
+      "rpgworldmod:ent_face_west_checked",
       "rpgworldmod:fancy_rie_tree_checked",
       "rpgworldmod:rie_tree_checked",
       "rpgworldmod:rie_bush_placed",

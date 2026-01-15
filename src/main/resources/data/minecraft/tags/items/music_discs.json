@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "rpgworldmod:music_disc_howling"
+    "rpgworldmod:music_disc_howling",
+    "rpgworldmod:music_disc_tire"
   ]
 }

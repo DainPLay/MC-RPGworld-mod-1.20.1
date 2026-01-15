@@ -15,6 +15,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -66,7 +68,7 @@ public class MossiosisEffect extends MobEffect {
             pLivingEntity = ((Mob) pLivingEntity).convertTo(ModEntities.MOSSFRONT.get(), true);
         }
 
-        if(pLivingEntity.getHealth() - (pAmplifier+1)*6 <= 0) {
+        if(pLivingEntity.canBeAffected(new MobEffectInstance(ModEffects.MOSSIOSIS.get())) && pLivingEntity.getHealth() - (pAmplifier+1)*6 <= 0) {
             if (pLivingEntity.getLastDamageSource() == null) {
                 pLivingEntity.hurt(ModDamageTypes.getDamageSource(pLivingEntity.level(), ModDamageTypes.MOSSIOSIS), Float.MAX_VALUE);
             } else {

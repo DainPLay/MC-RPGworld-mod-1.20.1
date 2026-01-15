@@ -1,0 +1,355 @@
+{
+  "variants": {
+    "asleep=true,facing=east": {
+      "model": "rpgworldmod:block/ent_face_asleep",
+      "y": 90
+    },
+    "asleep=true,facing=north": {
+      "model": "rpgworldmod:block/ent_face_asleep"
+    },
+    "asleep=true,facing=south": {
+      "model": "rpgworldmod:block/ent_face_asleep",
+      "y": 180
+    },
+    "asleep=true,facing=west": {
+      "model": "rpgworldmod:block/ent_face_asleep",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=false,looking=straight,facing=east": {
+      "model": "rpgworldmod:block/ent_face",
+      "y": 90
+    },
+    "asleep=false,is_attacking=false,looking=straight,facing=north": {
+      "model": "rpgworldmod:block/ent_face"
+    },
+    "asleep=false,is_attacking=false,looking=straight,facing=south": {
+      "model": "rpgworldmod:block/ent_face",
+      "y": 180
+    },
+    "asleep=false,is_attacking=false,looking=straight,facing=west": {
+      "model": "rpgworldmod:block/ent_face",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=false,looking=left,facing=east": {
+      "model": "rpgworldmod:block/ent_face_left",
+      "y": 90
+    },
+    "asleep=false,is_attacking=false,looking=left,facing=north": {
+      "model": "rpgworldmod:block/ent_face_left"
+    },
+    "asleep=false,is_attacking=false,looking=left,facing=south": {
+      "model": "rpgworldmod:block/ent_face_left",
+      "y": 180
+    },
+    "asleep=false,is_attacking=false,looking=left,facing=west": {
+      "model": "rpgworldmod:block/ent_face_left",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=false,looking=right,facing=east": {
+      "model": "rpgworldmod:block/ent_face_right",
+      "y": 90
+    },
+    "asleep=false,is_attacking=false,looking=right,facing=north": {
+      "model": "rpgworldmod:block/ent_face_right"
+    },
+    "asleep=false,is_attacking=false,looking=right,facing=south": {
+      "model": "rpgworldmod:block/ent_face_right",
+      "y": 180
+    },
+    "asleep=false,is_attacking=false,looking=right,facing=west": {
+      "model": "rpgworldmod:block/ent_face_right",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=true,melee_progress=0,looking=straight,facing=east": {
+      "model": "rpgworldmod:block/ent_face_fire",
+      "y": 90
+    },
+    "asleep=false,is_attacking=true,melee_progress=0,looking=straight,facing=north": {
+      "model": "rpgworldmod:block/ent_face_fire"
+    },
+    "asleep=false,is_attacking=true,melee_progress=0,looking=straight,facing=south": {
+      "model": "rpgworldmod:block/ent_face_fire",
+      "y": 180
+    },
+    "asleep=false,is_attacking=true,melee_progress=0,looking=straight,facing=west": {
+      "model": "rpgworldmod:block/ent_face_fire",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=true,melee_progress=0,looking=left,facing=east": {
+      "model": "rpgworldmod:block/ent_face_left_fire",
+      "y": 90
+    },
+    "asleep=false,is_attacking=true,melee_progress=0,looking=left,facing=north": {
+      "model": "rpgworldmod:block/ent_face_left_fire"
+    },
+    "asleep=false,is_attacking=true,melee_progress=0,looking=left,facing=south": {
+      "model": "rpgworldmod:block/ent_face_left_fire",
+      "y": 180
+    },
+    "asleep=false,is_attacking=true,melee_progress=0,looking=left,facing=west": {
+      "model": "rpgworldmod:block/ent_face_left_fire",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=true,melee_progress=0,looking=right,facing=east": {
+      "model": "rpgworldmod:block/ent_face_right_fire",
+      "y": 90
+    },
+    "asleep=false,is_attacking=true,melee_progress=0,looking=right,facing=north": {
+      "model": "rpgworldmod:block/ent_face_right_fire"
+    },
+    "asleep=false,is_attacking=true,melee_progress=0,looking=right,facing=south": {
+      "model": "rpgworldmod:block/ent_face_right_fire",
+      "y": 180
+    },
+    "asleep=false,is_attacking=true,melee_progress=0,looking=right,facing=west": {
+      "model": "rpgworldmod:block/ent_face_right_fire",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=true,melee_progress=1,looking=straight,facing=east": {
+      "model": "rpgworldmod:block/ent_face_melee_1",
+      "y": 90
+    },
+    "asleep=false,is_attacking=true,melee_progress=1,looking=straight,facing=north": {
+      "model": "rpgworldmod:block/ent_face_melee_1"
+    },
+    "asleep=false,is_attacking=true,melee_progress=1,looking=straight,facing=south": {
+      "model": "rpgworldmod:block/ent_face_melee_1",
+      "y": 180
+    },
+    "asleep=false,is_attacking=true,melee_progress=1,looking=straight,facing=west": {
+      "model": "rpgworldmod:block/ent_face_melee_1",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=true,melee_progress=1,looking=left,facing=east": {
+      "model": "rpgworldmod:block/ent_face_left_melee_1",
+      "y": 90
+    },
+    "asleep=false,is_attacking=true,melee_progress=1,looking=left,facing=north": {
+      "model": "rpgworldmod:block/ent_face_left_melee_1"
+    },
+    "asleep=false,is_attacking=true,melee_progress=1,looking=left,facing=south": {
+      "model": "rpgworldmod:block/ent_face_left_melee_1",
+      "y": 180
+    },
+    "asleep=false,is_attacking=true,melee_progress=1,looking=left,facing=west": {
+      "model": "rpgworldmod:block/ent_face_left_melee_1",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=true,melee_progress=1,looking=right,facing=east": {
+      "model": "rpgworldmod:block/ent_face_right_melee_1",
+      "y": 90
+    },
+    "asleep=false,is_attacking=true,melee_progress=1,looking=right,facing=north": {
+      "model": "rpgworldmod:block/ent_face_right_melee_1"
+    },
+    "asleep=false,is_attacking=true,melee_progress=1,looking=right,facing=south": {
+      "model": "rpgworldmod:block/ent_face_right_melee_1",
+      "y": 180
+    },
+    "asleep=false,is_attacking=true,melee_progress=1,looking=right,facing=west": {
+      "model": "rpgworldmod:block/ent_face_right_melee_1",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=true,melee_progress=2,looking=straight,facing=east": {
+      "model": "rpgworldmod:block/ent_face_melee_2",
+      "y": 90
+    },
+    "asleep=false,is_attacking=true,melee_progress=2,looking=straight,facing=north": {
+      "model": "rpgworldmod:block/ent_face_melee_2"
+    },
+    "asleep=false,is_attacking=true,melee_progress=2,looking=straight,facing=south": {
+      "model": "rpgworldmod:block/ent_face_melee_2",
+      "y": 180
+    },
+    "asleep=false,is_attacking=true,melee_progress=2,looking=straight,facing=west": {
+      "model": "rpgworldmod:block/ent_face_melee_2",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=true,melee_progress=2,looking=left,facing=east": {
+      "model": "rpgworldmod:block/ent_face_left_melee_2",
+      "y": 90
+    },
+    "asleep=false,is_attacking=true,melee_progress=2,looking=left,facing=north": {
+      "model": "rpgworldmod:block/ent_face_left_melee_2"
+    },
+    "asleep=false,is_attacking=true,melee_progress=2,looking=left,facing=south": {
+      "model": "rpgworldmod:block/ent_face_left_melee_2",
+      "y": 180
+    },
+    "asleep=false,is_attacking=true,melee_progress=2,looking=left,facing=west": {
+      "model": "rpgworldmod:block/ent_face_left_melee_2",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=true,melee_progress=2,looking=right,facing=east": {
+      "model": "rpgworldmod:block/ent_face_right_melee_2",
+      "y": 90
+    },
+    "asleep=false,is_attacking=true,melee_progress=2,looking=right,facing=north": {
+      "model": "rpgworldmod:block/ent_face_right_melee_2"
+    },
+    "asleep=false,is_attacking=true,melee_progress=2,looking=right,facing=south": {
+      "model": "rpgworldmod:block/ent_face_right_melee_2",
+      "y": 180
+    },
+    "asleep=false,is_attacking=true,melee_progress=2,looking=right,facing=west": {
+      "model": "rpgworldmod:block/ent_face_right_melee_2",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=true,melee_progress=3,looking=straight,facing=east": {
+      "model": "rpgworldmod:block/ent_face_melee_3",
+      "y": 90
+    },
+    "asleep=false,is_attacking=true,melee_progress=3,looking=straight,facing=north": {
+      "model": "rpgworldmod:block/ent_face_melee_3"
+    },
+    "asleep=false,is_attacking=true,melee_progress=3,looking=straight,facing=south": {
+      "model": "rpgworldmod:block/ent_face_melee_3",
+      "y": 180
+    },
+    "asleep=false,is_attacking=true,melee_progress=3,looking=straight,facing=west": {
+      "model": "rpgworldmod:block/ent_face_melee_3",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=true,melee_progress=3,looking=left,facing=east": {
+      "model": "rpgworldmod:block/ent_face_left_melee_3",
+      "y": 90
+    },
+    "asleep=false,is_attacking=true,melee_progress=3,looking=left,facing=north": {
+      "model": "rpgworldmod:block/ent_face_left_melee_3"
+    },
+    "asleep=false,is_attacking=true,melee_progress=3,looking=left,facing=south": {
+      "model": "rpgworldmod:block/ent_face_left_melee_3",
+      "y": 180
+    },
+    "asleep=false,is_attacking=true,melee_progress=3,looking=left,facing=west": {
+      "model": "rpgworldmod:block/ent_face_left_melee_3",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=true,melee_progress=3,looking=right,facing=east": {
+      "model": "rpgworldmod:block/ent_face_right_melee_3",
+      "y": 90
+    },
+    "asleep=false,is_attacking=true,melee_progress=3,looking=right,facing=north": {
+      "model": "rpgworldmod:block/ent_face_right_melee_3"
+    },
+    "asleep=false,is_attacking=true,melee_progress=3,looking=right,facing=south": {
+      "model": "rpgworldmod:block/ent_face_right_melee_3",
+      "y": 180
+    },
+    "asleep=false,is_attacking=true,melee_progress=3,looking=right,facing=west": {
+      "model": "rpgworldmod:block/ent_face_right_melee_3",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=true,melee_progress=4,looking=straight,facing=east": {
+      "model": "rpgworldmod:block/ent_face_melee_4",
+      "y": 90
+    },
+    "asleep=false,is_attacking=true,melee_progress=4,looking=straight,facing=north": {
+      "model": "rpgworldmod:block/ent_face_melee_4"
+    },
+    "asleep=false,is_attacking=true,melee_progress=4,looking=straight,facing=south": {
+      "model": "rpgworldmod:block/ent_face_melee_4",
+      "y": 180
+    },
+    "asleep=false,is_attacking=true,melee_progress=4,looking=straight,facing=west": {
+      "model": "rpgworldmod:block/ent_face_melee_4",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=true,melee_progress=4,looking=left,facing=east": {
+      "model": "rpgworldmod:block/ent_face_left_melee_4",
+      "y": 90
+    },
+    "asleep=false,is_attacking=true,melee_progress=4,looking=left,facing=north": {
+      "model": "rpgworldmod:block/ent_face_left_melee_4"
+    },
+    "asleep=false,is_attacking=true,melee_progress=4,looking=left,facing=south": {
+      "model": "rpgworldmod:block/ent_face_left_melee_4",
+      "y": 180
+    },
+    "asleep=false,is_attacking=true,melee_progress=4,looking=left,facing=west": {
+      "model": "rpgworldmod:block/ent_face_left_melee_4",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=true,melee_progress=4,looking=right,facing=east": {
+      "model": "rpgworldmod:block/ent_face_right_melee_4",
+      "y": 90
+    },
+    "asleep=false,is_attacking=true,melee_progress=4,looking=right,facing=north": {
+      "model": "rpgworldmod:block/ent_face_right_melee_4"
+    },
+    "asleep=false,is_attacking=true,melee_progress=4,looking=right,facing=south": {
+      "model": "rpgworldmod:block/ent_face_right_melee_4",
+      "y": 180
+    },
+    "asleep=false,is_attacking=true,melee_progress=4,looking=right,facing=west": {
+      "model": "rpgworldmod:block/ent_face_right_melee_4",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=true,melee_progress=5,looking=straight,facing=east": {
+      "model": "rpgworldmod:block/ent_face_melee_5",
+      "y": 90
+    },
+    "asleep=false,is_attacking=true,melee_progress=5,looking=straight,facing=north": {
+      "model": "rpgworldmod:block/ent_face_melee_5"
+    },
+    "asleep=false,is_attacking=true,melee_progress=5,looking=straight,facing=south": {
+      "model": "rpgworldmod:block/ent_face_melee_5",
+      "y": 180
+    },
+    "asleep=false,is_attacking=true,melee_progress=5,looking=straight,facing=west": {
+      "model": "rpgworldmod:block/ent_face_melee_5",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=true,melee_progress=5,looking=left,facing=east": {
+      "model": "rpgworldmod:block/ent_face_left_melee_5",
+      "y": 90
+    },
+    "asleep=false,is_attacking=true,melee_progress=5,looking=left,facing=north": {
+      "model": "rpgworldmod:block/ent_face_left_melee_5"
+    },
+    "asleep=false,is_attacking=true,melee_progress=5,looking=left,facing=south": {
+      "model": "rpgworldmod:block/ent_face_left_melee_5",
+      "y": 180
+    },
+    "asleep=false,is_attacking=true,melee_progress=5,looking=left,facing=west": {
+      "model": "rpgworldmod:block/ent_face_left_melee_5",
+      "y": 270
+    },
+
+    "asleep=false,is_attacking=true,melee_progress=5,looking=right,facing=east": {
+      "model": "rpgworldmod:block/ent_face_right_melee_5",
+      "y": 90
+    },
+    "asleep=false,is_attacking=true,melee_progress=5,looking=right,facing=north": {
+      "model": "rpgworldmod:block/ent_face_right_melee_5"
+    },
+    "asleep=false,is_attacking=true,melee_progress=5,looking=right,facing=south": {
+      "model": "rpgworldmod:block/ent_face_right_melee_5",
+      "y": 180
+    },
+    "asleep=false,is_attacking=true,melee_progress=5,looking=right,facing=west": {
+      "model": "rpgworldmod:block/ent_face_right_melee_5",
+      "y": 270
+    }
+  }
+}

@@ -12,6 +12,8 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
@@ -60,6 +62,10 @@ public class LivingWoodArmorItem extends ArmorItem implements RPGtooltip {
 	@Override
 	public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
 		return "rpgworldmod:textures/models/armor/living_wood_layer_" + (this.getType() == Type.LEGGINGS ? 2 : 1) + ".png";
+	}
+	@Override
+	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+		return enchantment == Enchantments.MENDING || super.canApplyAtEnchantingTable(stack, enchantment);
 	}
 
 }

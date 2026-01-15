@@ -1,5 +1,5 @@
 {
-  "parent": "rpgworldmod:get_depressed",
+  "parent": "rpgworldmod:find_rie_weald",
   "criteria": {
     "smoke_widoweed": {
       "conditions": {},

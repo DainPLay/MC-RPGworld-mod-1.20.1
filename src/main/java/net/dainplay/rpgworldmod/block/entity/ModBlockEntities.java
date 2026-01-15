@@ -37,6 +37,8 @@ public class ModBlockEntities {
 
     public static final RegistryObject<BlockEntityType<TreeHollowBlockEntity>> TREE_HOLLOW_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("tree_hollow_block_entity", () ->
             BlockEntityType.Builder.of(TreeHollowBlockEntity::new, ModBlocks.RIE_HOLLOW.get()).build(null));
+    public static final RegistryObject<BlockEntityType<EntFaceBlockEntity>> ENT_FACE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("ent_face_block_entity", () ->
+            BlockEntityType.Builder.of(EntFaceBlockEntity::new, ModBlocks.ENT_FACE.get()).build(null));
     public static final RegistryObject<BlockEntityType<FairapierWiltedPlantBlockEntity>> FAIRAPIER_WILTED_PLANT_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("fairapier_wilted_plant_block_entity", () ->
             BlockEntityType.Builder.of(FairapierWiltedPlantBlockEntity::new, ModBlocks.FAIRAPIER_WILTED_PLANT.get()).build(null));
     public static final RegistryObject<BlockEntityType<ModSignBlockEntity>> SIGN_BLOCK_ENTITIES = BLOCK_ENTITY_TYPES.register("sign_block_entity", () ->

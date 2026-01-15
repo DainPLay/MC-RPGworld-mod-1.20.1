@@ -1,9 +1,8 @@
 package net.dainplay.rpgworldmod.util;
 
-import net.dainplay.rpgworldmod.mana.FireExtinguishParticlesPacket;
-import net.dainplay.rpgworldmod.mana.ModMessages;
+import net.dainplay.rpgworldmod.network.FireExtinguishParticlesPacket;
+import net.dainplay.rpgworldmod.network.ModMessages;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

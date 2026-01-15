@@ -190,10 +190,10 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				if (distance < 1.5) {
 					applyEffect(target);
 
-					if (target instanceof ServerPlayer player && !hasGoldenKill(player))
+					if (target instanceof ServerPlayer player)
 						if (!this.entityData.get(DATA_DEALT_DAMAGE)) {
 							this.entityData.set(DATA_DEALT_DAMAGE, true);
-							this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
+							if (!hasGoldenKill(player)) this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
 						}
 					this.proceedKill();
 				}
@@ -204,6 +204,13 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 	public boolean hasGoldenKill(ServerPlayer player) {
 		PlayerAdvancements advancements = player.getAdvancements();
+
+		Advancement silverAdvancement = player.server.getAdvancements().getAdvancement(RPGworldMod.prefix("kill_all_rie_weald_mobs"));
+		AdvancementProgress silverProgress = advancements.getOrStartProgress(silverAdvancement);
+
+		if (!silverProgress.isDone()) {
+			return true;
+		}
 
 		Advancement advancement = player.server.getAdvancements().getAdvancement(RPGworldMod.prefix("golden_kill_all_rie_weald_mobs"));
 		AdvancementProgress progress = advancements.getOrStartProgress(advancement);
@@ -1572,10 +1579,10 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 	public boolean doHurtTarget(Entity pEntity) {
 		if (pEntity instanceof LivingEntity livingEntity && attackCooldown == 0) {
 			applyEffect(livingEntity);
-			if (pEntity instanceof ServerPlayer player && !hasGoldenKill(player))
+			if (pEntity instanceof ServerPlayer player)
 				if (!this.entityData.get(DATA_DEALT_DAMAGE)) {
 					this.entityData.set(DATA_DEALT_DAMAGE, true);
-					this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
+					if (!hasGoldenKill(player)) this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
 				}
 			this.proceedKill();
 			return true;

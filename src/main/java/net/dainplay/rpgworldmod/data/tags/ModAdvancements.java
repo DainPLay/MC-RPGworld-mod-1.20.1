@@ -21,6 +21,7 @@ public class ModAdvancements {
     public static final GoldenKillDrillhogTrigger GOLDEN_KILL_DRILLHOG = CriteriaTriggers.register(new GoldenKillDrillhogTrigger());
     public static final GoldenKillMosquitoSwarmTrigger GOLDEN_KILL_MOSQUITO_SWARM = CriteriaTriggers.register(new GoldenKillMosquitoSwarmTrigger());
     public static final GoldenKillRazorleafTrigger GOLDEN_KILL_RAZORLEAF = CriteriaTriggers.register(new GoldenKillRazorleafTrigger());
+    public static final GoldenKillEntTrigger GOLDEN_KILL_ENT = CriteriaTriggers.register(new GoldenKillEntTrigger());
     public static final KillMosquitoSwarmTrigger KILL_MOSQUITO_SWARM = CriteriaTriggers.register(new KillMosquitoSwarmTrigger());
     public static final ReleaseMosquitosInNetherTrigger RELEASE_MOSQUITOS_IN_NETHER = CriteriaTriggers.register(new ReleaseMosquitosInNetherTrigger());
     public static final FindRieWealdFirstTrigger FIND_RIE_WEALD_FIRST = CriteriaTriggers.register(new FindRieWealdFirstTrigger());
@@ -35,6 +36,9 @@ public class ModAdvancements {
     public static final MossiosisFoxTransformTrigger MOSSIOSIS_FOX_TRANSFORM_TRIGGER = CriteriaTriggers.register(new MossiosisFoxTransformTrigger());
     public static final MossiosisBatTransformTrigger MOSSIOSIS_BAT_TRANSFORM_TRIGGER = CriteriaTriggers.register(new MossiosisBatTransformTrigger());
     public static final MossiosisFishTransformTrigger MOSSIOSIS_FISH_TRANSFORM_TRIGGER = CriteriaTriggers.register(new MossiosisFishTransformTrigger());
+    public static final KillEntTrigger KILL_ENT_TRIGGER = CriteriaTriggers.register(new KillEntTrigger());
+    public static final RideTireSwingTrigger RIDE_TIRE_SWING_TRIGGER = CriteriaTriggers.register(new RideTireSwingTrigger());
+    public static final FeedTireToRazorleafTrigger FEED_TIRE_TO_RAZORLEAF = CriteriaTriggers.register(new FeedTireToRazorleafTrigger());
 
     public static void init() {}
 }

@@ -2,9 +2,7 @@ package net.dainplay.rpgworldmod.block.entity.custom;
 
 import net.dainplay.rpgworldmod.block.custom.StareblossomPotBlock;
 import net.dainplay.rpgworldmod.block.entity.ModBlockEntities;
-import net.dainplay.rpgworldmod.mana.PlayerManaProvider;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.entity.BlockEntity;

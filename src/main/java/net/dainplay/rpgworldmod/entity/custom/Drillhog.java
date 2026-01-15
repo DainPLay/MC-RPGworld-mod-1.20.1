@@ -247,6 +247,13 @@ public class Drillhog extends Monster {
 	public boolean hasGoldenKill(ServerPlayer player) {
 		PlayerAdvancements advancements = player.getAdvancements();
 
+		Advancement silverAdvancement = player.server.getAdvancements().getAdvancement(RPGworldMod.prefix("kill_all_rie_weald_mobs"));
+		AdvancementProgress silverProgress = advancements.getOrStartProgress(silverAdvancement);
+
+		if (!silverProgress.isDone()) {
+			return true;
+		}
+
 		Advancement advancement = player.server.getAdvancements().getAdvancement(RPGworldMod.prefix("golden_kill_all_rie_weald_mobs"));
 		AdvancementProgress progress = advancements.getOrStartProgress(advancement);
 
@@ -266,10 +273,10 @@ public class Drillhog extends Monster {
 	}
 
 	public boolean doHurtTarget(Entity pEntity) {
-		if (pEntity instanceof ServerPlayer player && !hasGoldenKill(player))
+		if (pEntity instanceof ServerPlayer player)
 			if (!player.isDamageSourceBlocked(this.damageSources().thorns(this)) && !this.entityData.get(DATA_DEALT_DAMAGE)) {
 				this.entityData.set(DATA_DEALT_DAMAGE, true);
-				this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
+				if (!hasGoldenKill(player)) this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
 			}
 		if (!(pEntity instanceof LivingEntity)) {
 			return false;

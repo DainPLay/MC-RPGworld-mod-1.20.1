@@ -141,7 +141,7 @@ public class GasbassItem extends Item {
      * Ищет ближайший биом Rie Weald
      */
     private BlockPos findNearestRieWeald(LivingEntity entity, ServerLevel level) {
-        BlockPos entityPos = entity.blockPosition();
+        BlockPos entityPos = new BlockPos(entity.blockPosition().getX(), 64, entity.blockPosition().getZ());
 
         Predicate<Holder<Biome>> biomePredicate = holder -> holder.unwrapKey()
                 .map(key -> key.equals(RIE_WEALD_KEY))

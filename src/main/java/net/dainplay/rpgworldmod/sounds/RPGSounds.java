@@ -64,6 +64,7 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> FAIRAPIER_WILTS;
     public static RegistryObject<SoundEvent> MOSSIOSIS_CONVERTED;
     public static RegistryObject<SoundEvent> MUSIC_DISC_HOWLING;
+    public static RegistryObject<SoundEvent> MUSIC_DISC_TIRE;
     public static RegistryObject<SoundEvent> PLATINUMFISH_AMBIENT;
     public static RegistryObject<SoundEvent> PLATINUMFISH_DEATH;
     public static RegistryObject<SoundEvent> PLATINUMFISH_HURT;
@@ -99,4 +100,20 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> INHALE;
     public static RegistryObject<SoundEvent> FIRE_CATCHER_HUNGRY;
     public static RegistryObject<SoundEvent> FIRE_CATCHER_NOT_HUNGRY;
+    public static RegistryObject<SoundEvent> RIE_FRUIT_SPLAT;
+    public static RegistryObject<SoundEvent> ENT_WAKE_UP;
+    public static RegistryObject<SoundEvent> ENT_SLEEP;
+    public static RegistryObject<SoundEvent> ENT_DEATH;
+    public static RegistryObject<SoundEvent> ENT_ATTACK;
+    public static RegistryObject<SoundEvent> ENT_ATTRACT;
+    public static RegistryObject<SoundEvent> ENT_SHAKE;
+    public static RegistryObject<SoundEvent> ENT_OPEN_HOLLOW;
+    public static RegistryObject<SoundEvent> ENT_CLOSE_HOLLOW;
+    public static RegistryObject<SoundEvent> ENT_ROOTS;
+    public static RegistryObject<SoundEvent> TIRE_BREAK;
+    public static RegistryObject<SoundEvent> TIRE_STEP;
+    public static RegistryObject<SoundEvent> TIRE_PLACE;
+    public static RegistryObject<SoundEvent> TIRE_HIT;
+    public static RegistryObject<SoundEvent> TIRE_FALL;
+    public static RegistryObject<SoundEvent> TIRE_BOUNCE;
 }

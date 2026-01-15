@@ -1,5 +1,6 @@
 package net.dainplay.rpgworldmod;
 
+import com.google.common.collect.ImmutableList;
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.block.entity.ModBlockEntities;
 import net.dainplay.rpgworldmod.block.entity.ModWoodTypes;
@@ -13,6 +14,8 @@ import net.dainplay.rpgworldmod.gui.OverlayEventHandler;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.FireproofSkirtItem;
 import net.dainplay.rpgworldmod.item.custom.MintalTriangleItem;
+import net.dainplay.rpgworldmod.util.BakedModelShadeLayerFullbright;
+import net.dainplay.rpgworldmod.util.BreakingEntFaceRenderer;
 import net.dainplay.rpgworldmod.util.EnchantedBlockRenderer;
 import net.dainplay.rpgworldmod.util.PottedStareblossomBlockEntityRenderer;
 import net.dainplay.rpgworldmod.util.StareblossomBlockEntityRenderer;
@@ -35,6 +38,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
@@ -51,6 +55,7 @@ public class RPGworldClient {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         modBus.addListener(this::onRegisterLayerDefinitions);
         modBus.addListener(this::guiSetup);
+        modBus.addListener(this::bakeModels);
     }
 
     public void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -60,6 +65,14 @@ public class RPGworldClient {
         //Register Armor Renderer for events
         event.registerAbove(VanillaGuiOverlay.PLAYER_HEALTH.id(),RPGworldMod.MOD_ID+"_hearts_overlay", new OverlayEventHandler());
         event.registerAbove(VanillaGuiOverlay.FOOD_LEVEL.id(),RPGworldMod.MOD_ID+"_mana_overlay", new ManaOverlayEventHandler());
+    }
+
+    private void bakeModels(final ModelEvent.ModifyBakingResult e) {
+            for (ResourceLocation id : e.getModels().keySet()) {
+                if (ImmutableList.of("rpgworldmod:ent_face#").stream().anyMatch(str -> id.toString().startsWith(str))) {
+                    e.getModels().put(id, new BakedModelShadeLayerFullbright(e.getModels().get(id)));
+                }
+            }
     }
 
     @SubscribeEvent
@@ -79,6 +92,8 @@ public class RPGworldClient {
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.EMULSION_BLOCK.get(), RenderType.translucent());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.MASKONITE_GLASS.get(), RenderType.translucent());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.MASKONITE_GLASS_PANE.get(), RenderType.translucent());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.ENT_FACE.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.TIRE.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.SHIVERALIS.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.POTTED_SHIVERALIS.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.POTTED_RIE_SAPLING.get(), RenderType.cutout());
@@ -134,6 +149,7 @@ public class RPGworldClient {
         BlockEntityRenderers.register(ModBlockEntities.FAIRAPIER_WILTED_PLANT_BLOCK_ENTITY.get(), EnchantedBlockRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.STAREBLOSSOM_BLOCK_ENTITY.get(), StareblossomBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.POTTED_STAREBLOSSOM_BLOCK_ENTITY.get(), PottedStareblossomBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.ENT_FACE_BLOCK_ENTITY.get(), BreakingEntFaceRenderer::new);
         CurioRenderers.register();
 
 

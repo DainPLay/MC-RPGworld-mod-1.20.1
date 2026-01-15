@@ -2,8 +2,7 @@ package net.dainplay.rpgworldmod.mixin;
 
 import net.dainplay.rpgworldmod.gui.ManaOverlayEventHandler;
 import net.dainplay.rpgworldmod.gui.OverlayEventHandler;
-import net.dainplay.rpgworldmod.mana.ClientManaData;
-import net.dainplay.rpgworldmod.mana.ClientMaxManaData;
+import net.dainplay.rpgworldmod.network.ClientMaxManaData;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;

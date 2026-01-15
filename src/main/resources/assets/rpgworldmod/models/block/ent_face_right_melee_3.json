@@ -1,0 +1,9 @@
+{
+  "parent": "rpgworldmod:block/ent_face_glow",
+  "textures": {
+    "top": "rpgworldmod:block/living_wood_log_top",
+    "front": "rpgworldmod:block/ent_face_right_fire",
+    "fire": "rpgworldmod:block/ent_face_right_fire_glow",
+    "side": "rpgworldmod:block/rie_log"
+  }
+}

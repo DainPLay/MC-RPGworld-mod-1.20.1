@@ -1,0 +1,30 @@
+{
+  "parent": "rpgworldmod:defeat_ent",
+  "criteria": {
+    "ride_tire_swing": {
+      "conditions": {},
+      "trigger": "rpgworldmod:ride_tire_swing"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.ride_tire_swing.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:tire"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.ride_tire_swing.title"
+    }
+  },
+  "requirements": [
+    [
+      "ride_tire_swing"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,139 @@
+{
+  "variants": {
+    "facing=down,form=half": {
+      "model": "rpgworldmod:block/tire_half",
+      "x": 180
+    },
+    "facing=down,form=normal": {
+      "model": "rpgworldmod:block/tire_normal",
+      "x": 180
+    },
+    "facing=down,form=single": {
+      "model": "rpgworldmod:block/tire_single",
+      "x": 180
+    },
+    "facing=down,form=double": {
+      "model": "rpgworldmod:block/tire_double",
+      "x": 180
+    },
+    "facing=down,form=triple": {
+      "model": "rpgworldmod:block/tire_triple",
+      "x": 180
+    },
+
+    "facing=up,form=half": {
+      "model": "rpgworldmod:block/tire_half"
+    },
+    "facing=up,form=normal": {
+      "model": "rpgworldmod:block/tire_normal"
+    },
+    "facing=up,form=single": {
+      "model": "rpgworldmod:block/tire_single"
+    },
+    "facing=up,form=double": {
+      "model": "rpgworldmod:block/tire_double"
+    },
+    "facing=up,form=triple": {
+      "model": "rpgworldmod:block/tire_triple"
+    },
+
+    "facing=north,form=half": {
+      "model": "rpgworldmod:block/tire_half",
+      "x": 90
+    },
+    "facing=north,form=normal": {
+      "model": "rpgworldmod:block/tire_normal",
+      "x": 90
+    },
+    "facing=north,form=single": {
+      "model": "rpgworldmod:block/tire_single",
+      "x": 90
+    },
+    "facing=north,form=double": {
+      "model": "rpgworldmod:block/tire_double",
+      "x": 90
+    },
+    "facing=north,form=triple": {
+      "model": "rpgworldmod:block/tire_triple",
+      "x": 90
+    },
+
+    "facing=south,form=half": {
+      "model": "rpgworldmod:block/tire_half",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,form=normal": {
+      "model": "rpgworldmod:block/tire_normal",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,form=single": {
+      "model": "rpgworldmod:block/tire_single",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,form=double": {
+      "model": "rpgworldmod:block/tire_double",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,form=triple": {
+      "model": "rpgworldmod:block/tire_triple",
+      "x": 90,
+      "y": 180
+    },
+
+    "facing=west,form=half": {
+      "model": "rpgworldmod:block/tire_half",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,form=normal": {
+      "model": "rpgworldmod:block/tire_normal",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,form=single": {
+      "model": "rpgworldmod:block/tire_single",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,form=double": {
+      "model": "rpgworldmod:block/tire_double",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,form=triple": {
+      "model": "rpgworldmod:block/tire_triple",
+      "x": 90,
+      "y": 270
+    },
+
+    "facing=east,form=half": {
+      "model": "rpgworldmod:block/tire_half",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,form=normal": {
+      "model": "rpgworldmod:block/tire_normal",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,form=single": {
+      "model": "rpgworldmod:block/tire_single",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,form=double": {
+      "model": "rpgworldmod:block/tire_double",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,form=triple": {
+      "model": "rpgworldmod:block/tire_triple",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

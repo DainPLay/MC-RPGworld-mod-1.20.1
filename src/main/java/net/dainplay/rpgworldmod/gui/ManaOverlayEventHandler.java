@@ -3,9 +3,9 @@ package net.dainplay.rpgworldmod.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.item.custom.ManaCostItem;
-import net.dainplay.rpgworldmod.mana.ClientIsManaRegenBlockedData;
-import net.dainplay.rpgworldmod.mana.ClientManaData;
-import net.dainplay.rpgworldmod.mana.ClientMaxManaData;
+import net.dainplay.rpgworldmod.network.ClientIsManaRegenBlockedData;
+import net.dainplay.rpgworldmod.network.ClientManaData;
+import net.dainplay.rpgworldmod.network.ClientMaxManaData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Random;
 

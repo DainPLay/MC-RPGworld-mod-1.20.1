@@ -1,0 +1,51 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "conditions": [
+                {
+                  "block": "rpgworldmod:tire",
+                  "condition": "minecraft:block_state_property",
+                  "properties": {
+                    "form": "double"
+                  }
+                }
+              ],
+              "count": 2.0,
+              "function": "minecraft:set_count"
+            },
+            {
+              "add": false,
+              "conditions": [
+                {
+                  "block": "rpgworldmod:tire",
+                  "condition": "minecraft:block_state_property",
+                  "properties": {
+                    "form": "triple"
+                  }
+                }
+              ],
+              "count": 2.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "rpgworldmod:tire"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "rpgworldmod:blocks/tire"
+}

@@ -2,16 +2,14 @@ package net.dainplay.rpgworldmod.world.feature;
 
 import com.google.common.collect.ImmutableList;
 import net.dainplay.rpgworldmod.RPGworldMod;
-import net.dainplay.rpgworldmod.block.ModBlocks;
-import net.dainplay.rpgworldmod.features.FancyOakTreeFeature;
+import net.dainplay.rpgworldmod.features.EntFeature;
+import net.dainplay.rpgworldmod.features.FancyTreeFeature;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
-import net.minecraft.data.worldgen.features.VegetationFeatures;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
-import net.minecraft.data.worldgen.placement.VegetationPlacements;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
@@ -40,6 +38,10 @@ public class ModPlacedFeatures {
     public static final ResourceKey<PlacedFeature> BIBBIT_HOLLOW_NORTH_FANCY_RIE_TREE_CHECKED_KEY = createKey("bibbit_hollow_north_fancy_rie_tree_checked");
     public static final ResourceKey<PlacedFeature> BIBBIT_HOLLOW_WEST_FANCY_RIE_TREE_CHECKED_KEY = createKey("bibbit_hollow_west_fancy_rie_tree_checked");
     public static final ResourceKey<PlacedFeature> BIBBIT_HOLLOW_EAST_FANCY_RIE_TREE_CHECKED_KEY = createKey("bibbit_hollow_east_fancy_rie_tree_checked");
+    public static final ResourceKey<PlacedFeature> ENT_FACE_SOUTH_CHECKED_KEY = createKey("ent_face_south_checked");
+    public static final ResourceKey<PlacedFeature> ENT_FACE_NORTH_CHECKED_KEY = createKey("ent_face_north_checked");
+    public static final ResourceKey<PlacedFeature> ENT_FACE_WEST_CHECKED_KEY = createKey("ent_face_west_checked");
+    public static final ResourceKey<PlacedFeature> ENT_FACE_EAST_CHECKED_KEY = createKey("ent_face_east_checked");
     public static final ResourceKey<PlacedFeature> RIE_FLOWER_PLACED_KEY = createKey("rie_flower_placed");
     public static final ResourceKey<PlacedFeature> FAIRAPIER_PLACED_KEY = createKey("fairapier_placed");
     public static final ResourceKey<PlacedFeature> SHIVERALIS_PLACED_KEY = createKey("shiveralis_placed");
@@ -70,42 +72,51 @@ public class ModPlacedFeatures {
         HolderGetter<ConfiguredFeature<?, ?>> configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
 
         register(context, RIE_TREE_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.RIE_TREE_KEY),
-                FancyOakTreeFeature.treePlacement(PlacementUtils.countExtra(2, 0.1f, 1)));
+                FancyTreeFeature.treePlacement(PlacementUtils.countExtra(2, 0.1f, 1)));
         register(context, HOLLOW_EAST_RIE_TREE_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.HOLLOW_EAST_RIE_TREE_KEY),
-                FancyOakTreeFeature.treePlacement(PlacementUtils.countExtra(2, 0.1f, 1)));
+                FancyTreeFeature.treePlacement(PlacementUtils.countExtra(2, 0.1f, 1)));
         register(context, HOLLOW_WEST_RIE_TREE_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.HOLLOW_WEST_RIE_TREE_KEY),
-                FancyOakTreeFeature.treePlacement(PlacementUtils.countExtra(2, 0.1f, 1)));
+                FancyTreeFeature.treePlacement(PlacementUtils.countExtra(2, 0.1f, 1)));
         register(context, HOLLOW_NORTH_RIE_TREE_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.HOLLOW_NORTH_RIE_TREE_KEY),
-                FancyOakTreeFeature.treePlacement(PlacementUtils.countExtra(2, 0.1f, 1)));
+                FancyTreeFeature.treePlacement(PlacementUtils.countExtra(2, 0.1f, 1)));
         register(context, HOLLOW_SOUTH_RIE_TREE_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.HOLLOW_SOUTH_RIE_TREE_KEY),
-                FancyOakTreeFeature.treePlacement(PlacementUtils.countExtra(2, 0.1f, 1)));
+                FancyTreeFeature.treePlacement(PlacementUtils.countExtra(2, 0.1f, 1)));
         register(context, BIBBIT_HOLLOW_EAST_RIE_TREE_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.BIBBIT_HOLLOW_EAST_RIE_TREE_KEY),
-                FancyOakTreeFeature.treePlacement(PlacementUtils.countExtra(2, 0.1f, 1)));
+                FancyTreeFeature.treePlacement(PlacementUtils.countExtra(2, 0.1f, 1)));
         register(context, BIBBIT_HOLLOW_WEST_RIE_TREE_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.BIBBIT_HOLLOW_WEST_RIE_TREE_KEY),
-                FancyOakTreeFeature.treePlacement(PlacementUtils.countExtra(2, 0.1f, 1)));
+                FancyTreeFeature.treePlacement(PlacementUtils.countExtra(2, 0.1f, 1)));
         register(context, BIBBIT_HOLLOW_NORTH_RIE_TREE_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.BIBBIT_HOLLOW_NORTH_RIE_TREE_KEY),
-                FancyOakTreeFeature.treePlacement(PlacementUtils.countExtra(2, 0.1f, 1)));
+                FancyTreeFeature.treePlacement(PlacementUtils.countExtra(2, 0.1f, 1)));
         register(context, BIBBIT_HOLLOW_SOUTH_RIE_TREE_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.BIBBIT_HOLLOW_SOUTH_RIE_TREE_KEY),
-                FancyOakTreeFeature.treePlacement(PlacementUtils.countExtra(2, 0.1f, 1)));
+                FancyTreeFeature.treePlacement(PlacementUtils.countExtra(2, 0.1f, 1)));
 
         register(context, FANCY_RIE_TREE_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.FANCY_RIE_TREE_KEY),
-                FancyOakTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
+                FancyTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
         register(context, HOLLOW_SOUTH_FANCY_RIE_TREE_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.HOLLOW_SOUTH_FANCY_RIE_TREE_KEY),
-                FancyOakTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
+                FancyTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
         register(context, HOLLOW_NORTH_FANCY_RIE_TREE_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.HOLLOW_NORTH_FANCY_RIE_TREE_KEY),
-                FancyOakTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
+                FancyTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
         register(context, HOLLOW_WEST_FANCY_RIE_TREE_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.HOLLOW_WEST_FANCY_RIE_TREE_KEY),
-                FancyOakTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
+                FancyTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
         register(context, HOLLOW_EAST_FANCY_RIE_TREE_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.HOLLOW_EAST_FANCY_RIE_TREE_KEY),
-                FancyOakTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
+                FancyTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
         register(context, BIBBIT_HOLLOW_SOUTH_FANCY_RIE_TREE_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.BIBBIT_HOLLOW_SOUTH_FANCY_RIE_TREE_KEY),
-                FancyOakTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
+                FancyTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
         register(context, BIBBIT_HOLLOW_NORTH_FANCY_RIE_TREE_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.BIBBIT_HOLLOW_NORTH_FANCY_RIE_TREE_KEY),
-                FancyOakTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
+                FancyTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
         register(context, BIBBIT_HOLLOW_WEST_FANCY_RIE_TREE_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.BIBBIT_HOLLOW_WEST_FANCY_RIE_TREE_KEY),
-                FancyOakTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
+                FancyTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
         register(context, BIBBIT_HOLLOW_EAST_FANCY_RIE_TREE_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.BIBBIT_HOLLOW_EAST_FANCY_RIE_TREE_KEY),
-                FancyOakTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
+                FancyTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
+        register(context, ENT_FACE_SOUTH_CHECKED_KEY,
+                configuredFeatures.getOrThrow(ModConfiguredFeatures.ENT_FACE_SOUTH_KEY),
+                EntFeature.treePlacement(RarityFilter.onAverageOnceEvery(39)));
+        register(context, ENT_FACE_NORTH_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.ENT_FACE_NORTH_KEY),
+                EntFeature.treePlacement(RarityFilter.onAverageOnceEvery(39)));
+        register(context, ENT_FACE_WEST_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.ENT_FACE_WEST_KEY),
+                EntFeature.treePlacement(RarityFilter.onAverageOnceEvery(39)));
+        register(context, ENT_FACE_EAST_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.ENT_FACE_EAST_KEY),
+                EntFeature.treePlacement(RarityFilter.onAverageOnceEvery(39)));
 
         register(context, RIE_FLOWER_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.RIE_FLOWER_KEY), RarityFilter.onAverageOnceEvery(2147483647),
                 InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome());

@@ -344,10 +344,10 @@ public class Fireflantern extends Monster {
                     if (!entity.equals(this)) {
                         entity.hurt(damageSources().mobAttack(this), damageAmount);
                     }
-                    if(entity instanceof ServerPlayer player && !hasGoldenKill(player))
+                    if(entity instanceof ServerPlayer player)
                         if(!player.isDamageSourceBlocked(this.level().damageSources().mobAttack(this)) && !this.entityData.get(DATA_DEALT_DAMAGE)) {
                             this.entityData.set(DATA_DEALT_DAMAGE, true);
-                            this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
+                             if (!hasGoldenKill(player)) this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
                         }
                 }
                 this.playSound(RPGSounds.FIREFLANTERN_IMPACT.get(), 1.0F, 1.0F);
@@ -358,6 +358,13 @@ public class Fireflantern extends Monster {
 
     public boolean hasGoldenKill(ServerPlayer player) {
         PlayerAdvancements advancements = player.getAdvancements();
+
+        Advancement silverAdvancement = player.server.getAdvancements().getAdvancement(RPGworldMod.prefix("kill_all_rie_weald_mobs"));
+        AdvancementProgress silverProgress = advancements.getOrStartProgress(silverAdvancement);
+
+        if (!silverProgress.isDone()) {
+            return true;
+        }
 
         Advancement advancement = player.server.getAdvancements().getAdvancement(RPGworldMod.prefix("golden_kill_all_rie_weald_mobs"));
         AdvancementProgress progress = advancements.getOrStartProgress(advancement);

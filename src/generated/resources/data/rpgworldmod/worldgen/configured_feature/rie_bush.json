@@ -21,6 +21,8 @@
         "Properties": {
           "distance": "7",
           "persistent": "false",
+          "related_to_ent": "0",
+          "spawned_for_ent": "false",
           "waterlogged": "false"
         }
       }

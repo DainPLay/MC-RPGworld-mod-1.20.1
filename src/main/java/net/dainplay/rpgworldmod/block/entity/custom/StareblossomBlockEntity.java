@@ -2,7 +2,7 @@ package net.dainplay.rpgworldmod.block.entity.custom;
 
 import net.dainplay.rpgworldmod.block.custom.StareblossomBlock;
 import net.dainplay.rpgworldmod.block.entity.ModBlockEntities;
-import net.dainplay.rpgworldmod.mana.PlayerManaProvider;
+import net.dainplay.rpgworldmod.network.PlayerManaProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;

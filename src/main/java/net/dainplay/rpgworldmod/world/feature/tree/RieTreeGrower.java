@@ -17,7 +17,7 @@ public class RieTreeGrower extends AbstractTreeGrower {
     @Override
     protected ResourceKey<ConfiguredFeature<?, ?>> getConfiguredFeature(RandomSource pRandom, boolean p_204308_) {
         if (pRandom.nextInt(10) == 0) {
-            int random1 = random.nextInt(63);
+            int random1 = random.nextInt(1);
             return switch (random1) {
                 case 0, 1 -> ModConfiguredFeatures.BIBBIT_HOLLOW_EAST_FANCY_RIE_TREE_KEY;
                 case 2, 3 -> ModConfiguredFeatures.BIBBIT_HOLLOW_WEST_FANCY_RIE_TREE_KEY;
@@ -28,6 +28,14 @@ public class RieTreeGrower extends AbstractTreeGrower {
                 case 10 -> ModConfiguredFeatures.HOLLOW_SOUTH_FANCY_RIE_TREE_KEY;
                 case 11 -> ModConfiguredFeatures.HOLLOW_NORTH_FANCY_RIE_TREE_KEY;
                 default -> ModConfiguredFeatures.FANCY_RIE_TREE_KEY;
+            };
+        } else if (pRandom.nextInt(10) == 0) {
+            int random1 = random.nextInt(4);
+            return switch (random1) {
+                case 0 -> ModConfiguredFeatures.ENT_FACE_EAST_KEY;
+                case 1 -> ModConfiguredFeatures.ENT_FACE_NORTH_KEY;
+                case 2 -> ModConfiguredFeatures.ENT_FACE_SOUTH_KEY;
+                default -> ModConfiguredFeatures.ENT_FACE_WEST_KEY;
             };
         } else {
             int random1 = random.nextInt(63);

@@ -22,7 +22,7 @@ import net.dainplay.rpgworldmod.item.ModCreativeModeTab;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.WealdBladeItem;
 import net.dainplay.rpgworldmod.loot.ModLootModifiers;
-import net.dainplay.rpgworldmod.mana.ModMessages;
+import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.particle.ModParticles;
 import net.dainplay.rpgworldmod.potion.ModPotions;
 import net.dainplay.rpgworldmod.sounds.ModSounds;
@@ -65,7 +65,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.FlowerPotBlock;
-import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
@@ -82,7 +81,6 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import terrablender.api.Regions;
@@ -254,6 +252,8 @@ public class RPGworldMod
             event.accept(ModBlocks.DRILL_TUSK);
             event.accept(ModBlocks.QUARTZITE_DRILL_TUSK);
             event.accept(ModItems.FIRE_CATCHER_ITEM);
+            event.accept(ModBlocks.ENT_FACE);
+            event.accept(ModBlocks.TIRE);
         }
 
         if(event.getTab() == ModCreativeModeTab.RPGWORLD_FLORA_TAB.get()) {
@@ -343,6 +343,7 @@ public class RPGworldMod
             event.accept(ModItems.BRAMBLEFOX_SCARF);
             event.accept(ModItems.FIG_LEAF);
             event.accept(ModItems.MUSIC_DISC_HOWLING);
+            event.accept(ModItems.MUSIC_DISC_TIRE);
             event.accept(ModItems.RIE_WEALD_BANNER_PATTERN);
             event.accept(ModItems.PORTABLE_TURRET);
         }
@@ -437,6 +438,7 @@ public class RPGworldMod
             event.accept(ModItems.DRILLHOG_SPAWN_EGG);
             event.accept(ModItems.MOSQUITO_SWARM_SPAWN_EGG);
             event.accept(ModItems.RAZORLEAF_SPAWN_EGG);
+            event.accept(ModItems.ENT_SPAWN_EGG);
             event.accept(ModItems.PLATINUMFISH_SPAWN_EGG);
             event.accept(ModItems.BHLEE_SPAWN_EGG);
             event.accept(ModItems.MOSSFRONT_SPAWN_EGG);
@@ -508,17 +510,14 @@ public class RPGworldMod
                 }
             });
 
-            BrewingRecipeRegistry.addRecipe(Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD)), Ingredient.of(ModItems.PARALILY_BERRY.get()), PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARALYSIS_POTION.get()));
-            //BrewingRecipeRegistry.addRecipe(new ModBrewingRecipe(Potions.AWKWARD, ModItems.PARALILY_BERRY.get(), ModPotions.PARALYSIS_POTION.get()));
+            BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(Potions.AWKWARD)), Ingredient.of(ModItems.PARALILY_BERRY.get()), PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARALYSIS_POTION.get())));
             BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.PARALYSIS_POTION.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_PARALYSIS_POTION.get())));
             BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.PARALYSIS_POTION.get())), Ingredient.of(Items.GLOWSTONE_DUST), createPotion(ModPotions.STRONG_PARALYSIS_POTION.get())));
-            BrewingRecipeRegistry.addRecipe(Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD)), Ingredient.of(ModBlocks.MOSSHROOM.get()), PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.MOSSIOSIS_POTION.get()));
-            //BrewingRecipeRegistry.addRecipe(new ModBrewingRecipe(Potions.AWKWARD, ModBlocks.MOSSHROOM.get().asItem(), ModPotions.MOSSIOSIS_POTION.get()));
+            BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(Potions.AWKWARD)), Ingredient.of(ModBlocks.MOSSHROOM.get()), PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.MOSSIOSIS_POTION.get())));
             BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.MOSSIOSIS_POTION.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_MOSSIOSIS_POTION.get())));
             BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.MOSSIOSIS_POTION.get())), Ingredient.of(Items.GLOWSTONE_DUST), createPotion(ModPotions.STRONG_MOSSIOSIS_POTION.get())));
             BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.ARBOR_FUEL_BOTTLE.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_ARBOR_FUEL_BOTTLE.get())));
-            BrewingRecipeRegistry.addRecipe(Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD)), Ingredient.of(Items.ENDER_EYE), PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARANOIA_POTION.get()));
-            //BrewingRecipeRegistry.addRecipe(new ModBrewingRecipe(Potions.AWKWARD, ModBlocks.MOSSHROOM.get().asItem(), ModPotions.PARANOIA_POTION.get()));
+            BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(Potions.AWKWARD)), Ingredient.of(Items.ENDER_EYE), PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARANOIA_POTION.get())));
             BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.PARANOIA_POTION.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_PARANOIA_POTION.get())));
             BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.PARANOIA_POTION.get())), Ingredient.of(Items.GLOWSTONE_DUST), createPotion(ModPotions.STRONG_PARANOIA_POTION.get())));
         });

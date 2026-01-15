@@ -249,6 +249,15 @@
       }
     ]
   },
+  "rpgworldmod.music_disc_tire": {
+    "sounds": [
+      {
+        "name": "rpgworldmod:music/records/tire",
+        "stream": true,
+        "weight": 1
+      }
+    ]
+  },
 
 
   "rpgworldmod.bibbit.hit": {
@@ -815,5 +824,112 @@
       "rpgworldmod:fire_catcher/not_hungry"
     ],
     "subtitle": "subtitles.rpgworldmod.fire_catcher_not_hungry"
+  },
+  "rpgworldmod.rie_fruit_splat": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.honey_block.fall"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.rie_fruit_splat"
+  },
+  "rpgworldmod.ent.attract": {
+    "sounds": [
+      "rpgworldmod:ent/illusion"
+    ]
+  },
+  "rpgworldmod.ent_roots": {
+    "sounds": [
+      "rpgworldmod:ent/roots1",
+      "rpgworldmod:ent/roots2"
+    ],
+    "subtitle": "subtitles.rpgworldmod.ent_roots"
+  },
+  "rpgworldmod.ent.wake_up": {
+    "sounds": [
+      "rpgworldmod:ent/wake_up"
+    ],
+    "subtitle": "subtitles.rpgworldmod.ent.wake_up"
+  },
+  "rpgworldmod.ent.sleep": {
+    "sounds": [
+      "rpgworldmod:ent/sleep"
+    ],
+    "subtitle": "subtitles.rpgworldmod.ent.sleep"
+  },
+  "rpgworldmod.ent.death": {
+    "sounds": [
+      "rpgworldmod:ent/death"
+    ],
+    "subtitle": "subtitles.rpgworldmod.ent.death"
+  },
+  "rpgworldmod.ent.attack": {
+    "sounds": [
+      "rpgworldmod:ent/attack1",
+      "rpgworldmod:ent/attack2",
+      "rpgworldmod:ent/attack3"
+    ],
+    "subtitle": "subtitles.rpgworldmod.ent.attack"
+  },
+  "rpgworldmod.ent.shake": {
+    "sounds": [
+      "rpgworldmod:ent/shake1",
+      "rpgworldmod:ent/shake2"
+    ],
+    "subtitle": "subtitles.rpgworldmod.ent.shake"
+  },
+  "rpgworldmod.ent.open_hollow": {
+    "sounds": [
+      "rpgworldmod:ent/open"
+    ],
+    "subtitle": "subtitles.rpgworldmod.ent.open_hollow"
+  },
+  "rpgworldmod.ent.close_hollow": {
+    "sounds": [
+      "rpgworldmod:ent/close1",
+      "rpgworldmod:ent/close2"
+    ],
+    "subtitle": "subtitles.rpgworldmod.ent.close_hollow"
+  },
+  "rpgworldmod.block.tire.break": {
+    "sounds": [
+      "rpgworldmod:tire/place"
+    ],
+    "subtitle": "subtitles.block.generic.break"
+  },
+  "rpgworldmod.block.tire.place": {
+    "sounds": [
+      "rpgworldmod:tire/place"
+    ],
+    "subtitle": "subtitles.block.generic.place"
+  },
+  "rpgworldmod.block.tire.step": {
+    "sounds": [
+      "rpgworldmod:tire/hit1",
+      "rpgworldmod:tire/hit2",
+      "rpgworldmod:tire/hit3"
+    ],
+    "subtitle": "subtitles.block.generic.footsteps"
+  },
+  "rpgworldmod.block.tire.hit": {
+    "sounds": [
+      "rpgworldmod:tire/hit1",
+      "rpgworldmod:tire/hit2",
+      "rpgworldmod:tire/hit3"
+    ],
+    "subtitle": "subtitles.block.generic.hit"
+  },
+  "rpgworldmod.block.tire.fall": {
+    "sounds": [
+      "rpgworldmod:tire/place"
+    ]
+  },
+  "rpgworldmod.block.tire.bounce": {
+    "sounds": [
+      "rpgworldmod:tire/bounce1",
+      "rpgworldmod:tire/bounce2"
+    ],
+    "subtitle": "subtitles.rpgworldmod.tire.bounce"
   }
 }

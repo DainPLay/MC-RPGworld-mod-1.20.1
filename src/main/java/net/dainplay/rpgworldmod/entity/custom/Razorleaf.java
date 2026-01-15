@@ -6,11 +6,10 @@ import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.damage.ModDamageTypes;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.item.ModItems;
-import net.dainplay.rpgworldmod.item.custom.EmberGemItem;
 import net.dainplay.rpgworldmod.item.custom.FireproofSkirtItem;
-import net.dainplay.rpgworldmod.mana.ModMessages;
-import net.dainplay.rpgworldmod.mana.SyncEntityMotionPacket;
-import net.dainplay.rpgworldmod.mana.SyncRazorleafDataPacket;
+import net.dainplay.rpgworldmod.network.ModMessages;
+import net.dainplay.rpgworldmod.network.SyncEntityMotionPacket;
+import net.dainplay.rpgworldmod.network.SyncRazorleafDataPacket;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.dainplay.rpgworldmod.util.ModTags;
 import net.minecraft.advancements.Advancement;
@@ -27,7 +26,6 @@ import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
@@ -72,7 +70,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import org.jetbrains.annotations.NotNull;
@@ -587,7 +584,7 @@ public class Razorleaf extends Monster {
 			} else {
 				// Если потеряли видимость, прерываем атаку
 				clearTongueTarget();
-				setState(State.IDLE);
+				if(getState() == State.ATTACKING) setState(State.IDLE);
 			}
 		} else if (attackTimer <= 30) {
 			Entity target = getTongueTargetEntity();
@@ -630,10 +627,10 @@ public class Razorleaf extends Monster {
 								ModAdvancements.GET_EATEN_BY_RAZORLEAF_WEARING_SKIRT_TRIGGER.trigger(player);
 							}
 							if (living.hurt(ModDamageTypes.getEntityDamageSource(this.level(), ModDamageTypes.SWALLOW, this), 30.0F))
-								if (living instanceof ServerPlayer player && !hasGoldenKill(player))
+								if (living instanceof ServerPlayer player)
 									if (!player.fireImmune() && !this.entityData.get(DATA_DEALT_DAMAGE)) {
 										this.entityData.set(DATA_DEALT_DAMAGE, true);
-										this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
+										if (!hasGoldenKill(player))this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
 									}
 							this.playSound(RPGSounds.RAZORLEAF_BITE.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
 						}
@@ -668,6 +665,13 @@ public class Razorleaf extends Monster {
 	public static boolean hasGoldenKill(ServerPlayer player) {
 		PlayerAdvancements advancements = player.getAdvancements();
 
+		Advancement silverAdvancement = player.server.getAdvancements().getAdvancement(RPGworldMod.prefix("kill_all_rie_weald_mobs"));
+		AdvancementProgress silverProgress = advancements.getOrStartProgress(silverAdvancement);
+
+		if (!silverProgress.isDone()) {
+			return true;
+		}
+
 		Advancement advancement = player.server.getAdvancements().getAdvancement(RPGworldMod.prefix("golden_kill_all_rie_weald_mobs"));
 		AdvancementProgress progress = advancements.getOrStartProgress(advancement);
 
@@ -693,6 +697,21 @@ public class Razorleaf extends Monster {
 
 		if (stack.getItem().isFireResistant()) {
 			spitOutItem(item);
+			return;
+		}
+
+		if (stack.getItem() == ModBlocks.TIRE.get().asItem()) {
+			item.discard();
+			setState(State.EXTINGUISHED);
+			die(this.damageSources().generic());
+			this.level().explode(this, this.getX(), this.getY(0.0625D), this.getZ(), 2.0F, Level.ExplosionInteraction.MOB);
+			spawnExtinguishSmokeCircleAnimated();
+			this.playSound(RPGSounds.RAZORLEAF_EXTINGUISH.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
+			this.spawnAtLocation(ModItems.MUSIC_DISC_TIRE.get());
+			for(ServerPlayer serverplayer : level().getEntitiesOfClass(ServerPlayer.class, new AABB(this.blockPosition()).inflate(10.0D, 25.0D, 10.0D))) {
+				ModAdvancements.FEED_TIRE_TO_RAZORLEAF.trigger(serverplayer);
+			}
+			this.discard();
 			return;
 		}
 
@@ -885,10 +904,10 @@ public class Razorleaf extends Monster {
 				if (this.distanceTo(player) <= 4.0 && canSeeTarget(player)) {
 					hitAnyPlayer = true;
 					if (player.hurt(this.damageSources().mobAttack(this), 5.0F))
-						if (player instanceof ServerPlayer serverPlayer && !hasGoldenKill(serverPlayer))
+						if (player instanceof ServerPlayer serverPlayer)
 							if (!serverPlayer.fireImmune() && !this.entityData.get(DATA_DEALT_DAMAGE)) {
 								this.entityData.set(DATA_DEALT_DAMAGE, true);
-								this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
+								if (!hasGoldenKill(serverPlayer)) this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
 							}
 					Vec3 knockback = player.position()
 							.subtract(this.position())
@@ -944,6 +963,13 @@ public class Razorleaf extends Monster {
 					projectile.position.x, projectile.position.y, projectile.position.z,
 					3, 0.1, 0.1, 0.1, 0.01);
 		}
+	}
+
+	public void dealtDamage(ServerPlayer player) {
+			if (!this.entityData.get(DATA_DEALT_DAMAGE)) {
+				if (!hasGoldenKill(player)) this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
+			}
+		this.entityData.set(DATA_DEALT_DAMAGE, true);
 	}
 
 	private void updateFireProjectiles() {
@@ -1191,10 +1217,10 @@ public class Razorleaf extends Monster {
 				// Поджигаем существо на 5 секунд (100 тиков)
 				livingEntity.setSecondsOnFire(8);
 				if (entity.hurt(this.damageSources().fireball(fakeFireball, this), 1.0F)) {
-					if (entity instanceof ServerPlayer player && !hasGoldenKill(player))
+					if (entity instanceof ServerPlayer player)
 						if (!player.fireImmune() && !this.entityData.get(DATA_DEALT_DAMAGE)) {
 							this.entityData.set(DATA_DEALT_DAMAGE, true);
-							this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
+							if (!hasGoldenKill(player)) this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
 						}
 				}
 				return true;

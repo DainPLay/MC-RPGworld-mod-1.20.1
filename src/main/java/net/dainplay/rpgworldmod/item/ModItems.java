@@ -158,6 +158,8 @@ public class ModItems {
             () -> new ForgeSpawnEggItem(ModEntities.MOSQUITO_SWARM, 0x4D7575, 0x648C8C, new Item.Properties()));
     public static final RegistryObject<Item> RAZORLEAF_SPAWN_EGG = ITEMS.register("razorleaf_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.RAZORLEAF, 0xD2443F, 0x587E3C, new Item.Properties()));
+    public static final RegistryObject<Item> ENT_SPAWN_EGG = ITEMS.register("ent_spawn_egg",
+            () -> new EntSpawnEggItem(0x37352A, 0x319966, new Item.Properties()));
     public static final RegistryObject<CurioItem> LAPIS_CHARM = ITEMS.register("lapis_charm",
             () -> new CurioItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<CurioItem> BRAMBLEFOX_SCARF = ITEMS.register("bramblefox_scarf", () -> new CurioItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
@@ -165,6 +167,7 @@ public class ModItems {
     public static final RegistryObject<CurioItem> PORTABLE_TURRET = ITEMS.register("portable_turret", () -> new CurioItem(new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<ChitinThimbleItem> CHITIN_THIMBLE = ITEMS.register("chitin_thimble", () -> new ChitinThimbleItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> MUSIC_DISC_HOWLING = ITEMS.register("music_disc_howling", () -> new RecordItem(12, RPGSounds.MUSIC_DISC_HOWLING.get(), new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 184 * 20));
+    public static final RegistryObject<Item> MUSIC_DISC_TIRE = ITEMS.register("music_disc_tire", () -> new RecordItem(9, RPGSounds.MUSIC_DISC_TIRE.get(), new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 164 * 20));
     public static final RegistryObject<Item> RIE_WEALD_BANNER_PATTERN = ITEMS.register("rie_weald_banner_pattern",  () -> new BannerPatternItem(ModTags.BannerPatterns.PATTERN_ITEM_RIE_WEALD, (new Item.Properties()).stacksTo(1).rarity(Rarity.EPIC)));
 
     public static final RegistryObject<Item> FIRE_CATCHER_ITEM = ITEMS.register("fire_catcher",

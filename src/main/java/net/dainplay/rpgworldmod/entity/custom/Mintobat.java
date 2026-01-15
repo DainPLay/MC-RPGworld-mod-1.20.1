@@ -211,6 +211,13 @@ public class Mintobat extends Monster {
     public static boolean hasGoldenKill(ServerPlayer player) {
         PlayerAdvancements advancements = player.getAdvancements();
 
+        Advancement silverAdvancement = player.server.getAdvancements().getAdvancement(RPGworldMod.prefix("kill_all_rie_weald_mobs"));
+        AdvancementProgress silverProgress = advancements.getOrStartProgress(silverAdvancement);
+
+        if (!silverProgress.isDone()) {
+            return true;
+        }
+
         Advancement advancement = player.server.getAdvancements().getAdvancement(RPGworldMod.prefix("golden_kill_all_rie_weald_mobs"));
         AdvancementProgress progress = advancements.getOrStartProgress(advancement);
 
@@ -231,10 +238,10 @@ public class Mintobat extends Monster {
 
     @Override
     public boolean doHurtTarget(Entity pEntity) {
-        if(pEntity instanceof ServerPlayer player && !hasGoldenKill(player))
+        if(pEntity instanceof ServerPlayer player)
             if(!player.isDamageSourceBlocked(this.level().damageSources().mobAttack(this)) && !this.entityData.get(DATA_DEALT_DAMAGE)) {
                 this.entityData.set(DATA_DEALT_DAMAGE, true);
-                this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
+                if (!hasGoldenKill(player)) this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
             }
         return super.doHurtTarget(pEntity);
     }
@@ -338,10 +345,10 @@ public class Mintobat extends Monster {
                                             if (isEyeInAnyFluid(target) && !isEyeInAnyFluid(this.mintobat)) scaledDamage /= 4;
                                             (target).hurt(ModDamageTypes.getEntityDamageSource(this.mintobat.level(), ModDamageTypes.SCREAM, this.mintobat), (float) scaledDamage);
 
-                                            if(target instanceof ServerPlayer player && !hasGoldenKill(player))
+                                            if(target instanceof ServerPlayer player)
                                                 if(!player.isDamageSourceBlocked(this.mintobat.level().damageSources().mobAttack(this.mintobat)) && !this.mintobat.entityData.get(DATA_DEALT_DAMAGE)) {
                                                     this.mintobat.entityData.set(DATA_DEALT_DAMAGE, true);
-                                                    this.mintobat.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
+                                                    if (!hasGoldenKill(player)) this.mintobat.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
                                                 }
                                         }
                                     });

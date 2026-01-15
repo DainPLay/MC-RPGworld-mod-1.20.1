@@ -1,0 +1,30 @@
+{
+  "parent": "rpgworldmod:find_rie_weald",
+  "criteria": {
+    "kill_ent": {
+      "conditions": {},
+      "trigger": "rpgworldmod:kill_ent"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.defeat_ent.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:ent_face"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.defeat_ent.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_ent"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

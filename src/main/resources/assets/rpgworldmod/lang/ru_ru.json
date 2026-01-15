@@ -80,6 +80,7 @@
   "item.rpgworldmod.burr_purr_spawn_egg": "Яйцо призыва пыр-фырея",
   "item.rpgworldmod.drillhog_spawn_egg": "Яйцо призыва теребрея",
   "item.rpgworldmod.razorleaf_spawn_egg": "Яйцо призыва бритволиста",
+  "item.rpgworldmod.ent_spawn_egg": "Яйцо призыва энта",
   "item.rpgworldmod.bibbit_spawn_egg": "Яйцо призыва бибита",
   "item.rpgworldmod.platinumfish_spawn_egg": "Яйцо призыва платиновой рыбки",
   "item.rpgworldmod.mossfront_spawn_egg": "Яйцо призыва мохолобика",
@@ -113,6 +114,8 @@
   "item.rpgworldmod.guitar_ax.desc": "Трунь",
   "item.rpgworldmod.music_disc_howling": "Пластинка",
   "item.rpgworldmod.music_disc_howling.desc": "Lupus Nocte - Howling",
+  "item.rpgworldmod.music_disc_tire": "Пластинка",
+  "item.rpgworldmod.music_disc_tire.desc": "Денис Котенко - Dark Electronic Cinematic 01",
   "item.rpgworldmod.arbor_fuel_bucket": "Ведро древесного горючего",
   "item.rpgworldmod.rie_weald_banner_pattern": "Узор флага",
   "item.rpgworldmod.rie_weald_banner_pattern.desc": "Рийская дубрава",
@@ -211,6 +214,10 @@
   "block.rpgworldmod.rie_pressure_plate": "Рийская нажимная плита",
   "block.rpgworldmod.rie_sign": "Рийская табличка",
   "block.rpgworldmod.rie_hanging_sign": "Рийская подвесная табличка",
+  "block.rpgworldmod.ent_face": "Дупло энта",
+  "block.rpgworldmod.tire": "Шина",
+  "block.rpgworldmod.tire.desc": "Для квадратного колеса",
+  "block.rpgworldmod.tire.features": "Подкидывает вверх. Если расположена вертикально, также откидывает в сторону. Две шины подкидывают сильнее.",
 
   "block.rpgworldmod.shiveralis": "Трусянка",
   "block.rpgworldmod.potted_shiveralis": "Трусянка в горшке",
@@ -342,6 +349,12 @@
   "death.attack.ding.player": "У %1$s лопнули барабанные перепонки в попытках убежать от %2$s",
   "death.attack.swallow": "%1$s проглотили заживо",
   "death.attack.swallow.player": "%1$s был заживо проглочен %2$s",
+  "death.attack.ent_rie_fruit": "%1$s зашибло падающией рией",
+  "death.attack.ent_rie_fruit.item": "%1$s зашибло падающией рией",
+  "death.attack.ent_snap": "%1$s зажало дуплом энта",
+  "death.attack.ent_snap.item": "%1$s зажало дуплом энта",
+  "death.attack.ent_roots": "%1$s был убит корнями энта",
+  "death.attack.ent_roots.item": "%1$s был убит корнями энта",
 
   "upgrade.minecraft.maskonite_upgrade": "Масконитовое улучшение",
   "trim_pattern.rpgworldmod.leaves": "Отделка «Листва»",
@@ -410,6 +423,12 @@
   "advancements.rpgworldmod.mintal_block_note.description": "Сыграйте на нотном блоке, стоящем на блоке минталла",
   "advancements.rpgworldmod.mossiosis_convert_mobs.title": "Помохите!",
   "advancements.rpgworldmod.mossiosis_convert_mobs.description": "Заразите мохотрихозом треску, лису и летучую мышь",
+  "advancements.rpgworldmod.defeat_ent.title": "Раздупляйся",
+  "advancements.rpgworldmod.defeat_ent.description": "Одолейте энта, разрушив его дупло",
+  "advancements.rpgworldmod.feed_tire_to_razorleaf.title": "Зашинься, бритвоглист",
+  "advancements.rpgworldmod.feed_tire_to_razorleaf.description": "Скормите шину бритволисту",
+  "advancements.rpgworldmod.ride_tire_swing.title": "Смысл жизни",
+  "advancements.rpgworldmod.ride_tire_swing.description": "Выйдете из депрессии, покачавшись на шине, привязанной поводком к забору над ней",
 
   "enchantment.rpgworldmod.pitch": "Частота",
   "enchantment.rpgworldmod.crescendo": "Крещендо",
@@ -512,6 +531,19 @@
 
   "subtitles.rpgworldmod.fire_catcher_hungry": "Огнеловка проголодалась",
   "subtitles.rpgworldmod.fire_catcher_not_hungry": "Огнеловка больше не голодная",
+
+  "subtitles.rpgworldmod.rie_fruit_splat": "Рия плюхается наземь",
+  "subtitles.rpgworldmod.ent_roots": "Корни энта распространяются",
+
+  "subtitles.rpgworldmod.ent.wake_up": "Энт пробуждается",
+  "subtitles.rpgworldmod.ent.sleep": "Энт застывает",
+  "subtitles.rpgworldmod.ent.death": "Энт погибает",
+  "subtitles.rpgworldmod.ent.attack": "Энт скрипит",
+  "subtitles.rpgworldmod.ent.shake": "Энт шуршит листвой",
+  "subtitles.rpgworldmod.ent.open_hollow": "Дупло энта открывается",
+  "subtitles.rpgworldmod.ent.close_hollow": "Дупло энта захлопывается",
+
+  "subtitles.rpgworldmod.tire.bounce": "Шина вибрирует",
 
   "subtitles.rpgworldmod.platinumfish.death": "Платиновая рыбка погибает",
   "subtitles.rpgworldmod.platinumfish.hurt": "Платиновая рыбка ранена",

@@ -1,25 +1,14 @@
 package net.dainplay.rpgworldmod.effect;
 
 
-import net.dainplay.rpgworldmod.damage.ModDamageTypes;
-import net.dainplay.rpgworldmod.entity.ModEntities;
-import net.dainplay.rpgworldmod.entity.custom.Bhlee;
-import net.dainplay.rpgworldmod.mana.PlayerManaProvider;
-import net.dainplay.rpgworldmod.sounds.RPGSounds;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
+import net.dainplay.rpgworldmod.network.PlayerManaProvider;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ambient.Bat;
-import net.minecraft.world.entity.animal.Cod;
-import net.minecraft.world.entity.animal.Fox;
-import net.minecraft.world.entity.animal.Salmon;
 
 import java.util.UUID;
 

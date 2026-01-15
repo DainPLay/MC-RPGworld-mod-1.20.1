@@ -1,13 +1,11 @@
 package net.dainplay.rpgworldmod.biome;
 
 import net.dainplay.rpgworldmod.entity.ModEntities;
-import net.dainplay.rpgworldmod.features.FancyOakTreeFeature;
 import net.dainplay.rpgworldmod.util.ColorConstants;
 import net.dainplay.rpgworldmod.world.feature.ModConfiguredFeatures;
 import net.dainplay.rpgworldmod.world.feature.ModPlacedFeatures;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.data.worldgen.BiomeDefaultFeatures;
-import net.minecraft.data.worldgen.placement.VegetationPlacements;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -88,6 +86,10 @@ public class RPGworldBiomeDecorator {
         biomeFeatures.addFeature(GenerationStep.Decoration.LOCAL_MODIFICATIONS, ModPlacedFeatures.MASKONITE_PLACED_KEY);
         BiomeDefaultFeatures.addDefaultOres(biomeFeatures);
         BiomeDefaultFeatures.addDefaultSoftDisks(biomeFeatures);
+        biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.ENT_FACE_SOUTH_CHECKED_KEY);
+        biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.ENT_FACE_EAST_CHECKED_KEY);
+        biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.ENT_FACE_NORTH_CHECKED_KEY);
+        biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.ENT_FACE_WEST_CHECKED_KEY);
         biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.FANCY_RIE_TREE_CHECKED_KEY);
         biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.RIE_TREE_CHECKED_KEY);
         biomeFeatures.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModPlacedFeatures.RIE_BUSH_PLACED_KEY);

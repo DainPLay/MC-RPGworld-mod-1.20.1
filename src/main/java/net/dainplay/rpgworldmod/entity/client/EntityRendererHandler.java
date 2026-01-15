@@ -9,6 +9,7 @@ import net.dainplay.rpgworldmod.entity.client.model.BramblefoxModel;
 import net.dainplay.rpgworldmod.entity.client.model.Burr_purrModel;
 import net.dainplay.rpgworldmod.entity.client.model.DrillSpearModel;
 import net.dainplay.rpgworldmod.entity.client.model.DrillhogModel;
+import net.dainplay.rpgworldmod.entity.client.model.EntRootsModel;
 import net.dainplay.rpgworldmod.entity.client.model.FireflanternModel;
 import net.dainplay.rpgworldmod.entity.client.model.GasbassModel;
 import net.dainplay.rpgworldmod.entity.client.model.LivingWoodArmorModel;
@@ -18,12 +19,15 @@ import net.dainplay.rpgworldmod.entity.client.model.PlatinumfishModel;
 import net.dainplay.rpgworldmod.entity.client.model.RazorleafModel;
 import net.dainplay.rpgworldmod.entity.client.model.SheentroutModel;
 import net.dainplay.rpgworldmod.entity.client.model.SkirtModel;
+import net.dainplay.rpgworldmod.entity.client.model.TireSwingModel;
 import net.dainplay.rpgworldmod.entity.client.render.BhleeRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.BibbitRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.BramblefoxRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.BurrSpikeRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.Burr_purrRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.DrillhogRenderer;
+import net.dainplay.rpgworldmod.entity.client.render.EntRieFruitProjectileRenderer;
+import net.dainplay.rpgworldmod.entity.client.render.EntRootsRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.FairapierSeedRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.FireflanternRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.GasbassRenderer;
@@ -36,6 +40,7 @@ import net.dainplay.rpgworldmod.entity.client.render.ProjectruffleArrowRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.RazorleafRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.SheentroutRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.ThrownDrillSpearRenderer;
+import net.dainplay.rpgworldmod.entity.client.render.TireSwingRenderer;
 import net.dainplay.rpgworldmod.entity.custom.ModBoat;
 import net.minecraft.client.model.BoatModel;
 import net.minecraft.client.model.ChestBoatModel;
@@ -55,6 +60,8 @@ public class EntityRendererHandler {
         EntityRenderers.register(ModEntities.FAIRAPIER_SEED_PROJECTILE.get(), FairapierSeedRenderer::new);
         EntityRenderers.register(ModEntities.BURR_SPIKE_PROJECTILE.get(), BurrSpikeRenderer::new);
         EntityRenderers.register(ModEntities.DRILL_SPEAR_PROJECTILE.get(), ThrownDrillSpearRenderer::new);
+        EntityRenderers.register(ModEntities.ENT_ROOTS.get(), EntRootsRenderer::new);
+        EntityRenderers.register(ModEntities.ENT_RIE_FRUIT_PROJECTILE.get(), EntRieFruitProjectileRenderer::new);
     }
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -74,6 +81,8 @@ public class EntityRendererHandler {
         event.registerLayerDefinition(DrillSpearModel.LAYER_LOCATION, DrillSpearModel::createBodyLayer);
         event.registerLayerDefinition(SkirtModel.LAYER_LOCATION, SkirtModel::createBodyLayer);
         event.registerLayerDefinition(LivingWoodArmorModel.LAYER_LOCATION, LivingWoodArmorModel::createBodyLayer);
+        event.registerLayerDefinition(EntRootsModel.LAYER_LOCATION, EntRootsModel::createBodyLayer);
+        event.registerLayerDefinition(TireSwingModel.LAYER_LOCATION, TireSwingModel::createBodyLayer);
 
         for(ModBoat.Type boatType : ModBoat.Type.values()) {
             event.registerLayerDefinition(ModBoatRenderer.createBoatModelName(boatType), BoatModel::createBodyModel);
@@ -98,6 +107,7 @@ public class EntityRendererHandler {
         event.registerEntityRenderer(ModEntities.DRILLHOG.get(), DrillhogRenderer::new);
         event.registerEntityRenderer(ModEntities.MOSQUITO_SWARM.get(), MosquitoSwarmRenderer::new);
         event.registerEntityRenderer(ModEntities.RAZORLEAF.get(), RazorleafRenderer::new);
+        event.registerEntityRenderer(ModEntities.TIRE_SWING.get(), TireSwingRenderer::new);
         event.registerEntityRenderer(ModEntities.MODBOAT.get(), (p_174094_) -> new ModBoatRenderer(p_174094_, false));
         event.registerEntityRenderer(ModEntities.MODCHESTBOAT.get(), (p_174092_) -> new ModBoatRenderer(p_174092_, true));
     }

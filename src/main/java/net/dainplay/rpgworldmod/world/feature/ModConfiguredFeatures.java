@@ -6,9 +6,9 @@ import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.block.custom.DirectionalFlowerBlock;
 import net.dainplay.rpgworldmod.block.custom.HoltsReflectionBlock;
 import net.dainplay.rpgworldmod.block.custom.TreeHollowBlock;
-import net.dainplay.rpgworldmod.entity.custom.Razorleaf;
+import net.dainplay.rpgworldmod.features.EntFeature;
 import net.dainplay.rpgworldmod.features.TrunkDecorator;
-import net.dainplay.rpgworldmod.features.FancyOakTreeFeature;
+import net.dainplay.rpgworldmod.features.FancyTreeFeature;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -59,6 +59,10 @@ public class ModConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?, ?>> BIBBIT_HOLLOW_NORTH_FANCY_RIE_TREE_KEY = registerKey("bibbit_hollow_north_fancy_rie_tree");
     public static final ResourceKey<ConfiguredFeature<?, ?>> BIBBIT_HOLLOW_WEST_FANCY_RIE_TREE_KEY = registerKey("bibbit_hollow_west_fancy_rie_tree");
     public static final ResourceKey<ConfiguredFeature<?, ?>> BIBBIT_HOLLOW_EAST_FANCY_RIE_TREE_KEY = registerKey("bibbit_hollow_east_fancy_rie_tree");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ENT_FACE_EAST_KEY = registerKey("ent_face_east");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ENT_FACE_WEST_KEY = registerKey("ent_face_west");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ENT_FACE_NORTH_KEY = registerKey("ent_face_north");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ENT_FACE_SOUTH_KEY = registerKey("ent_face_south");
     public static final ResourceKey<ConfiguredFeature<?, ?>> RIE_FLOWER_KEY = registerKey("rie_flower");
     public static final ResourceKey<ConfiguredFeature<?, ?>> FAIRAPIER_KEY = registerKey("fairapier");
     public static final ResourceKey<ConfiguredFeature<?, ?>> SHIVERALIS_KEY = registerKey("shiveralis");
@@ -135,37 +139,53 @@ public class ModConfiguredFeatures {
                 new TrunkDecorator(6, 1.0f, BlockStateProvider.simple(ModBlocks.RIE_HOLLOW.get().defaultBlockState().setValue(TreeHollowBlock.HAS_CONTENTS, true).setValue(FACING, Direction.SOUTH))),
                 new LeaveVineDecorator(0.1F))).ignoreVines().build());
 
-        register(context, FANCY_RIE_TREE_KEY, Feature.TREE, FancyOakTreeFeature.createFancyOak().build());
+        register(context, ENT_FACE_EAST_KEY, Feature.TREE, EntFeature.createEnt().decorators(ImmutableList.of(
+                TrunkVineDecorator.INSTANCE,
+                new TrunkDecorator(6, 1.0f, BlockStateProvider.simple(ModBlocks.ENT_FACE.get().defaultBlockState().setValue(FACING, Direction.EAST))))).build());
 
-        register(context, HOLLOW_SOUTH_FANCY_RIE_TREE_KEY, Feature.TREE, FancyOakTreeFeature.createFancyOak().decorators(ImmutableList.of(
+        register(context, ENT_FACE_WEST_KEY, Feature.TREE, EntFeature.createEnt().decorators(ImmutableList.of(
+                TrunkVineDecorator.INSTANCE,
+                new TrunkDecorator(6, 1.0f, BlockStateProvider.simple(ModBlocks.ENT_FACE.get().defaultBlockState().setValue(FACING, Direction.WEST))))).build());
+
+        register(context, ENT_FACE_NORTH_KEY, Feature.TREE, EntFeature.createEnt().decorators(ImmutableList.of(
+                TrunkVineDecorator.INSTANCE,
+                new TrunkDecorator(6, 1.0f, BlockStateProvider.simple(ModBlocks.ENT_FACE.get().defaultBlockState().setValue(FACING, Direction.NORTH))))).build());
+
+        register(context, ENT_FACE_SOUTH_KEY, Feature.TREE, EntFeature.createEnt().decorators(ImmutableList.of(
+                TrunkVineDecorator.INSTANCE,
+                new TrunkDecorator(6, 1.0f, BlockStateProvider.simple(ModBlocks.ENT_FACE.get().defaultBlockState().setValue(FACING, Direction.WEST))))).build());
+
+        register(context, FANCY_RIE_TREE_KEY, Feature.TREE, FancyTreeFeature.createFancyTree().build());
+
+        register(context, HOLLOW_SOUTH_FANCY_RIE_TREE_KEY, Feature.TREE, FancyTreeFeature.createFancyTree().decorators(ImmutableList.of(
                 TrunkVineDecorator.INSTANCE,
                 new TrunkDecorator(6, 1.0f, BlockStateProvider.simple(ModBlocks.RIE_HOLLOW.get().defaultBlockState().setValue(FACING, Direction.SOUTH))))).build());
 
-        register(context, HOLLOW_NORTH_FANCY_RIE_TREE_KEY, Feature.TREE, FancyOakTreeFeature.createFancyOak().decorators(ImmutableList.of(
+        register(context, HOLLOW_NORTH_FANCY_RIE_TREE_KEY, Feature.TREE, FancyTreeFeature.createFancyTree().decorators(ImmutableList.of(
                 TrunkVineDecorator.INSTANCE,
                 new TrunkDecorator(6, 1.0f, BlockStateProvider.simple(ModBlocks.RIE_HOLLOW.get().defaultBlockState().setValue(FACING, Direction.NORTH))))).build());
 
-        register(context, HOLLOW_WEST_FANCY_RIE_TREE_KEY, Feature.TREE, FancyOakTreeFeature.createFancyOak().decorators(ImmutableList.of(
+        register(context, HOLLOW_WEST_FANCY_RIE_TREE_KEY, Feature.TREE, FancyTreeFeature.createFancyTree().decorators(ImmutableList.of(
                 TrunkVineDecorator.INSTANCE,
                 new TrunkDecorator(6, 1.0f, BlockStateProvider.simple(ModBlocks.RIE_HOLLOW.get().defaultBlockState().setValue(FACING, Direction.WEST))))).build());
 
-        register(context, HOLLOW_EAST_FANCY_RIE_TREE_KEY, Feature.TREE, FancyOakTreeFeature.createFancyOak().decorators(ImmutableList.of(
+        register(context, HOLLOW_EAST_FANCY_RIE_TREE_KEY, Feature.TREE, FancyTreeFeature.createFancyTree().decorators(ImmutableList.of(
                 TrunkVineDecorator.INSTANCE,
                 new TrunkDecorator(6, 1.0f, BlockStateProvider.simple(ModBlocks.RIE_HOLLOW.get().defaultBlockState().setValue(FACING, Direction.EAST))))).build());
 
-        register(context, BIBBIT_HOLLOW_SOUTH_FANCY_RIE_TREE_KEY, Feature.TREE, FancyOakTreeFeature.createFancyOak().decorators(ImmutableList.of(
+        register(context, BIBBIT_HOLLOW_SOUTH_FANCY_RIE_TREE_KEY, Feature.TREE, FancyTreeFeature.createFancyTree().decorators(ImmutableList.of(
                 TrunkVineDecorator.INSTANCE,
                 new TrunkDecorator(6, 1.0f, BlockStateProvider.simple(ModBlocks.RIE_HOLLOW.get().defaultBlockState().setValue(TreeHollowBlock.HAS_CONTENTS, true).setValue(FACING, Direction.SOUTH))))).build());
 
-        register(context, BIBBIT_HOLLOW_NORTH_FANCY_RIE_TREE_KEY, Feature.TREE, FancyOakTreeFeature.createFancyOak().decorators(ImmutableList.of(
+        register(context, BIBBIT_HOLLOW_NORTH_FANCY_RIE_TREE_KEY, Feature.TREE, FancyTreeFeature.createFancyTree().decorators(ImmutableList.of(
                 TrunkVineDecorator.INSTANCE,
                 new TrunkDecorator(6, 1.0f, BlockStateProvider.simple(ModBlocks.RIE_HOLLOW.get().defaultBlockState().setValue(TreeHollowBlock.HAS_CONTENTS, true).setValue(FACING, Direction.NORTH))))).build());
 
-        register(context, BIBBIT_HOLLOW_WEST_FANCY_RIE_TREE_KEY, Feature.TREE, FancyOakTreeFeature.createFancyOak().decorators(ImmutableList.of(
+        register(context, BIBBIT_HOLLOW_WEST_FANCY_RIE_TREE_KEY, Feature.TREE, FancyTreeFeature.createFancyTree().decorators(ImmutableList.of(
                 TrunkVineDecorator.INSTANCE,
                 new TrunkDecorator(6, 1.0f, BlockStateProvider.simple(ModBlocks.RIE_HOLLOW.get().defaultBlockState().setValue(TreeHollowBlock.HAS_CONTENTS, true).setValue(FACING, Direction.WEST))))).build());
 
-        register(context, BIBBIT_HOLLOW_EAST_FANCY_RIE_TREE_KEY, Feature.TREE, FancyOakTreeFeature.createFancyOak().decorators(ImmutableList.of(
+        register(context, BIBBIT_HOLLOW_EAST_FANCY_RIE_TREE_KEY, Feature.TREE, FancyTreeFeature.createFancyTree().decorators(ImmutableList.of(
                 TrunkVineDecorator.INSTANCE,
                 new TrunkDecorator(6, 1.0f, BlockStateProvider.simple(ModBlocks.RIE_HOLLOW.get().defaultBlockState().setValue(TreeHollowBlock.HAS_CONTENTS, true).setValue(FACING, Direction.EAST))))).build());
 

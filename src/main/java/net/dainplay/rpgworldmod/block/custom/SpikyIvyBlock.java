@@ -2,12 +2,15 @@ package net.dainplay.rpgworldmod.block.custom;
 import com.google.common.collect.ImmutableMap;
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.damage.ModDamageTypes;
+import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.entity.ModEntities;
 import net.dainplay.rpgworldmod.entity.custom.Bramblefox;
+import net.dainplay.rpgworldmod.entity.custom.Razorleaf;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -378,7 +381,11 @@ public class SpikyIvyBlock extends Block implements BonemealableBlock {
                 && pEntity.getType() != ModEntities.MOSQUITO_SWARM.get()
                 && pEntity.getType() != ModEntities.RAZORLEAF.get()) {
             if(pEntity.getBoundingBox().intersects(getAlignedBlockAABB(pLevel, pPos, pState).inflate(0.01D))) {
-                pEntity.hurt(ModDamageTypes.getDamageSource(pLevel, ModDamageTypes.SPIKY_IVY), 2.5F);
+                if(pEntity.hurt(ModDamageTypes.getDamageSource(pLevel, ModDamageTypes.SPIKY_IVY), 2.5F) && pEntity instanceof ServerPlayer serverplayer) {
+                    for (Razorleaf razorleaf : pLevel.getEntitiesOfClass(Razorleaf.class, getAlignedBlockAABB(pLevel, pPos, pState).inflate(10.0D, 5.0D, 10.0D))) {
+                        razorleaf.dealtDamage(serverplayer);
+                    }
+                }
                 pEntity.makeStuckInBlock(pState, new Vec3(0.25D, 1.0F, 0.25D));
             }
         }

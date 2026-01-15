@@ -74,6 +74,10 @@
     "kill_mosquito_swarm": {
       "conditions": {},
       "trigger": "rpgworldmod:kill_mosquito_swarm"
+    },
+    "kill_ent": {
+      "conditions": {},
+      "trigger": "rpgworldmod:kill_ent"
     }
   },
   "display": {
@@ -110,6 +114,9 @@
     ],
     [
       "kill_mosquito_swarm"
+    ],
+    [
+      "kill_ent"
     ]
   ],
   "rewards": {

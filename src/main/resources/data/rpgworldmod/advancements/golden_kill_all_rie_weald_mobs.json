@@ -24,6 +24,10 @@
     "golden_kill_razorleaf": {
       "conditions": {},
       "trigger": "rpgworldmod:golden_kill_razorleaf"
+    },
+    "golden_kill_ent": {
+      "conditions": {},
+      "trigger": "rpgworldmod:golden_kill_ent"
     }
   },
   "display": {
@@ -60,6 +64,9 @@
     ],
     [
       "golden_kill_razorleaf"
+    ],
+    [
+      "golden_kill_ent"
     ]
   ],
   "rewards": {

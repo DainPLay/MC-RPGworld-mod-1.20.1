@@ -1,0 +1,10 @@
+{
+  "parent": "rpgworldmod:block/ent_face_glow",
+  "render_type": "cutout",
+  "textures": {
+    "top": "rpgworldmod:block/living_wood_log_top",
+    "front": "rpgworldmod:block/ent_face_idle_fire",
+    "fire": "rpgworldmod:block/ent_face_idle_fire_glow",
+    "side": "rpgworldmod:block/rie_log"
+  }
+}

@@ -4,12 +4,14 @@ import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.block.custom.ArborFuelCauldron;
 import net.dainplay.rpgworldmod.block.custom.BlowerBlock;
 import net.dainplay.rpgworldmod.block.custom.DrillTuskBlock;
+import net.dainplay.rpgworldmod.block.custom.EntFaceBlock;
 import net.dainplay.rpgworldmod.block.custom.FairapierPlantBlock;
 import net.dainplay.rpgworldmod.block.custom.FairapierWiltedPlantBlock;
 import net.dainplay.rpgworldmod.block.custom.FireCatcherBlock;
 import net.dainplay.rpgworldmod.block.custom.FuelLiquidBlock;
 import net.dainplay.rpgworldmod.block.custom.GlossomBlock;
 import net.dainplay.rpgworldmod.block.custom.HoltsReflectionBlock;
+import net.dainplay.rpgworldmod.block.custom.LivingWoodLogBlock;
 import net.dainplay.rpgworldmod.block.custom.ModCeilingHangingSignBlock;
 import net.dainplay.rpgworldmod.block.custom.ModFlammableRotatedPillarBlock;
 import net.dainplay.rpgworldmod.block.custom.ModStandingSignBlock;
@@ -22,10 +24,12 @@ import net.dainplay.rpgworldmod.block.custom.QuartziteDrillTuskBlock;
 import net.dainplay.rpgworldmod.block.custom.QuartziteSlabBlock;
 import net.dainplay.rpgworldmod.block.custom.QuartziteWallBlock;
 import net.dainplay.rpgworldmod.block.custom.RazorleafBudBlock;
+import net.dainplay.rpgworldmod.block.custom.RieLeavesBlock;
 import net.dainplay.rpgworldmod.block.custom.ShiveralisPlantBlock;
 import net.dainplay.rpgworldmod.block.custom.SpikyIvyBlock;
 import net.dainplay.rpgworldmod.block.custom.StareblossomBlock;
 import net.dainplay.rpgworldmod.block.custom.StareblossomPotBlock;
+import net.dainplay.rpgworldmod.block.custom.TireBlock;
 import net.dainplay.rpgworldmod.block.custom.TreeHollowBlock;
 import net.dainplay.rpgworldmod.block.custom.TyphonBlock;
 import net.dainplay.rpgworldmod.block.custom.WidoweedBlock;
@@ -35,9 +39,11 @@ import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.fluid.ModFluids;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.TooltipBlockItem;
+import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.dainplay.rpgworldmod.world.feature.tree.RieTreeGrower;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -325,7 +331,7 @@ public class ModBlocks {
 
 
 	public static final RegistryObject<Block> LIVING_WOOD_LOG = registerBlock("living_wood_log",
-			() -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.WARPED_STEM).mapColor(MapColor.GLOW_LICHEN)));
+			() -> new LivingWoodLogBlock(BlockBehaviour.Properties.copy(Blocks.WARPED_STEM).mapColor(MapColor.GLOW_LICHEN)));
 	public static final RegistryObject<Block> LIVING_WOOD_WOOD = registerBlock("living_wood_wood",
 			() -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.WARPED_HYPHAE).mapColor(MapColor.TERRACOTTA_GRAY)));
 	public static final RegistryObject<Block> STRIPPED_LIVING_WOOD_LOG = registerBlock("stripped_living_wood_log",
@@ -342,7 +348,11 @@ public class ModBlocks {
 	public static final RegistryObject<Block> STRIPPED_RIE_WOOD = registerBlock("stripped_rie_wood",
 			() -> new ModFlammableRotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_OAK_WOOD).mapColor(MapColor.GLOW_LICHEN)));
 	public static final RegistryObject<Block> RIE_HOLLOW = registerBlock("rie_hollow",
-			() -> new TreeHollowBlock(BlockBehaviour.Properties.copy(Blocks.OAK_WOOD).strength(2.0F).mapColor(MapColor.GLOW_LICHEN)));
+			() -> new TreeHollowBlock(BlockBehaviour.Properties.copy(Blocks.OAK_WOOD).mapColor(MapColor.GLOW_LICHEN)));
+	public static final RegistryObject<Block> ENT_FACE = registerBlock("ent_face",
+			() -> new EntFaceBlock(BlockBehaviour.Properties.copy(Blocks.WARPED_STEM).mapColor(MapColor.GLOW_LICHEN)));
+	public static final RegistryObject<Block> TIRE = registerBlockWithTooltip("tire",
+			() -> new TireBlock(BlockBehaviour.Properties.of().strength(0.4F).sound(new SoundType(1.0F, 1.0F, RPGSounds.TIRE_PLACE.get(), RPGSounds.TIRE_STEP.get(), RPGSounds.TIRE_PLACE.get(), RPGSounds.TIRE_HIT.get(), RPGSounds.TIRE_FALL.get()))));
 
 
 	public static final RegistryObject<Block> RIE_PLANKS = registerBlock("rie_planks",
@@ -443,22 +453,7 @@ public class ModBlocks {
 
 
 	public static final RegistryObject<Block> RIE_LEAVES = registerBlock("rie_leaves",
-			() -> new LeavesBlock(BlockBehaviour.Properties.copy(Blocks.OAK_LEAVES)) {
-				@Override
-				public boolean isFlammable(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
-					return true;
-				}
-
-				@Override
-				public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
-					return 60;
-				}
-
-				@Override
-				public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
-					return 30;
-				}
-			});
+			() -> new RieLeavesBlock(BlockBehaviour.Properties.copy(Blocks.OAK_LEAVES)));
 	public static final RegistryObject<Block> RIE_SAPLING = registerBlock("rie_sapling",
 			() -> new SaplingBlock(new RieTreeGrower(), BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING)));
 	public static final RegistryObject<Block> POTTED_RIE_SAPLING = registerBlockWithoutBlockItem("potted_rie_sapling",
