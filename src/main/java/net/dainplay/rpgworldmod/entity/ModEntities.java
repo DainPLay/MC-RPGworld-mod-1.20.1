@@ -60,7 +60,7 @@ public class ModEntities {
             () -> EntityType.Builder.of((EntityType.EntityFactory<ModChestBoat>) ModChestBoat::new, MobCategory.MISC).sized(1.375F, 0.5625F).clientTrackingRange(10).build("modboat"));
 
     public static final RegistryObject<EntityType<TireSwingEntity>> TIRE_SWING = ENTITY_TYPES.register("tire_swing",
-            () -> EntityType.Builder.of(TireSwingEntity::new, MobCategory.MISC).sized(0.875F, 0.875F).clientTrackingRange(10).build("tire_swing"));
+            () -> EntityType.Builder.of(TireSwingEntity::new, MobCategory.MISC).sized(0.875F, 0.875F).clientTrackingRange(16).build("tire_swing"));
 
     public static final RegistryObject<EntityType<Bramblefox>> BRAMBLEFOX = ENTITY_TYPES.register("bramblefox",
             () -> EntityType.Builder.of(Bramblefox::new, MobCategory.CREATURE).sized(0.6F, 0.7F).clientTrackingRange(8).build("bramblefox"));

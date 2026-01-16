@@ -1,11 +1,15 @@
 package net.dainplay.rpgworldmod.entity.custom;
 
+import net.dainplay.rpgworldmod.network.ModMessages;
+import net.dainplay.rpgworldmod.network.PacketTireSwingInteraction;
+import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -13,7 +17,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.network.NetworkHooks;
 
 import java.util.Random;
@@ -35,21 +41,26 @@ public class TireSwingEntity extends Entity {
 	private static final float ROPE_LENGTH = 5.0F;
 
 	// Константы для поворота качелей
-	private static final float BASE_ROTATION_SPEED = 1.5F; // градусов за тик
-	private static final float ROTATION_SMOOTHNESS = 0.1F; // коэффициент плавности (0-1, меньше = плавнее)
-	private static final float ROTATION_ANGLE_LIMIT = 15.0F; // градусов
-	private static final float MAX_HEAD_YAW_OFFSET = 90.0F; // максимальное отклонение головы
+	private static final float BASE_ROTATION_SPEED = 1.5F;
+	private static final float ROTATION_SMOOTHNESS = 0.1F;
+	private static final float ROTATION_ANGLE_LIMIT = 15.0F;
+	private static final float MAX_HEAD_YAW_OFFSET = 90.0F;
 
 	// Константы для случайного поворота
-	private static final float RANDOM_ROTATION_CHANCE = 0.02F; // 2% шанс каждый тик
-	private static final float MAX_RANDOM_ROTATION = 5.0F; // максимальный случайный поворот (градусы)
-	private static final float MIN_ANGLE_FOR_RANDOM_ROTATION = 10.0F; // минимальный угол для случайного поворота
-	private static final float RANDOM_ROTATION_DECAY = 0.95F; // затухание случайного поворота
+	private static final float RANDOM_ROTATION_CHANCE = 0.02F;
+	private static final float MAX_RANDOM_ROTATION = 5.0F;
+	private static final float MIN_ANGLE_FOR_RANDOM_ROTATION = 10.0F;
+	private static final float RANDOM_ROTATION_DECAY = 0.95F;
 
 	// Константы для зависимости толчка от скорости
 	private static final float MIN_VELOCITY_FOR_MAX_PUSH = 5.0F;
 	private static final float MAX_VELOCITY_MULTIPLIER = 2.0F;
 	private static final float MIN_VELOCITY_MULTIPLIER = 0.3F;
+
+	private static final float COLLISION_BOUNCE_FACTOR = 0.7F; // Эластичность отскока (70%)
+	private static final float MAX_BOUNCE_VELOCITY = 2.0F;     // Максимальная скорость после отскока
+	private static final float COLLISION_ANGLE_REDUCTION = 0.8F; // Уменьшение угла при столкновении
+	private static final float COLLISION_DAMPING_FACTOR = 0.9F;  // Дополнительное трение при столкновен
 
 	// Константы для поворота модели
 	private static final float BASE_MODEL_ROTATION = 45.0F;
@@ -87,11 +98,18 @@ public class TireSwingEntity extends Entity {
 	// Рандомизатор
 	private final Random random = new Random();
 
+	// Второй хитбокс для сиденья
+	private final TireSwingSeatPart seatPart;
+
+	// Флаг для отслеживания, было ли взаимодействие с сиденьем
+	private boolean seatInteraction = false;
+
 	public TireSwingEntity(EntityType<?> type, Level level) {
 		super(type, level);
 		this.noPhysics = false;
 		this.setMaxUpStep(0.0F);
 		this.blocksBuilding = true;
+		this.seatPart = new TireSwingSeatPart(this);
 	}
 
 	@Override
@@ -118,13 +136,23 @@ public class TireSwingEntity extends Entity {
 			}
 			if (key.equals(DATA_SWING_YAW)) {
 				this.prevClientSwingYaw = this.clientSwingYaw;
-				this.clientSwingYaw = getSwingYaw();
+				float newYaw = getSwingYaw();
+
+				// Корректируем для плавной интерполяции
+				float diff = newYaw - this.prevClientSwingYaw;
+				if (diff > 180.0F) {
+					newYaw -= 360.0F;
+				} else if (diff < -180.0F) {
+					newYaw += 360.0F;
+				}
+
+				this.clientSwingYaw = newYaw;
 			}
 		}
 	}
 
-	@Override
-	public InteractionResult interact(Player player, InteractionHand hand) {
+	// Метод для посадки игрока (вызывается как из основного тела, так и из сиденья)
+	public InteractionResult tryMountPlayer(Player player) {
 		if (this.getPassengers().isEmpty() && !player.isSecondaryUseActive()) {
 			if (!this.level().isClientSide) {
 				// Запоминаем yaw игрока как начальное значение
@@ -138,15 +166,27 @@ public class TireSwingEntity extends Entity {
 				setSwingYaw(player.yBodyRot);
 				setTargetSwingYaw(player.yBodyRot);
 
-				player.setPos(this.getX(), this.getY() + this.getPassengersRidingOffset(), this.getZ());
-
+				// Позиция рассчитывается в positionRider, поэтому просто запускаем riding
 				if (player.startRiding(this)) {
 					setOccupied(true);
+					return InteractionResult.CONSUME;
 				}
+			} else {
+				// На клиенте просто возвращаем успех
+				return InteractionResult.SUCCESS;
 			}
-			return InteractionResult.sidedSuccess(this.level().isClientSide);
 		}
 		return InteractionResult.PASS;
+	}
+
+	@Override
+	public boolean isMultipartEntity() {
+		return true;
+	}
+
+	@Override
+	public PartEntity<?>[] getParts() {
+		return new PartEntity<?>[]{seatPart};
 	}
 
 	@Override
@@ -157,6 +197,9 @@ public class TireSwingEntity extends Entity {
 	@Override
 	public void tick() {
 		super.tick();
+
+		// Обновляем позицию хитбокса сиденья
+		updateSeatPartPosition();
 
 		// Обновляем интерполированные значения для рендеринга
 		if (this.level().isClientSide) {
@@ -169,16 +212,33 @@ public class TireSwingEntity extends Entity {
 
 			// Интерполируем yaw тела пассажира и качелей
 			this.lastPassengerBodyYaw = this.passengerBodyYaw;
-			this.passengerBodyYaw = getPassengerYaw();
+			float newPassengerYaw = getPassengerYaw();
+
+			float diffYaw = newPassengerYaw - this.lastPassengerBodyYaw;
+			if (diffYaw > 180.0F) {
+				this.passengerBodyYaw = newPassengerYaw - 360.0F;
+			} else if (diffYaw < -180.0F) {
+				this.passengerBodyYaw = newPassengerYaw + 360.0F;
+			} else {
+				this.passengerBodyYaw = newPassengerYaw;
+			}
 
 			this.lastSwingYaw = this.swingYaw;
-			this.swingYaw = getSwingYaw();
+			float newSwingYaw = getSwingYaw();
+			float diff = newSwingYaw - this.lastSwingYaw;
+			if (diff > 180.0F) {
+				this.swingYaw = newSwingYaw - 360.0F;
+			} else if (diff < -180.0F) {
+				this.swingYaw = newSwingYaw + 360.0F;
+			} else {
+				this.swingYaw = newSwingYaw;
+			}
 		} else {
 			// Серверная логика
 			boolean hasPassenger = !this.getPassengers().isEmpty();
 			setOccupied(hasPassenger);
 
-			// Обновляем физику качания
+			// Обновляем физику качания (включая проверку столкновений)
 			updateSwingPhysics(hasPassenger);
 
 			// Обновляем поворот качелей
@@ -192,9 +252,9 @@ public class TireSwingEntity extends Entity {
 					// 1. Ограничиваем вращение головы игрока
 					limitPlayerHeadRotation(player);
 
-					// 2. Обрабатываем ввод для качания вперед/назад
+					// 2. Обрабатываем ввод для качания вперед/назад (только если нет столкновения)
 					float moveInput = player.zza;
-					if (moveInput != 0) {
+					if (moveInput != 0 && !checkSeatCollision(getSwingAngle())) {
 						this.pushDirection = (int) Math.signum(moveInput);
 						float currentVel = getSwingVelocity();
 						float impulse = moveInput * 0.008F;
@@ -203,10 +263,9 @@ public class TireSwingEntity extends Entity {
 						this.pushDirection = 0;
 					}
 
-					// 3. Обрабатываем ввод для поворота качелей (влево/вправо) - ИНВЕРТИРОВАНО
+					// 3. Обрабатываем ввод для поворота качелей
 					float strafeInput = player.xxa;
 					if (Math.abs(strafeInput) > 0.1f) {
-						// Инвертируем ввод: нажатие влево поворачивает влево, вправо - вправо
 						this.rotationInput = (int) Math.signum(strafeInput);
 					} else {
 						this.rotationInput = 0;
@@ -221,6 +280,35 @@ public class TireSwingEntity extends Entity {
 				}
 			}
 		}
+	}
+
+	private void updateSeatPartPosition() {
+		if (seatPart == null) return;
+
+		// Вычисляем позицию сиденья на основе текущего угла качания
+		float swingAngleRad = (float) Math.toRadians(getSwingAngle());
+		float swingYawRad = (float) Math.toRadians(getSwingYaw());
+
+		double forwardOffset = ROPE_LENGTH * Math.sin(swingAngleRad);
+		double verticalOffset = ROPE_LENGTH * (1.0 - Math.cos(swingAngleRad));
+		double yOffset = this.getPassengersRidingOffset();
+
+		// Поворачиваем смещение согласно swingYaw
+		double rotatedX = -forwardOffset * Math.sin(swingYawRad);
+		double rotatedZ = forwardOffset * Math.cos(swingYawRad);
+
+		Vec3 seatPos = this.position()
+				.add(rotatedX, yOffset + verticalOffset, rotatedZ);
+
+		seatPart.setPos(seatPos.x, seatPos.y, seatPos.z);
+
+		// Обновляем bounding box сиденья (слегка уменьшаем для лучшего геймплея)
+		float width = 0.8f; // Было 0.875f
+		float height = 0.8f; // Было 0.875f
+		seatPart.setBoundingBox(new AABB(
+				seatPos.x - width / 2, seatPos.y - 0.05, seatPos.z - width / 2,
+				seatPos.x + width / 2, seatPos.y + height, seatPos.z + width / 2
+		));
 	}
 
 	private void limitPlayerHeadRotation(Player player) {
@@ -259,6 +347,32 @@ public class TireSwingEntity extends Entity {
 		// Тело игрока следует за направлением качелей
 		this.passengerBodyYaw = swingYaw;
 		setPassengerYaw(this.passengerBodyYaw);
+	}
+
+	private float normalizeAngle(float angle) {
+		angle %= 360.0F;
+		if (angle > 180.0F) {
+			angle -= 360.0F;
+		} else if (angle < -180.0F) {
+			angle += 360.0F;
+		}
+		return angle;
+	}
+
+	private float lerpAngle(float partialTicks, float start, float end) {
+		// Нормализуем углы
+		start = normalizeAngle(start);
+		end = normalizeAngle(end);
+
+		// Вычисляем кратчайший путь
+		float diff = end - start;
+		if (diff > 180.0F) {
+			diff -= 360.0F;
+		} else if (diff < -180.0F) {
+			diff += 360.0F;
+		}
+
+		return start + diff * partialTicks;
 	}
 
 	private void updateSwingRotation(boolean hasPassenger) {
@@ -330,11 +444,16 @@ public class TireSwingEntity extends Entity {
 
 		// Плавное приближение текущего yaw к целевому
 		float currentSwingYaw = getSwingYaw();
-		float newSwingYaw = currentSwingYaw + (this.targetSwingYaw - currentSwingYaw) * 0.2F;
+		float targetDiff = this.targetSwingYaw - currentSwingYaw;
 
-		// Нормализуем угол
-		while (newSwingYaw > 180.0F) newSwingYaw -= 360.0F;
-		while (newSwingYaw < -180.0F) newSwingYaw += 360.0F;
+// Корректируем разницу для кратчайшего пути
+		if (targetDiff > 180.0F) {
+			targetDiff -= 360.0F;
+		} else if (targetDiff < -180.0F) {
+			targetDiff += 360.0F;
+		}
+		float newSwingYaw = currentSwingYaw + targetDiff * 0.2F;
+		newSwingYaw = normalizeAngle(newSwingYaw);
 
 		setSwingYaw(newSwingYaw);
 
@@ -348,7 +467,10 @@ public class TireSwingEntity extends Entity {
 		float currentAngle = getSwingAngle();
 		float currentVelocity = getSwingVelocity();
 
-		// 1. Гравитационная сила с нелинейным усилением
+		// 1. Проверяем столкновение ДО обновления физики
+		boolean collisionDetected = checkSeatCollision(currentAngle);
+
+		// 2. Гравитационная сила с нелинейным усилением
 		float angleRad = (float) Math.toRadians(currentAngle);
 		float gravityForce = (float) -Math.sin(angleRad) * SWING_GRAVITY;
 
@@ -357,9 +479,9 @@ public class TireSwingEntity extends Entity {
 		float nonLinearBoost = 1.0F + angleRatio * angleRatio * 2.0F;
 		gravityForce *= nonLinearBoost;
 
-		// 2. Сила от игрока (только если есть пассажир и активен ввод)
+		// 3. Сила от игрока (только если есть пассажир и активен ввод)
 		float playerForce = 0.0f;
-		if (hasPassenger && this.pushDirection != 0) {
+		if (hasPassenger && this.pushDirection != 0 && !collisionDetected) {
 			// Игрок толкает эффективнее всего в нижней точке (cos максимален при angle=0°)
 			float efficiency = (float) Math.cos(angleRad);
 			efficiency = Math.max(0.2F, Math.abs(efficiency)); // Минимум 20% эффективности
@@ -370,24 +492,55 @@ public class TireSwingEntity extends Entity {
 			this.pushDirection = 0;
 		}
 
-		// 3. Суммарное ускорение
+		// 4. Если обнаружено столкновение - применяем отскок
+		if (collisionDetected) {
+			// Вычисляем вектор отскока на основе текущей скорости и угла
+			float collisionVelocity = currentVelocity;
+
+			// Эластичный отскок: сохраняем 70% энергии, меняем направление
+			float bounceFactor = 1F; // 70% энергии сохраняется
+			float newVelocity = -collisionVelocity * bounceFactor;
+
+			// Ограничиваем максимальную скорость после отскока
+			float maxBounceVelocity = 2.0F;
+			if (Math.abs(newVelocity) > maxBounceVelocity) {
+				newVelocity = Math.signum(newVelocity) * maxBounceVelocity;
+			}
+
+			// Применяем отскок
+			currentVelocity = newVelocity;
+
+			// Немного уменьшаем угол, чтобы качели не застревали в блоке
+			float angleReduction = 0.8F; // Уменьшаем угол на 20%
+			currentAngle *= angleReduction;
+
+			// Сбрасываем силу игрока при столкновении
+			playerForce = 0.0f;
+			this.pushDirection = 0;
+
+			level().playSound(null, this.seatPart.blockPosition(), RPGSounds.TIRE_BOUNCE.get(), SoundSource.BLOCKS, 1.0F, (level().random.nextFloat() - level().random.nextFloat()) * 0.2F + 1.0F);
+		}
+
+		// 5. Суммарное ускорение (гравитация доминирует)
 		float acceleration = gravityForce + playerForce;
 
-		// 4. Обновление скорости с демпфированием
+		// 6. Обновление скорости с демпфированием (увеличиваем трение при столкновении)
+		float currentDamping = collisionDetected ? SWING_DAMPING * 0.9F : SWING_DAMPING;
 		currentVelocity += acceleration;
-		currentVelocity *= SWING_DAMPING;
+		currentVelocity *= currentDamping;
 
-		// 5. Обновление угла
+		// 7. Обновление угла
 		currentAngle += currentVelocity;
 
-		// 6. Ограничение угла с потерей энергии при ударе о предельный угол
+		// 8. Ограничение угла с потерей энергии при ударе о предельный угол
 		if (Math.abs(currentAngle) > MAX_SWING_ANGLE) {
 			currentAngle = MAX_SWING_ANGLE * Math.signum(currentAngle);
 			currentVelocity *= -0.6F; // Потеря 40% энергии при отскоке
 		}
 
-		// 7. Гарантированный возврат в нейтраль при малых колебаниях
+		// 9. Гарантированный возврат в нейтраль при малых колебаниях
 		if (Math.abs(currentVelocity) < STOP_THRESHOLD && Math.abs(currentAngle) < 2.0F) {
+			// Плавное возвращение к нулю
 			currentAngle *= 0.9F;
 			if (Math.abs(currentAngle) < 0.5F) {
 				currentAngle = 0.0F;
@@ -399,13 +552,71 @@ public class TireSwingEntity extends Entity {
 		setSwingVelocity(currentVelocity);
 	}
 
-	private float calculateSpeedMultiplier(float currentSpeed) {
-		if (currentSpeed <= 0.0F) {
-			return MIN_VELOCITY_MULTIPLIER;
+	private boolean checkSeatCollision(float swingAngle) {
+		if (seatPart == null) return false;
+
+		// Получаем текущую позицию сиденья (копируем логику из updateSeatPartPosition)
+		float swingAngleRad = (float) Math.toRadians(swingAngle);
+		float swingYawRad = (float) Math.toRadians(getSwingYaw());
+
+		double forwardOffset = ROPE_LENGTH * Math.sin(swingAngleRad);
+		double verticalOffset = ROPE_LENGTH * (1.0 - Math.cos(swingAngleRad));
+		double yOffset = this.getPassengersRidingOffset();
+
+		// Поворачиваем смещение согласно swingYaw
+		double rotatedX = -forwardOffset * Math.sin(swingYawRad);
+		double rotatedZ = forwardOffset * Math.cos(swingYawRad);
+
+		Vec3 seatPos = this.position()
+				.add(rotatedX, yOffset + verticalOffset, rotatedZ);
+
+		// Создаём AABB для сиденья (немного меньше для предотвращения ложных срабатываний)
+		float collisionWidth = 0.7f;
+		float collisionHeight = 0.7f;
+		AABB seatCollisionBox = new AABB(
+				seatPos.x - collisionWidth / 2,
+				seatPos.y - 0.05,
+				seatPos.z - collisionWidth / 2,
+				seatPos.x + collisionWidth / 2,
+				seatPos.y + collisionHeight,
+				seatPos.z + collisionWidth / 2
+		);
+
+		// Проверяем столкновение с твёрдыми блоками
+		return checkAABBCollisionWithSolidBlocks(seatCollisionBox);
+	}
+
+	private boolean checkAABBCollisionWithSolidBlocks(AABB aabb) {
+		// Получаем все блоки, которые пересекаются с AABB
+		int minX = net.minecraft.util.Mth.floor(aabb.minX);
+		int minY = net.minecraft.util.Mth.floor(aabb.minY);
+		int minZ = net.minecraft.util.Mth.floor(aabb.minZ);
+		int maxX = net.minecraft.util.Mth.floor(aabb.maxX);
+		int maxY = net.minecraft.util.Mth.floor(aabb.maxY);
+		int maxZ = net.minecraft.util.Mth.floor(aabb.maxZ);
+
+		for (int x = minX; x <= maxX; x++) {
+			for (int y = minY; y <= maxY; y++) {
+				for (int z = minZ; z <= maxZ; z++) {
+					net.minecraft.core.BlockPos pos = new net.minecraft.core.BlockPos(x, y, z);
+					net.minecraft.world.level.block.state.BlockState state = this.level().getBlockState(pos);
+
+					// Проверяем, является ли блок твёрдым (столкновение)
+					if (!state.isAir() && state.isSolid()) {
+						// Получаем VoxelShape блока и проверяем пересечение
+						net.minecraft.world.phys.shapes.VoxelShape shape = state.getCollisionShape(this.level(), pos);
+						if (!shape.isEmpty()) {
+							net.minecraft.world.phys.shapes.VoxelShape offsetShape = shape.move(pos.getX(), pos.getY(), pos.getZ());
+							if (offsetShape.toAabbs().stream().anyMatch(blockAABB -> blockAABB.intersects(aabb))) {
+								return true;
+							}
+						}
+					}
+				}
+			}
 		}
 
-		float speedRatio = Math.min(currentSpeed / MIN_VELOCITY_FOR_MAX_PUSH, 1.0F);
-		return MIN_VELOCITY_MULTIPLIER + (MAX_VELOCITY_MULTIPLIER - MIN_VELOCITY_MULTIPLIER) * speedRatio;
+		return false;
 	}
 
 	@Override
@@ -460,11 +671,6 @@ public class TireSwingEntity extends Entity {
 		}
 	}
 
-	@Override
-	public boolean isPickable() {
-		return true;
-	}
-
 	// Методы для рендерера
 	public float getRenderSwingAngle(float partialTicks) {
 		if (this.level().isClientSide) {
@@ -482,7 +688,8 @@ public class TireSwingEntity extends Entity {
 
 	public float getRenderSwingYaw(float partialTicks) {
 		if (this.level().isClientSide) {
-			return this.lastSwingYaw + (this.swingYaw - this.lastSwingYaw) * partialTicks;
+			// Используем lerpAngle для плавной интерполяции
+			return lerpAngle(partialTicks, this.lastSwingYaw, this.swingYaw);
 		}
 		return getSwingYaw();
 	}
@@ -492,7 +699,11 @@ public class TireSwingEntity extends Entity {
 	}
 
 	public float getPassengerBodyYaw(float partialTicks) {
-		return this.lastPassengerBodyYaw + (this.passengerBodyYaw - this.lastPassengerBodyYaw) * partialTicks;
+		if (this.level().isClientSide) {
+			// Используем lerpAngle для плавной интерполяции
+			return lerpAngle(partialTicks, this.lastPassengerBodyYaw, this.passengerBodyYaw);
+		}
+		return getPassengerYaw();
 	}
 
 	// Метод для вычисления поворота модели
@@ -534,6 +745,7 @@ public class TireSwingEntity extends Entity {
 	}
 
 	public void setPassengerYaw(float yaw) {
+		yaw = normalizeAngle(yaw);
 		this.entityData.set(DATA_PASSENGER_YAW, yaw);
 	}
 
@@ -542,6 +754,7 @@ public class TireSwingEntity extends Entity {
 	}
 
 	public void setSwingYaw(float yaw) {
+		yaw = normalizeAngle(yaw);
 		this.entityData.set(DATA_SWING_YAW, yaw);
 	}
 
@@ -550,6 +763,7 @@ public class TireSwingEntity extends Entity {
 	}
 
 	public void setTargetSwingYaw(float yaw) {
+		yaw = normalizeAngle(yaw);
 		this.entityData.set(DATA_TARGET_SWING_YAW, yaw);
 	}
 
@@ -609,5 +823,98 @@ public class TireSwingEntity extends Entity {
 	@Override
 	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
+	}
+
+	// Метод для обработки взаимодействия с сиденьем
+	public void setSeatInteraction(boolean seatInteraction) {
+		this.seatInteraction = seatInteraction;
+	}
+
+	// Внутренний класс для хитбокса сиденья
+	public class TireSwingSeatPart extends PartEntity<TireSwingEntity> {
+		public TireSwingSeatPart(TireSwingEntity parent) {
+			super(parent);
+		}
+
+		@Override
+		protected void defineSynchedData() {
+			// Не требуется синхронизация данных для части
+		}
+
+		@Override
+		protected void readAdditionalSaveData(CompoundTag pCompound) {
+			// Части сущности не сохраняются отдельно
+		}
+
+		@Override
+		protected void addAdditionalSaveData(CompoundTag pCompound) {
+			// Части сущности не сохраняются отдельно
+		}
+
+		@Override
+		public boolean isPickable() {
+			return true;
+		}
+
+		@Override
+		public boolean is(Entity entity) {
+			return this == entity || this.getParent() == entity;
+		}
+
+		@Override
+		public boolean hurt(net.minecraft.world.damagesource.DamageSource source, float amount) {
+			// Можно добавить логику повреждения качелей
+			return false;
+		}
+
+		@Override
+		public void setPos(double x, double y, double z) {
+			super.setPos(x, y, z);
+			// Сбрасываем bounding box при изменении позиции
+			this.setBoundingBox(this.getBoundingBox());
+		}
+
+		@Override
+		public boolean isPushable() {
+			return false;
+		}
+
+		@Override
+		public InteractionResult interact(Player player, InteractionHand hand) {
+			if (this.level().isClientSide) {
+				// Отправляем пакет на сервер при клике на сиденье
+				ModMessages.sendToServer(new PacketTireSwingInteraction(this.getParent().getId()));
+				return InteractionResult.SUCCESS;
+			}
+			return InteractionResult.PASS;
+		}
+
+		@Override
+		public boolean isNoGravity() {
+			return true; // Часть не должна падать
+		}
+
+		@Override
+		public boolean isAttackable() {
+			return false; // Часть нельзя атаковать напрямую
+		}
+
+		@Override
+		public boolean isAlive() {
+			return this.getParent() != null && this.getParent().isAlive();
+		}
+
+		@Override
+		public void remove(net.minecraft.world.entity.Entity.RemovalReason reason) {
+			// Не позволяем удалять часть отдельно от родителя
+			if (this.getParent() != null && !this.getParent().isRemoved()) {
+				return;
+			}
+			super.remove(reason);
+		}
+
+		public boolean isVisible() {
+			return true;
+		}
 	}
 }

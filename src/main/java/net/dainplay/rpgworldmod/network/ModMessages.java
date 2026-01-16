@@ -76,6 +76,12 @@ public class ModMessages {
 				.encoder(IllusionForceDataSyncS2CPacket::toBytes)
 				.consumerMainThread(IllusionForceDataSyncS2CPacket::handle)
 				.add();
+
+		net.messageBuilder(PacketTireSwingInteraction.class, id(), NetworkDirection.PLAY_TO_SERVER)
+				.decoder(PacketTireSwingInteraction::new)
+				.encoder(PacketTireSwingInteraction::toBytes)
+				.consumerMainThread(PacketTireSwingInteraction::handle)
+				.add();
 	}
 
 	public static <MSG> void sendToServer(MSG message) {
