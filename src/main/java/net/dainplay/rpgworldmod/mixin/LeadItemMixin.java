@@ -29,6 +29,21 @@ public class LeadItemMixin {
         }
     }
 
+    @Inject(
+            method = "bindPlayerMobs",
+            at = @At("TAIL")
+    )
+    private static void onAfterBindPlayerMobs(Player player, Level level, BlockPos fencePos,
+                                              CallbackInfoReturnable<InteractionResult> cir) {
+        // Если стандартная логика не сработала, пробуем привязать качели
+        if (!cir.getReturnValue().consumesAction()) {
+            InteractionResult result = bindPlayerTireSwings(player, level, fencePos);
+            if (result.consumesAction()) {
+                cir.setReturnValue(result);
+            }
+        }
+    }
+
     private static InteractionResult bindPlayerTireSwings(Player player, Level level, BlockPos fencePos) {
         boolean flag = false;
 
@@ -40,13 +55,13 @@ public class LeadItemMixin {
                         (double)fencePos.getY() + 7.0D, (double)fencePos.getZ() + 7.0D)
         )) {
             if (tireSwing.getLeashHolder() == player) {
-                // Пытаемся привязать к забору (создаст узел)
+                // Пытаемся привязать к забору
                 if (tireSwing.leashToFence(fencePos, player)) {
                     flag = true;
                 }
             }
         }
 
-        return flag ? InteractionResult.SUCCESS : InteractionResult.PASS;
+        return flag ? InteractionResult.sidedSuccess(level.isClientSide) : InteractionResult.PASS;
     }
 }

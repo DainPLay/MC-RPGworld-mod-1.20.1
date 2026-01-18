@@ -138,12 +138,8 @@ public class TireSwingEntity extends Entity {
 
 	// Заменим константу ROPE_LENGTH на использование переменной
 	private float currentRopeLength = 5.0F;
-
-	// Добавим переменные для хранения состояния привязки
-	private Entity leashHolder;
 	private BlockPos fencePos;
 	private boolean isLeashed = false;
-	private byte leashType = LEASH_TYPE_NONE;
 
 	public TireSwingEntity(EntityType<?> type, Level level) {
 		super(type, level);
@@ -200,14 +196,9 @@ public class TireSwingEntity extends Entity {
 
 	// Добавим новые методы для работы с поводком
 	public void setLeashedTo(@Nullable Entity entity, boolean broadcast) {
-		if (this.leashHolder != null) {
-			this.leashHolder = null;
-		}
 
 		if (entity != null) {
-			this.leashHolder = entity;
 			this.isLeashed = true;
-			this.leashType = LEASH_TYPE_PLAYER;
 			this.entityData.set(DATA_LEASH_HOLDER_ID, entity.getId());
 			this.entityData.set(DATA_LEASH_TYPE, LEASH_TYPE_PLAYER);
 			this.entityData.set(DATA_FENCE_POS, Optional.empty());
@@ -215,6 +206,9 @@ public class TireSwingEntity extends Entity {
 			if (broadcast && !this.level().isClientSide) {
 				this.level().broadcastEntityEvent(this, (byte)7); // Событие привязки
 			}
+		}
+		else {
+			this.entityData.set(DATA_LEASH_HOLDER_ID, null);
 		}
 	}
 
@@ -227,14 +221,13 @@ public class TireSwingEntity extends Entity {
 	}
 	@Nullable
 	public Entity getLeashHolder() {
-		if (this.leashHolder == null) {
+		Entity leashholder = null;
 			// Пытаемся восстановить из данных
 			int holderId = this.entityData.get(DATA_LEASH_HOLDER_ID);
 			if (holderId != -1) {
-				this.leashHolder = this.level().getEntity(holderId);
+				leashholder = this.level().getEntity(holderId);
 			}
-		}
-		return this.leashHolder;
+		return leashholder;
 	}
 
 	public byte getLeashType() {
@@ -245,6 +238,9 @@ public class TireSwingEntity extends Entity {
 	public BlockPos getFencePos() {
 		return this.entityData.get(DATA_FENCE_POS).orElse(null);
 	}
+	public ItemStack getPickResult() {
+		return new ItemStack(ModBlocks.TIRE.get());
+	}
 
 	// Метод для привязки к забору
 	public boolean leashToFence(BlockPos fencePos, Player player) {
@@ -252,27 +248,33 @@ public class TireSwingEntity extends Entity {
 		if (canLeashToFence(fencePos)) {
 			// Создаем или получаем существующий узел на заборе
 			LeashFenceKnotEntity knot = LeashFenceKnotEntity.getOrCreateKnot(this.level(), fencePos);
-			knot.playPlacementSound();
+			if (knot != null) {
+				knot.playPlacementSound();
 
-			this.leashHolder = knot;
-			this.isLeashed = true;
-			this.leashType = LEASH_TYPE_FENCE_KNOT;
+				this.isLeashed = true;
+				this.fencePos = fencePos;
 
-			// Обновляем синхронизированные данные
-			this.entityData.set(DATA_LEASH_HOLDER_ID, knot.getId());
-			this.entityData.set(DATA_LEASH_TYPE, LEASH_TYPE_FENCE_KNOT);
-			this.entityData.set(DATA_FENCE_POS, Optional.of(fencePos));
+				// Обновляем синхронизированные данные
+				this.entityData.set(DATA_LEASH_HOLDER_ID, knot.getId());
+				this.entityData.set(DATA_LEASH_TYPE, LEASH_TYPE_FENCE_KNOT);
+				this.entityData.set(DATA_FENCE_POS, Optional.of(fencePos));
 
-			// Устанавливаем длину веревки как расстояние до узла
-			float distance = (float) Math.sqrt(
-					Math.pow(knot.getX() - this.getX(), 2) +
-							Math.pow(knot.getY() + 0.5 - this.getY(), 2) + // Узел немного выше забора
-							Math.pow(knot.getZ() - this.getZ(), 2)
-			);
-			this.currentRopeLength = distance;
-			this.entityData.set(DATA_ROPE_LENGTH, distance);
+				// Устанавливаем длину веревки как расстояние до узла
+				float distance = (float) Math.sqrt(
+						Math.pow(knot.getX() - this.getX(), 2) +
+								Math.pow(knot.getY() + 0.5 - this.getY(), 2) +
+								Math.pow(knot.getZ() - this.getZ(), 2)
+				);
+				this.currentRopeLength = distance;
+				this.entityData.set(DATA_ROPE_LENGTH, distance);
 
-			return true;
+				// Отправляем событие привязки
+				if (!this.level().isClientSide) {
+					this.level().broadcastEntityEvent(this, (byte)7);
+				}
+
+				return true;
+			}
 		}
 		return false;
 	}
@@ -302,24 +304,45 @@ public class TireSwingEntity extends Entity {
 
 		// Проверяем, что на позиции забора действительно забор
 		BlockState fenceState = this.level().getBlockState(fencePos);
-		return fenceState.getBlock() instanceof FenceBlock || fenceState.is(Blocks.CHAIN);
+		return fenceState.getBlock() instanceof FenceBlock;
 	}
 
 	// Метод для отвязки
 	public void dropLeash(boolean broadcast, boolean dropItem) {
+		// Сохраняем текущий держатель поводка
+		Entity oldHolder = getLeashHolder();
+
 		this.isLeashed = false;
-		this.leashHolder = null;
+		setLeashedTo(null, broadcast);
 		this.fencePos = null;
-		this.leashType = LEASH_TYPE_NONE;
 
 		this.entityData.set(DATA_LEASH_HOLDER_ID, -1);
 		this.entityData.set(DATA_LEASH_TYPE, LEASH_TYPE_NONE);
 		this.entityData.set(DATA_FENCE_POS, Optional.empty());
 
+		// Если это был узел на заборе и мы отвязываемся, уничтожаем узел
+		if (oldHolder instanceof LeashFenceKnotEntity) {
+			oldHolder.discard();
+		}
+
 		// Если качели не привязаны, уничтожаем их
 		if (!this.level().isClientSide) {
 			this.destroyAndDropTire();
 		}
+
+		if (broadcast && !this.level().isClientSide) {
+			this.level().broadcastEntityEvent(this, (byte)6); // Событие отвязки
+		}
+	}
+	public Vec3 getLeashRopePosition(float partialTicks) {
+		if (getLeashType() == LEASH_TYPE_FENCE_KNOT && getLeashHolder() instanceof LeashFenceKnotEntity) {
+			// Для узла на заборе используем его позицию
+			return new Vec3(getLeashHolder().getX(), getLeashHolder().getY() + 0.5, getLeashHolder().getZ());
+		} else if (getLeashHolder() != null) {
+			// Для игрока используем стандартный метод
+			return getLeashHolder().getRopeHoldPosition(partialTicks);
+		}
+		return this.position();
 	}
 
 	// Метод для уничтожения качелей и выпадения шины
@@ -375,7 +398,9 @@ public class TireSwingEntity extends Entity {
 	@Override
 	public void tick() {
 		super.tick();
-
+		if (this.tickCount == 1 && !this.level().isClientSide && this.isLeashed) {
+			restoreLeash();
+		}
 		// Обновляем позицию хитбокса сиденья
 		updateSeatPartPosition();
 
@@ -465,7 +490,7 @@ public class TireSwingEntity extends Entity {
 
 	private void updateLeashState() {
 		if (this.isLeashed) {
-			switch (this.leashType) {
+			switch (getLeashType()) {
 				case LEASH_TYPE_PLAYER:
 					updatePlayerLeash();
 					break;
@@ -506,12 +531,17 @@ public class TireSwingEntity extends Entity {
 		BlockPos fence = this.getFencePos();
 		if (fence != null) {
 			// Проверяем, существует ли еще узел
-			LeashFenceKnotEntity knot = LeashFenceKnotEntity.getOrCreateKnot(this.level(), fence);
+			LeashFenceKnotEntity knot = this.getLeashKnot();
 			if (knot != null && knot.isAlive()) {
-				// Обновляем ссылку на узел
-				this.leashHolder = knot;
+				// Также проверяем, что на позиции забора все еще забор
+				BlockState fenceState = this.level().getBlockState(fence);
+				if (!(fenceState.getBlock() instanceof FenceBlock)) {
+					// Забор был заменен на другой блок, отвязываем
+					this.dropLeash(true, true);
+					return;
+				}
 
-				// Проверяем расстояние до узла (если узел был перемещен или изменен)
+				// Обновляем длину веревки
 				float distance = (float) Math.sqrt(
 						Math.pow(knot.getX() - this.getX(), 2) +
 								Math.pow(knot.getY() + 0.5 - this.getY(), 2) +
@@ -520,8 +550,15 @@ public class TireSwingEntity extends Entity {
 				this.currentRopeLength = distance;
 				this.entityData.set(DATA_ROPE_LENGTH, distance);
 			} else {
-				// Узел был уничтожен
-				this.dropLeash(false, false);
+				// Узел был уничтожен, пытаемся восстановить
+				knot = LeashFenceKnotEntity.getOrCreateKnot(this.level(), fence);
+				if (knot != null) {
+					this.setLeashedTo(knot, false);
+					this.entityData.set(DATA_LEASH_HOLDER_ID, knot.getId());
+				} else {
+					// Не удалось восстановить узел
+					this.dropLeash(true, true);
+				}
 			}
 		} else {
 			this.dropLeash(false, false);
@@ -1246,16 +1283,18 @@ public class TireSwingEntity extends Entity {
 		if (compound.contains("WasAboveSwooshAngle")) {
 			this.wasAboveSwooshAngle = compound.getBoolean("WasAboveSwooshAngle");
 		}
+
 		if (compound.contains("LeashHolderId")) {
 			int holderId = compound.getInt("LeashHolderId");
 			if (holderId != -1) {
+				// Не устанавливаем сразу, а только сохраняем ID
+				// Узел будет восстановлен позже
 				this.entityData.set(DATA_LEASH_HOLDER_ID, holderId);
 			}
 		}
 
 		if (compound.contains("LeashType")) {
-			this.leashType = compound.getByte("LeashType");
-			this.entityData.set(DATA_LEASH_TYPE, this.leashType);
+			this.entityData.set(DATA_LEASH_TYPE, compound.getByte("LeashType"));
 		}
 
 		if (compound.contains("FencePos")) {
@@ -1315,7 +1354,46 @@ public class TireSwingEntity extends Entity {
 		}
 		return InteractionResult.PASS;
 	}
+	private void restoreLeash() {
+		if (!this.level().isClientSide && this.isLeashed) {
+			byte leashType = getLeashType();
 
+			if (leashType == LEASH_TYPE_FENCE_KNOT) {
+				BlockPos fence = getFencePos();
+				if (fence != null) {
+					// Восстанавливаем узел на заборе
+					LeashFenceKnotEntity knot = LeashFenceKnotEntity.getOrCreateKnot(this.level(), fence);
+					if (knot != null) {
+						this.setLeashedTo(knot, false);
+						this.entityData.set(DATA_LEASH_HOLDER_ID, knot.getId());
+
+						// Восстанавливаем длину веревки
+						float distance = (float) Math.sqrt(
+								Math.pow(knot.getX() - this.getX(), 2) +
+										Math.pow(knot.getY() + 0.5 - this.getY(), 2) +
+										Math.pow(knot.getZ() - this.getZ(), 2)
+						);
+						this.currentRopeLength = distance;
+						this.entityData.set(DATA_ROPE_LENGTH, distance);
+					} else {
+						// Если узел не удалось восстановить, отвязываем
+						this.dropLeash(false, false);
+					}
+				}
+			} else if (leashType == LEASH_TYPE_PLAYER) {
+				// Восстановление привязки к игроку
+				int holderId = this.entityData.get(DATA_LEASH_HOLDER_ID);
+				if (holderId != -1) {
+					Entity holder = this.level().getEntity(holderId);
+					if (holder instanceof Player) {
+						this.setLeashedTo(holder, false);
+					} else {
+						this.dropLeash(false, false);
+					}
+				}
+			}
+		}
+	}
 	@Override
 	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
