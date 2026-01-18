@@ -15,200 +15,270 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 public class TireSwingRenderer extends EntityRenderer<TireSwingEntity> {
-    private final TireSwingModel<TireSwingEntity> model;
-    private static final ResourceLocation TEXTURE = new ResourceLocation(RPGworldMod.MOD_ID, "textures/entity/tire_swing/tire_swing.png");
+	private final TireSwingModel<TireSwingEntity> model;
+	private static final ResourceLocation TEXTURE = new ResourceLocation(RPGworldMod.MOD_ID, "textures/entity/tire_swing/tire_swing.png");
 
-    public TireSwingRenderer(EntityRendererProvider.Context context) {
-        super(context);
-        this.model = new TireSwingModel<>(context.bakeLayer(TireSwingModel.LAYER_LOCATION));
-        this.shadowRadius = 0.5F;
-    }
+	public TireSwingRenderer(EntityRendererProvider.Context context) {
+		super(context);
+		this.model = new TireSwingModel<>(context.bakeLayer(TireSwingModel.LAYER_LOCATION));
+		this.shadowRadius = 0.5F;
+	}
 
-    @Override
-    public void render(TireSwingEntity entity, float entityYaw, float partialTicks,
-                       PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+	@Override
+	public void render(TireSwingEntity entity, float entityYaw, float partialTicks,
+					   PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
 
-        // Рендерим качели
-        renderSwing(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
+		// Рендерим качели
+		renderSwing(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
 
-        // Рендерим поводок, если есть привязка
-        renderLeash(entity, partialTicks, poseStack, buffer);
+		// Рендерим поводок, если есть привязка
+		renderLeash(entity, partialTicks, poseStack, buffer);
 
-        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
-    }
+		super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
+	}
 
-    private void renderSwing(TireSwingEntity entity, float entityYaw, float partialTicks,
-                             PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+	private void renderSwing(TireSwingEntity entity, float entityYaw, float partialTicks,
+							 PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
 
-        poseStack.pushPose();
+		poseStack.pushPose();
 
-        // Получаем длину веревки из данных сущности
-        float ropeLength = entity.getRopeLength() + 0.6F;
+		// Получаем длину веревки из данных сущности
+		float ropeLength = entity.getRopeLength() + 0.6F;
 
-        // Получаем плавный угол качания с интерполяцией
-        float swingAngle = entity.getRenderSwingAngle(partialTicks);
+		// Получаем плавный угол качания с интерполяцией
+		float swingAngle = entity.getRenderSwingAngle(partialTicks);
 
-        // Используем yaw тела пассажира
-        float yaw = entity.getPassengerBodyYaw(partialTicks);
+		// Используем yaw тела пассажира
+		float yaw = entity.getPassengerBodyYaw(partialTicks);
 
-        // Применяем вращение качелей
-        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - yaw));
+		// Применяем вращение качелей
+		poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - yaw));
 
-        // Устанавливаем точку подвеса
-        poseStack.translate(0.0D, ropeLength, 0.13);
+		// Устанавливаем точку подвеса
+		poseStack.translate(0.0D, ropeLength, 0.13);
 
-        // Применяем качание
-        poseStack.mulPose(Axis.XP.rotationDegrees(swingAngle));
+		// Применяем качание
+		poseStack.mulPose(Axis.XP.rotationDegrees(swingAngle));
 
-        // Возвращаем модель в исходное положение
-        poseStack.translate(0.0D, -ropeLength, -0.13);
+		// Возвращаем модель в исходное положение
+		poseStack.translate(0.0D, -ropeLength, -0.13);
 
-        // Поворачиваем модель в зависимости от угла качания
-        if (entity.isOccupied()) {
-            float modelRotation = entity.getModelRotationAngle(swingAngle);
+		// Поворачиваем модель в зависимости от угла качания
+		if (entity.isOccupied()) {
+			float modelRotation = entity.getModelRotationAngle(swingAngle);
 
-            // Временно смещаемся к центру модели для поворота
-            poseStack.translate(0.0D, 0.5, 0.0D);
-            poseStack.mulPose(Axis.XP.rotationDegrees(modelRotation));
-            poseStack.translate(0.0D, -0.5, 0.0D);
-        }
+			// Временно смещаемся к центру модели для поворота
+			poseStack.translate(0.0D, 0.5, 0.0D);
+			poseStack.mulPose(Axis.XP.rotationDegrees(modelRotation));
+			poseStack.translate(0.0D, -0.5, 0.0D);
+		}
 
-        // Центрируем модель
-        poseStack.translate(0.0D, 1.5D, 0.0D);
+		// Центрируем модель
+		poseStack.translate(0.0D, 1.5D, 0.0D);
 
-        // Переворачиваем модель
-        poseStack.scale(-1.0F, -1.0F, 1.0F);
+		// Переворачиваем модель
+		poseStack.scale(-1.0F, -1.0F, 1.0F);
 
-        // Настраиваем анимацию модели
-        this.model.setupAnim(entity, 0, 0, entity.tickCount + partialTicks, 0, 0);
+		// Настраиваем анимацию модели
+		this.model.setupAnim(entity, 0, 0, entity.tickCount + partialTicks, 0, 0);
 
-        // Получаем VertexConsumer для отрисовки
-        VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(this.getTextureLocation(entity)));
+		// Получаем VertexConsumer для отрисовки
+		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(this.getTextureLocation(entity)));
 
-        // Рендерим модель
-        this.model.renderToBuffer(poseStack, vertexConsumer, packedLight,
-                OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+		// Рендерим модель
+		this.model.renderToBuffer(poseStack, vertexConsumer, packedLight,
+				OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 
-        poseStack.popPose();
-    }
+		poseStack.popPose();
+	}
 
-    private void renderLeash(TireSwingEntity entity, float partialTicks,
-                             PoseStack poseStack, MultiBufferSource buffer) {
+	private void renderLeash(TireSwingEntity entity, float partialTicks,
+							 PoseStack poseStack, MultiBufferSource buffer) {
 
-        byte leashType = entity.getLeashType();
+		byte leashType = entity.getLeashType();
 
-        if (leashType == TireSwingEntity.LEASH_TYPE_NONE) {
-            return;
-        }
+		if (leashType == TireSwingEntity.LEASH_TYPE_NONE) {
+			return;
+		}
 
-        Vec3 leashHolderPosition = null;
+		Vec3 leashHolderPosition = null;
+		Entity leashHolder = null;
 
-        // Получаем позицию, к которой привязаны качели
-        if (leashType == TireSwingEntity.LEASH_TYPE_PLAYER) {
-            Entity leashHolder = entity.getLeashHolder();
-            if (leashHolder != null) {
-                leashHolderPosition = leashHolder.getRopeHoldPosition(partialTicks);
-            }
-        } else if (leashType == TireSwingEntity.LEASH_TYPE_FENCE) {
-            BlockPos fencePos = entity.getFencePos();
-            if (fencePos != null) {
-                // Позиция на заборе (середина верхней части)
-                leashHolderPosition = new Vec3(
-                        fencePos.getX() + 0.5,
-                        fencePos.getY() + 1.0,
-                        fencePos.getZ() + 0.5
-                );
-            }
-        }
+		// Получаем позицию, к которой привязаны качели
+		if (leashType == TireSwingEntity.LEASH_TYPE_PLAYER) {
+			leashHolder = entity.getLeashHolder();
+			if (leashHolder != null) {
+				leashHolderPosition = leashHolder.getRopeHoldPosition(partialTicks);
+			}
+		} else if (leashType == TireSwingEntity.LEASH_TYPE_FENCE_KNOT) {
+			// Для узла на заборе получаем узел
+			leashHolder = entity.getLeashHolder();
+			if (leashHolder instanceof LeashFenceKnotEntity knot) {
+				// Получаем позицию узла через рендерер узлов
+				leashHolderPosition = new Vec3(
+						knot.getX(),
+						knot.getY() + 0.5, // Узел немного выше своего положения
+						knot.getZ()
+				);
+			}
+		}
 
-        if (leashHolderPosition == null) {
-            return;
-        }
+		if (leashHolderPosition == null) {
+			return;
+		}
 
-        // Позиция качелей, откуда идет поводок
-        Vec3 swingLeashPosition = entity.getRopeHoldPosition(partialTicks);
+		// Рендерим поводок до узла/игрока
+		renderCustomLeash(entity, partialTicks, poseStack, buffer, leashHolderPosition);
 
-        // Рендерим поводок
-        renderCustomLeash(entity, partialTicks, poseStack, buffer, leashHolderPosition);
-    }
+		// Если это узел на заборе, также рендерим короткий поводок от узла до забора
+		if (leashType == TireSwingEntity.LEASH_TYPE_FENCE_KNOT && leashHolder instanceof LeashFenceKnotEntity) {
+			renderKnotToFence((LeashFenceKnotEntity) leashHolder, partialTicks, poseStack, buffer);
+		}
+	}
 
-    private void renderCustomLeash(TireSwingEntity entity, float partialTicks, PoseStack poseStack,
-                                   MultiBufferSource buffer, Vec3 leashHolderPosition) {
+	private void renderKnotToFence(LeashFenceKnotEntity knot, float partialTicks,
+								   PoseStack poseStack, MultiBufferSource buffer) {
+		// Рендерим очень короткий поводок от узла до точки на заборе
+		poseStack.pushPose();
 
-        poseStack.pushPose();
+		Vec3 knotPos = new Vec3(knot.getX(), knot.getY() + 0.5, knot.getZ());
+		Vec3 fencePos = new Vec3(knot.getX(), knot.getY() + 0.25, knot.getZ()); // Немного ниже узла
 
-        double d0 = (double)(Mth.lerp(partialTicks, entity.yRotO, entity.getYRot()) * ((float)Math.PI / 180F)) + (Math.PI / 2D);
-        Vec3 vec31 = entity.getLeashOffset(partialTicks);
-        double d1 = Math.cos(d0) * vec31.z + Math.sin(d0) * vec31.x;
-        double d2 = Math.sin(d0) * vec31.z - Math.cos(d0) * vec31.x;
-        double d3 = Mth.lerp((double)partialTicks, entity.xo, entity.getX()) + d1;
-        double d4 = Mth.lerp((double)partialTicks, entity.yo, entity.getY()) + vec31.y;
-        double d5 = Mth.lerp((double)partialTicks, entity.zo, entity.getZ()) + d2;
+		float f = (float) (fencePos.x - knotPos.x);
+		float f1 = (float) (fencePos.y - knotPos.y);
+		float f2 = (float) (fencePos.z - knotPos.z);
 
-        poseStack.translate(d1, vec31.y, d2);
+		VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.leash());
+		Matrix4f matrix4f = poseStack.last().pose();
+		float f4 = Mth.invSqrt(f * f + f2 * f2) * 0.0125F / 2.0F; // Более тонкий поводок
+		float f5 = f2 * f4;
+		float f6 = f * f4;
 
-        float f = (float)(leashHolderPosition.x - d3);
-        float f1 = (float)(leashHolderPosition.y - d4);
-        float f2 = (float)(leashHolderPosition.z - d5);
-        float f3 = 0.025F;
+		BlockPos blockpos = BlockPos.containing(knotPos);
+		BlockPos blockpos1 = BlockPos.containing(fencePos);
+		int i = knot.level().getBrightness(LightLayer.BLOCK, blockpos);
+		int j = knot.level().getBrightness(net.minecraft.world.level.LightLayer.BLOCK, blockpos1);
+		int k = knot.level().getBrightness(net.minecraft.world.level.LightLayer.SKY, blockpos);
+		int l = knot.level().getBrightness(net.minecraft.world.level.LightLayer.SKY, blockpos1);
 
-        VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.leash());
-        Matrix4f matrix4f = poseStack.last().pose();
-        float f4 = Mth.invSqrt(f * f + f2 * f2) * 0.025F / 2.0F;
-        float f5 = f2 * f4;
-        float f6 = f * f4;
+		// Рендерим короткий поводок (только 6 сегментов вместо 24)
+		for (int i1 = 0; i1 <= 6; ++i1) {
+			addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.015F, 0.015F, f5, f6, i1, false, 6);
+		}
 
-        BlockPos blockpos = BlockPos.containing(entity.getEyePosition(partialTicks));
-        BlockPos blockpos1 = BlockPos.containing(leashHolderPosition);
-        int i = this.getBlockLightLevel(entity, blockpos);
-        int j = entity.level().getBrightness(net.minecraft.world.level.LightLayer.BLOCK, blockpos1);
-        int k = entity.level().getBrightness(net.minecraft.world.level.LightLayer.SKY, blockpos);
-        int l = entity.level().getBrightness(net.minecraft.world.level.LightLayer.SKY, blockpos1);
+		for (int j1 = 6; j1 >= 0; --j1) {
+			addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.015F, 0.0F, f5, f6, j1, true, 6);
+		}
 
-        for(int i1 = 0; i1 <= 24; ++i1) {
-            addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.025F, f5, f6, i1, false);
-        }
+		poseStack.popPose();
+	}
 
-        for(int j1 = 24; j1 >= 0; --j1) {
-            addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.0F, f5, f6, j1, true);
-        }
+	private static void addVertexPair(VertexConsumer consumer, Matrix4f matrix, float dx, float dy, float dz,
+									  int entityLight, int holderLight, int entitySkyLight, int holderSkyLight,
+									  float thickness, float offset, float normalX, float normalZ,
+									  int segment, boolean reverse, int totalSegments) {
 
-        poseStack.popPose();
-    }
+		float f = (float) segment / totalSegments;
+		int i = (int) Mth.lerp(f, (float) entityLight, (float) holderLight);
+		int j = (int) Mth.lerp(f, (float) entitySkyLight, (float) holderSkyLight);
+		int k = net.minecraft.client.renderer.LightTexture.pack(i, j);
+		float f1 = segment % 2 == (reverse ? 1 : 0) ? 0.7F : 1.0F;
+		float f2 = 0.5F * f1;
+		float f3 = 0.4F * f1;
+		float f4 = 0.3F * f1;
+		float f5 = dx * f;
+		float f6 = dy > 0.0F ? dy * f * f : dy - dy * (1.0F - f) * (1.0F - f);
+		float f7 = dz * f;
 
-    private static void addVertexPair(VertexConsumer consumer, Matrix4f matrix, float dx, float dy, float dz,
-                                      int entityLight, int holderLight, int entitySkyLight, int holderSkyLight,
-                                      float thickness, float offset, float normalX, float normalZ,
-                                      int segment, boolean reverse) {
+		consumer.vertex(matrix, f5 - normalX, f6 + offset, f7 + normalZ)
+				.color(f2, f3, f4, 1.0F)
+				.uv2(k)
+				.endVertex();
+		consumer.vertex(matrix, f5 + normalX, f6 + thickness - offset, f7 - normalZ)
+				.color(f2, f3, f4, 1.0F)
+				.uv2(k)
+				.endVertex();
+	}
 
-        float f = (float)segment / 24.0F;
-        int i = (int)Mth.lerp(f, (float)entityLight, (float)holderLight);
-        int j = (int)Mth.lerp(f, (float)entitySkyLight, (float)holderSkyLight);
-        int k = net.minecraft.client.renderer.LightTexture.pack(i, j);
-        float f1 = segment % 2 == (reverse ? 1 : 0) ? 0.7F : 1.0F;
-        float f2 = 0.5F * f1;
-        float f3 = 0.4F * f1;
-        float f4 = 0.3F * f1;
-        float f5 = dx * f;
-        float f6 = dy > 0.0F ? dy * f * f : dy - dy * (1.0F - f) * (1.0F - f);
-        float f7 = dz * f;
+	private void renderCustomLeash(TireSwingEntity entity, float partialTicks, PoseStack poseStack,
+								   MultiBufferSource buffer, Vec3 leashHolderPosition) {
 
-        consumer.vertex(matrix, f5 - normalX, f6 + offset, f7 + normalZ)
-                .color(f2, f3, f4, 1.0F)
-                .uv2(k)
-                .endVertex();
-        consumer.vertex(matrix, f5 + normalX, f6 + thickness - offset, f7 - normalZ)
-                .color(f2, f3, f4, 1.0F)
-                .uv2(k)
-                .endVertex();
-    }
+		poseStack.pushPose();
 
-    @Override
-    public ResourceLocation getTextureLocation(TireSwingEntity entity) {
-        return TEXTURE;
-    }
+		double d0 = (double) (Mth.lerp(partialTicks, entity.yRotO, entity.getYRot()) * ((float) Math.PI / 180F)) + (Math.PI / 2D);
+		Vec3 vec31 = entity.getLeashOffset(partialTicks);
+		double d1 = Math.cos(d0) * vec31.z + Math.sin(d0) * vec31.x;
+		double d2 = Math.sin(d0) * vec31.z - Math.cos(d0) * vec31.x;
+		double d3 = Mth.lerp((double) partialTicks, entity.xo, entity.getX()) + d1;
+		double d4 = Mth.lerp((double) partialTicks, entity.yo, entity.getY()) + vec31.y;
+		double d5 = Mth.lerp((double) partialTicks, entity.zo, entity.getZ()) + d2;
+
+		poseStack.translate(d1, vec31.y, d2);
+
+		float f = (float) (leashHolderPosition.x - d3);
+		float f1 = (float) (leashHolderPosition.y - d4);
+		float f2 = (float) (leashHolderPosition.z - d5);
+		float f3 = 0.025F;
+
+		VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.leash());
+		Matrix4f matrix4f = poseStack.last().pose();
+		float f4 = Mth.invSqrt(f * f + f2 * f2) * 0.025F / 2.0F;
+		float f5 = f2 * f4;
+		float f6 = f * f4;
+
+		BlockPos blockpos = BlockPos.containing(entity.getEyePosition(partialTicks));
+		BlockPos blockpos1 = BlockPos.containing(leashHolderPosition);
+		int i = this.getBlockLightLevel(entity, blockpos);
+		int j = entity.level().getBrightness(net.minecraft.world.level.LightLayer.BLOCK, blockpos1);
+		int k = entity.level().getBrightness(net.minecraft.world.level.LightLayer.SKY, blockpos);
+		int l = entity.level().getBrightness(net.minecraft.world.level.LightLayer.SKY, blockpos1);
+
+		for (int i1 = 0; i1 <= 24; ++i1) {
+			addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.025F, f5, f6, i1, false);
+		}
+
+		for (int j1 = 24; j1 >= 0; --j1) {
+			addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.0F, f5, f6, j1, true);
+		}
+
+		poseStack.popPose();
+	}
+
+	private static void addVertexPair(VertexConsumer consumer, Matrix4f matrix, float dx, float dy, float dz,
+									  int entityLight, int holderLight, int entitySkyLight, int holderSkyLight,
+									  float thickness, float offset, float normalX, float normalZ,
+									  int segment, boolean reverse) {
+
+		float f = (float) segment / 24.0F;
+		int i = (int) Mth.lerp(f, (float) entityLight, (float) holderLight);
+		int j = (int) Mth.lerp(f, (float) entitySkyLight, (float) holderSkyLight);
+		int k = net.minecraft.client.renderer.LightTexture.pack(i, j);
+		float f1 = segment % 2 == (reverse ? 1 : 0) ? 0.7F : 1.0F;
+		float f2 = 0.5F * f1;
+		float f3 = 0.4F * f1;
+		float f4 = 0.3F * f1;
+		float f5 = dx * f;
+		float f6 = dy > 0.0F ? dy * f * f : dy - dy * (1.0F - f) * (1.0F - f);
+		float f7 = dz * f;
+
+		consumer.vertex(matrix, f5 - normalX, f6 + offset, f7 + normalZ)
+				.color(f2, f3, f4, 1.0F)
+				.uv2(k)
+				.endVertex();
+		consumer.vertex(matrix, f5 + normalX, f6 + thickness - offset, f7 - normalZ)
+				.color(f2, f3, f4, 1.0F)
+				.uv2(k)
+				.endVertex();
+	}
+
+	@Override
+	public ResourceLocation getTextureLocation(TireSwingEntity entity) {
+		return TEXTURE;
+	}
 }

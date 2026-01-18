@@ -6,6 +6,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.LeadItem;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,16 +16,37 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class LeadItemMixin {
 
     @Inject(
-        method = "bindPlayerMobs",
-        at = @At("HEAD"),
-        cancellable = true
+            method = "bindPlayerMobs",
+            at = @At("HEAD"),
+            cancellable = true
     )
     private static void onBindPlayerMobs(Player player, Level level, BlockPos fencePos,
                                          CallbackInfoReturnable<InteractionResult> cir) {
         // Пытаемся привязать качели к забору
-        InteractionResult result = TireSwingEntity.bindPlayerMobs(player, level, fencePos);
+        InteractionResult result = bindPlayerTireSwings(player, level, fencePos);
         if (result.consumesAction()) {
             cir.setReturnValue(result);
         }
+    }
+
+    private static InteractionResult bindPlayerTireSwings(Player player, Level level, BlockPos fencePos) {
+        boolean flag = false;
+
+        // Ищем качели, привязанные к игроку
+        for (TireSwingEntity tireSwing : level.getEntitiesOfClass(
+                TireSwingEntity.class,
+                new AABB((double)fencePos.getX() - 7.0D, (double)fencePos.getY() - 7.0D,
+                        (double)fencePos.getZ() - 7.0D, (double)fencePos.getX() + 7.0D,
+                        (double)fencePos.getY() + 7.0D, (double)fencePos.getZ() + 7.0D)
+        )) {
+            if (tireSwing.getLeashHolder() == player) {
+                // Пытаемся привязать к забору (создаст узел)
+                if (tireSwing.leashToFence(fencePos, player)) {
+                    flag = true;
+                }
+            }
+        }
+
+        return flag ? InteractionResult.SUCCESS : InteractionResult.PASS;
     }
 }

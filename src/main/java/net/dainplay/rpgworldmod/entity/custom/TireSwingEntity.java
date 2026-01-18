@@ -1,6 +1,7 @@
 package net.dainplay.rpgworldmod.entity.custom;
 
 import net.dainplay.rpgworldmod.block.ModBlocks;
+import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.PacketTireSwingInteraction;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
@@ -20,6 +21,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -62,7 +64,7 @@ public class TireSwingEntity extends Entity {
 	// Константы для типа привязки
 	public static final byte LEASH_TYPE_NONE = 0;
 	public static final byte LEASH_TYPE_PLAYER = 1;
-	public static final byte LEASH_TYPE_FENCE = 2;
+	public static final byte LEASH_TYPE_FENCE_KNOT = 2;
 
 	// Максимальное расстояние для привязки
 	private static final float MAX_LEASH_DISTANCE = 10.0F;
@@ -223,11 +225,14 @@ public class TireSwingEntity extends Entity {
 	public boolean isLeashed() {
 		return this.isLeashed;
 	}
-
 	@Nullable
 	public Entity getLeashHolder() {
-		if (this.leashHolder == null && this.entityData.get(DATA_LEASH_HOLDER_ID) != -1) {
-			this.leashHolder = this.level().getEntity(this.entityData.get(DATA_LEASH_HOLDER_ID));
+		if (this.leashHolder == null) {
+			// Пытаемся восстановить из данных
+			int holderId = this.entityData.get(DATA_LEASH_HOLDER_ID);
+			if (holderId != -1) {
+				this.leashHolder = this.level().getEntity(holderId);
+			}
 		}
 		return this.leashHolder;
 	}
@@ -245,21 +250,24 @@ public class TireSwingEntity extends Entity {
 	public boolean leashToFence(BlockPos fencePos, Player player) {
 		// Проверяем условия для привязки к забору
 		if (canLeashToFence(fencePos)) {
-			this.leashHolder = null;
-			this.fencePos = fencePos;
+			// Создаем или получаем существующий узел на заборе
+			LeashFenceKnotEntity knot = LeashFenceKnotEntity.getOrCreateKnot(this.level(), fencePos);
+			knot.playPlacementSound();
+
+			this.leashHolder = knot;
 			this.isLeashed = true;
-			this.leashType = LEASH_TYPE_FENCE;
+			this.leashType = LEASH_TYPE_FENCE_KNOT;
 
 			// Обновляем синхронизированные данные
-			this.entityData.set(DATA_LEASH_HOLDER_ID, -1);
-			this.entityData.set(DATA_LEASH_TYPE, LEASH_TYPE_FENCE);
+			this.entityData.set(DATA_LEASH_HOLDER_ID, knot.getId());
+			this.entityData.set(DATA_LEASH_TYPE, LEASH_TYPE_FENCE_KNOT);
 			this.entityData.set(DATA_FENCE_POS, Optional.of(fencePos));
 
-			// Устанавливаем длину веревки как расстояние до забора
+			// Устанавливаем длину веревки как расстояние до узла
 			float distance = (float) Math.sqrt(
-					Math.pow(fencePos.getX() + 0.5 - this.getX(), 2) +
-							Math.pow(fencePos.getY() + 1.0 - this.getY(), 2) +
-							Math.pow(fencePos.getZ() + 0.5 - this.getZ(), 2)
+					Math.pow(knot.getX() - this.getX(), 2) +
+							Math.pow(knot.getY() + 0.5 - this.getY(), 2) + // Узел немного выше забора
+							Math.pow(knot.getZ() - this.getZ(), 2)
 			);
 			this.currentRopeLength = distance;
 			this.entityData.set(DATA_ROPE_LENGTH, distance);
@@ -317,17 +325,8 @@ public class TireSwingEntity extends Entity {
 	// Метод для уничтожения качелей и выпадения шины
 	private void destroyAndDropTire() {
 		if (!this.level().isClientSide) {
-			// Спавним шину как предмет
-			ItemEntity tireItem = new ItemEntity(
-					this.level(),
-					this.getX(),
-					this.getY(),
-					this.getZ(),
-					new ItemStack(ModBlocks.TIRE.get())
-			);
-			this.level().addFreshEntity(tireItem);
-
-			// Удаляем сущность качелей
+			this.spawnAtLocation(ModBlocks.TIRE.get());
+			this.spawnAtLocation(Items.LEAD);
 			this.discard();
 		}
 	}
@@ -470,7 +469,7 @@ public class TireSwingEntity extends Entity {
 				case LEASH_TYPE_PLAYER:
 					updatePlayerLeash();
 					break;
-				case LEASH_TYPE_FENCE:
+				case LEASH_TYPE_FENCE_KNOT:
 					updateFenceLeash();
 					break;
 			}
@@ -493,14 +492,35 @@ public class TireSwingEntity extends Entity {
 			this.dropLeash(false, false);
 		}
 	}
+	@Nullable
+	public LeashFenceKnotEntity getLeashKnot() {
+		Entity holder = this.getLeashHolder();
+		if (holder instanceof LeashFenceKnotEntity) {
+			return (LeashFenceKnotEntity) holder;
+		}
+		return null;
+	}
 
 	// Обновление привязки к забору
 	private void updateFenceLeash() {
 		BlockPos fence = this.getFencePos();
 		if (fence != null) {
-			// Проверяем, существует ли еще забор
-			BlockState fenceState = this.level().getBlockState(fence);
-			if (!(fenceState.getBlock() instanceof FenceBlock) && !fenceState.is(Blocks.CHAIN)) {
+			// Проверяем, существует ли еще узел
+			LeashFenceKnotEntity knot = LeashFenceKnotEntity.getOrCreateKnot(this.level(), fence);
+			if (knot != null && knot.isAlive()) {
+				// Обновляем ссылку на узел
+				this.leashHolder = knot;
+
+				// Проверяем расстояние до узла (если узел был перемещен или изменен)
+				float distance = (float) Math.sqrt(
+						Math.pow(knot.getX() - this.getX(), 2) +
+								Math.pow(knot.getY() + 0.5 - this.getY(), 2) +
+								Math.pow(knot.getZ() - this.getZ(), 2)
+				);
+				this.currentRopeLength = distance;
+				this.entityData.set(DATA_ROPE_LENGTH, distance);
+			} else {
+				// Узел был уничтожен
 				this.dropLeash(false, false);
 			}
 		} else {
