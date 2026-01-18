@@ -286,6 +286,8 @@
   "effect.rpgworldmod.fueling.description": "The target is covered in oil and its density is lower than that of water. Taking damage sets target on fire.",
   "effect.rpgworldmod.paranoia": "Paranoia",
   "effect.rpgworldmod.paranoia.description": "Disables natural mana regeneration and drains mana.",
+  "effect.rpgworldmod.happiness": "Happiness",
+  "effect.rpgworldmod.happiness.description": "Increases maximum mana and regenerates it.",
 
   "item.minecraft.potion.effect.paralysis_potion": "Nerve Paralysis Potion",
   "item.minecraft.potion.effect.long_paralysis_potion": "Nerve Paralysis Potion",

@@ -2,6 +2,7 @@ package net.dainplay.rpgworldmod.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.dainplay.rpgworldmod.RPGworldMod;
+import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.item.custom.ManaCostItem;
 import net.dainplay.rpgworldmod.network.ClientIsManaRegenBlockedData;
 import net.dainplay.rpgworldmod.network.ClientManaData;
@@ -81,6 +82,16 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 	private static ManaIcon[] manaIcons = new ManaIcon[0];
 	private static ManaIcon[] maxManaIcons = new ManaIcon[0];
 
+	private static int[] createHappinessOffset(int maxMana, int tickCount) {
+		int[] offset = new int[maxMana];
+		if (maxMana > 0) {
+			// Вычисляем позицию единицы: двигаемся по массиву с каждым тиком
+			int position = tickCount % maxMana;
+			offset[position] = -1;
+		}
+		return offset;
+	}
+
 	public void render(ForgeGui gui, GuiGraphics guiGraphics, float partialTick, int screenWidth, int screenHeight) {
 		if (!mc.options.hideGui && gui.shouldDrawSurvivalElements()) {
 			gui.setupOverlayRenderState(true, false);
@@ -106,7 +117,10 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 			}
 
 			if (shouldRenderMana() && mc.player != null) {
-				int[] randomOffset = new Random(mc.player.tickCount).ints(0, 2).limit(maxMana).toArray();
+				int[] randomOffset;
+				if(mc.player.hasEffect(ModEffects.HAPPINESS.get()))
+					randomOffset = createHappinessOffset(maxMana/3, mc.player.tickCount);
+				else randomOffset = new Random(mc.player.tickCount).ints(0, 2).limit(maxMana).toArray();
 
 				// Обновляем состояние мигания
 				updateManaBlink();
@@ -296,7 +310,7 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 			int xPosition = xStart + (i % 10) * 8;
 			int currentY = yPosition - max(3, (12 - ClientMaxManaData.get() / 50)) * (i / 10);
 
-			if (mana <= 10 || ClientIsManaRegenBlockedData.get() > 0) {
+			if (mana <= 10 || ClientIsManaRegenBlockedData.get() > 0 || mc.player.hasEffect(ModEffects.HAPPINESS.get())) {
 				currentY += randomOffset[i];
 			}
 			if (i == regen) {
@@ -383,7 +397,7 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 			int xPosition = xStart + (i % 10) * 8;
 			int currentY = yPosition - max(3, (12 - maxManaValue / 50)) * (i / 10);
 
-			if (mana <= 10 || ClientIsManaRegenBlockedData.get() > 0) {
+			if (mana <= 10 || ClientIsManaRegenBlockedData.get() > 0 || mc.player.hasEffect(ModEffects.HAPPINESS.get())) {
 				currentY += randomOffset[i];
 			}
 			if (i == regen) {
@@ -502,7 +516,7 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 			int currentY = yPosition - max(3, (12 - maxManaValue / 50)) * (i / 10);
 
 
-			if (calculateManaValue() <= 10 || ClientIsManaRegenBlockedData.get() > 0) {
+			if (calculateManaValue() <= 10 || ClientIsManaRegenBlockedData.get() > 0 || mc.player.hasEffect(ModEffects.HAPPINESS.get())) {
 				currentY += randomOffset[i];
 			}
 			// Определяем количество маны в текущей иконке
@@ -621,7 +635,7 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 				int currentY = yPosition - max(3, (12 - maxManaValue / 50)) * (iconIndex / 10);
 
 
-				if (calculateManaValue() <= 10 || ClientIsManaRegenBlockedData.get() > 0) {
+				if (calculateManaValue() <= 10 || ClientIsManaRegenBlockedData.get() > 0 || mc.player.hasEffect(ModEffects.HAPPINESS.get())) {
 					currentY += randomOffset[iconIndex];
 				}
 
@@ -649,7 +663,7 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 				int currentY = yPosition - max(3, (12 - maxManaValue / 50)) * (iconIndex / 10);
 
 
-				if (calculateManaValue() <= 10 || ClientIsManaRegenBlockedData.get() > 0) {
+				if (calculateManaValue() <= 10 || ClientIsManaRegenBlockedData.get() > 0 || mc.player.hasEffect(ModEffects.HAPPINESS.get())) {
 					currentY += randomOffset[iconIndex];
 				}
 

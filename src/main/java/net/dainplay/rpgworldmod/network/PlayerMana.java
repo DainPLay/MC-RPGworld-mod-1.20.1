@@ -1,6 +1,7 @@
 package net.dainplay.rpgworldmod.network;
 
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
+import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -39,6 +40,7 @@ public class PlayerMana {
 		if(player.getItemBySlot(EquipmentSlot.CHEST).getItem() == ModItems.LIVING_WOOD_CHESTPLATE.get()) max_mana += 25;
 		if(player.getItemBySlot(EquipmentSlot.LEGS).getItem() == ModItems.LIVING_WOOD_LEGGINGS.get()) max_mana += 25;
 		if(player.getItemBySlot(EquipmentSlot.FEET).getItem() == ModItems.LIVING_WOOD_BOOTS.get()) max_mana += 25;
+		if(player.hasEffect(ModEffects.HAPPINESS.get())) max_mana += 15 + 15*player.getEffect(ModEffects.HAPPINESS.get()).getAmplifier();
 		this.setMana(player, Math.min(mana, max_mana));
 		if(prev_max_mana == 0) addMana(player, max_mana);
 		if(max_mana != prev_max_mana) ModMessages.sendToPlayer(new MaxManaDataSyncS2CPacket(max_mana), player);

@@ -157,6 +157,9 @@ public class ModSounds
         TIRE_HIT = registerSound("rpgworldmod.block.tire.hit");
         TIRE_FALL = registerSound("rpgworldmod.block.tire.fall");
         TIRE_BOUNCE = registerSound("rpgworldmod.block.tire.bounce");
+
+        TIRE_SWING_SWOOSH = registerSound("rpgworldmod.tire_swing.swoosh");
+        TIRE_SWING_CRACK = registerSound("rpgworldmod.tire_swing.crack");
     }
 
     private static RegistryObject<SoundEvent> registerSound(String name)

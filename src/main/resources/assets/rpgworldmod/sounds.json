@@ -931,5 +931,16 @@
       "rpgworldmod:tire/bounce2"
     ],
     "subtitle": "subtitles.rpgworldmod.tire.bounce"
+  },
+  "rpgworldmod.tire_swing.swoosh": {
+    "sounds": [
+      "rpgworldmod:tire_swing/swoosh"
+    ]
+  },
+  "rpgworldmod.tire_swing.crack": {
+    "sounds": [
+      "rpgworldmod:tire_swing/crack1",
+      "rpgworldmod:tire_swing/crack2"
+    ]
   }
 }

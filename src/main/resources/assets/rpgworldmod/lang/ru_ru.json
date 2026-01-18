@@ -286,6 +286,8 @@
   "effect.rpgworldmod.fueling.description": "Цель облита маслом и её плотность ниже плотности воды. Получение урона поджигает.",
   "effect.rpgworldmod.paranoia": "Паранойя",
   "effect.rpgworldmod.paranoia.description": "Отключает естественную регенерацию маны и истощает ману.",
+  "effect.rpgworldmod.happiness": "Счастье",
+  "effect.rpgworldmod.happiness.description": "Увеличивает максимальный запас маны и восстанавливает её со временем.",
 
   "item.minecraft.potion.effect.paralysis_potion": "Зелье нервного паралича",
   "item.minecraft.potion.effect.long_paralysis_potion": "Зелье нервного паралича",

@@ -12,6 +12,7 @@
     "FireBlockMixin",
     "FoxMixin",
     "GiveGiftToHeroMixin",
+    "LeadItemMixin",
     "LevelAccessorMixin",
     "LivingEntityMixin",
     "LookControlMixin",
