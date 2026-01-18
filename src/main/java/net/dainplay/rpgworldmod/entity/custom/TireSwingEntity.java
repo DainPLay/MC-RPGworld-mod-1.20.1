@@ -1,5 +1,6 @@
 package net.dainplay.rpgworldmod.entity.custom;
 
+import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.PacketTireSwingInteraction;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
@@ -16,13 +17,27 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.network.NetworkHooks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 
+import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.Random;
 
 public class TireSwingEntity extends Entity {
@@ -32,6 +47,10 @@ public class TireSwingEntity extends Entity {
 	private static final EntityDataAccessor<Float> DATA_PASSENGER_YAW = SynchedEntityData.defineId(TireSwingEntity.class, EntityDataSerializers.FLOAT);
 	private static final EntityDataAccessor<Float> DATA_SWING_YAW = SynchedEntityData.defineId(TireSwingEntity.class, EntityDataSerializers.FLOAT);
 	private static final EntityDataAccessor<Float> DATA_TARGET_SWING_YAW = SynchedEntityData.defineId(TireSwingEntity.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Integer> DATA_LEASH_HOLDER_ID = SynchedEntityData.defineId(TireSwingEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Byte> DATA_LEASH_TYPE = SynchedEntityData.defineId(TireSwingEntity.class, EntityDataSerializers.BYTE);
+	private static final EntityDataAccessor<Optional<BlockPos>> DATA_FENCE_POS = SynchedEntityData.defineId(TireSwingEntity.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
+	private static final EntityDataAccessor<Float> DATA_ROPE_LENGTH = SynchedEntityData.defineId(TireSwingEntity.class, EntityDataSerializers.FLOAT);
 
 	// Физические константы
 	private static final float MAX_SWING_ANGLE = 90.0F;
@@ -39,7 +58,15 @@ public class TireSwingEntity extends Entity {
 	private static final float SWING_GRAVITY = 0.3F;
 	private static final float PLAYER_PUSH_STRENGTH = 0.015F;
 	private static final float STOP_THRESHOLD = 0.01F;
-	private static final float ROPE_LENGTH = 5.0F;
+
+	// Константы для типа привязки
+	public static final byte LEASH_TYPE_NONE = 0;
+	public static final byte LEASH_TYPE_PLAYER = 1;
+	public static final byte LEASH_TYPE_FENCE = 2;
+
+	// Максимальное расстояние для привязки
+	private static final float MAX_LEASH_DISTANCE = 10.0F;
+	private static final int MAX_FENCE_HEIGHT = 7;
 
 	// Константы для поворота качелей
 	private static final float BASE_ROTATION_SPEED = 1.5F;
@@ -107,6 +134,15 @@ public class TireSwingEntity extends Entity {
 	// Флаг для отслеживания, было ли взаимодействие с сиденьем
 	private boolean seatInteraction = false;
 
+	// Заменим константу ROPE_LENGTH на использование переменной
+	private float currentRopeLength = 5.0F;
+
+	// Добавим переменные для хранения состояния привязки
+	private Entity leashHolder;
+	private BlockPos fencePos;
+	private boolean isLeashed = false;
+	private byte leashType = LEASH_TYPE_NONE;
+
 	public TireSwingEntity(EntityType<?> type, Level level) {
 		super(type, level);
 		this.noPhysics = false;
@@ -123,6 +159,12 @@ public class TireSwingEntity extends Entity {
 		this.entityData.define(DATA_PASSENGER_YAW, 0.0F);
 		this.entityData.define(DATA_SWING_YAW, 0.0F);
 		this.entityData.define(DATA_TARGET_SWING_YAW, 0.0F);
+
+		// Новые параметры для привязки
+		this.entityData.define(DATA_LEASH_HOLDER_ID, -1);
+		this.entityData.define(DATA_LEASH_TYPE, (byte)0);
+		this.entityData.define(DATA_FENCE_POS, Optional.empty());
+		this.entityData.define(DATA_ROPE_LENGTH, 5.0F);
 	}
 
 	@Override
@@ -151,6 +193,142 @@ public class TireSwingEntity extends Entity {
 
 				this.clientSwingYaw = newYaw;
 			}
+		}
+	}
+
+	// Добавим новые методы для работы с поводком
+	public void setLeashedTo(@Nullable Entity entity, boolean broadcast) {
+		if (this.leashHolder != null) {
+			this.leashHolder = null;
+		}
+
+		if (entity != null) {
+			this.leashHolder = entity;
+			this.isLeashed = true;
+			this.leashType = LEASH_TYPE_PLAYER;
+			this.entityData.set(DATA_LEASH_HOLDER_ID, entity.getId());
+			this.entityData.set(DATA_LEASH_TYPE, LEASH_TYPE_PLAYER);
+			this.entityData.set(DATA_FENCE_POS, Optional.empty());
+
+			if (broadcast && !this.level().isClientSide) {
+				this.level().broadcastEntityEvent(this, (byte)7); // Событие привязки
+			}
+		}
+	}
+
+	public boolean canBeLeashed(Player player) {
+		return !this.isLeashed();
+	}
+
+	public boolean isLeashed() {
+		return this.isLeashed;
+	}
+
+	@Nullable
+	public Entity getLeashHolder() {
+		if (this.leashHolder == null && this.entityData.get(DATA_LEASH_HOLDER_ID) != -1) {
+			this.leashHolder = this.level().getEntity(this.entityData.get(DATA_LEASH_HOLDER_ID));
+		}
+		return this.leashHolder;
+	}
+
+	public byte getLeashType() {
+		return this.entityData.get(DATA_LEASH_TYPE);
+	}
+
+	@Nullable
+	public BlockPos getFencePos() {
+		return this.entityData.get(DATA_FENCE_POS).orElse(null);
+	}
+
+	// Метод для привязки к забору
+	public boolean leashToFence(BlockPos fencePos, Player player) {
+		// Проверяем условия для привязки к забору
+		if (canLeashToFence(fencePos)) {
+			this.leashHolder = null;
+			this.fencePos = fencePos;
+			this.isLeashed = true;
+			this.leashType = LEASH_TYPE_FENCE;
+
+			// Обновляем синхронизированные данные
+			this.entityData.set(DATA_LEASH_HOLDER_ID, -1);
+			this.entityData.set(DATA_LEASH_TYPE, LEASH_TYPE_FENCE);
+			this.entityData.set(DATA_FENCE_POS, Optional.of(fencePos));
+
+			// Устанавливаем длину веревки как расстояние до забора
+			float distance = (float) Math.sqrt(
+					Math.pow(fencePos.getX() + 0.5 - this.getX(), 2) +
+							Math.pow(fencePos.getY() + 1.0 - this.getY(), 2) +
+							Math.pow(fencePos.getZ() + 0.5 - this.getZ(), 2)
+			);
+			this.currentRopeLength = distance;
+			this.entityData.set(DATA_ROPE_LENGTH, distance);
+
+			return true;
+		}
+		return false;
+	}
+
+	// Проверка возможности привязки к забору
+	private boolean canLeashToFence(BlockPos fencePos) {
+		// Проверяем, что забор находится на той же координате Y (вертикально над качелями)
+		BlockPos currentPos = this.blockPosition();
+		if (fencePos.getX() != currentPos.getX() || fencePos.getZ() != currentPos.getZ()) {
+			return false;
+		}
+
+		// Проверяем, что забор не выше 7 блоков
+		int heightDiff = fencePos.getY() - currentPos.getY();
+		if (heightDiff < 0 || heightDiff > MAX_FENCE_HEIGHT) {
+			return false;
+		}
+
+		// Проверяем, что между качелями и забором нет блоков
+		for (int y = currentPos.getY() + 1; y < fencePos.getY(); y++) {
+			BlockPos checkPos = new BlockPos(currentPos.getX(), y, currentPos.getZ());
+			BlockState state = this.level().getBlockState(checkPos);
+			if (!state.isAir() && !state.getCollisionShape(this.level(), checkPos).isEmpty()) {
+				return false;
+			}
+		}
+
+		// Проверяем, что на позиции забора действительно забор
+		BlockState fenceState = this.level().getBlockState(fencePos);
+		return fenceState.getBlock() instanceof FenceBlock || fenceState.is(Blocks.CHAIN);
+	}
+
+	// Метод для отвязки
+	public void dropLeash(boolean broadcast, boolean dropItem) {
+		this.isLeashed = false;
+		this.leashHolder = null;
+		this.fencePos = null;
+		this.leashType = LEASH_TYPE_NONE;
+
+		this.entityData.set(DATA_LEASH_HOLDER_ID, -1);
+		this.entityData.set(DATA_LEASH_TYPE, LEASH_TYPE_NONE);
+		this.entityData.set(DATA_FENCE_POS, Optional.empty());
+
+		// Если качели не привязаны, уничтожаем их
+		if (!this.level().isClientSide) {
+			this.destroyAndDropTire();
+		}
+	}
+
+	// Метод для уничтожения качелей и выпадения шины
+	private void destroyAndDropTire() {
+		if (!this.level().isClientSide) {
+			// Спавним шину как предмет
+			ItemEntity tireItem = new ItemEntity(
+					this.level(),
+					this.getX(),
+					this.getY(),
+					this.getZ(),
+					new ItemStack(ModBlocks.TIRE.get())
+			);
+			this.level().addFreshEntity(tireItem);
+
+			// Удаляем сущность качелей
+			this.discard();
 		}
 	}
 
@@ -237,6 +415,7 @@ public class TireSwingEntity extends Entity {
 			if (zeroCrossCooldown > 0) zeroCrossCooldown--;
 			if (swooshCooldown > 0) swooshCooldown--;
 		} else {
+			updateLeashState();
 			// Серверная логика
 			boolean hasPassenger = !this.getPassengers().isEmpty();
 			setOccupied(hasPassenger);
@@ -285,6 +464,55 @@ public class TireSwingEntity extends Entity {
 		}
 	}
 
+	private void updateLeashState() {
+		if (this.isLeashed) {
+			switch (this.leashType) {
+				case LEASH_TYPE_PLAYER:
+					updatePlayerLeash();
+					break;
+				case LEASH_TYPE_FENCE:
+					updateFenceLeash();
+					break;
+			}
+		} else {
+			// Если не привязаны, уничтожаем
+			this.destroyAndDropTire();
+		}
+	}
+
+	// Обновление привязки к игроку
+	private void updatePlayerLeash() {
+		Entity holder = this.getLeashHolder();
+		if (holder != null && holder.isAlive()) {
+			// Проверяем расстояние до игрока
+			double distance = this.distanceTo(holder);
+			if (distance > MAX_LEASH_DISTANCE) {
+				this.dropLeash(true, true);
+			}
+		} else {
+			this.dropLeash(false, false);
+		}
+	}
+
+	// Обновление привязки к забору
+	private void updateFenceLeash() {
+		BlockPos fence = this.getFencePos();
+		if (fence != null) {
+			// Проверяем, существует ли еще забор
+			BlockState fenceState = this.level().getBlockState(fence);
+			if (!(fenceState.getBlock() instanceof FenceBlock) && !fenceState.is(Blocks.CHAIN)) {
+				this.dropLeash(false, false);
+			}
+		} else {
+			this.dropLeash(false, false);
+		}
+	}
+
+	// Обновим метод для получения длины веревки
+	public float getRopeLength() {
+		return this.entityData.get(DATA_ROPE_LENGTH);
+	}
+
 	private void updateSeatPartPosition() {
 		if (seatPart == null) return;
 
@@ -292,8 +520,8 @@ public class TireSwingEntity extends Entity {
 		float swingAngleRad = (float) Math.toRadians(getSwingAngle());
 		float swingYawRad = (float) Math.toRadians(getSwingYaw());
 
-		double forwardOffset = ROPE_LENGTH * Math.sin(swingAngleRad);
-		double verticalOffset = ROPE_LENGTH * (1.0 - Math.cos(swingAngleRad));
+		double forwardOffset = getRopeLength() * Math.sin(swingAngleRad);
+		double verticalOffset = getRopeLength() * (1.0 - Math.cos(swingAngleRad));
 		double yOffset = this.getPassengersRidingOffset();
 
 		// Поворачиваем смещение согласно swingYaw
@@ -649,8 +877,8 @@ public class TireSwingEntity extends Entity {
 		float swingAngleRad = (float) Math.toRadians(swingAngle);
 		float swingYawRad = (float) Math.toRadians(getSwingYaw());
 
-		double forwardOffset = ROPE_LENGTH * Math.sin(swingAngleRad);
-		double verticalOffset = ROPE_LENGTH * (1.0 - Math.cos(swingAngleRad));
+		double forwardOffset = getRopeLength() * Math.sin(swingAngleRad);
+		double verticalOffset = getRopeLength() * (1.0 - Math.cos(swingAngleRad));
 		double yOffset = this.getPassengersRidingOffset();
 
 		// Поворачиваем смещение согласно swingYaw
@@ -725,8 +953,8 @@ public class TireSwingEntity extends Entity {
 		float swingAngleRad = (float) Math.toRadians(getSwingAngle());
 		float swingYawRad = (float) Math.toRadians(getSwingYaw());
 
-		double forwardOffset = ROPE_LENGTH * Math.sin(swingAngleRad);
-		double verticalOffset = ROPE_LENGTH * (1.0 - Math.cos(swingAngleRad));
+		double forwardOffset = getRopeLength() * Math.sin(swingAngleRad);
+		double verticalOffset = getRopeLength() * (1.0 - Math.cos(swingAngleRad));
 		double yOffset = this.getPassengersRidingOffset() + passenger.getMyRidingOffset();
 
 		// Используем swingYaw для позиционирования
@@ -754,8 +982,8 @@ public class TireSwingEntity extends Entity {
 		float swingAngleRad = (float) Math.toRadians(getSwingAngle());
 		float swingYawRad = (float) Math.toRadians(getSwingYaw());
 
-		double forwardOffset = ROPE_LENGTH * Math.sin(swingAngleRad);
-		double verticalOffset = ROPE_LENGTH * (1.0 - Math.cos(swingAngleRad));
+		double forwardOffset = getRopeLength() * Math.sin(swingAngleRad);
+		double verticalOffset = getRopeLength() * (1.0 - Math.cos(swingAngleRad));
 		double yOffset = this.getPassengersRidingOffset() + passenger.getMyRidingOffset();
 
 		double rotatedX = -forwardOffset * Math.sin(swingYawRad);
@@ -809,7 +1037,7 @@ public class TireSwingEntity extends Entity {
 		float swingYawRad = (float) Math.toRadians(getSwingYaw());
 
 		// Тангенциальная скорость: v = R * ω
-		double tangentialSpeed = ROPE_LENGTH * swingVelocityRad;
+		double tangentialSpeed = getRopeLength() * swingVelocityRad;
 
 		// Направление скорости зависит от угла качания и поворота качелей
 		// При малых углах sin(θ) ≈ θ, cos(θ) ≈ 1
@@ -954,10 +1182,6 @@ public class TireSwingEntity extends Entity {
 		this.entityData.set(DATA_TARGET_SWING_YAW, yaw);
 	}
 
-	public float getRopeLength() {
-		return ROPE_LENGTH;
-	}
-
 	public float getMaxSwingAngle() {
 		return MAX_SWING_ANGLE;
 	}
@@ -1002,6 +1226,32 @@ public class TireSwingEntity extends Entity {
 		if (compound.contains("WasAboveSwooshAngle")) {
 			this.wasAboveSwooshAngle = compound.getBoolean("WasAboveSwooshAngle");
 		}
+		if (compound.contains("LeashHolderId")) {
+			int holderId = compound.getInt("LeashHolderId");
+			if (holderId != -1) {
+				this.entityData.set(DATA_LEASH_HOLDER_ID, holderId);
+			}
+		}
+
+		if (compound.contains("LeashType")) {
+			this.leashType = compound.getByte("LeashType");
+			this.entityData.set(DATA_LEASH_TYPE, this.leashType);
+		}
+
+		if (compound.contains("FencePos")) {
+			BlockPos fencePos = NbtUtils.readBlockPos(compound.getCompound("FencePos"));
+			this.fencePos = fencePos;
+			this.entityData.set(DATA_FENCE_POS, Optional.of(fencePos));
+		}
+
+		if (compound.contains("RopeLength")) {
+			this.currentRopeLength = compound.getFloat("RopeLength");
+			this.entityData.set(DATA_ROPE_LENGTH, this.currentRopeLength);
+		}
+
+		if (compound.contains("IsLeashed")) {
+			this.isLeashed = compound.getBoolean("IsLeashed");
+		}
 	}
 
 	@Override
@@ -1015,6 +1265,35 @@ public class TireSwingEntity extends Entity {
 		// Сохраняем флаги звуков
 		compound.putBoolean("HasCrossedZeroRecently", this.hasCrossedZeroRecently);
 		compound.putBoolean("WasAboveSwooshAngle", this.wasAboveSwooshAngle);
+		compound.putInt("LeashHolderId", this.entityData.get(DATA_LEASH_HOLDER_ID));
+		compound.putByte("LeashType", this.entityData.get(DATA_LEASH_TYPE));
+
+		if (this.fencePos != null) {
+			compound.put("FencePos", NbtUtils.writeBlockPos(this.fencePos));
+		}
+
+		compound.putFloat("RopeLength", this.currentRopeLength);
+		compound.putBoolean("IsLeashed", this.isLeashed);
+	}
+	public Vec3 getLeashOffset(float partialTicks) {
+		return new Vec3(0.0D, 0.5D, 0.0D);
+	}
+
+	// Добавим обработку привязки к забору через поводок
+	public static InteractionResult bindPlayerMobs(Player player, Level level, BlockPos fencePos) {
+		// Ищем качели, привязанные к игроку
+		for (TireSwingEntity tireSwing : level.getEntitiesOfClass(
+				TireSwingEntity.class,
+				new AABB(fencePos).inflate(MAX_LEASH_DISTANCE)
+		)) {
+			if (tireSwing.getLeashHolder() == player) {
+				// Пытаемся привязать к забору
+				if (tireSwing.leashToFence(fencePos, player)) {
+					return InteractionResult.SUCCESS;
+				}
+			}
+		}
+		return InteractionResult.PASS;
 	}
 
 	@Override

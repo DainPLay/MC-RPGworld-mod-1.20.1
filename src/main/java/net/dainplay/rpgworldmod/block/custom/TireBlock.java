@@ -1,5 +1,7 @@
 package net.dainplay.rpgworldmod.block.custom;
 
+import net.dainplay.rpgworldmod.entity.ModEntities;
+import net.dainplay.rpgworldmod.entity.custom.TireSwingEntity;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,10 +20,16 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import javax.annotation.Nullable;
 
@@ -591,5 +599,50 @@ public class TireBlock extends Block {
 		AABB voxelShapeAABB = voxelShape.bounds();
 		return new AABB(voxelShapeAABB.minX + pos.getX(), voxelShapeAABB.minY + pos.getY(), voxelShapeAABB.minZ + pos.getZ(),
 				voxelShapeAABB.maxX + pos.getX(), voxelShapeAABB.maxY + pos.getY(), voxelShapeAABB.maxZ + pos.getZ());
+	}
+
+
+	@Override
+	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+		ItemStack itemStack = player.getItemInHand(hand);
+
+		// Проверяем, что игрок использует поводок и у него нет другой привязанной шины
+		if (itemStack.is(Items.LEAD)) {
+			// Проверяем, нет ли у игрока уже привязанных качелей
+			if (!hasPlayerLeashedTireSwing(player)) {
+				if (!level.isClientSide) {
+					// Удаляем блок
+					level.destroyBlock(pos, false);
+
+					// Создаем сущность качелей
+					TireSwingEntity tireSwing = new TireSwingEntity(ModEntities.TIRE_SWING.get(), level);
+					tireSwing.setPos(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+
+					// Привязываем к игроку
+					tireSwing.setLeashedTo(player, true);
+
+					// Добавляем в мир
+					level.addFreshEntity(tireSwing);
+
+					// Уменьшаем поводок в руке
+					if (!player.getAbilities().instabuild) {
+						itemStack.shrink(1);
+					}
+				}
+				return InteractionResult.sidedSuccess(level.isClientSide);
+			}
+		}
+
+		return super.use(state, level, pos, player, hand, hit);
+	}
+
+	// Метод для проверки, есть ли у игрока уже привязанные качели
+	private boolean hasPlayerLeashedTireSwing(Player player) {
+		for (Entity entity : player.level().getEntitiesOfClass(TireSwingEntity.class, player.getBoundingBox().inflate(100))) {
+			if (entity instanceof TireSwingEntity tireSwing && tireSwing.getLeashHolder() == player) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
