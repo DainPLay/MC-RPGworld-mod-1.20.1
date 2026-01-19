@@ -5,15 +5,19 @@ import net.dainplay.rpgworldmod.entity.custom.TireSwingEntity;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShearsItem;
+import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -600,6 +604,11 @@ public class TireBlock extends Block {
 		return new AABB(voxelShapeAABB.minX + pos.getX(), voxelShapeAABB.minY + pos.getY(), voxelShapeAABB.minZ + pos.getZ(),
 				voxelShapeAABB.maxX + pos.getX(), voxelShapeAABB.maxY + pos.getY(), voxelShapeAABB.maxZ + pos.getZ());
 	}
+	@Override
+	public float getDestroyProgress(BlockState state, Player player, BlockGetter getter, BlockPos pos) {
+		// ItemShears#getDestroySpeed is really dumb and doesn't check IShearable so we have to do it this way to try to match the wool break speed with shears
+		return (player.getMainHandItem().getItem() instanceof ShearsItem) ? 1.0F : super.getDestroyProgress(state, player, getter, pos);
+	}
 
 
 	@Override
@@ -607,16 +616,17 @@ public class TireBlock extends Block {
 		ItemStack itemStack = player.getItemInHand(hand);
 
 		// Проверяем, что игрок использует поводок и у него нет другой привязанной шины
-		if (itemStack.is(Items.LEAD)) {
+		if (state.getValue(FORM) == Form.SINGLE && itemStack.is(Items.LEAD)) {
 			// Проверяем, нет ли у игрока уже привязанных качелей
 			if (!hasPlayerLeashedTireSwing(player)) {
 				if (!level.isClientSide) {
 					// Удаляем блок
-					level.destroyBlock(pos, false);
+					level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+					level.playSound(null,pos,SoundEvents.LEASH_KNOT_PLACE,SoundSource.BLOCKS, 1.0F, 1.0F);
 
 					// Создаем сущность качелей
 					TireSwingEntity tireSwing = new TireSwingEntity(ModEntities.TIRE_SWING.get(), level);
-					tireSwing.setPos(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+					tireSwing.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 
 					// Привязываем к игроку
 					tireSwing.setLeashedTo(player, true);

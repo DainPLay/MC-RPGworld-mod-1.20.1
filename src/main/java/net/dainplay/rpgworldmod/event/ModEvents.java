@@ -297,16 +297,13 @@ public class ModEvents {
 			return;
 		}
 
-		// Проверяем, является ли блок связанным с энтом
 		boolean isEntBlock = (block instanceof LivingWoodLogBlock livingWoodLogBlock && livingWoodLogBlock.isRelatedToEnt(state) != 0) ||
 				(block instanceof RieLeavesBlock rieLeavesBlock && rieLeavesBlock.isRelatedToEnt(state) != 0);
 
-		// Для блоков лица энта используем другой триггер (через use)
 		if (!isEntBlock) {
 			return;
 		}
 
-		// Поиск ближайшего блока лица энта в радиусе (например, 16 блоков)
 		for (int x = -16; x <= 16; x++) {
 			for (int y = -16; y <= 16; y++) {
 				for (int z = -16; z <= 16; z++) {
@@ -314,18 +311,12 @@ public class ModEvents {
 					BlockEntity blockEntity = level.getBlockEntity(checkPos);
 
 					if (blockEntity instanceof EntFaceBlockEntity entEntity) {
-						// Проверяем, связан ли атакованный блок с этим энтом
 						if (entEntity.getRelatedBlocks().contains(pos)) {
-							// Будим энта!
 							entEntity.onRelatedBlockAttacked(pos);
 
-							// Отменяем стандартное разрушение, если нужно
 							if (!player.getAbilities().instabuild) {
 								event.setCanceled(true);
 							}
-
-							// Можно добавить эффекты или звук
-							// level.playSound(null, pos, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 0.5F, 1.0F);
 
 							return;
 						}

@@ -1,6 +1,7 @@
 package net.dainplay.rpgworldmod.entity.custom;
 
 import net.dainplay.rpgworldmod.block.ModBlocks;
+import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.PacketTireSwingInteraction;
@@ -11,10 +12,13 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -39,6 +43,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -91,6 +96,13 @@ public class TireSwingEntity extends Entity {
 	private static final float CRACK_VELOCITY_THRESHOLD = 1.5F; // Средняя скорость для звука треска
 	private static final float MAX_SWOOSH_SPEED = 5.0F; // Максимальная скорость для нормализации громкости
 	private static final float CRACK_ANGLE_DEADZONE = 2.0F; // Зона вокруг 0 градусов для предотвращения спама
+
+	// Константы для эффекта регенерации
+	private static final int HAPPINESS_DURATION = 200; // 10 секунд (200 тиков)
+	private static final int MAX_HAPPINESS_DURATION = 3600; // 3 минуты (3600 тиков)
+	private static final float HAPPINESS_VELOCITY_THRESHOLD = 1.0F; // Порог скорости для активации эффекта
+	private static final int HAPPINESS_COOLDOWN = 20; // Кулдаун 1 секунда
+	private int happinessCooldown = 0;
 
 	// Добавьте эти поля в раздел с другими переменными
 	private boolean hasCrossedZeroRecently = false;
@@ -160,7 +172,7 @@ public class TireSwingEntity extends Entity {
 
 		// Новые параметры для привязки
 		this.entityData.define(DATA_LEASH_HOLDER_ID, -1);
-		this.entityData.define(DATA_LEASH_TYPE, (byte)0);
+		this.entityData.define(DATA_LEASH_TYPE, (byte) 0);
 		this.entityData.define(DATA_FENCE_POS, Optional.empty());
 		this.entityData.define(DATA_ROPE_LENGTH, 5.0F);
 	}
@@ -200,14 +212,19 @@ public class TireSwingEntity extends Entity {
 		if (entity != null) {
 			this.isLeashed = true;
 			this.entityData.set(DATA_LEASH_HOLDER_ID, entity.getId());
-			this.entityData.set(DATA_LEASH_TYPE, LEASH_TYPE_PLAYER);
-			this.entityData.set(DATA_FENCE_POS, Optional.empty());
+			if (entity instanceof LeashFenceKnotEntity knot) {
+
+				this.entityData.set(DATA_LEASH_TYPE, LEASH_TYPE_FENCE_KNOT);
+				this.entityData.set(DATA_FENCE_POS, Optional.of(knot.getPos()));
+			} else {
+				this.entityData.set(DATA_LEASH_TYPE, LEASH_TYPE_PLAYER);
+				this.entityData.set(DATA_FENCE_POS, Optional.empty());
+			}
 
 			if (broadcast && !this.level().isClientSide) {
-				this.level().broadcastEntityEvent(this, (byte)7); // Событие привязки
+				this.level().broadcastEntityEvent(this, (byte) 7); // Событие привязки
 			}
-		}
-		else {
+		} else {
 			this.entityData.set(DATA_LEASH_HOLDER_ID, null);
 		}
 	}
@@ -219,14 +236,15 @@ public class TireSwingEntity extends Entity {
 	public boolean isLeashed() {
 		return this.isLeashed;
 	}
+
 	@Nullable
 	public Entity getLeashHolder() {
 		Entity leashholder = null;
-			// Пытаемся восстановить из данных
-			int holderId = this.entityData.get(DATA_LEASH_HOLDER_ID);
-			if (holderId != -1) {
-				leashholder = this.level().getEntity(holderId);
-			}
+		// Пытаемся восстановить из данных
+		int holderId = this.entityData.get(DATA_LEASH_HOLDER_ID);
+		if (holderId != -1) {
+			leashholder = this.level().getEntity(holderId);
+		}
 		return leashholder;
 	}
 
@@ -238,43 +256,19 @@ public class TireSwingEntity extends Entity {
 	public BlockPos getFencePos() {
 		return this.entityData.get(DATA_FENCE_POS).orElse(null);
 	}
+
 	public ItemStack getPickResult() {
 		return new ItemStack(ModBlocks.TIRE.get());
 	}
 
 	// Метод для привязки к забору
-	public boolean leashToFence(BlockPos fencePos, Player player) {
+	public boolean leashToFence(BlockPos fencePos, Player player, boolean newSwing) {
 		// Проверяем условия для привязки к забору
 		if (canLeashToFence(fencePos)) {
-			// Создаем или получаем существующий узел на заборе
+			// Используем существующий узел или создаем новый
 			LeashFenceKnotEntity knot = LeashFenceKnotEntity.getOrCreateKnot(this.level(), fencePos);
-			if (knot != null) {
-				knot.playPlacementSound();
-
-				this.isLeashed = true;
-				this.fencePos = fencePos;
-
-				// Обновляем синхронизированные данные
-				this.entityData.set(DATA_LEASH_HOLDER_ID, knot.getId());
-				this.entityData.set(DATA_LEASH_TYPE, LEASH_TYPE_FENCE_KNOT);
-				this.entityData.set(DATA_FENCE_POS, Optional.of(fencePos));
-
-				// Устанавливаем длину веревки как расстояние до узла
-				float distance = (float) Math.sqrt(
-						Math.pow(knot.getX() - this.getX(), 2) +
-								Math.pow(knot.getY() + 0.5 - this.getY(), 2) +
-								Math.pow(knot.getZ() - this.getZ(), 2)
-				);
-				this.currentRopeLength = distance;
-				this.entityData.set(DATA_ROPE_LENGTH, distance);
-
-				// Отправляем событие привязки
-				if (!this.level().isClientSide) {
-					this.level().broadcastEntityEvent(this, (byte)7);
-				}
-
-				return true;
-			}
+			knot.playPlacementSound();
+			return leashToExistingKnot(knot, player, newSwing);
 		}
 		return false;
 	}
@@ -289,7 +283,7 @@ public class TireSwingEntity extends Entity {
 
 		// Проверяем, что забор не выше 7 блоков
 		int heightDiff = fencePos.getY() - currentPos.getY();
-		if (heightDiff < 0 || heightDiff > MAX_FENCE_HEIGHT) {
+		if (heightDiff <= 1 || heightDiff > MAX_FENCE_HEIGHT) {
 			return false;
 		}
 
@@ -309,31 +303,76 @@ public class TireSwingEntity extends Entity {
 
 	// Метод для отвязки
 	public void dropLeash(boolean broadcast, boolean dropItem) {
-		// Сохраняем текущий держатель поводка
+		// Сохраняем текущего держателя поводка
 		Entity oldHolder = getLeashHolder();
+		byte leashType = getLeashType();
 
 		this.isLeashed = false;
-		setLeashedTo(null, broadcast);
-		this.fencePos = null;
-
 		this.entityData.set(DATA_LEASH_HOLDER_ID, -1);
 		this.entityData.set(DATA_LEASH_TYPE, LEASH_TYPE_NONE);
 		this.entityData.set(DATA_FENCE_POS, Optional.empty());
+		this.fencePos = null;
 
-		// Если это был узел на заборе и мы отвязываемся, уничтожаем узел
-		if (oldHolder instanceof LeashFenceKnotEntity) {
-			oldHolder.discard();
+		// Если это был узел на заборе, не уничтожаем его сразу
+		// Узел будет уничтожен только если к нему больше никто не привязан
+		if (oldHolder instanceof LeashFenceKnotEntity knot) {
+			// Проверяем, остались ли другие существа, привязанные к узлу
+			boolean hasOtherEntities = false;
+
+			// Проверяем мобов
+			List<Mob> mobs = this.level().getEntitiesOfClass(Mob.class,
+					new AABB(knot.getX() - 7, knot.getY() - 7, knot.getZ() - 7,
+							knot.getX() + 7, knot.getY() + 7, knot.getZ() + 7));
+			for (Mob mob : mobs) {
+				if (mob.isLeashed() && mob.getLeashHolder() == knot) {
+					hasOtherEntities = true;
+					break;
+				}
+			}
+
+			// Проверяем другие качели
+			if (!hasOtherEntities) {
+				List<TireSwingEntity> swings = this.level().getEntitiesOfClass(TireSwingEntity.class,
+						new AABB(knot.getX() - 7, knot.getY() - 7, knot.getZ() - 7,
+								knot.getX() + 7, knot.getY() + 7, knot.getZ() + 7));
+				for (TireSwingEntity swing : swings) {
+					if (swing.isLeashed() && swing.getLeashHolder() == knot && swing != this) {
+						hasOtherEntities = true;
+						break;
+					}
+				}
+			}
+
+			// Если больше никто не привязан к узлу, удаляем его
+			if (!hasOtherEntities && !this.level().isClientSide) {
+				knot.discard();
+			}
 		}
 
-		// Если качели не привязаны, уничтожаем их
-		if (!this.level().isClientSide) {
+		// Если качели не привязаны и нужно выпадать предметы, уничтожаем их
+		if (dropItem && !this.level().isClientSide) {
 			this.destroyAndDropTire();
 		}
 
 		if (broadcast && !this.level().isClientSide) {
-			this.level().broadcastEntityEvent(this, (byte)6); // Событие отвязки
+			this.level().broadcastEntityEvent(this, (byte) 6); // Событие отвязки
 		}
 	}
+
+	public boolean canShareLeashKnot() {
+		if (!this.isLeashed || getLeashType() != LEASH_TYPE_FENCE_KNOT) {
+			return false;
+		}
+
+		Entity holder = getLeashHolder();
+		if (!(holder instanceof LeashFenceKnotEntity)) {
+			return false;
+		}
+
+		// Узел может делиться с любыми другими существами
+		return true;
+	}
+
 	public Vec3 getLeashRopePosition(float partialTicks) {
 		if (getLeashType() == LEASH_TYPE_FENCE_KNOT && getLeashHolder() instanceof LeashFenceKnotEntity) {
 			// Для узла на заборе используем его позицию
@@ -356,7 +395,7 @@ public class TireSwingEntity extends Entity {
 
 	// Метод для посадки игрока (вызывается как из основного тела, так и из сиденья)
 	public InteractionResult tryMountPlayer(Player player) {
-		if (this.getPassengers().isEmpty() && !player.isSecondaryUseActive()) {
+		if (this.getPassengers().isEmpty() && !player.isSecondaryUseActive() && getLeashType() == LEASH_TYPE_FENCE_KNOT) {
 			if (!this.level().isClientSide) {
 				// НЕ меняем yaw качелей под игрока, оставляем текущий поворот качелей
 				// Только устанавливаем yaw тела пассажира на текущий yaw качелей
@@ -376,6 +415,10 @@ public class TireSwingEntity extends Entity {
 				// На клиенте просто возвращаем успех
 				return InteractionResult.SUCCESS;
 			}
+		}
+		else {
+			dropLeash(true,true);
+			return InteractionResult.CONSUME;
 		}
 		return InteractionResult.PASS;
 	}
@@ -438,7 +481,11 @@ public class TireSwingEntity extends Entity {
 			}
 			if (zeroCrossCooldown > 0) zeroCrossCooldown--;
 			if (swooshCooldown > 0) swooshCooldown--;
+			if (happinessCooldown > 0) happinessCooldown--;
 		} else {
+			if (this.tickCount % 100 == 0 && this.isLeashed) {
+				validateLeashConnection();
+			}
 			updateLeashState();
 			// Серверная логика
 			boolean hasPassenger = !this.getPassengers().isEmpty();
@@ -488,6 +535,55 @@ public class TireSwingEntity extends Entity {
 		}
 	}
 
+	private void validateLeashConnection() {
+		if (!this.isLeashed) return;
+
+		Entity holder = getLeashHolder();
+		if (holder instanceof LeashFenceKnotEntity knot) {
+			// Проверяем, что узел все еще существует и на месте
+			if (!knot.isAlive()) {
+				// Узел был уничтожен, отвязываем
+				this.dropLeash(true, true);
+			} else if (this.fencePos != null && !knot.getPos().equals(this.fencePos)) {
+				// Узел был перемещен (маловероятно, но на всякий случай)
+				this.dropLeash(true, true);
+			}
+		}
+	}
+
+	public boolean leashToExistingKnot(LeashFenceKnotEntity knot, Player player, boolean newSwing) {
+		BlockPos fencePos = knot.getPos();
+
+		// Проверяем условия для привязки
+		if (canLeashToFence(fencePos)) {
+			this.isLeashed = true;
+			this.fencePos = fencePos;
+
+			// Обновляем синхронизированные данные
+			this.entityData.set(DATA_LEASH_HOLDER_ID, knot.getId());
+			this.entityData.set(DATA_LEASH_TYPE, LEASH_TYPE_FENCE_KNOT);
+			this.entityData.set(DATA_FENCE_POS, Optional.of(fencePos));
+
+			// Устанавливаем длину веревки как расстояние до узла
+			float distance = (float) Math.sqrt(
+					Math.pow(knot.getX() - this.getX(), 2) +
+							Math.pow(knot.getY() + 0.5 - this.getY(), 2) +
+							Math.pow(knot.getZ() - this.getZ(), 2)
+			);
+			this.currentRopeLength = distance;
+			this.entityData.set(DATA_ROPE_LENGTH, distance);
+
+			// Отправляем событие привязки
+			if (!this.level().isClientSide) {
+				this.level().broadcastEntityEvent(this, (byte) 7);
+			}
+			if (newSwing) this.setPos(this.getX(), this.getY() + 0.5, this.getZ());
+
+			return true;
+		}
+		return false;
+	}
+
 	private void updateLeashState() {
 		if (this.isLeashed) {
 			switch (getLeashType()) {
@@ -517,6 +613,7 @@ public class TireSwingEntity extends Entity {
 			this.dropLeash(false, false);
 		}
 	}
+
 	@Nullable
 	public LeashFenceKnotEntity getLeashKnot() {
 		Entity holder = this.getLeashHolder();
@@ -551,14 +648,7 @@ public class TireSwingEntity extends Entity {
 				this.entityData.set(DATA_ROPE_LENGTH, distance);
 			} else {
 				// Узел был уничтожен, пытаемся восстановить
-				knot = LeashFenceKnotEntity.getOrCreateKnot(this.level(), fence);
-				if (knot != null) {
-					this.setLeashedTo(knot, false);
-					this.entityData.set(DATA_LEASH_HOLDER_ID, knot.getId());
-				} else {
-					// Не удалось восстановить узел
-					this.dropLeash(true, true);
-				}
+				this.dropLeash(true, true);
 			}
 		} else {
 			this.dropLeash(false, false);
@@ -893,6 +983,11 @@ public class TireSwingEntity extends Entity {
 			return;
 		}
 
+		// Обновляем кулдаун регенерации
+		if (happinessCooldown > 0) {
+			happinessCooldown--;
+		}
+
 		// Проверяем, пересекли ли мы ноль (знак угла изменился)
 		boolean crossedZero = (previousAngle > 0 && currentAngle <= 0) ||
 				(previousAngle < 0 && currentAngle >= 0);
@@ -901,10 +996,13 @@ public class TireSwingEntity extends Entity {
 		boolean wasFarEnoughFromZero = Math.abs(previousAngle) > CRACK_ANGLE_DEADZONE;
 
 		// Проверяем, достаточно ли высокая скорость для звука
-		boolean hasEnoughVelocity = Math.abs(currentVelocity) >= CRACK_VELOCITY_THRESHOLD;
+		boolean hasEnoughVelocityForSound = Math.abs(currentVelocity) >= CRACK_VELOCITY_THRESHOLD;
 
-		// Если все условия выполнены
-		if (crossedZero && wasFarEnoughFromZero && hasEnoughVelocity && !hasCrossedZeroRecently) {
+		// Проверяем, достаточно ли высокая скорость для эффекта регенерации
+		boolean hasEnoughVelocityForHappiness = Math.abs(currentVelocity) >= HAPPINESS_VELOCITY_THRESHOLD;
+
+		// Если все условия выполнены для звука
+		if (crossedZero && wasFarEnoughFromZero && hasEnoughVelocityForSound && !hasCrossedZeroRecently) {
 			// Нормализуем скорость для вычисления громкости
 			float normalizedVelocity = Math.min(Math.abs(currentVelocity) / (CRACK_VELOCITY_THRESHOLD * 2), 1.0F);
 			float volume = 0.1F + normalizedVelocity * 0.1F; // Громкость от 0.6 до 1.0
@@ -920,9 +1018,68 @@ public class TireSwingEntity extends Entity {
 			hasCrossedZeroRecently = true;
 		}
 
+		// Обработка эффекта регенерации (только если есть пассажир)
+		if (hasEnoughVelocityForHappiness && happinessCooldown == 0 && !this.getPassengers().isEmpty()) {
+
+			applyHappinessEffect();
+			happinessCooldown = HAPPINESS_COOLDOWN;
+		}
+
 		// Сбрасываем флаг после пересечения нуля
 		if (Math.abs(currentAngle) > CRACK_ANGLE_DEADZONE) {
 			hasCrossedZeroRecently = false;
+		}
+	}
+
+	private void applyHappinessEffect() {
+		if (this.level().isClientSide || this.getPassengers().isEmpty()) {
+			return;
+		}
+
+		Entity passenger = this.getPassengers().get(0);
+		if (passenger instanceof LivingEntity livingPassenger) {
+			// Проверяем, есть ли уже эффект регенерации
+			MobEffectInstance currentRegen = livingPassenger.getEffect(ModEffects.HAPPINESS.get());
+
+			int newDuration = HAPPINESS_DURATION;
+
+			// Если эффект уже есть, добавляем время, но не превышаем максимум
+			if (currentRegen != null) {
+				newDuration = currentRegen.getDuration() + HAPPINESS_DURATION;
+
+				// Ограничиваем максимальной продолжительностью
+				if (newDuration > MAX_HAPPINESS_DURATION) {
+					newDuration = MAX_HAPPINESS_DURATION;
+				}
+
+				// Сохраняем уровень эффекта (усиление)
+				int amplifier = currentRegen.getAmplifier();
+
+				// Создаём новый эффект с увеличенной длительностью
+				MobEffectInstance newEffect = new MobEffectInstance(
+						ModEffects.HAPPINESS.get(),
+						newDuration,
+						amplifier,
+						false, // не является ambient эффектом
+						true,  // показывать частицы
+						true   // показывать иконку
+				);
+
+				livingPassenger.removeEffect(ModEffects.HAPPINESS.get());
+				livingPassenger.addEffect(newEffect);
+			} else {
+				// Создаём новый эффект
+				MobEffectInstance newEffect = new MobEffectInstance(
+						ModEffects.HAPPINESS.get(),
+						newDuration,
+						0, // уровень I
+						false,
+						true,
+						true
+				);
+
+				livingPassenger.addEffect(newEffect);
+			}
 		}
 	}
 
@@ -993,6 +1150,7 @@ public class TireSwingEntity extends Entity {
 
 		return false;
 	}
+
 	private void clampPassengerRotation(Entity passenger) {
 		passenger.setYBodyRot(getSwingYaw());
 		float f = Mth.wrapDegrees(passenger.getYRot() - getSwingYaw());
@@ -1140,6 +1298,7 @@ public class TireSwingEntity extends Entity {
 			this.wasAboveSwooshAngle = false;
 			this.zeroCrossCooldown = 0;
 			this.swooshCooldown = 0;
+			this.happinessCooldown = 0;
 		}
 	}
 
@@ -1287,8 +1446,6 @@ public class TireSwingEntity extends Entity {
 		if (compound.contains("LeashHolderId")) {
 			int holderId = compound.getInt("LeashHolderId");
 			if (holderId != -1) {
-				// Не устанавливаем сразу, а только сохраняем ID
-				// Узел будет восстановлен позже
 				this.entityData.set(DATA_LEASH_HOLDER_ID, holderId);
 			}
 		}
@@ -1310,6 +1467,11 @@ public class TireSwingEntity extends Entity {
 
 		if (compound.contains("IsLeashed")) {
 			this.isLeashed = compound.getBoolean("IsLeashed");
+		}
+
+		// Восстанавливаем состояние узла при загрузке
+		if (this.level() != null && !this.level().isClientSide && this.isLeashed) {
+			this.restoreLeashConnection();
 		}
 	}
 
@@ -1334,26 +1496,51 @@ public class TireSwingEntity extends Entity {
 		compound.putFloat("RopeLength", this.currentRopeLength);
 		compound.putBoolean("IsLeashed", this.isLeashed);
 	}
+
+	private void restoreLeashConnection() {
+		if (!this.isLeashed) return;
+
+		byte leashType = getLeashType();
+		int holderId = this.entityData.get(DATA_LEASH_HOLDER_ID);
+
+		if (leashType == LEASH_TYPE_FENCE_KNOT && holderId != -1) {
+			Entity entity = this.level().getEntity(holderId);
+			if (entity instanceof LeashFenceKnotEntity knot) {
+				// Проверяем, что узел все еще существует и на правильном месте
+				BlockPos savedPos = this.fencePos;
+				if (savedPos != null && knot.getPos().equals(savedPos)) {
+					// Узел существует, обновляем длину веревки
+					float distance = (float) Math.sqrt(
+							Math.pow(knot.getX() - this.getX(), 2) +
+									Math.pow(knot.getY() + 0.5 - this.getY(), 2) +
+									Math.pow(knot.getZ() - this.getZ(), 2)
+					);
+					this.currentRopeLength = distance;
+					this.entityData.set(DATA_ROPE_LENGTH, distance);
+				} else {
+					// Узел был перемещен или уничтожен, отвязываем
+					this.dropLeash(false, false);
+				}
+			} else {
+				// Узел не найден, пытаемся восстановить
+				BlockPos fencePos = getFencePos();
+				if (fencePos != null) {
+					LeashFenceKnotEntity newKnot = LeashFenceKnotEntity.getOrCreateKnot(
+							this.level(), fencePos);
+					if (newKnot != null) {
+						this.leashToExistingKnot(newKnot, null, false);
+					} else {
+						this.dropLeash(false, false);
+					}
+				}
+			}
+		}
+	}
+
 	public Vec3 getLeashOffset(float partialTicks) {
 		return new Vec3(0.0D, 0.5D, 0.0D);
 	}
 
-	// Добавим обработку привязки к забору через поводок
-	public static InteractionResult bindPlayerMobs(Player player, Level level, BlockPos fencePos) {
-		// Ищем качели, привязанные к игроку
-		for (TireSwingEntity tireSwing : level.getEntitiesOfClass(
-				TireSwingEntity.class,
-				new AABB(fencePos).inflate(MAX_LEASH_DISTANCE)
-		)) {
-			if (tireSwing.getLeashHolder() == player) {
-				// Пытаемся привязать к забору
-				if (tireSwing.leashToFence(fencePos, player)) {
-					return InteractionResult.SUCCESS;
-				}
-			}
-		}
-		return InteractionResult.PASS;
-	}
 	private void restoreLeash() {
 		if (!this.level().isClientSide && this.isLeashed) {
 			byte leashType = getLeashType();
@@ -1394,6 +1581,7 @@ public class TireSwingEntity extends Entity {
 			}
 		}
 	}
+
 	@Override
 	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
@@ -1456,7 +1644,6 @@ public class TireSwingEntity extends Entity {
 		@Override
 		public InteractionResult interact(Player player, InteractionHand hand) {
 			if (this.level().isClientSide) {
-				// Отправляем пакет на сервер при клике на сиденье
 				ModMessages.sendToServer(new PacketTireSwingInteraction(this.getParent().getId()));
 				return InteractionResult.SUCCESS;
 			}

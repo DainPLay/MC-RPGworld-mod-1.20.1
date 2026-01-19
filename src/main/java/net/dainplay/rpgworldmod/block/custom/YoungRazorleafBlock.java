@@ -61,7 +61,7 @@ public class YoungRazorleafBlock extends BushBlock {
 					if (dx == 0 && dz == 0 && dy == 0) continue;
 
 					BlockPos checkPos = pPos.offset(dx, dy, dz);
-					if (!canBeReplaced(pLevel.getBlockState(checkPos))) {
+					if (!canBeReplacedBy(pLevel,pLevel.getBlockState(checkPos),checkPos)) {
 						return;
 					}
 				}
@@ -90,8 +90,8 @@ public class YoungRazorleafBlock extends BushBlock {
 		net.minecraftforge.common.ForgeHooks.onCropsGrowPost(pLevel, pPos, pState);
 	}
 
-	public boolean canBeReplaced(BlockState state) {
-		return state.getBlock().getExplosionResistance() < 20F || state.isAir();
+	public boolean canBeReplacedBy(Level level, BlockState state, BlockPos pos) {
+		return state.getBlock().getExplosionResistance(state, level, pos, null) < 20F || state.isAir();
 	}
 
 	@Override

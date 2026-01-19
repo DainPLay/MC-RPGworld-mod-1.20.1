@@ -30,7 +30,7 @@ public class RazorleafBudBlock extends FlowerBlock {
 	@Override
 	public void randomTick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
 				float f = 0.25F;
-				if (pLevel.isDay() && (pLevel.getBlockState(pPos.above()).getBlock().getExplosionResistance() < 20F || pLevel.getBlockState(pPos.above()).isAir()) && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(pLevel, pPos, pState, pRandom.nextInt((int)(25.0F / f) + 1) == 0)) {
+				if (pLevel.isDay() && (pLevel.getBlockState(pPos.above()).getBlock().getExplosionResistance(pState, pLevel, pPos.above(), null) < 20F || pLevel.getBlockState(pPos.above()).isAir()) && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(pLevel, pPos, pState, pRandom.nextInt((int)(25.0F / f) + 1) == 0)) {
 					pLevel.destroyBlock(pPos.above(), true);
 					pLevel.setBlock(pPos, ModBlocks.SPIKY_IVY.get().defaultBlockState(), 2);
 					pLevel.setBlock(pPos.above(), ModBlocks.YOUNG_RAZORLEAF.get().defaultBlockState(), 2);

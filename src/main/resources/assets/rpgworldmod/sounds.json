@@ -894,13 +894,21 @@
   },
   "rpgworldmod.block.tire.break": {
     "sounds": [
-      "rpgworldmod:tire/place"
+      "rpgworldmod:tire/place1",
+      "rpgworldmod:tire/place2",
+      "rpgworldmod:tire/place3",
+      "rpgworldmod:tire/place4",
+      "rpgworldmod:tire/place5"
     ],
     "subtitle": "subtitles.block.generic.break"
   },
   "rpgworldmod.block.tire.place": {
     "sounds": [
-      "rpgworldmod:tire/place"
+      "rpgworldmod:tire/place1",
+      "rpgworldmod:tire/place2",
+      "rpgworldmod:tire/place3",
+      "rpgworldmod:tire/place4",
+      "rpgworldmod:tire/place5"
     ],
     "subtitle": "subtitles.block.generic.place"
   },
@@ -922,7 +930,11 @@
   },
   "rpgworldmod.block.tire.fall": {
     "sounds": [
-      "rpgworldmod:tire/place"
+      "rpgworldmod:tire/place1",
+      "rpgworldmod:tire/place2",
+      "rpgworldmod:tire/place3",
+      "rpgworldmod:tire/place4",
+      "rpgworldmod:tire/place5"
     ]
   },
   "rpgworldmod.block.tire.bounce": {
@@ -934,7 +946,13 @@
   },
   "rpgworldmod.tire_swing.swoosh": {
     "sounds": [
-      "rpgworldmod:tire_swing/swoosh"
+      "rpgworldmod:tire_swing/swoosh1",
+      "rpgworldmod:tire_swing/swoosh2",
+      "rpgworldmod:tire_swing/swoosh3",
+      "rpgworldmod:tire_swing/swoosh4",
+      "rpgworldmod:tire_swing/swoosh5",
+      "rpgworldmod:tire_swing/swoosh6",
+      "rpgworldmod:tire_swing/swoosh7"
     ]
   },
   "rpgworldmod.tire_swing.crack": {

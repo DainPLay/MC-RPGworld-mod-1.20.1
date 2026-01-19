@@ -15,6 +15,18 @@
         ]
       },
       "trigger": "minecraft:location"
+    },
+    "rpgworldmod:rpgirolle": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:rpgirolle_item"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
     }
   },
   "display": {
@@ -36,7 +48,8 @@
   },
   "requirements": [
     [
-      "rpgworldmod:rie_weald"
+      "rpgworldmod:rie_weald",
+      "rpgworldmod:rpgirolle"
     ]
   ],
   "sends_telemetry_event": true

@@ -1,6 +1,8 @@
 package net.dainplay.rpgworldmod.effect;
 
 
+import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
+import net.dainplay.rpgworldmod.entity.custom.TireSwingEntity;
 import net.dainplay.rpgworldmod.network.PlayerManaProvider;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -26,8 +28,11 @@ public class HappinessEffect extends MobEffect {
 		if (pLivingEntity instanceof ServerPlayer serverPlayer) {
 			if (!serverPlayer.getAbilities().instabuild) {
 				serverPlayer.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-					if (pLivingEntity.tickCount % Math.max(1, 20 - 5 * pAmplifier) == 0)
+					if (pLivingEntity.tickCount % Math.max(1, 20 - 5 * pAmplifier) == 0) {
+						if (mana.getMana() == 0 && serverPlayer.getVehicle() instanceof TireSwingEntity)
+							ModAdvancements.RIDE_TIRE_SWING_TRIGGER.trigger(serverPlayer);
 						mana.addMana(serverPlayer, 1);
+					}
 				});
 			}
 		}

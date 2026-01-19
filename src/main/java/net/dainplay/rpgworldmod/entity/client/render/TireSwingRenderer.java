@@ -8,6 +8,7 @@ import net.dainplay.rpgworldmod.entity.client.model.TireSwingModel;
 import net.dainplay.rpgworldmod.entity.custom.TireSwingEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -17,6 +18,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
@@ -27,7 +29,7 @@ public class TireSwingRenderer extends EntityRenderer<TireSwingEntity> {
 	public TireSwingRenderer(EntityRendererProvider.Context context) {
 		super(context);
 		this.model = new TireSwingModel<>(context.bakeLayer(TireSwingModel.LAYER_LOCATION));
-		this.shadowRadius = 0.5F;
+		this.shadowRadius = 0F;
 	}
 
 	@Override
@@ -128,26 +130,83 @@ public class TireSwingRenderer extends EntityRenderer<TireSwingEntity> {
 			return;
 		}
 
-		// Рендерим поводок до узла/игрока
-		renderCustomLeash(entity, partialTicks, poseStack, buffer, leashHolderPosition);
+		// Получаем позицию сиденья (куда должен тянуться поводок)
+		Vec3 seatPosition = getSeatPosition(entity, partialTicks);
+
+		// Рендерим поводок от держателя до сиденья
+		renderStraightLeash(entity, partialTicks, poseStack, buffer, leashHolderPosition, seatPosition);
 	}
 
-	// Обновить метод renderCustomLeash для правильной работы с узлом:
-	private void renderCustomLeash(TireSwingEntity entity, float partialTicks,
-								   PoseStack poseStack, MultiBufferSource buffer, Vec3 leashHolderPosition) {
+	// Новый метод для получения позиции сиденья
+	private Vec3 getSeatPosition(TireSwingEntity entity, float partialTicks) {
+		// Интерполируем позицию сущности
+		double x = Mth.lerp(partialTicks, entity.xo, entity.getX());
+		double y = Mth.lerp(partialTicks, entity.yo, entity.getY());
+		double z = Mth.lerp(partialTicks, entity.zo, entity.getZ());
+
+		// Получаем параметры для вычисления позиции сиденья
+		float ropeLength = entity.getRopeLength();
+		float swingAngle = entity.getRenderSwingAngle(partialTicks);
+		float swingYaw = entity.getRenderSwingYaw(partialTicks);
+
+		// Переводим углы в радианы
+		float swingAngleRad = (float) Math.toRadians(swingAngle);
+		float swingYawRad = (float) Math.toRadians(swingYaw);
+
+		// Вычисляем смещение сиденья относительно точки подвеса (аналогично positionRider в сущности)
+		double forwardOffset = ropeLength * Math.sin(swingAngleRad);
+		double verticalOffset = ropeLength * (1.0 - Math.cos(swingAngleRad));
+		double yOffset = 0.7;
+
+		// Базовое смещение (центр сиденья)
+		double rotatedX = -forwardOffset * Math.sin(swingYawRad);
+		double rotatedZ = forwardOffset * Math.cos(swingYawRad);
+
+		// Если есть пассажир, смещаем точку крепления поводка
+		if (entity.isOccupied()) {
+			// Смещение назад относительно направления взгляда пассажира
+			// Направление назад: противоположное направлению forwardOffset
+			double backDistance = 0.25; // Расстояние назад от центра сиденья
+
+			// Вычисляем угол наклона шины для корректировки вертикального смещения
+			float tireTilt = entity.getModelRotationAngle(swingAngle);
+			float tireTiltRad = (float) Math.toRadians(tireTilt);
+
+			// При наклоне шины точка крепления смещается по кругу
+			// Смещение назад по горизонтали с учетом наклона
+			double backX = backDistance * Math.sin(swingYawRad);
+			double backZ = -backDistance * Math.cos(swingYawRad);
+
+			// Вертикальное смещение в зависимости от наклона шины
+			// Когда шина наклонена вперед (положительный угол), задняя точка поднимается
+			double verticalBackOffset = backDistance * Math.sin(tireTiltRad) * 0.5;
+
+			// Возвращаем мировую позицию с учетом смещения
+			return new Vec3(
+					x + rotatedX + backX,
+					y + yOffset + verticalOffset + verticalBackOffset,
+					z + rotatedZ + backZ
+			);
+		}
+
+		// Возвращаем мировую позицию сиденья без смещения (для пустых качелей)
+		return new Vec3(x + rotatedX, y + yOffset + verticalOffset, z + rotatedZ);
+	}
+
+	// Модифицированный метод для рендеринга прямого поводка
+	private void renderStraightLeash(TireSwingEntity entity, float partialTicks,
+									 PoseStack poseStack, MultiBufferSource buffer,
+									 Vec3 leashHolderPosition, Vec3 seatPosition) {
 
 		poseStack.pushPose();
 
-		// Копируем ванильную логику вычислений
-		double d0 = (double)(Mth.lerp(partialTicks, entity.yRotO, entity.getYRot()) * ((float)Math.PI / 180F)) + (Math.PI / 2D);
-		Vec3 vec31 = entity.getLeashOffset(partialTicks);
-		double d1 = Math.cos(d0) * vec31.z + Math.sin(d0) * vec31.x;
-		double d2 = Math.sin(d0) * vec31.z - Math.cos(d0) * vec31.x;
-		double d3 = Mth.lerp((double)partialTicks, entity.xo, entity.getX()) + d1;
-		double d4 = Mth.lerp((double)partialTicks, entity.yo, entity.getY()) + vec31.y;
-		double d5 = Mth.lerp((double)partialTicks, entity.zo, entity.getZ()) + d2;
+		// Переходим к позиции сиденья
+		double d3 = seatPosition.x;
+		double d4 = seatPosition.y;
+		double d5 = seatPosition.z;
 
-		poseStack.translate(d1, vec31.y, d2);
+		// Вместо использования entity.getLeashOffset, начинаем от сиденья
+		poseStack.translate(d3 - entity.getX(), d4 - entity.getY(), d5 - entity.getZ());
 
 		float f = (float)(leashHolderPosition.x - d3);
 		float f1 = (float)(leashHolderPosition.y - d4);
@@ -156,13 +215,13 @@ public class TireSwingRenderer extends EntityRenderer<TireSwingEntity> {
 		VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.leash());
 		Matrix4f matrix4f = poseStack.last().pose();
 
-		// Вычисляем освещение как в ванильном коде
-		BlockPos blockpos = BlockPos.containing(entity.getEyePosition(partialTicks));
-		BlockPos blockpos1 = BlockPos.containing(leashHolderPosition);
-		int i = this.getBlockLightLevel(entity, blockpos);
-		int j = entity.level().getBrightness(LightLayer.BLOCK, blockpos1);
-		int k = entity.level().getBrightness(LightLayer.SKY, blockpos);
-		int l = entity.level().getBrightness(LightLayer.SKY, blockpos1);
+		// Вычисляем освещение для сиденья и держателя
+		BlockPos seatPos = BlockPos.containing(seatPosition);
+		BlockPos holderPos = BlockPos.containing(leashHolderPosition);
+		int seatBlockLight = this.getBlockLightLevel(entity, seatPos);
+		int holderBlockLight = entity.level().getBrightness(LightLayer.BLOCK, holderPos);
+		int seatSkyLight = entity.level().getBrightness(LightLayer.SKY, seatPos);
+		int holderSkyLight = entity.level().getBrightness(LightLayer.SKY, holderPos);
 
 		// Вычисляем вектор направления поводка
 		float dirX = f;
@@ -242,74 +301,95 @@ public class TireSwingRenderer extends EntityRenderer<TireSwingEntity> {
 		perpY2 *= halfThickness;
 		perpZ2 *= halfThickness;
 
+		// Количество сегментов поводка (меньше сегментов = более прямая линия)
+		int segments = 24;
+
 		// Рендерим первый проход (одна сторона перекрестия)
-		for (int i1 = 0; i1 <= 24; ++i1) {
-			addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l,
-					thickness, thickness, perpX1, perpY1, perpZ1, perpX2, perpY2, perpZ2, i1, false);
+		for (int i1 = 0; i1 <= segments; ++i1) {
+			addStraightVertexPair(vertexconsumer, matrix4f, f, f1, f2, seatBlockLight, holderBlockLight, seatSkyLight, holderSkyLight,
+					thickness, thickness, perpX1, perpY1, perpZ1, perpX2, perpY2, perpZ2, i1, segments, false);
 		}
-		for (int j1 = 24; j1 >= 0; --j1) {
-			addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l,
-					thickness, 0.0F, perpX1, perpY1, perpZ1, perpX2, perpY2, perpZ2, j1, true);
+		for (int j1 = segments; j1 >= 0; --j1) {
+			addStraightVertexPair(vertexconsumer, matrix4f, f, f1, f2, seatBlockLight, holderBlockLight, seatSkyLight, holderSkyLight,
+					thickness, 0.0F, perpX1, perpY1, perpZ1, perpX2, perpY2, perpZ2, j1, segments, true);
 		}
 
 		// Рендерим второй проход (другая сторона перекрестия)
-		for (int i1 = 0; i1 <= 24; ++i1) {
-			addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l,
-					thickness, thickness, perpX2, perpY2, perpZ2, perpX1, perpY1, perpZ1, i1, false);
+		for (int i1 = 0; i1 <= segments; ++i1) {
+			addStraightVertexPair(vertexconsumer, matrix4f, f, f1, f2, seatBlockLight, holderBlockLight, seatSkyLight, holderSkyLight,
+					thickness, thickness, perpX2, perpY2, perpZ2, perpX1, perpY1, perpZ1, i1, segments, false);
 		}
-		for (int j1 = 24; j1 >= 0; --j1) {
-			addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l,
-					thickness, 0.0F, perpX2, perpY2, perpZ2, perpX1, perpY1, perpZ1, j1, true);
+		for (int j1 = segments; j1 >= 0; --j1) {
+			addStraightVertexPair(vertexconsumer, matrix4f, f, f1, f2, seatBlockLight, holderBlockLight, seatSkyLight, holderSkyLight,
+					thickness, 0.0F, perpX2, perpY2, perpZ2, perpX1, perpY1, perpZ1, j1, segments, true);
 		}
 
 		poseStack.popPose();
 	}
 
-	// Модифицированный метод addVertexPair для работы с 3D перпендикулярами
-	private static void addVertexPair(VertexConsumer pConsumer, Matrix4f pMatrix,
-									  float dirX, float dirY, float dirZ,
-									  int pEntityBlockLightLevel, int pLeashHolderBlockLightLevel,
-									  int pEntitySkyLightLevel, int pLeashHolderSkyLightLevel,
-									  float p_174317_, float p_174318_,
-									  float perpAX, float perpAY, float perpAZ,  // Первый перпендикуляр (основное смещение)
-									  float perpBX, float perpBY, float perpBZ,  // Второй перпендикуляр (дополнительное смещение для толщины)
-									  int pIndex, boolean p_174322_) {
+	// Модифицированный метод для прямой линии
+	private static void addStraightVertexPair(VertexConsumer pConsumer, Matrix4f pMatrix,
+											  float dirX, float dirY, float dirZ,
+											  int seatBlockLightLevel, int holderBlockLightLevel,
+											  int seatSkyLightLevel, int holderSkyLightLevel,
+											  float thickness, float offset,
+											  float perpAX, float perpAY, float perpAZ,
+											  float perpBX, float perpBY, float perpBZ,
+											  int pIndex, int segments, boolean reverse) {
 
-		float f = (float)pIndex / 24.0F;
-		int i = (int)Mth.lerp(f, (float)pEntityBlockLightLevel, (float)pLeashHolderBlockLightLevel);
-		int j = (int)Mth.lerp(f, (float)pEntitySkyLightLevel, (float)pLeashHolderSkyLightLevel);
-		int k = net.minecraft.client.renderer.LightTexture.pack(i, j);
+		// Линейная интерполяция вместо параболы
+		float f = (float)pIndex / segments;
 
-		float f1 = pIndex % 2 == (p_174322_ ? 1 : 0) ? 0.7F : 1.0F;
-		float f2 = 0.5F * f1;
-		float f3 = 0.4F * f1;
-		float f4 = 0.3F * f1;
+		// Интерполируем освещение
+		int blockLight = (int)Mth.lerp(f, (float)seatBlockLightLevel, (float)holderBlockLightLevel);
+		int skyLight = (int)Mth.lerp(f, (float)seatSkyLightLevel, (float)holderSkyLightLevel);
+		int packedLight = net.minecraft.client.renderer.LightTexture.pack(blockLight, skyLight);
 
+		// Цвет поводка
+		float colorMultiplier = pIndex % 2 == (reverse ? 1 : 0) ? 0.7F : 1.0F;
+		float r = 0.5F * colorMultiplier;
+		float g = 0.4F * colorMultiplier;
+		float b = 0.3F * colorMultiplier;
+
+		// Прямая линейная интерполяция координат
 		float posX = dirX * f;
-		float posY = dirY > 0.0F ? dirY * f * f : dirY - dirY * (1.0F - f) * (1.0F - f);
+		float posY = dirY * f;  // Прямая линия вместо параболы
 		float posZ = dirZ * f;
 
-		// Первая вершина: смещение по основному перпендикуляру и небольшое смещение по второму для толщины
+		// Первая вершина
 		pConsumer.vertex(pMatrix,
-						posX - perpAX + perpBX * p_174318_,
-						posY - perpAY + perpBY * p_174318_,
-						posZ - perpAZ + perpBZ * p_174318_)
-				.color(f2, f3, f4, 1.0F)
-				.uv2(k)
+						posX - perpAX + perpBX * offset,
+						posY - perpAY + perpBY * offset,
+						posZ - perpAZ + perpBZ * offset)
+				.color(r, g, b, 1.0F)
+				.uv2(packedLight)
 				.endVertex();
 
-		// Вторая вершина: смещение в противоположную сторону по основному перпендикуляру
+		// Вторая вершина
 		pConsumer.vertex(pMatrix,
-						posX + perpAX + (perpBX * (p_174317_ - p_174318_)),
-						posY + perpAY + (perpBY * (p_174317_ - p_174318_)),
-						posZ + perpAZ + (perpBZ * (p_174317_ - p_174318_)))
-				.color(f2, f3, f4, 1.0F)
-				.uv2(k)
+						posX + perpAX + (perpBX * (thickness - offset)),
+						posY + perpAY + (perpBY * (thickness - offset)),
+						posZ + perpAZ + (perpBZ * (thickness - offset)))
+				.color(r, g, b, 1.0F)
+				.uv2(packedLight)
 				.endVertex();
 	}
 
 	@Override
 	public ResourceLocation getTextureLocation(TireSwingEntity entity) {
 		return TEXTURE;
+	}
+
+	@Override
+	public boolean shouldRender(TireSwingEntity entity, Frustum frustum, double cameraX, double cameraY, double cameraZ) {
+		// Всегда рендерить, если есть привязка (чтобы поводок был виден)
+			// Расширяем проверяемую область для поводка
+			AABB expandedBox = entity.getBoundingBox().inflate(10.0);
+			if (frustum.isVisible(expandedBox)) {
+				return true;
+			}
+
+		// Стандартная проверка для качелей
+		return super.shouldRender(entity, frustum, cameraX, cameraY, cameraZ);
 	}
 }

@@ -53,7 +53,7 @@ public class PistonStructureResolverMixin {
 
             blockstate = this.level.getBlockState(blockpos1);
 
-            if (blockstate.getBlock() instanceof DrillTuskBlock && DrillTuskBlock.getConnectedDirection(blockstate) == this.pushDirection && this.level.getBlockState(blockpos1.relative(this.pushDirection)).getBlock().getExplosionResistance() < 20F) {
+            if (blockstate.getBlock() instanceof DrillTuskBlock && DrillTuskBlock.getConnectedDirection(blockstate) == this.pushDirection && this.level.getBlockState(blockpos1.relative(this.pushDirection)).getBlock().getExplosionResistance(this.level.getBlockState(blockpos1.relative(this.pushDirection)), this.level,blockpos1.relative(this.pushDirection),null) < 20F) {
                 map.put(blockpos1.relative(this.pushDirection), this.level.getBlockState(blockpos1.relative(this.pushDirection)));
                 this.level.setBlock(blockpos1.relative(this.pushDirection), Blocks.AIR.defaultBlockState(), 18);
             }
@@ -80,7 +80,7 @@ public class PistonStructureResolverMixin {
         BlockState blockstate = this.level.getBlockState(this.startPos);
         BlockPos blockpos1 = this.startPos.relative(this.pushDirection);
 
-            if (blockstate.getBlock() instanceof DrillTuskBlock && DrillTuskBlock.getConnectedDirection(blockstate) == this.pushDirection && this.level.getBlockState(blockpos1).getBlock().getExplosionResistance() < 20F) {
+            if (blockstate.getBlock() instanceof DrillTuskBlock && DrillTuskBlock.getConnectedDirection(blockstate) == this.pushDirection && this.level.getBlockState(blockpos1).getBlock().getExplosionResistance(this.level.getBlockState(blockpos1), this.level,blockpos1,null) < 20F) {
                 map1.put(blockpos1, this.level.getBlockState(blockpos1));
                 this.level.setBlock(blockpos1, Blocks.AIR.defaultBlockState(), 18);
             }
