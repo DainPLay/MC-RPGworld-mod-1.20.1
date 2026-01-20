@@ -31,6 +31,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.player.Player;
@@ -344,6 +345,7 @@ public class ModEvents {
 		if (event.getProjectile() instanceof AbstractArrow arrow &&
 				event.getRayTraceResult() instanceof EntityHitResult entityHit &&
 				entityHit.getEntity() instanceof LivingEntity target &&
+				!(entityHit.getEntity() instanceof EnderMan) &&
 				!arrow.level().isClientSide) { // Только на сервере
 
 			// Проверяем, есть ли у стрелы привязка к игроку и является ли она нашей

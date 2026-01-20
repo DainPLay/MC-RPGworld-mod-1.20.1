@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -18,6 +19,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.joml.Matrix4f;
 
 public class BoundEntityRenderer {
+
+    // Цвета в формате RGB (0-1)
+    private static final float[] COLOR1 = {0f, 0.380f, 0.243f}; // #00613E
+    private static final float[] COLOR2 = {0.086f, 0.498f, 0.306f}; // #167F4E
 
     @SubscribeEvent
     public static void onRenderWorldLast(RenderLevelStageEvent event) {
@@ -52,14 +57,28 @@ public class BoundEntityRenderer {
 
         Vec3 cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
 
-        // Получаем позиции с интерполяцией как в ванильном коде
+        // Получаем позиции с интерполяцией
         Vec3 holderPos = holder.getRopeHoldPosition(partialTicks);
 
-        // Расчет точки крепления на сущности (аналогично getLeashOffset)
+        // Расчет точки крепления на сущности с использованием getLeashOffset для LivingEntity
         double d0;
-        if(entity instanceof LivingEntity livingEntity) d0 = (double)(Mth.lerp(partialTicks, livingEntity.yBodyRotO, livingEntity.yBodyRot) * ((float)Math.PI / 180F)) + (Math.PI / 2D);
-        else d0 = (double)(Mth.lerp(partialTicks, 0, 0) * ((float)Math.PI / 180F)) + (Math.PI / 2D);
-        Vec3 entityOffset = new Vec3(0.0D, entity.getEyeHeight(), 0.0D); // Простое смещение
+        Vec3 entityOffset;
+
+        if (entity instanceof LivingEntity livingEntity) {
+            // Используем yBodyRot для LivingEntity
+            d0 = (double)(Mth.lerp(partialTicks, livingEntity.yBodyRotO, livingEntity.yBodyRot) * ((float)Math.PI / 180F)) + (Math.PI / 2D);
+            // Используем getLeashOffset как в ванильном рендерере
+            entityOffset = livingEntity.getLeashOffset(partialTicks);
+        } else if (entity instanceof AbstractArrow arrow) {
+            d0 = (double)(Mth.lerp(partialTicks, entity.yRotO, entity.getYRot()) * ((float)Math.PI / 180F)) + (Math.PI / 2D);
+            entityOffset = new Vec3(0.0D, 0.0D, 0.0D);
+        } else {
+            d0 = (double)(Mth.lerp(partialTicks, entity.yRotO, entity.getYRot()) * ((float)Math.PI / 180F)) + (Math.PI / 2D);
+            // Для не-LivingEntity используем смещение как в оригинальном коде
+            entityOffset = new Vec3(0.0D, entity.getEyeHeight(), 0.0D);
+        }
+
+        // Расчет смещения как в ванильном коде
         double d1 = Math.cos(d0) * entityOffset.z + Math.sin(d0) * entityOffset.x;
         double d2 = Math.sin(d0) * entityOffset.z - Math.cos(d0) * entityOffset.x;
         double d3 = Mth.lerp((double)partialTicks, entity.xo, entity.getX()) + d1;
@@ -83,7 +102,7 @@ public class BoundEntityRenderer {
         VertexConsumer vertexconsumer = bufferSource.getBuffer(RenderType.leash());
         Matrix4f matrix4f = poseStack.last().pose();
 
-        // Расчет ширины ленты (как в ванильном коде)
+        // Расчет ширины ленты
         float horizontalDist = Mth.sqrt(f * f + f2 * f2);
         float segmentWidth = 0.025F;
         float perpendicularX = f2 * segmentWidth / horizontalDist / 2.0F;
@@ -128,11 +147,13 @@ public class BoundEntityRenderer {
         int skyLight = (int)Mth.lerp(progress, (float)entitySkyLight, (float)holderSkyLight);
         int packedLight = LightTexture.pack(blockLight, skyLight);
 
-        // Цвет как у ванильного поводка (коричневый)
-        float brightness = segment % 2 == (reverse ? 1 : 0) ? 0.7F : 1.0F;
-        float red = 0.5F * brightness;
-        float green = 0.4F * brightness;
-        float blue = 0.3F * brightness;
+        // Определяем цвет в зависимости от четности сегмента
+        boolean useFirstColor = segment % 2 == (reverse ? 1 : 0);
+        float[] color = useFirstColor ? COLOR1 : COLOR2;
+
+        float red = color[0];
+        float green = color[1];
+        float blue = color[2];
         float alpha = 1.0F;
 
         // Позиция с волной (синусоидальная форма)
