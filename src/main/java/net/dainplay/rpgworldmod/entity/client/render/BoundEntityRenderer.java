@@ -41,8 +41,9 @@ public class BoundEntityRenderer {
 
         for (ClientBoundEntityData.BoundEntityClientData data : ClientBoundEntityData.getBoundEntities().values()) {
             Entity entity = data.getEntity();
+            Entity holder = data.getHolder();
             if (entity != null && entity.isAlive()) {
-                renderLeashLine(poseStack, bufferSource, partialTicks, entity, mc.player);
+                renderLeashLine(poseStack, bufferSource, partialTicks, entity, holder);
             }
         }
 

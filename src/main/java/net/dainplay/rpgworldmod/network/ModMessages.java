@@ -88,6 +88,12 @@ public class ModMessages {
 				.encoder(BoundEntitySyncPacket::toBytes)
 				.consumerMainThread(BoundEntitySyncPacket::handle)
 				.add();
+
+		net.messageBuilder(PullPlayerPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(PullPlayerPacket::new)
+				.encoder(PullPlayerPacket::toBytes)
+				.consumerMainThread(PullPlayerPacket::handle)
+				.add();
 	}
 
 	public static <MSG> void sendToServer(MSG message) {

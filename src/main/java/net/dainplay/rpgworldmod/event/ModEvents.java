@@ -51,6 +51,7 @@ import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
@@ -340,29 +341,34 @@ public class ModEvents {
 	}
 
 	@SubscribeEvent
-	public static void onArrowHit(ProjectileImpactEvent event) {
-		// Проверяем, что это стрела и попала в сущность
-		if (event.getProjectile() instanceof AbstractArrow arrow &&
-				event.getRayTraceResult() instanceof EntityHitResult entityHit &&
-				entityHit.getEntity() instanceof LivingEntity target &&
-				!(entityHit.getEntity() instanceof EnderMan) &&
-				!arrow.level().isClientSide) { // Только на сервере
+	public static void onLivingHurt(LivingHurtEvent event) {
+		// Проверяем, что урон нанесён стрелой
+		if (event.getSource().getDirectEntity() instanceof AbstractArrow arrow &&
+				arrow.getOwner() instanceof Player shooter &&
+				!arrow.level().isClientSide) {
 
-			// Проверяем, есть ли у стрелы привязка к игроку и является ли она нашей
 			CompoundTag arrowTag = arrow.getPersistentData();
-			if (arrowTag.hasUUID("BoundPlayer") &&
-					arrow.getOwner() instanceof Player shooter &&
-					arrowTag.getBoolean("LivingWoodArrow")) {
+			// Проверяем, что это наша особенная стрела
+			if (arrowTag.hasUUID("BoundPlayer") && arrowTag.getBoolean("LivingWoodArrow")) {
+				LivingEntity target = event.getEntity();
 
-				// Рассчитываем силу отталкивания для этой стрелы
+				// Проверяем, что цель не стрелок и не эндермен
+				if (target == shooter) {
+					return;
+				}
+
+				// Проверяем, что урон был действительно нанесён (значение > 0)
+				if (event.getAmount() <= 0) {
+					return;
+				}
+
+				// Остальной код привязки...
 				int knockback = arrow.getKnockback();
 				if (knockback > 0) {
-					// Сохраняем силу отталкивания в теге моба для будущего притягивания
 					CompoundTag mobTag = target.getPersistentData();
 					mobTag.putInt("PunchLevel", knockback);
 				}
 
-				// Привязываем моба к игроку
 				BoundEntityHelper.bindMobToPlayer(target, shooter, arrowTag.getDouble("BoundPullRange"));
 				float pitch = 1.0F / (arrow.level().getRandom().nextFloat() * 0.4F + 1.2F);
 				arrow.level().playSound(null, target.getX(), target.getY(), target.getZ(),
@@ -372,7 +378,6 @@ public class ModEvents {
 						RPGSounds.LIVING_WOOD_BOW_TIE.get(), SoundSource.PLAYERS,
 						0.5F, pitch);
 
-				// Удаляем привязку у стрелы после попадания в моба
 				arrowTag.remove("BoundPlayer");
 				arrowTag.remove("LivingWoodArrow");
 				arrowTag.remove("ShotTime");

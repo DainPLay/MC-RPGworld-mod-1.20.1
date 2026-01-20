@@ -6,6 +6,7 @@ import net.dainplay.rpgworldmod.entity.projectile.ProjectruffleArrowEntity;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.network.BoundEntitySyncPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
+import net.dainplay.rpgworldmod.network.PullPlayerPacket;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.dainplay.rpgworldmod.util.BoundEntityHelper;
 import net.minecraft.client.Minecraft;
@@ -213,40 +214,70 @@ public class LivingWoodBowItem extends BowItem implements RPGtooltip {
 		}
 
 		// Притягиваем мобов
-		for (LivingEntity mob : level.getEntitiesOfClass(LivingEntity.class,
+		for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class,
 				player.getBoundingBox().inflate(50 + EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.STRETCH.get(), bowStack) * 50))) {
 
-			if (mob == player) continue;
-
-			CompoundTag tag = mob.getPersistentData();
+			CompoundTag tag = entity.getPersistentData();
 			if (tag.hasUUID("BoundPlayer") &&
 					tag.getUUID("BoundPlayer").equals(player.getUUID()) &&
 					tag.getBoolean("LivingWoodBound")) {
 
-				if (mob.distanceTo(player) > tag.getDouble("BoundPullRange")) {
+				if (entity.distanceTo(player) > tag.getDouble("BoundPullRange")) {
 					continue;
 				}
 
 				pulledSomething = true;
 
-				double pullForce = calculatePullForce(mob, punchLevel);
+				double pullForce = calculatePullForce(entity, punchLevel);
 				Vec3 playerPos = player.position().add(0, player.getEyeHeight() * 0.8, 0);
-				Vec3 mobPos = mob.position();
-				Vec3 direction = playerPos.subtract(mobPos).normalize();
+				Vec3 entityPos = entity.position();
+				Vec3 direction = playerPos.subtract(entityPos).normalize();
 				Vec3 pullMotion = direction.scale(pullForce);
-				mob.setDeltaMovement(mob.getDeltaMovement().add(pullMotion));
-				mob.fallDistance = 0;
 
-				tag.remove("BoundPlayer");
-				tag.remove("BoundTime");
-				tag.remove("LivingWoodBound");
+				// Если это другой игрок
+				if (entity instanceof ServerPlayer targetPlayer && targetPlayer != player) {
+					// Отправляем пакет целевому игроку
+					ModMessages.sendToPlayer(new PullPlayerPacket(pullMotion, targetPlayer.getId()), targetPlayer);
 
-				ModMessages.sendToNearbyPlayers(
-						new BoundEntitySyncPacket(mob.getId()),
-						mob.level(),
-						mob.blockPosition(),
-						300
-				);
+					// Также обновляем движение на сервере для корректной работы
+					targetPlayer.setDeltaMovement(targetPlayer.getDeltaMovement().add(pullMotion));
+					targetPlayer.fallDistance = 0;
+
+					// Убираем привязку после притягивания
+					tag.remove("BoundPlayer");
+					tag.remove("BoundTime");
+					tag.remove("LivingWoodBound");
+
+					// Синхронизируем с клиентами
+					ModMessages.sendToNearbyPlayers(
+							new BoundEntitySyncPacket(targetPlayer.getId()),
+							targetPlayer.level(),
+							targetPlayer.blockPosition(),
+							300
+					);
+				}
+				// Если это текущий игрок (себя самого)
+				else if (entity == player) {
+					// Просто применяем движение на сервере
+					player.setDeltaMovement(player.getDeltaMovement().add(pullMotion));
+					player.fallDistance = 0;
+				}
+				// Если это моб
+				else {
+					entity.setDeltaMovement(entity.getDeltaMovement().add(pullMotion));
+					entity.fallDistance = 0;
+
+					tag.remove("BoundPlayer");
+					tag.remove("BoundTime");
+					tag.remove("LivingWoodBound");
+
+					ModMessages.sendToNearbyPlayers(
+							new BoundEntitySyncPacket(entity.getId()),
+							entity.level(),
+							entity.blockPosition(),
+							300
+					);
+				}
 			}
 		}
 

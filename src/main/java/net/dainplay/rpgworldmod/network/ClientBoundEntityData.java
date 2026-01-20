@@ -62,6 +62,10 @@ public class ClientBoundEntityData {
             return Minecraft.getInstance().level.getEntity(entityId);
         }
 
+        public Entity getHolder() {
+            return Minecraft.getInstance().level.getPlayerByUUID(boundPlayerId);
+        }
+
         public void updatePlayerPos() {
             if (Minecraft.getInstance().level != null) {
                 Entity playerEntity = Minecraft.getInstance().level.getPlayerByUUID(boundPlayerId);
