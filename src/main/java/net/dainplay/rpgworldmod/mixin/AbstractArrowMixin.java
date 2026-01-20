@@ -1,16 +1,19 @@
 package net.dainplay.rpgworldmod.mixin;
 
+import net.dainplay.rpgworldmod.network.BoundEntitySyncPacket;
+import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Mixin(AbstractArrow.class)
@@ -78,6 +81,37 @@ public abstract class AbstractArrowMixin {
                     tag.putLong("ShotTime", currentTime);
                 }
             }
+
+            if (arrow.tickCount % 5 == 0) {
+                if (tag.hasUUID("BoundPlayer") && tag.getBoolean("LivingWoodArrow")) {
+                    Player player = arrow.level().getPlayerByUUID(tag.getUUID("BoundPlayer"));
+
+                    if (player != null) {
+                        ModMessages.sendToNearbyPlayers(
+                                new BoundEntitySyncPacket(
+                                        arrow.getId(),
+                                        new BoundEntitySyncPacket.BoundEntityData(
+                                                arrow.getId(),
+                                                player.getUUID(),
+                                                player.getX(), player.getY(), player.getZ(),
+                                                false
+                                        )
+                                ),
+                                arrow.level(),
+                                arrow.blockPosition(),
+                                300
+                        );
+                    }
+                }
+                else {
+                    ModMessages.sendToNearbyPlayers(
+                            new BoundEntitySyncPacket(arrow.getId()),
+                            arrow.level(),
+                            arrow.blockPosition(),
+                            300
+                    );
+                }
+            }
         }
     }
 
@@ -107,7 +141,7 @@ public abstract class AbstractArrowMixin {
                     arrowTag.putLong("ShotTime", arrow.level().getGameTime());
                 }
                 if (!arrowTag.contains("BoundPullRange")) {
-                    arrowTag.putDouble("BoundPullRange", 100);
+                    arrowTag.putDouble("BoundPullRange", 50);
                 }
 
                 // Принудительно сбрасываем гравитацию на сервере

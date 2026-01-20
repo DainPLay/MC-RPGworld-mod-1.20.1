@@ -9,6 +9,7 @@ import net.dainplay.rpgworldmod.block.entity.custom.EntFaceBlockEntity;
 import net.dainplay.rpgworldmod.data.tags.DepressionDeathCheck;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.item.ModItems;
+import net.dainplay.rpgworldmod.network.BoundEntitySyncPacket;
 import net.dainplay.rpgworldmod.network.IllusionForceDataSyncS2CPacket;
 import net.dainplay.rpgworldmod.network.IsManaRegenBlockedDataSyncS2CPacket;
 import net.dainplay.rpgworldmod.network.ManaDataSyncS2CPacket;
@@ -58,7 +59,9 @@ import net.minecraftforge.event.village.WandererTradesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = RPGworldMod.MOD_ID)
 public class ModEvents {
@@ -418,6 +421,48 @@ public class ModEvents {
 							RPGSounds.LIVING_WOOD_BOW_BREAK.get(), SoundSource.PLAYERS,
 							0.5F, pitch);
 				}
+			}
+		}
+
+		// Проверяем привязанных мобов каждые 5 тиков (только на сервере)
+		if (!entity.level().isClientSide && entity.tickCount % 5 == 0) {
+			CompoundTag tag = entity.getPersistentData();
+			if (tag.hasUUID("BoundPlayer") && tag.getBoolean("LivingWoodBound")) {
+				Player player = entity.level().getPlayerByUUID(tag.getUUID("BoundPlayer"));
+
+				if (player != null) {
+					// Отправляем пакет с данными о привязанном существе
+					ModMessages.sendToNearbyPlayers(
+							new BoundEntitySyncPacket(
+									entity.getId(),
+									new BoundEntitySyncPacket.BoundEntityData(
+											entity.getId(),
+											player.getUUID(),
+											player.getX(), player.getY(), player.getZ(),
+											false
+									)
+							),
+							entity.level(),
+							entity.blockPosition(),
+							300
+					);
+				} else {
+					// Если игрок не найден, отправляем пакет удаления
+					ModMessages.sendToNearbyPlayers(
+							new BoundEntitySyncPacket(entity.getId()),
+							entity.level(),
+							entity.blockPosition(),
+							300
+					);
+				}
+			} else {
+				// Если существо не привязано, отправляем пакет удаления
+				ModMessages.sendToNearbyPlayers(
+						new BoundEntitySyncPacket(entity.getId()),
+						entity.level(),
+						entity.blockPosition(),
+						300
+				);
 			}
 		}
 	}

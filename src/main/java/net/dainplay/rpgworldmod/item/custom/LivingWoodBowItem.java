@@ -4,6 +4,8 @@ import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.entity.projectile.ProjectruffleArrowEntity;
 import net.dainplay.rpgworldmod.item.ModItems;
+import net.dainplay.rpgworldmod.network.BoundEntitySyncPacket;
+import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.dainplay.rpgworldmod.util.BoundEntityHelper;
 import net.minecraft.client.Minecraft;
@@ -34,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class LivingWoodBowItem extends BowItem implements RPGtooltip {
@@ -88,7 +91,7 @@ public class LivingWoodBowItem extends BowItem implements RPGtooltip {
 							abstractarrow.setSecondsOnFire(100);
 						}
 
-						abstractarrow.getPersistentData().putDouble("BoundPullRange", 100 + EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.STRETCH.get(), pStack) * 50);
+						abstractarrow.getPersistentData().putDouble("BoundPullRange", 50 + EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.STRETCH.get(), pStack) * 50);
 
 						pStack.hurtAndBreak(1, player, (p_289501_) -> {
 							p_289501_.broadcastBreakEvent(player.getUsedItemHand());
@@ -128,7 +131,7 @@ public class LivingWoodBowItem extends BowItem implements RPGtooltip {
 
 		if (player.isShiftKeyDown()) {
 			if (!level.isClientSide) {
-				if (BoundEntityHelper.hasBoundEntities(player,100 + EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.STRETCH.get(), stack) * 50)) {
+				if (BoundEntityHelper.hasBoundEntities(player,50 + EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.STRETCH.get(), stack) * 50)) {
 					pullBoundEntities(player, (ServerLevel) level, stack, hand);
 					level.playSound(null, player.getX(), player.getY(), player.getZ(),
 							RPGSounds.LIVING_WOOD_BOW_PULL.get(), SoundSource.PLAYERS,
@@ -175,7 +178,7 @@ public class LivingWoodBowItem extends BowItem implements RPGtooltip {
 		List<AbstractArrow> arrowsToCollect = new ArrayList<>();
 
 		for (AbstractArrow arrow : level.getEntitiesOfClass(AbstractArrow.class,
-				player.getBoundingBox().inflate(100 + EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.STRETCH.get(), bowStack) * 50))) {
+				player.getBoundingBox().inflate(50 + EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.STRETCH.get(), bowStack) * 50))) {
 
 			CompoundTag tag = arrow.getPersistentData();
 			if (tag.hasUUID("BoundPlayer") &&
@@ -211,7 +214,7 @@ public class LivingWoodBowItem extends BowItem implements RPGtooltip {
 
 		// Притягиваем мобов
 		for (LivingEntity mob : level.getEntitiesOfClass(LivingEntity.class,
-				player.getBoundingBox().inflate(100 + EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.STRETCH.get(), bowStack) * 50))) {
+				player.getBoundingBox().inflate(50 + EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.STRETCH.get(), bowStack) * 50))) {
 
 			if (mob == player) continue;
 
@@ -237,6 +240,13 @@ public class LivingWoodBowItem extends BowItem implements RPGtooltip {
 				tag.remove("BoundPlayer");
 				tag.remove("BoundTime");
 				tag.remove("LivingWoodBound");
+
+				ModMessages.sendToNearbyPlayers(
+						new BoundEntitySyncPacket(mob.getId()),
+						mob.level(),
+						mob.blockPosition(),
+						300
+				);
 			}
 		}
 

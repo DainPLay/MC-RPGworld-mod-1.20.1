@@ -22,6 +22,7 @@ import net.dainplay.rpgworldmod.entity.client.model.SkirtModel;
 import net.dainplay.rpgworldmod.entity.client.model.TireSwingModel;
 import net.dainplay.rpgworldmod.entity.client.render.BhleeRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.BibbitRenderer;
+import net.dainplay.rpgworldmod.entity.client.render.BoundEntityRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.BramblefoxRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.BurrSpikeRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.Burr_purrRenderer;
@@ -47,6 +48,7 @@ import net.minecraft.client.model.ChestBoatModel;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -62,6 +64,7 @@ public class EntityRendererHandler {
         EntityRenderers.register(ModEntities.DRILL_SPEAR_PROJECTILE.get(), ThrownDrillSpearRenderer::new);
         EntityRenderers.register(ModEntities.ENT_ROOTS.get(), EntRootsRenderer::new);
         EntityRenderers.register(ModEntities.ENT_RIE_FRUIT_PROJECTILE.get(), EntRieFruitProjectileRenderer::new);
+        MinecraftForge.EVENT_BUS.register(BoundEntityRenderer.class);
     }
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {

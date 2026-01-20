@@ -82,6 +82,12 @@ public class ModMessages {
 				.encoder(PacketTireSwingInteraction::toBytes)
 				.consumerMainThread(PacketTireSwingInteraction::handle)
 				.add();
+
+		net.messageBuilder(BoundEntitySyncPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(BoundEntitySyncPacket::new)
+				.encoder(BoundEntitySyncPacket::toBytes)
+				.consumerMainThread(BoundEntitySyncPacket::handle)
+				.add();
 	}
 
 	public static <MSG> void sendToServer(MSG message) {

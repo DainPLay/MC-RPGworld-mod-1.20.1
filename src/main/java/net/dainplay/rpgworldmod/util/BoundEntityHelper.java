@@ -1,5 +1,6 @@
 package net.dainplay.rpgworldmod.util;
 
+import net.dainplay.rpgworldmod.network.BoundEntitySyncPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -55,6 +56,20 @@ public class BoundEntityHelper {
         tag.putLong("BoundTime", mob.level().getGameTime());
         tag.putBoolean("LivingWoodBound", true);
         tag.putDouble("BoundPullRange", pullRange);
+        ModMessages.sendToNearbyPlayers(
+                new BoundEntitySyncPacket(
+                        mob.getId(),
+                        new BoundEntitySyncPacket.BoundEntityData(
+                                mob.getId(),
+                                player.getUUID(),
+                                player.getX(), player.getY(), player.getZ(),
+                                false
+                        )
+                ),
+                mob.level(),
+                mob.blockPosition(),
+                300
+        );
     }
 
     // Добавьте вызов синхронизации при создании привязанной стрелы
@@ -63,6 +78,22 @@ public class BoundEntityHelper {
         tag.putUUID("BoundPlayer", player.getUUID());
         tag.putLong("ShotTime", arrow.level().getGameTime());
         tag.putBoolean("LivingWoodArrow", true);
+
+
+        ModMessages.sendToNearbyPlayers(
+                new BoundEntitySyncPacket(
+                        arrow.getId(),
+                        new BoundEntitySyncPacket.BoundEntityData(
+                                arrow.getId(),
+                                player.getUUID(),
+                                player.getX(), player.getY(), player.getZ(),
+                                false
+                        )
+                ),
+                arrow.level(),
+                arrow.blockPosition(),
+                300
+        );
     }
 
     public static int countBoundArrows(Player player, double pullRange) {
