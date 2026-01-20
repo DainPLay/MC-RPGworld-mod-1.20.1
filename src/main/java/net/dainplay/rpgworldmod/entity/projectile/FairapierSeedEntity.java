@@ -40,7 +40,7 @@ public class FairapierSeedEntity extends AbstractArrow {
 
 
     @Override
-    protected ItemStack getPickupItem() {
+    public ItemStack getPickupItem() {
         return this.fairapierSeedItem.copy();
     }
     @Override

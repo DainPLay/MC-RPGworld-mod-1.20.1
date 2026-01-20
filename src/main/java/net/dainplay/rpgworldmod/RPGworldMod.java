@@ -325,6 +325,7 @@ public class RPGworldMod
             event.accept(ModItems.LIVING_WOOD_LEGGINGS);
             event.accept(ModItems.LIVING_WOOD_BOOTS);
             event.accept(ModItems.LAPIS_CHARM);
+            event.accept(ModItems.LIVING_WOOD_BOW);
             event.accept(ModItems.MOSQUITO_BOTTLE);
             event.accept(ModItems.CHITIN_THIMBLE);
             event.accept(ModItems.CHITIN_POWDER);
@@ -427,6 +428,7 @@ public class RPGworldMod
             event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.SOUNDPROOF.get(), ModEnchantments.SOUNDPROOF.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.COLLECTION.get(), ModEnchantments.COLLECTION.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.BLOWING.get(), ModEnchantments.BLOWING.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.STRETCH.get(), ModEnchantments.STRETCH.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
         }
 
         if(event.getTab() == ModCreativeModeTab.RPGWORLD_SPAWN_EGGS_TAB.get()) {

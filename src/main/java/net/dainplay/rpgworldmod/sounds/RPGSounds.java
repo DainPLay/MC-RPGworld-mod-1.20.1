@@ -118,4 +118,7 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> TIRE_BOUNCE;
     public static RegistryObject<SoundEvent> TIRE_SWING_SWOOSH;
     public static RegistryObject<SoundEvent> TIRE_SWING_CRACK;
+    public static RegistryObject<SoundEvent> LIVING_WOOD_BOW_TIE;
+    public static RegistryObject<SoundEvent> LIVING_WOOD_BOW_PULL;
+    public static RegistryObject<SoundEvent> LIVING_WOOD_BOW_BREAK;
 }

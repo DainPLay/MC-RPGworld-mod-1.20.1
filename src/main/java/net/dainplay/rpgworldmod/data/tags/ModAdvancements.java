@@ -39,6 +39,7 @@ public class ModAdvancements {
     public static final KillEntTrigger KILL_ENT_TRIGGER = CriteriaTriggers.register(new KillEntTrigger());
     public static final RideTireSwingTrigger RIDE_TIRE_SWING_TRIGGER = CriteriaTriggers.register(new RideTireSwingTrigger());
     public static final FeedTireToRazorleafTrigger FEED_TIRE_TO_RAZORLEAF = CriteriaTriggers.register(new FeedTireToRazorleafTrigger());
+    public static final ShootProjectruffleTrigger SHOOT_PROJECTRUFFLE = CriteriaTriggers.register(new ShootProjectruffleTrigger());
 
     public static void init() {}
 }

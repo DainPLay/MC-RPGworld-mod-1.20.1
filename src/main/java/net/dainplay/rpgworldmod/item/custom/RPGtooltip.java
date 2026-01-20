@@ -42,7 +42,12 @@ public interface RPGtooltip {
     }
 
     default MutableComponent getDisplayFeatures(ItemStack item) {
-        return Component.translatable(((Item)this).getDescriptionId() + ".features");
+        return Component.translatable(((Item)this).getDescriptionId() + ".features",
+                getFirstPredicate());
+    }
+
+    default String getFirstPredicate() {
+        return "";
     }
 
     /**

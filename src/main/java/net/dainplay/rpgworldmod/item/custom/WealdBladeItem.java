@@ -397,4 +397,9 @@ public class WealdBladeItem extends SwordItem implements RPGtooltip {
     public static ParticleMode getParticleMode() {
         return PARTICLE_MODE;
     }
+
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return !ItemStack.isSameItem(oldStack, newStack);
+    }
 }

@@ -960,5 +960,32 @@
       "rpgworldmod:tire_swing/crack1",
       "rpgworldmod:tire_swing/crack2"
     ]
+  },
+  "rpgworldmod.item.living_wood_bow.tie": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.leash_knot.place"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.item.living_wood_bow.tie"
+  },
+  "rpgworldmod.item.living_wood_bow.pull": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.fishing_bobber.retrieve"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.item.living_wood_bow.pull"
+  },
+  "rpgworldmod.item.living_wood_bow.break": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.leash_knot.break"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.item.living_wood_bow.break"
   }
 }

@@ -193,7 +193,7 @@ public class ThrownDrillSpear extends AbstractArrow {
 		}
 	}
 
-	protected ItemStack getPickupItem() {
+	public ItemStack getPickupItem() {
 		return this.drillSpearItem.copy();
 	}
 

@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "mixins.rpgworldmod.refmap.json",
   "mixins": [
+    "AbstractArrowMixin",
     "AbstractVillagerMixin",
     "BottleItemMixin",
     "DolphinPlayWithItemsGoalMixin",

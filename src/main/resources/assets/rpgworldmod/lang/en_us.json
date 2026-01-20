@@ -53,6 +53,9 @@
   "item.rpgworldmod.lapis_charm": "Lapis Amulet",
   "item.rpgworldmod.lapis_charm.desc": "Knowledge is power",
   "item.rpgworldmod.lapis_charm.features": "Speeds up mana regeneration by spending experience.",
+  "item.rpgworldmod.living_wood_bow": "Living Wood Bow",
+  "item.rpgworldmod.living_wood_bow.desc": "Vine boom",
+  "item.rpgworldmod.living_wood_bow.features": "Binds released arrows and targets they hit to the shooter. Using bow while holding [%s] will pull them towards the shooter.",
 
   "item.rpgworldmod.shiveralis_berries": "Shiveralis Berries",
   "item.rpgworldmod.rie_fruit": "Rie",
@@ -431,6 +434,8 @@
   "advancements.rpgworldmod.feed_tire_to_razorleaf.description": "Feed Tire to Razorleaf",
   "advancements.rpgworldmod.ride_tire_swing.title": "The Meaning of Life",
   "advancements.rpgworldmod.ride_tire_swing.description": "Cure depression by swinging on a tire leashed to the fence above it",
+  "advancements.rpgworldmod.shoot_projectruffle.title": "Eco-Friendly Archery",
+  "advancements.rpgworldmod.shoot_projectruffle.description": "Shoot Projectruffle from Living Wood Bow",
 
   "enchantment.rpgworldmod.pitch": "Pitch",
   "enchantment.rpgworldmod.crescendo": "Crescendo",
@@ -439,14 +444,16 @@
   "enchantment.rpgworldmod.soundproof": "Soundproof",
   "enchantment.rpgworldmod.collection": "Collection",
   "enchantment.rpgworldmod.blowing": "Blowing",
+  "enchantment.rpgworldmod.stretch": "Stretch",
 
-  "enchantment.rpgworldmod.pitch.desc": "Increases the damage and pitch of sonic weapons.",
-  "enchantment.rpgworldmod.crescendo.desc": "Increases the range and volume of sonic weapons.",
-  "enchantment.rpgworldmod.stereo.desc": "Filters the damage dealt by sonic weapons to only harm hostile targets.",
+  "enchantment.rpgworldmod.pitch.desc": "Increases damage and pitch of sonic weapons.",
+  "enchantment.rpgworldmod.crescendo.desc": "Increases range and volume of sonic weapons.",
+  "enchantment.rpgworldmod.stereo.desc": "Filters damage dealt by sonic weapons to only harm hostile targets.",
   "enchantment.rpgworldmod.tempo.desc": "Speeds up reload time for sonic weapons.",
   "enchantment.rpgworldmod.soundproof.desc": "Significantly reduces incoming sonic damage.",
-  "enchantment.rpgworldmod.collection.desc": "Sends mined resources directly to the owner's inventory.",
+  "enchantment.rpgworldmod.collection.desc": "Sends mined resources directly to owner's inventory.",
   "enchantment.rpgworldmod.blowing.desc": "Replaces blocking with generating a strong stream of air that blows away everyone in its path.",
+  "enchantment.rpgworldmod.stretch.desc": "Increases maximum length of vines bound to arrows.",
 
   "trim_material.rpgworldmod.mintal": "Mintal Material",
 
@@ -546,6 +553,10 @@
   "subtitles.rpgworldmod.ent.close_hollow": "Ent hollow shuts",
 
   "subtitles.rpgworldmod.tire.bounce": "Tire vibrates",
+
+  "subtitles.rpgworldmod.item.living_wood_bow.tie": "Vine ties up",
+  "subtitles.rpgworldmod.item.living_wood_bow.pull": "Vine pulls",
+  "subtitles.rpgworldmod.item.living_wood_bow.break": "Vine breaks",
 
   "subtitles.rpgworldmod.platinumfish.death": "Platinumfish dies",
   "subtitles.rpgworldmod.platinumfish.hurt": "Platinumfish hurts",

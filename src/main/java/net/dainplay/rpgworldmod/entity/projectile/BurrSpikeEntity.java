@@ -39,7 +39,7 @@ public class BurrSpikeEntity extends AbstractArrow {
 
 
     @Override
-    protected ItemStack getPickupItem() {
+    public ItemStack getPickupItem() {
         return this.BurrSpikeItem.copy();
     }
     @Override

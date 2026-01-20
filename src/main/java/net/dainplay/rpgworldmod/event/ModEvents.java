@@ -18,16 +18,22 @@ import net.dainplay.rpgworldmod.network.PlayerIllusionForce;
 import net.dainplay.rpgworldmod.network.PlayerIllusionForceProvider;
 import net.dainplay.rpgworldmod.network.PlayerMana;
 import net.dainplay.rpgworldmod.network.PlayerManaProvider;
+import net.dainplay.rpgworldmod.sounds.RPGSounds;
+import net.dainplay.rpgworldmod.util.BoundEntityHelper;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffer;
@@ -35,11 +41,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
@@ -325,4 +334,92 @@ public class ModEvents {
 			}
 		}
 	}
+
+	@SubscribeEvent
+	public static void onArrowHit(ProjectileImpactEvent event) {
+		// Проверяем, что это стрела и попала в сущность
+		if (event.getProjectile() instanceof AbstractArrow arrow &&
+				event.getRayTraceResult() instanceof EntityHitResult entityHit &&
+				entityHit.getEntity() instanceof LivingEntity target &&
+				!arrow.level().isClientSide) { // Только на сервере
+
+			// Проверяем, есть ли у стрелы привязка к игроку и является ли она нашей
+			CompoundTag arrowTag = arrow.getPersistentData();
+			if (arrowTag.hasUUID("BoundPlayer") &&
+					arrow.getOwner() instanceof Player shooter &&
+					arrowTag.getBoolean("LivingWoodArrow")) {
+
+				// Рассчитываем силу отталкивания для этой стрелы
+				int knockback = arrow.getKnockback();
+				if (knockback > 0) {
+					// Сохраняем силу отталкивания в теге моба для будущего притягивания
+					CompoundTag mobTag = target.getPersistentData();
+					mobTag.putInt("PunchLevel", knockback);
+				}
+
+				// Привязываем моба к игроку
+				BoundEntityHelper.bindMobToPlayer(target, shooter, arrowTag.getDouble("BoundPullRange"));
+				float pitch = 1.0F / (arrow.level().getRandom().nextFloat() * 0.4F + 1.2F);
+				arrow.level().playSound(null, target.getX(), target.getY(), target.getZ(),
+						RPGSounds.LIVING_WOOD_BOW_TIE.get(), SoundSource.PLAYERS,
+						0.5F, pitch);
+				arrow.level().playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(),
+						RPGSounds.LIVING_WOOD_BOW_TIE.get(), SoundSource.PLAYERS,
+						0.5F, pitch);
+
+				// Удаляем привязку у стрелы после попадания в моба
+				arrowTag.remove("BoundPlayer");
+				arrowTag.remove("LivingWoodArrow");
+				arrowTag.remove("ShotTime");
+				arrowTag.remove("BoundPullRange");
+				arrow.setNoGravity(false);
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onLivingUpdate(LivingEvent.LivingTickEvent event) {
+		LivingEntity entity = event.getEntity();
+
+		// Проверяем привязанных мобов каждые 20 тиков (только на сервере)
+		if (!entity.level().isClientSide && entity.tickCount % 20 == 0) {
+			CompoundTag tag = entity.getPersistentData();
+			if (tag.hasUUID("BoundPlayer") && tag.getBoolean("LivingWoodBound")) {
+				// Получаем игрока по UUID
+				Player player = entity.level().getPlayerByUUID(tag.getUUID("BoundPlayer"));
+				if (player != null && !player.isRemoved()) {
+					// Проверяем расстояние
+					if (entity.distanceTo(player) > tag.getDouble("BoundPullRange")) {
+						// Удаляем привязку, если слишком далеко
+						tag.remove("BoundPlayer");
+						tag.remove("BoundTime");
+						tag.remove("LivingWoodBound");
+						tag.remove("PunchLevel");
+						tag.remove("BoundPullRange");
+
+						float pitch = 1.0F / (entity.level().getRandom().nextFloat() * 0.4F + 1.2F);
+						entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(),
+								RPGSounds.LIVING_WOOD_BOW_BREAK.get(), SoundSource.PLAYERS,
+								0.5F, pitch);
+						entity.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+								RPGSounds.LIVING_WOOD_BOW_BREAK.get(), SoundSource.PLAYERS,
+								0.5F, pitch);
+					}
+				} else {
+					// Если игрок не найден (вышел из игры), удаляем привязку
+					tag.remove("BoundPlayer");
+					tag.remove("BoundTime");
+					tag.remove("LivingWoodBound");
+					tag.remove("PunchLevel");
+					tag.remove("BoundPullRange");
+
+					float pitch = 1.0F / (entity.level().getRandom().nextFloat() * 0.4F + 1.2F);
+					entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(),
+							RPGSounds.LIVING_WOOD_BOW_BREAK.get(), SoundSource.PLAYERS,
+							0.5F, pitch);
+				}
+			}
+		}
+	}
+
 }

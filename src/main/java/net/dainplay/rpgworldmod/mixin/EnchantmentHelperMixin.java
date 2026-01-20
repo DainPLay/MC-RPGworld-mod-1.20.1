@@ -1,6 +1,7 @@
 package net.dainplay.rpgworldmod.mixin;
 
 import net.dainplay.rpgworldmod.item.custom.LivingWoodArmorItem;
+import net.dainplay.rpgworldmod.item.custom.LivingWoodBowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -28,7 +29,7 @@ public abstract class EnchantmentHelperMixin {
             boolean pAllowTreasure) {
         
         // Проверяем, что предмет - железный меч
-        if (pStack.getItem() instanceof LivingWoodArmorItem) {
+        if (pStack.getItem() instanceof LivingWoodArmorItem || pStack.getItem() instanceof LivingWoodBowItem) {
             Enchantment mending = Enchantments.MENDING;
             
             // Проверяем, совместимо ли Mending с другими зачарованиями в списке

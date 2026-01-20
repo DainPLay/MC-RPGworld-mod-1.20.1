@@ -1,0 +1,31 @@
+{
+  "parent": "rpgworldmod:defeat_ent",
+  "criteria": {
+    "shoot_projectruffle": {
+      "conditions": {},
+      "trigger": "rpgworldmod:shoot_projectruffle"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.shoot_projectruffle.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:rpgirolle_item",
+      "nbt": "{Token:5}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.shoot_projectruffle.title"
+    }
+  },
+  "requirements": [
+    [
+      "shoot_projectruffle"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

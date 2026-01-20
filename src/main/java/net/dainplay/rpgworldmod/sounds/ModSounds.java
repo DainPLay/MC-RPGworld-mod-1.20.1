@@ -160,6 +160,10 @@ public class ModSounds
 
         TIRE_SWING_SWOOSH = registerSound("rpgworldmod.tire_swing.swoosh");
         TIRE_SWING_CRACK = registerSound("rpgworldmod.tire_swing.crack");
+
+        LIVING_WOOD_BOW_TIE = registerSound("rpgworldmod.item.living_wood_bow.tie");
+        LIVING_WOOD_BOW_PULL = registerSound("rpgworldmod.item.living_wood_bow.pull");
+        LIVING_WOOD_BOW_BREAK = registerSound("rpgworldmod.item.living_wood_bow.break");
     }
 
     private static RegistryObject<SoundEvent> registerSound(String name)

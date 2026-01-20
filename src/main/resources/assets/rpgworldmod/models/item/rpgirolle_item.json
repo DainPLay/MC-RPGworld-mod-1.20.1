@@ -27,6 +27,12 @@
         "token": 4.0
       },
       "model": "rpgworldmod:item/mana_star"
+    },
+    {
+      "predicate": {
+        "token": 5.0
+      },
+      "model": "rpgworldmod:item/living_wood_bow_pulling_projectruffle_0"
     }
   ]
 }

@@ -176,4 +176,9 @@ public class MintalTriangleItem extends Item implements Vanishable, RPGtooltip {
             return Component.translatable(this.getDescriptionId() + ".features");
         }
     }
+
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return !ItemStack.isSameItem(oldStack, newStack);
+    }
 }

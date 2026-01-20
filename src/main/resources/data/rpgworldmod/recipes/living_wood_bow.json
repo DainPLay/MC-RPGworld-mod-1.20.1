@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "#": {
+      "tag": "rpgworldmod:living_wood_logs"
+    },
+    "X": {
+      "item": "minecraft:vine"
+    }
+  },
+  "pattern": [
+    " #X",
+    "# X",
+    " #X"
+  ],
+  "result": {
+    "item": "rpgworldmod:living_wood_bow"
+  },
+  "show_notification": true
+}

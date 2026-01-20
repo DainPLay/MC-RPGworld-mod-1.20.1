@@ -14,74 +14,6 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = "rpgworldmod", bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class BowNBTManager {
 
-    /**
-     * Проверяет, должен ли лук иметь тег UsingProjectruffle на основе инвентаря игрока
-     */
-    private static boolean shouldUseProjectruffle(Player living) {
-        boolean result = false;
-        if (living instanceof Player) {
-            if (living.getItemInHand(InteractionHand.MAIN_HAND).getItem() == Items.BOW) {
-                for (int i = 0; i < ((Player) living).getInventory().getContainerSize(); ++i) {
-                    if (ModItems.PROJECTRUFFLE_ITEM.get() == (((Player) living).getInventory().getItem(i)).getItem()) {
-                        result = true;
-                        break;
-                        //return result;
-                    }
-                    if (Items.ARROW == (((Player) living).getInventory().getItem(i)).getItem()) {
-                        result = false;
-                        break;
-                        //return result;
-                    }
-                    if (Items.TIPPED_ARROW == (((Player) living).getInventory().getItem(i)).getItem()) {
-                        result = false;
-                        break;
-                        //return result;
-                    }
-                    if (Items.SPECTRAL_ARROW == (((Player) living).getInventory().getItem(i)).getItem()) {
-                        result = false;
-                        break;
-                        //return result;
-                    }
-                }
-                if (living.getOffhandItem().getItem() == Items.ARROW) result = false;
-                if (living.getOffhandItem().getItem() == Items.TIPPED_ARROW) result = false;
-                if (living.getOffhandItem().getItem() == Items.SPECTRAL_ARROW) result = false;
-                if (living.getOffhandItem().getItem() == ModItems.PROJECTRUFFLE_ITEM.get())
-                    result = true;
-            }
-            if (living.getItemInHand(InteractionHand.OFF_HAND).getItem() == Items.BOW) {
-                for (int i = 0; i < ((Player) living).getInventory().getContainerSize(); ++i) {
-                    if (ModItems.PROJECTRUFFLE_ITEM.get() == (((Player) living).getInventory().getItem(i)).getItem()) {
-                        result = true;
-                        break;
-                        //return result;
-                    }
-                    if (Items.ARROW == (((Player) living).getInventory().getItem(i)).getItem()) {
-                        result = false;
-                        break;
-                        //return result;
-                    }
-                    if (Items.TIPPED_ARROW == (((Player) living).getInventory().getItem(i)).getItem()) {
-                        result = false;
-                        break;
-                        //return result;
-                    }
-                    if (Items.SPECTRAL_ARROW == (((Player) living).getInventory().getItem(i)).getItem()) {
-                        result = false;
-                        break;
-                        //return result;
-                    }
-                }
-                if (living.getItemInHand(InteractionHand.MAIN_HAND).getItem() == Items.ARROW) result = false;
-                if (living.getItemInHand(InteractionHand.MAIN_HAND).getItem() == Items.TIPPED_ARROW) result = false;
-                if (living.getItemInHand(InteractionHand.MAIN_HAND).getItem() == Items.SPECTRAL_ARROW) result = false;
-                if (living.getItemInHand(InteractionHand.MAIN_HAND).getItem() == ModItems.PROJECTRUFFLE_ITEM.get())
-                    result = true;
-            }
-        }
-        return result;
-    }
-
     @SubscribeEvent
     public static void onBowUseStart(LivingEntityUseItemEvent.Start event) {
         if (event.getEntity() instanceof Player player && 
@@ -89,7 +21,7 @@ public class BowNBTManager {
             
             ItemStack bowStack = event.getItem();
             
-            if (shouldUseProjectruffle(player)) {
+            if (player.getProjectile(bowStack).getItem() == ModItems.PROJECTRUFFLE_ITEM.get()) {
                 // Устанавливаем тег
                 CompoundTag tag = bowStack.getOrCreateTag();
                 tag.putBoolean("UsingProjectruffle", true);

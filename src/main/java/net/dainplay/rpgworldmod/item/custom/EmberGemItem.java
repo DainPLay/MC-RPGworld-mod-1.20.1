@@ -483,4 +483,9 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 
 		return false;
 	}
+
+	@Override
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+		return !ItemStack.isSameItem(oldStack, newStack);
+	}
 }

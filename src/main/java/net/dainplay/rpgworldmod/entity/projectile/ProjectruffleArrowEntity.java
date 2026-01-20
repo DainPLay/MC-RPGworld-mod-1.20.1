@@ -34,7 +34,7 @@ public class ProjectruffleArrowEntity extends AbstractArrow {
 
     // the item stack to give the player when they walk over your arrow stuck in the ground
     @Override
-    protected ItemStack getPickupItem() {
+    public ItemStack getPickupItem() {
         return new ItemStack(ModItems.PROJECTRUFFLE_ITEM.get());
     }
 

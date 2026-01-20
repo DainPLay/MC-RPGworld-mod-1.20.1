@@ -53,6 +53,9 @@
   "item.rpgworldmod.lapis_charm": "Лазуритовый амулет",
   "item.rpgworldmod.lapis_charm.desc": "Знание - сила",
   "item.rpgworldmod.lapis_charm.features": "Ускоряет восстановление маны, тратя опыт.",
+  "item.rpgworldmod.living_wood_bow": "Живой древесный лук",
+  "item.rpgworldmod.living_wood_bow.desc": "Берёт за живое",
+  "item.rpgworldmod.living_wood_bow.features": "Привязывает выпускаемые стрелы и поражённые ими цели к стрелку. Использование лука с зажатой клавишей [%s] притянет их к стрелку.",
 
   "item.rpgworldmod.shiveralis_berries": "Ягоды трусянки",
   "item.rpgworldmod.rie_fruit": "Рия",
@@ -431,6 +434,8 @@
   "advancements.rpgworldmod.feed_tire_to_razorleaf.description": "Скормите шину бритволисту",
   "advancements.rpgworldmod.ride_tire_swing.title": "Смысл жизни",
   "advancements.rpgworldmod.ride_tire_swing.description": "Выйдете из депрессии, покачавшись на шине, привязанной поводком к забору над ней",
+  "advancements.rpgworldmod.shoot_projectruffle.title": "Экологически чистая стрельба",
+  "advancements.rpgworldmod.shoot_projectruffle.description": "Выстрелите стрюфелем из живого древесного лука",
 
   "enchantment.rpgworldmod.pitch": "Частота",
   "enchantment.rpgworldmod.crescendo": "Крещендо",
@@ -439,6 +444,7 @@
   "enchantment.rpgworldmod.soundproof": "Звукоизоляция",
   "enchantment.rpgworldmod.collection": "Коллекционирование",
   "enchantment.rpgworldmod.blowing": "Надувательство",
+  "enchantment.rpgworldmod.stretch": "Растяжка",
 
   "enchantment.rpgworldmod.pitch.desc": "Увеличивает урон и высоту тона звукового оружия.",
   "enchantment.rpgworldmod.crescendo.desc": "Увеличивает дальность поражения и громкость звукового оружия.",
@@ -447,6 +453,7 @@
   "enchantment.rpgworldmod.soundproof.desc": "Значительно понижает входящий звуковой урон.",
   "enchantment.rpgworldmod.collection.desc": "Направляет добываемые ресурсы сразу в инвентарь владельца.",
   "enchantment.rpgworldmod.blowing.desc": "Заменяет блокирование генерацией сильного потока воздуха, сдувающего всех на пути.",
+  "enchantment.rpgworldmod.stretch.desc": "Увеличивает максимальную длину привязываемых к стрелам лиан.",
 
   "trim_material.rpgworldmod.mintal": "Минталловая",
 
@@ -546,6 +553,10 @@
   "subtitles.rpgworldmod.ent.close_hollow": "Дупло энта захлопывается",
 
   "subtitles.rpgworldmod.tire.bounce": "Шина вибрирует",
+
+  "subtitles.rpgworldmod.item.living_wood_bow.tie": "Лиана привязывается",
+  "subtitles.rpgworldmod.item.living_wood_bow.pull": "Лиана тянется",
+  "subtitles.rpgworldmod.item.living_wood_bow.break": "Лиана рвётся",
 
   "subtitles.rpgworldmod.platinumfish.death": "Платиновая рыбка погибает",
   "subtitles.rpgworldmod.platinumfish.hurt": "Платиновая рыбка ранена",

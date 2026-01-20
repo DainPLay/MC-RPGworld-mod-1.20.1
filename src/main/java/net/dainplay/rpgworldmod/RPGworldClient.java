@@ -177,16 +177,7 @@ public class RPGworldClient {
                 }
                 CompoundTag tag = stack.getTag();
                 if (tag != null && tag.contains("Token", Tag.TAG_INT)) {
-                    int tokenValue = tag.getInt("Token");
-                    if (tokenValue == 1) {
-                        return 1.0F;
-                    } else if (tokenValue == 2) {
-                        return 2.0F;
-                    } else if (tokenValue == 3) {
-                        return 3.0F;
-                    } else if (tokenValue == 4) {
-                        return 4.0F;
-                    }
+					return (float) tag.getInt("Token");
                 }
                 return 0.0F;
             });
@@ -196,6 +187,23 @@ public class RPGworldClient {
             ItemProperties.register(ModItems.MINTAL_TRIANGLE.get(), new ResourceLocation("vibration"), (itemstack, level, livingEntity, p_174608_) -> livingEntity != null && MintalTriangleItem.getVibes(itemstack)>0 ? (23F-(float)MintalTriangleItem.getVibes(itemstack))/100 : 1.0F);
             ItemProperties.register(Items.CROSSBOW, new ResourceLocation("projectruffle"), (p_174605_, p_174606_, p_174607_, p_174608_) -> p_174607_ != null && CrossbowItem.isCharged(p_174605_) && CrossbowItem.containsChargedProjectile(p_174605_, ModItems.PROJECTRUFFLE_ITEM.get()) ? 1.0F : 0.0F);
             ItemProperties.register(Items.BOW, new ResourceLocation("projectruffle"), (stack, level, living, id) -> {
+                if (stack.hasTag() && stack.getTag().contains("UsingProjectruffle")) {
+                    return stack.getTag().getBoolean("UsingProjectruffle") ? 1.0F : 0.0F;
+                }
+                return 0.0F;
+            });
+
+            ItemProperties.register(ModItems.LIVING_WOOD_BOW.get(), new ResourceLocation("pull"), (p_174635_, p_174636_, p_174637_, p_174638_) -> {
+                if (p_174637_ == null) {
+                    return 0.0F;
+                } else {
+                    return p_174637_.getUseItem() != p_174635_ ? 0.0F : (float)(p_174635_.getUseDuration() - p_174637_.getUseItemRemainingTicks()) / 20.0F;
+                }
+            });
+            ItemProperties.register(ModItems.LIVING_WOOD_BOW.get(), new ResourceLocation("pulling"), (p_174630_, p_174631_, p_174632_, p_174633_) -> {
+                return p_174632_ != null && p_174632_.isUsingItem() && p_174632_.getUseItem() == p_174630_ ? 1.0F : 0.0F;
+            });
+            ItemProperties.register(ModItems.LIVING_WOOD_BOW.get(), new ResourceLocation("projectruffle"), (stack, level, living, id) -> {
                 if (stack.hasTag() && stack.getTag().contains("UsingProjectruffle")) {
                     return stack.getTag().getBoolean("UsingProjectruffle") ? 1.0F : 0.0F;
                 }

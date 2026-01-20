@@ -3,6 +3,7 @@ package net.dainplay.rpgworldmod.enchantment;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.item.custom.DrillSpearItem;
 import net.dainplay.rpgworldmod.item.custom.GuitarAxItem;
+import net.dainplay.rpgworldmod.item.custom.LivingWoodBowItem;
 import net.dainplay.rpgworldmod.item.custom.MintalTriangleItem;
 import net.dainplay.rpgworldmod.item.custom.WealdBladeItem;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -19,6 +20,7 @@ public class ModEnchantments {
     public static final EquipmentSlot[] ARMOR_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
     public static final EnchantmentCategory DRILL_SPEAR = EnchantmentCategory.create("drill_spear", (item) -> {return (item instanceof DrillSpearItem); });
     public static final EnchantmentCategory WEALD_BLADE = EnchantmentCategory.create("weald_blade", (item) -> {return (item instanceof WealdBladeItem); });
+    public static final EnchantmentCategory LIVING_WOOD_BOW = EnchantmentCategory.create("living_wood_bow", (item) -> {return (item instanceof LivingWoodBowItem); });
     public static final EnchantmentCategory TRIANGLE = EnchantmentCategory.create("triangle", (item) -> {return (item instanceof MintalTriangleItem); });
     public static final EnchantmentCategory GUITAR_AX = EnchantmentCategory.create("guitar_ax", (item) -> {return (item instanceof MintalTriangleItem || item instanceof GuitarAxItem); });
     public static RegistryObject<Enchantment> PITCH =
@@ -49,6 +51,10 @@ public class ModEnchantments {
             ENCHANTMENTS.register("blowing",
                     () -> new BlowingEnchantment(Enchantment.Rarity.RARE,
                             WEALD_BLADE, EquipmentSlot.MAINHAND));
+    public static RegistryObject<Enchantment> STRETCH =
+            ENCHANTMENTS.register("stretch",
+                    () -> new StretchEnchantment(Enchantment.Rarity.RARE,
+                            LIVING_WOOD_BOW, EquipmentSlot.MAINHAND));
 
 
     public static void register(IEventBus eventBus) {
