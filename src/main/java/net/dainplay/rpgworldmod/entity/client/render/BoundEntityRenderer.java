@@ -11,6 +11,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
@@ -65,18 +67,18 @@ public class BoundEntityRenderer {
         double d0;
         Vec3 entityOffset;
 
-        if (entity instanceof LivingEntity livingEntity) {
+        if (entity instanceof Mob mob && !(mob instanceof Enemy)) {
             // Используем yBodyRot для LivingEntity
-            d0 = (double)(Mth.lerp(partialTicks, livingEntity.yBodyRotO, livingEntity.yBodyRot) * ((float)Math.PI / 180F)) + (Math.PI / 2D);
+            d0 = (double)(Mth.lerp(partialTicks, mob.yBodyRotO, mob.yBodyRot) * ((float)Math.PI / 180F)) + (Math.PI / 2D);
             // Используем getLeashOffset как в ванильном рендерере
-            entityOffset = livingEntity.getLeashOffset(partialTicks);
-        } else if (entity instanceof AbstractArrow arrow) {
+            entityOffset = mob.getLeashOffset(partialTicks);
+        } else if (entity instanceof AbstractArrow) {
             d0 = (double)(Mth.lerp(partialTicks, entity.yRotO, entity.getYRot()) * ((float)Math.PI / 180F)) + (Math.PI / 2D);
             entityOffset = new Vec3(0.0D, 0.0D, 0.0D);
         } else {
             d0 = (double)(Mth.lerp(partialTicks, entity.yRotO, entity.getYRot()) * ((float)Math.PI / 180F)) + (Math.PI / 2D);
             // Для не-LivingEntity используем смещение как в оригинальном коде
-            entityOffset = new Vec3(0.0D, entity.getEyeHeight(), 0.0D);
+            entityOffset = new Vec3(0.0D, entity.getBbHeight()/2, 0.0D);
         }
 
         // Расчет смещения как в ванильном коде
