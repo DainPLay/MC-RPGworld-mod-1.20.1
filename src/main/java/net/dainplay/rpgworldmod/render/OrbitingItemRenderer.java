@@ -4,6 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.dainplay.rpgworldmod.RPGworldMod;
+import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
+import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
 import net.dainplay.rpgworldmod.item.custom.ManaCostItem;
 import net.dainplay.rpgworldmod.item.custom.OrbitingItem;
 import net.dainplay.rpgworldmod.network.ClientManaData;
@@ -34,6 +36,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.joml.Matrix4f;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class OrbitingItemRenderer {
 
@@ -46,10 +51,10 @@ public class OrbitingItemRenderer {
 		}
 
 		LivingEntity entity = event.getEntity();
-		if ((entity.getMainHandItem().getItem() instanceof OrbitingItem item1 && item1.shouldOrbit(entity.getMainHandItem(),entity)) ||
-				(entity.getOffhandItem().getItem() instanceof OrbitingItem item2 && item2.shouldOrbit(entity.getOffhandItem(),entity))) {
-			renderRotatingItem(event.getPoseStack(), entity, event.getPartialTick(),
-					event.getMultiBufferSource(), entity.getMainHandItem(), entity.getOffhandItem());
+		List<ItemStack> orbitingItems = getOrbitingItems(entity);
+		if (!orbitingItems.isEmpty()) {
+			renderRotatingItems(event.getPoseStack(), entity, event.getPartialTick(),
+					event.getMultiBufferSource(), orbitingItems);
 		}
 	}
 
@@ -67,14 +72,14 @@ public class OrbitingItemRenderer {
 			return;
 		}
 
-		if (!(player.getMainHandItem().getItem() instanceof OrbitingItem item1 && item1.shouldOrbit(player.getMainHandItem(),player)) &&
-				!(player.getOffhandItem().getItem() instanceof OrbitingItem item2 && item2.shouldOrbit(player.getOffhandItem(),player))) {
+		List<ItemStack> orbitingItems = getOrbitingItems(player);
+		if (orbitingItems.isEmpty()) {
 			return;
 		}
 
-		// Рендерим камень от первого лица
-		renderRotatingItemFirstPerson(event.getPoseStack(), player,
-				event.getPartialTick(), Minecraft.getInstance().renderBuffers().bufferSource(), player.getMainHandItem(), player.getOffhandItem());
+		// Рендерим предметы от первого лица
+		renderRotatingItemsFirstPerson(event.getPoseStack(), player,
+				event.getPartialTick(), Minecraft.getInstance().renderBuffers().bufferSource(), orbitingItems);
 	}
 
 	@SubscribeEvent
@@ -121,6 +126,11 @@ public class OrbitingItemRenderer {
 			ms.mulPose(Axis.YP.rotationDegrees(flip * -135.0F));
 			ms.translate(flip * 5.6F, 0.0F, 0.0F);
 
+
+
+			if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUsedItemHand() == event.getHand()) {
+				ms = item1.getUsingPose(event.getItemStack(), player, ms, flip);
+			}
 			// Рендерим руку
 			if (rightHand) {
 				playerrenderer.renderRightHand(ms, buffer, light, player);
@@ -135,7 +145,7 @@ public class OrbitingItemRenderer {
 			int animationSpeed = item.getAnimationSpeed(event.getItemStack(), player);
 			int animationLength = item.getAnimationLength(event.getItemStack(), player);
 			int manacost = 0;
-			if (item instanceof ManaCostItem spell) manacost = spell.getManaCost(event.getItemStack());
+			if (item instanceof ManaCostItem spell) manacost = spell.getManaCost(event.getItemStack(), player);
 
 			// Рендерим текстуру или цветной квадрат позади руки
 			ms.pushPose();
@@ -147,8 +157,10 @@ public class OrbitingItemRenderer {
 			);
 
 			// Смещаем квадрат немного назад
-			ms.translate(rightHand ? 0.15F : -0.15F, 0.0F + item.getYOffset(event.getItemStack(), player), -0.5F);
-
+			ms.translate(flip * item.get1XOffset(event.getItemStack(), player), item.get1YOffset(event.getItemStack(), player), item.get1ZOffset(event.getItemStack(), player));
+			if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUsedItemHand() == event.getHand()) {
+				ms = item1.getEffectUsingPose(event.getItemStack(), player, ms, flip);
+			}
 			VertexConsumer vertexconsumer;
 			float size = 0.5F;
 			Matrix4f matrix4f = ms.last().pose();
@@ -274,11 +286,27 @@ public class OrbitingItemRenderer {
 		}
 	}
 
-	private static void renderRotatingItemFirstPerson(PoseStack poseStack, Player player,
-													  float partialTick,
-													  MultiBufferSource buffer, ItemStack item1, ItemStack item2) {
-		ItemStack itemToRender = item1;
-		if (!(item1.getItem() instanceof OrbitingItem) && item2.getItem() instanceof OrbitingItem) itemToRender = item2;
+	private static List<ItemStack> getOrbitingItems(LivingEntity entity) {
+		List<ItemStack> items = new ArrayList<>();
+
+		ItemStack mainHand = entity.getMainHandItem();
+		if (mainHand.getItem() instanceof OrbitingItem item && item.shouldOrbit(mainHand, entity)) {
+			items.add(mainHand);
+		}
+
+		ItemStack offHand = entity.getOffhandItem();
+		if (offHand.getItem() instanceof OrbitingItem item && item.shouldOrbit(offHand, entity)) {
+			items.add(offHand);
+		}
+
+		return items;
+	}
+
+	private static void renderRotatingItemsFirstPerson(PoseStack poseStack, Player player,
+													   float partialTick,
+													   MultiBufferSource buffer, List<ItemStack> orbitingItems) {
+		if (orbitingItems.isEmpty()) return;
+
 		Minecraft minecraft = Minecraft.getInstance();
 		ItemRenderer itemRenderer = minecraft.getItemRenderer();
 
@@ -294,43 +322,49 @@ public class OrbitingItemRenderer {
 		// Параметры вращения
 		float radius = 0.75F;
 		float rotationSpeed = 0.05F;
-		float angle = (player.tickCount + partialTick) * rotationSpeed;
+		float baseAngle = (player.tickCount + partialTick) * rotationSpeed;
 
-		// Вычисляем позицию на окружности вокруг игрока
-		float orbitX = (float) (playerX + radius * Math.cos(angle));
-		float orbitY = (float) (playerY + player.getBbHeight() * 0.5f);
-		float orbitZ = (float) (playerZ + radius * Math.sin(angle));
+		for (int i = 0; i < orbitingItems.size(); i++) {
+			ItemStack itemToRender = orbitingItems.get(i);
 
-		poseStack.pushPose();
+			// Рассчитываем угол для каждого предмета
+			float angleOffset = (float) (Math.PI * 2 * i / orbitingItems.size());
+			float angle = baseAngle + angleOffset;
 
-		// Перемещаем в мировые координаты относительно камеры
-		poseStack.translate(orbitX - cameraPos.x,
-				orbitY - cameraPos.y,
-				orbitZ - cameraPos.z);
+			// Вычисляем позицию на окружности вокруг игрока
+			float orbitX = (float) (playerX + radius * Math.cos(angle));
+			float orbitY = (float) (playerY + player.getBbHeight() * 0.5f);
+			float orbitZ = (float) (playerZ + radius * Math.sin(angle));
 
-		poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(angle * 50));
-		poseStack.scale(0.5F, 0.5F, 0.5F);
+			poseStack.pushPose();
 
-		int light = player.level().getBrightness(LightLayer.BLOCK,
-				BlockPos.containing(orbitX, orbitY, orbitZ));
+			// Перемещаем в мировые координаты относительно камеры
+			poseStack.translate(orbitX - cameraPos.x,
+					orbitY - cameraPos.y,
+					orbitZ - cameraPos.z);
 
-		itemRenderer.renderStatic(
-				itemToRender,
-				ItemDisplayContext.FIXED,
-				15728880,
-				0,
-				poseStack,
-				buffer,
-				minecraft.level,
-				0
-		);
+			poseStack.mulPose(Axis.YP.rotationDegrees(angle * 50));
+			poseStack.scale(0.5F, 0.5F, 0.5F);
 
-		poseStack.popPose();
+			itemRenderer.renderStatic(
+					itemToRender,
+					ItemDisplayContext.FIXED,
+					15728880,
+					OverlayTexture.NO_OVERLAY,
+					poseStack,
+					buffer,
+					minecraft.level,
+					0
+			);
+
+			poseStack.popPose();
+		}
 	}
 
-	private static void renderRotatingItem(PoseStack poseStack, LivingEntity entity, float partialTick, MultiBufferSource buffer, ItemStack item1, ItemStack item2) {
-		ItemStack itemToRender = item1;
-		if (!(item1.getItem() instanceof OrbitingItem) && item2.getItem() instanceof OrbitingItem) itemToRender = item2;
+	private static void renderRotatingItems(PoseStack poseStack, LivingEntity entity, float partialTick,
+											MultiBufferSource buffer, List<ItemStack> orbitingItems) {
+		if (orbitingItems.isEmpty()) return;
+
 		Minecraft minecraft = Minecraft.getInstance();
 		ItemRenderer itemRenderer = minecraft.getItemRenderer();
 
@@ -342,35 +376,43 @@ public class OrbitingItemRenderer {
 		// Параметры вращения
 		float radius = 0.75F; // Радиус орбиты
 		float rotationSpeed = 0.05F; // Скорость вращения
-		float angle = (entity.tickCount + partialTick) * rotationSpeed; // Угол на основе игрового времени
+		float baseAngle = (entity.tickCount + partialTick) * rotationSpeed; // Базовый угол на основе игрового времени
 
-		// Вычисляем позицию на окружности
-		float orbitX = (float) (x + radius * Math.cos(angle));
-		float orbitY = (float) y;
-		float orbitZ = (float) (z + radius * Math.sin(angle));
+		for (int i = 0; i < orbitingItems.size(); i++) {
+			ItemStack itemToRender = orbitingItems.get(i);
 
-		// Настраиваем матрицу для рендеринга
-		poseStack.pushPose();
-		poseStack.translate(orbitX - x, orbitY - y + entity.getBbHeight() / 2, orbitZ - z); // Перемещаем к точке на орбите
+			// Рассчитываем угол для каждого предмета
+			float angleOffset = (float) (Math.PI * 2 * i / orbitingItems.size());
+			float angle = baseAngle + angleOffset;
 
-		// Вращение предмета вокруг своей оси
-		poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(angle * 50)); // Вращение вокруг своей оси
+			// Вычисляем позицию на окружности
+			float orbitX = (float) (x + radius * Math.cos(angle));
+			float orbitY = (float) y;
+			float orbitZ = (float) (z + radius * Math.sin(angle));
 
-		// Масштаб предмета (при необходимости)
-		poseStack.scale(0.5F, 0.5F, 0.5F);
+			// Настраиваем матрицу для рендеринга
+			poseStack.pushPose();
+			poseStack.translate(orbitX - x, orbitY - y + entity.getBbHeight() / 2, orbitZ - z); // Перемещаем к точке на орбите
 
-		// Рендеринг предмета
-		itemRenderer.renderStatic(
-				itemToRender,
-				ItemDisplayContext.FIXED, // Контекст отображения
-				15728880, // Свет
-				0, // Наложение (overlay)
-				poseStack,
-				buffer,
-				minecraft.level,
-				0
-		);
+			// Вращение предмета вокруг своей оси
+			poseStack.mulPose(Axis.YP.rotationDegrees(angle * 50)); // Вращение вокруг своей оси
 
-		poseStack.popPose();
+			// Масштаб предмета (при необходимости)
+			poseStack.scale(0.5F, 0.5F, 0.5F);
+
+			// Рендеринг предмета
+			itemRenderer.renderStatic(
+					itemToRender,
+					ItemDisplayContext.FIXED, // Контекст отображения
+					15728880, // Свет
+					OverlayTexture.NO_OVERLAY,
+					poseStack,
+					buffer,
+					minecraft.level,
+					0
+			);
+
+			poseStack.popPose();
+		}
 	}
 }

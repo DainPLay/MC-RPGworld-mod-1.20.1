@@ -22,12 +22,12 @@ public class ModEnchantments {
     public static final DeferredRegister<Enchantment> ENCHANTMENTS =
             DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, RPGworldMod.MOD_ID);
     public static final EquipmentSlot[] ARMOR_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
-    public static final EnchantmentCategory DRILL_SPEAR = EnchantmentCategory.create("drill_spear", (item) -> {return (item instanceof DrillSpearItem); });
-    public static final EnchantmentCategory WEALD_BLADE = EnchantmentCategory.create("weald_blade", (item) -> {return (item instanceof WealdBladeItem); });
-    public static final EnchantmentCategory LIVING_WOOD_BOW = EnchantmentCategory.create("living_wood_bow", (item) -> {return (item instanceof LivingWoodBowItem); });
-    public static final EnchantmentCategory TRIANGLE = EnchantmentCategory.create("triangle", (item) -> {return (item instanceof MintalTriangleItem); });
-    public static final EnchantmentCategory GUITAR_AX = EnchantmentCategory.create("guitar_ax", (item) -> {return (item instanceof MintalTriangleItem || item instanceof GuitarAxItem); });
-    public static final EnchantmentCategory MAGIC_SCROLLS = EnchantmentCategory.create("magic_scrolls", (item) -> {return (item instanceof EmptyScrollItem || item instanceof ScrollItem); });
+    public static final EnchantmentCategory DRILL_SPEAR = EnchantmentCategory.create("drill_spear", (item) -> (item instanceof DrillSpearItem));
+    public static final EnchantmentCategory WEALD_BLADE = EnchantmentCategory.create("weald_blade", (item) -> (item instanceof WealdBladeItem));
+    public static final EnchantmentCategory LIVING_WOOD_BOW = EnchantmentCategory.create("living_wood_bow", (item) -> (item instanceof LivingWoodBowItem));
+    public static final EnchantmentCategory TRIANGLE = EnchantmentCategory.create("triangle", (item) -> (item instanceof MintalTriangleItem));
+    public static final EnchantmentCategory GUITAR_AX = EnchantmentCategory.create("guitar_ax", (item) -> (item instanceof MintalTriangleItem || item instanceof GuitarAxItem));
+    public static final EnchantmentCategory MAGIC_SCROLLS = EnchantmentCategory.create("magic_scrolls", (item) -> (item instanceof EmptyScrollItem || item instanceof ScrollItem));
     public static RegistryObject<Enchantment> PITCH =
             ENCHANTMENTS.register("pitch",
                     () -> new PitchEnchantment(Enchantment.Rarity.COMMON,

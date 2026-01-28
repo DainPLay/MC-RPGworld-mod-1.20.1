@@ -111,11 +111,11 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 				if (mainHandItem.getItem() instanceof ManaCostItem) {
 					if(mainHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(mainHandItem, mc.player);
 					else hasManaCostItem = true;
-					if (hasManaCostItem) manaCostToShow = ((ManaCostItem) mainHandItem.getItem()).getManaCost(mainHandItem);
+					if (hasManaCostItem) manaCostToShow = ((ManaCostItem) mainHandItem.getItem()).getManaCost(mainHandItem, mc.player);
 				} else if (offHandItem.getItem() instanceof ManaCostItem) {
 					if(offHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(offHandItem, mc.player);
 					else hasManaCostItem = true;
-					if (hasManaCostItem) manaCostToShow = ((ManaCostItem) offHandItem.getItem()).getManaCost(offHandItem);
+					if (hasManaCostItem) manaCostToShow = ((ManaCostItem) offHandItem.getItem()).getManaCost(offHandItem, mc.player);
 				}
 			}
 
@@ -151,11 +151,11 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		if (mainHandItem.getItem() instanceof ManaCostItem) {
 			if(mainHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(mainHandItem, mc.player);
 			else hasManaCostItem = true;
-			if (hasManaCostItem) manaCostToShow = ((ManaCostItem) mainHandItem.getItem()).getManaCost(mainHandItem);
+			if (hasManaCostItem) manaCostToShow = ((ManaCostItem) mainHandItem.getItem()).getManaCost(mainHandItem, mc.player);
 		} else if (offHandItem.getItem() instanceof ManaCostItem) {
 			if(offHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(offHandItem, mc.player);
 			else hasManaCostItem = true;
-			if (hasManaCostItem) manaCostToShow = ((ManaCostItem) offHandItem.getItem()).getManaCost(offHandItem);
+			if (hasManaCostItem) manaCostToShow = ((ManaCostItem) offHandItem.getItem()).getManaCost(offHandItem, mc.player);
 		}
 		return ClientManaData.get() < ClientMaxManaData.get() ||
 				System.currentTimeMillis() < fullManaDisplayTime ||

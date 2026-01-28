@@ -624,5 +624,6 @@
   "tooltip.rpgworldmod.features": "Особенность:",
   "tooltip.rpgworldmod.cost_text": "Цена: ",
   "tooltip.rpgworldmod.cost_number": "%s⭐",
-  "tooltip.rpgworldmod.cost_per_second": " в секунду"
+  "tooltip.rpgworldmod.cost_per_second": " в секунду",
+  "tooltip.rpgworldmod.plus_cost_per_second": " + %s⭐ в секунду"
 }

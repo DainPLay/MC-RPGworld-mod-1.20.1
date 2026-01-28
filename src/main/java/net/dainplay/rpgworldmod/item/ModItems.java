@@ -96,7 +96,7 @@ public class ModItems {
     public static final RegistryObject<Item> CHITIN_POWDER = ITEMS.register("chitin_powder",
             () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> EMBER_GEM = ITEMS.register("ember_gem",
-            () -> new EmberGemItem(new Item.Properties().fireResistant().rarity(Rarity.UNCOMMON).stacksTo(1), 5, -65536, "textures/entity/spells/spark", 2, 6));
+            () -> new EmberGemItem(new Item.Properties().fireResistant().rarity(Rarity.UNCOMMON).stacksTo(1), 1, -65536, "textures/entity/spells/spark", 2, 6));
     public static final RegistryObject<Item> FIREPROOF_PETALS = ITEMS.register("fireproof_petals",
             () -> new Item(new Item.Properties().fireResistant()));
     public static final RegistryObject<Item> MOSQUITO_BOTTLE = ITEMS.register("mosquito_bottle",
@@ -146,8 +146,6 @@ public class ModItems {
             () -> new ModBoatItem(true, ModBoat.Type.RIE, (new Item.Properties()).stacksTo(1)));
     public static final RegistryObject<Item> BRAMBLEFOX_SPAWN_EGG = ITEMS.register("bramblefox_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.BRAMBLEFOX, 0x18693F, 0xE27C21, new Item.Properties()));
-    public static final RegistryObject<Item> BIBBIT_SPAWN_EGG = ITEMS.register("bibbit_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.BIBBIT, 0x0D3821, 0xFFFF00, new Item.Properties()));
     public static final RegistryObject<Item> MINTOBAT_SPAWN_EGG = ITEMS.register("mintobat_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.MINTOBAT, 0x14B485, 0x263C47, new Item.Properties()));
     public static final RegistryObject<Item> FIREFLANTERN_SPAWN_EGG = ITEMS.register("fireflantern_spawn_egg",
@@ -162,6 +160,8 @@ public class ModItems {
             () -> new ForgeSpawnEggItem(ModEntities.RAZORLEAF, 0xD2443F, 0x587E3C, new Item.Properties()));
     public static final RegistryObject<Item> ENT_SPAWN_EGG = ITEMS.register("ent_spawn_egg",
             () -> new EntSpawnEggItem(0x37352A, 0x319966, new Item.Properties()));
+    public static final RegistryObject<Item> BIBBIT_SPAWN_EGG = ITEMS.register("bibbit_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.BIBBIT, 0x0D3821, 0xFFFF00, new Item.Properties()));
     public static final RegistryObject<CurioItem> LAPIS_CHARM = ITEMS.register("lapis_charm",
             () -> new CurioItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<CurioItem> BRAMBLEFOX_SCARF = ITEMS.register("bramblefox_scarf", () -> new CurioItem(new Item.Properties().rarity(Rarity.UNCOMMON)));

@@ -22,7 +22,7 @@ public interface RPGtooltip {
             return;
         if(pStack.getItem() instanceof ManaCostItem item) {
             MutableComponent costText = Component.translatable("tooltip.rpgworldmod.cost_text").withStyle(ChatFormatting.WHITE);
-            costText.append(Component.translatable("tooltip.rpgworldmod.cost_number", item.getDisplayManaCost(pStack)).withStyle(ChatFormatting.BLUE));
+            costText.append(Component.translatable("tooltip.rpgworldmod.cost_number", item.getDisplayManaCost(pStack, Minecraft.getInstance().player)).withStyle(ChatFormatting.BLUE));
             costText.append(item.getManaCostAdditionalLine(pStack));
             pTooltip.add(costText);
         }

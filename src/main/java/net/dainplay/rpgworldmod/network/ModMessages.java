@@ -100,6 +100,18 @@ public class ModMessages {
 				.encoder(UpdateItemTagMessage::encode)
 				.consumerMainThread(UpdateItemTagMessage::handle)
 				.add();
+
+		net.messageBuilder(MoveParticlesPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(MoveParticlesPacket::new)
+				.encoder(MoveParticlesPacket::toBytes)
+				.consumerMainThread(MoveParticlesPacket::handle)
+				.add();
+
+		net.messageBuilder(EmberScrollLoopSoundPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(EmberScrollLoopSoundPacket::decode)
+				.encoder(EmberScrollLoopSoundPacket::encode)
+				.consumerMainThread(EmberScrollLoopSoundPacket::handle)
+				.add();
 	}
 
 	public static <MSG> void sendToServer(MSG message) {

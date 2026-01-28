@@ -53,6 +53,9 @@ public class ModEntities {
                             .clientTrackingRange(6)
                             .updateInterval(2)
                             .build("ent_roots"));
+    public static final RegistryObject<EntityType<BurrSpikeEntity>> FLAMES_PROJECTILE = ENTITY_TYPES.register("flames_projectile",
+            () -> EntityType.Builder.of((EntityType.EntityFactory<BurrSpikeEntity>) BurrSpikeEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F).build("flames_projectile"));
 
     public static final RegistryObject<EntityType<ModBoat>> MODBOAT = ENTITY_TYPES.register("modboat",
             () -> EntityType.Builder.of((EntityType.EntityFactory<ModBoat>) ModBoat::new, MobCategory.MISC).sized(1.375F, 0.5625F).clientTrackingRange(10).build("modboat"));

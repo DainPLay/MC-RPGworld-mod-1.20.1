@@ -282,7 +282,7 @@ public class FireCatcherManager extends SavedData {
                 new FireExtinguishParticlesPacket(fireCatcherPos, firePos),
                 level,
                 firePos,
-                64.0
+                128.0
         );
     }
 

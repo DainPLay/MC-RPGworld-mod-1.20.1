@@ -33,10 +33,6 @@ public class MagicScrollEnchantment extends Enchantment {
         return false;
     }
 
-    public boolean isDiscoverable() {
-        return false;
-    }
-
     @Override
     public @NotNull Component getFullname(int pLevel) {
         MutableComponent mutablecomponent = Component.translatable(this.getDescriptionId());

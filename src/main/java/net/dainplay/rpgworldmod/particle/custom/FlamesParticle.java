@@ -12,6 +12,7 @@ public class FlamesParticle extends RisingParticle {
     FlamesParticle(ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, SpriteSet spriteSet) {
         super(level, x, y, z, xSpeed, ySpeed, zSpeed);
         this.sprites = spriteSet;
+        this.lifetime = 14;
         // Устанавливаем начальный спрайт
         this.setSpriteFromAge(spriteSet);
     }

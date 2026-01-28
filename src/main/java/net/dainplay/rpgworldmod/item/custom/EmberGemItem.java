@@ -91,7 +91,7 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 	}
 
 	@Override
-	public int getManaCost(ItemStack item) {
+	public int getManaCost(ItemStack item, Player player) {
 		return manacost;
 	}
 

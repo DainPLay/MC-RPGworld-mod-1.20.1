@@ -1,18 +1,20 @@
 package net.dainplay.rpgworldmod.item.custom;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.network.ClientManaData;
+import net.dainplay.rpgworldmod.network.EmberScrollLoopSoundPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.PlayerManaProvider;
 import net.dainplay.rpgworldmod.network.UpdateItemTagMessage;
 import net.dainplay.rpgworldmod.particle.ModParticles;
-import net.dainplay.rpgworldmod.sounds.EmberScrollSound;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -26,6 +28,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.SmallFireball;
@@ -44,6 +47,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
@@ -55,17 +59,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
-public class EmberScrollItem extends ScrollItem {
+public class EmberScrollItem extends ScrollItem implements IClientItemExtensions {
 
 	// Хранилище активных снарядов
 	private static final Map<UUID, EmberProjectileData> activeProjectiles = new HashMap<>();
 
 	// Хранилище для отслеживания использования игроком
 	private static final Map<UUID, PlayerUseData> playerUseData = new HashMap<>();
-
-	// Хранилище для клиентских звуков
-	private static final Map<UUID, SoundState> clientSoundStates = new HashMap<>();
 
 	public EmberScrollItem(Properties pProperties) {
 		super(pProperties);
@@ -81,11 +83,32 @@ public class EmberScrollItem extends ScrollItem {
 	}
 
 	@Override
-	public float getYOffset(ItemStack stack, Entity entity) {
+	public float get1YOffset(ItemStack stack, Entity entity) {
 		if (entity instanceof Player player && player.isUsingItem() && player.getUseItem() == stack) {
 			return 0.25F;
 		}
 		return 0F;
+	}
+
+	@Override
+	public PoseStack getUsingPose(ItemStack stack, Player player, PoseStack poseStack, float flip) {
+		if(stack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0) {
+			poseStack.mulPose(Axis.ZP.rotationDegrees(flip * -10.0F));
+			poseStack.mulPose(Axis.YP.rotationDegrees((-(float)Math.PI / 6F)));
+			poseStack.translate(0F, 0.25F, 0F);
+			float shakeRotY = (float) (Math.cos(player.getTicksUsingItem() * 1.5) * 0.3F);
+			poseStack.mulPose(Axis.YP.rotationDegrees(shakeRotY));
+		}
+		return poseStack;
+	}
+
+	@Override
+	public PoseStack getEffectUsingPose(ItemStack stack, Player player, PoseStack poseStack, float flip) {
+		if(stack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0) {
+			poseStack.translate(flip*0.05F, 0.05F, -0.31F);
+
+		}
+		return poseStack;
 	}
 
 	@Override
@@ -104,21 +127,58 @@ public class EmberScrollItem extends ScrollItem {
 		return 6;
 	}
 
+	/*@Override
+	public @NotNull UseAnim getUseAnimation(ItemStack item) {
+		return item.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0 ? UseAnim.CUSTOM : UseAnim.NONE;
+	}*/
+
+	@Override
+	public void initializeClient(Consumer<IClientItemExtensions> consumer)
+	{
+		consumer.accept(new IClientItemExtensions() {
+
+			private static final HumanoidModel.ArmPose DESTRUCTION_POSE = HumanoidModel.ArmPose.create("DESTRUCTION", false, (model, entity, arm) -> {
+				if (arm == HumanoidArm.RIGHT) {
+					model.rightArm.xRot = (-(float)Math.PI / 2F) + model.head.xRot;
+					model.rightArm.yRot = -0.1F + model.head.yRot;
+				} else {
+					model.leftArm.xRot = (-(float)Math.PI / 2F) + model.head.xRot;
+					model.leftArm.yRot = 0.1F + model.head.yRot;
+				}
+			});
+
+			@Override
+			public HumanoidModel.ArmPose getArmPose(LivingEntity entityLiving, InteractionHand hand, ItemStack itemStack) {
+				if (!itemStack.isEmpty() && itemStack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0) {
+					if (entityLiving.isUsingItem() && entityLiving.getUseItemRemainingTicks() > 0 && entityLiving.getUsedItemHand() == hand) {
+						return DESTRUCTION_POSE;
+					}
+				}
+				return HumanoidModel.ArmPose.EMPTY;
+			}
+		});
+	}
+
 	@Override
 	public int getColor(ItemStack stack, Entity entity) {
 		return -65536;
 	}
 
 	@Override
-	public int getDisplayManaCost(ItemStack item) {
+	public int getDisplayManaCost(ItemStack item, Player player) {
 		return 5;
 	}
 
 	@Override
-	public int getManaCost(ItemStack item) {
+	public int getManaCost(ItemStack item, Player player) {
 		// Возвращаем 1, если предмет зачарован на DESTRUCTION, иначе 5
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), item) > 0) {
 			return 1;
+		}
+		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), item) > 0) {
+			if(player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getItemInHand(player.getUsedItemHand()) == item)
+				return 1;
+			else return 5;
 		}
 		return 5;
 	}
@@ -126,6 +186,9 @@ public class EmberScrollItem extends ScrollItem {
 	public Component getManaCostAdditionalLine(ItemStack item) {
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), item) > 0) {
 			return Component.translatable("tooltip.rpgworldmod.cost_per_second").withStyle(ChatFormatting.BLUE);
+		}
+		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), item) > 0) {
+			return Component.translatable("tooltip.rpgworldmod.plus_cost_per_second", 5).withStyle(ChatFormatting.BLUE);
 		}
 		return Component.literal("");
 	}
@@ -147,58 +210,72 @@ public class EmberScrollItem extends ScrollItem {
 		return compoundtag != null ? compoundtag.getInt("UseTime") : 0;
 	}
 
-	public static float getLerpedUseTime(ItemStack stack, float f) {
-		CompoundTag compoundtag = stack.getTag();
-		float prev = compoundtag != null ? (float) compoundtag.getInt("PrevUseTime") : 0F;
-		float current = compoundtag != null ? (float) compoundtag.getInt("UseTime") : 0F;
-		return prev + f * (current - prev);
-	}
-
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack itemstack = player.getItemInHand(hand);
 
 		// Проверка наличия нужного зачарования
-		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), itemstack) <= 0) {
+		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), itemstack) <= 0
+				&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), itemstack) <= 0) {
 			return InteractionResultHolder.fail(itemstack);
 		}
 
 		if (!level.isClientSide) {
-			// Начинаем отслеживание использования
-			UUID playerId = player.getUUID();
-			if (!playerUseData.containsKey(playerId)) {
-				playerUseData.put(playerId, new PlayerUseData(playerId, level.getGameTime()));
-			}
 
-			// Первая трата маны сразу
+			// На сервере
+			UUID playerId = player.getUUID();
+
 			AtomicBoolean cir = new AtomicBoolean(false);
 
 			if (!player.getAbilities().instabuild) {
 				player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-					if (mana.getMana() < getManaCost(itemstack)) {
+					if (mana.getMana() < getManaCost(itemstack, player)) {
 						cir.set(true);
 						return;
 					}
-					mana.reduceMana((ServerPlayer) player, getManaCost(itemstack));
+					mana.reduceMana((ServerPlayer) player, getManaCost(itemstack, player));
 				});
 			}
 
 			if (cir.get()) {
 				playerUseData.remove(playerId);
+				// Отправляем пакет для остановки звуков на клиентах
+				ModMessages.sendToNearbyPlayers(
+						new EmberScrollLoopSoundPacket(player.getId(), false),
+						(ServerLevel) level,
+						player.blockPosition(),
+						64.0
+				);
 				return InteractionResultHolder.fail(itemstack);
 			}
+			if (!playerUseData.containsKey(playerId)) {
+				playerUseData.put(playerId, new PlayerUseData(playerId, level.getGameTime()));
+			}
 
-			// Начинаем использование без кулдауна
+			if(EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), itemstack) > 0) {
+
+					// Воспроизводим звук начала для всех игроков
+					level.playSound(null,
+							player.getX(), player.getY(), player.getZ(),
+							RPGSounds.SPELL_DESTRUCTION_EMBER_START.get(),
+							SoundSource.PLAYERS, 1.0F, 1.0F
+					);
+
+					// Отправляем пакет для запуска зацикленного звука на клиентах
+					ModMessages.sendToNearbyPlayers(
+							new EmberScrollLoopSoundPacket(player.getId(), true),
+							(ServerLevel) level,
+							player.blockPosition(),
+							64.0
+					);
+			}
+
 			player.startUsingItem(hand);
 		} else {
 			// Клиентская проверка маны
-			if (!player.getAbilities().instabuild && ClientManaData.get() < getManaCost(itemstack))
+			if (!player.getAbilities().instabuild && ClientManaData.get() < getManaCost(itemstack,player))
 				return InteractionResultHolder.fail(itemstack);
 
-			// Проигрываем звук начала на клиенте
-			playStartSound(player, itemstack);
-
-			// Начинаем использование на клиенте
 			player.startUsingItem(hand);
 		}
 
@@ -210,14 +287,27 @@ public class EmberScrollItem extends ScrollItem {
 		if (livingEntity instanceof Player player) {
 			UUID playerId = player.getUUID();
 
-			// Останавливаем использование на сервере
 			if (!level.isClientSide) {
-				playerUseData.remove(playerId);
-			} else {
-				// Проигрываем звук конца на клиенте
-				playEndSound(player);
+					// На сервере
+					playerUseData.remove(playerId);
 
-				// Отправляем пакет на сервер для синхронизации тегов
+				if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), stack) > 0) {
+					// Воспроизводим звук окончания для всех игроков
+					level.playSound(null,
+							player.getX(), player.getY(), player.getZ(),
+							RPGSounds.SPELL_DESTRUCTION_EMBER_STOP.get(),
+							SoundSource.PLAYERS, 1.0F, 1.0F
+					);
+
+					// Отправляем пакет для остановки зацикленного звука
+					ModMessages.sendToNearbyPlayers(
+							new EmberScrollLoopSoundPacket(player.getId(), false),
+							(ServerLevel) level,
+							player.blockPosition(),
+							64.0
+					);
+				}
+			} else {
 				ModMessages.sendToServer(new UpdateItemTagMessage(player.getId(), stack));
 			}
 		}
@@ -252,77 +342,6 @@ public class EmberScrollItem extends ScrollItem {
 		}
 	}
 
-	@Override
-	public void onUseTick(Level level, LivingEntity living, ItemStack stack, int timeUsing) {
-		int i = getUseDuration(stack) - timeUsing;
-
-		if (!level.isClientSide) {
-			// Серверная логика остается прежней
-		} else {
-			// Клиентская логика
-			setUseTime(stack, Math.min(5, i / 4)); // Упрощенная логика прогресса
-
-			// Проверяем, пора ли запустить зацикленный звук
-			if (living instanceof Player player) {
-				UUID playerId = player.getUUID();
-				SoundState soundState = clientSoundStates.get(playerId);
-
-				if (soundState != null && soundState.startSoundCooldown > 0) {
-					soundState.startSoundCooldown--;
-					if (soundState.startSoundCooldown <= 0 && soundState.loopSound == null) {
-						// Запускаем зацикленный звук
-						soundState.loopSound = new EmberScrollSound(player, stack);
-						Minecraft.getInstance().getSoundManager().play(soundState.loopSound);
-					}
-				}
-			}
-		}
-	}
-
-	// Клиентские методы для управления звуками
-	private void playStartSound(Player player, ItemStack stack) {
-		UUID playerId = player.getUUID();
-
-		// Останавливаем предыдущие звуки
-		stopAllSounds(playerId);
-
-		// Проигрываем звук начала
-		player.level().playSound(player, player.getX(), player.getY(), player.getZ(),
-				RPGSounds.SPELL_DESTRUCTION_EMBER_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
-
-		// Создаем состояние звука с задержкой перед запуском зацикленного звука
-		SoundState soundState = new SoundState();
-		soundState.startSoundCooldown = 10; // 0.5 секунды задержки (20 тиков = 1 секунда)
-		clientSoundStates.put(playerId, soundState);
-	}
-
-	private void playEndSound(Player player) {
-		UUID playerId = player.getUUID();
-
-		// Проигрываем звук конца
-		player.level().playSound(player, player.getX(), player.getY(), player.getZ(),
-				RPGSounds.SPELL_DESTRUCTION_EMBER_STOP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
-
-		// Останавливаем все звуки
-		stopAllSounds(playerId);
-	}
-
-	private void stopAllSounds(UUID playerId) {
-		SoundState soundState = clientSoundStates.get(playerId);
-		if (soundState != null) {
-			if (soundState.loopSound != null) {
-				soundState.loopSound.stop();
-			}
-			clientSoundStates.remove(playerId);
-		}
-	}
-
-	// Класс для хранения состояния звуков на клиенте
-	private static class SoundState {
-		int startSoundCooldown = 0;
-		EmberScrollSound loopSound = null;
-	}
-
 	// Класс для отслеживания использования игроком
 	private static class PlayerUseData {
 		private final UUID playerId;
@@ -346,14 +365,6 @@ public class EmberScrollItem extends ScrollItem {
 		public boolean shouldConsumeMana() {
 			if (useTicks - lastManaTick >= 4) {
 				lastManaTick = useTicks;
-				return true;
-			}
-			return false;
-		}
-
-		public boolean shouldSpawnProjectile() {
-			if (useTicks - lastProjectileTick >= 3) {
-				lastProjectileTick = useTicks;
 				return true;
 			}
 			return false;
@@ -406,7 +417,7 @@ public class EmberScrollItem extends ScrollItem {
 			}
 
 			// Проверяем наличие зачарования
-			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), usingItem) <= 0) {
+			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), usingItem) <= 0 && EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), usingItem) <= 0) {
 				playerUseData.remove(playerId);
 				player.stopUsingItem();
 				continue;
@@ -419,49 +430,56 @@ public class EmberScrollItem extends ScrollItem {
 				if (!player.getAbilities().instabuild) {
 					AtomicBoolean hasEnoughMana = new AtomicBoolean(true);
 					player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-						if (mana.getMana() < getManaCost(usingItem)) {
+						if (mana.getMana() < getManaCost(usingItem, player)) {
 							hasEnoughMana.set(false);
 						} else {
-							mana.reduceMana((ServerPlayer) player, getManaCost(usingItem));
+							mana.reduceMana((ServerPlayer) player, getManaCost(usingItem, player));
 						}
 					});
 
 					if (!hasEnoughMana.get()) {
 						playerUseData.remove(playerId);
 						player.stopUsingItem();
+
+						// Отправляем пакет остановки звука
+						ModMessages.sendToNearbyPlayers(
+								new EmberScrollLoopSoundPacket(player.getId(), false),
+								level,
+								player.blockPosition(),
+								64.0
+						);
 						continue;
 					}
 				}
 			}
-
-			// Спавн снаряда каждые 3 тика
-			if (useData.shouldSpawnProjectile()) {
-				spawnProjectile(level, player);
-			}
+			spawnProjectile(level, player);
 		}
 	}
 
 	private void spawnProjectile(ServerLevel level, Player player) {
 		// Создаем снаряд
 		Vec3 lookAngle = player.getLookAngle();
-		Vec3 startPos = player.getEyePosition().add(lookAngle.scale(1));
+		Vec3 startPos = player.getEyePosition().add(lookAngle.scale(0.5));
 
 		EmberProjectileData projectile = new EmberProjectileData(
 				player.getUUID(),
 				startPos,
-				lookAngle.scale(2.0),
+				lookAngle.scale(0.7),
 				level.getGameTime()
 		);
 
 		activeProjectiles.put(UUID.randomUUID(), projectile);
 
+		/*ModMessages.sendToNearbyPlayers(
+				new MoveParticlesPacket(startPos.add(lookAngle.scale(0.5)), lookAngle.scale(2.0), ModParticles.FLAMES.get(), true, 2D),
+				level,
+				player.getOnPos(),
+				64.0
+		);
+
 		level.sendParticles(ModParticles.FLAMES.get(),
 				projectile.position.x, projectile.position.y, projectile.position.z,
-				1, 0.1, 0.1, 0.1, 0.01);
-
-		level.sendParticles(ParticleTypes.SMOKE,
-				projectile.position.x, projectile.position.y, projectile.position.z,
-				1, 0.05, 0.05, 0.05, 0.005);
+				1, 0.1, 0.1, 0.1, 0.01);*/
 	}
 
 	private void processProjectiles(ServerLevel level) {
@@ -474,7 +492,7 @@ public class EmberScrollItem extends ScrollItem {
 			UUID projectileId = entry.getKey();
 			EmberProjectileData projectile = entry.getValue();
 
-			if (level.getGameTime() - projectile.spawnTime >= 3) {
+			if (level.getGameTime() - projectile.spawnTime >= 10) {
 				activeProjectiles.remove(projectileId);
 
 				level.sendParticles(ParticleTypes.SMOKE,
@@ -511,7 +529,10 @@ public class EmberScrollItem extends ScrollItem {
 			}
 
 			// Спавним частицы
-			level.sendParticles(ModParticles.FLAMES.get(),
+			if(level.getGameTime() - projectile.spawnTime <= 1) level.sendParticles(ParticleTypes.FLAME,
+					projectile.position.x, projectile.position.y, projectile.position.z,
+					1, 0.1, 0.1, 0.1, 0.01);
+			else  level.sendParticles(ModParticles.FLAMES.get(),
 					projectile.position.x, projectile.position.y, projectile.position.z,
 					1, 0.1, 0.1, 0.1, 0.01);
 
@@ -676,7 +697,7 @@ public class EmberScrollItem extends ScrollItem {
 
 		// Проверка столкновения с существами
 		List<Entity> entities = level.getEntities(null,
-				new net.minecraft.world.phys.AABB(startPos, endPos).inflate(0.3));
+				new net.minecraft.world.phys.AABB(startPos, endPos).inflate(0.5));
 
 		for (Entity entity : entities) {
 			if (level instanceof ServerLevel serverLevel) {
@@ -698,7 +719,7 @@ public class EmberScrollItem extends ScrollItem {
 					// Поджигаем существо на 5 секунд (100 тиков)
 					livingEntity.setSecondsOnFire(5);
 					if (owner != null)
-						entity.hurt(owner.damageSources().fireball(fakeFireball, owner), 1F);
+						entity.hurt(owner.damageSources().fireball(fakeFireball, owner), 2F);
 					return false;
 				}
 			}

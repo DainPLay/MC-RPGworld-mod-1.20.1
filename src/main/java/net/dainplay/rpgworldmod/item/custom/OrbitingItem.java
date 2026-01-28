@@ -1,6 +1,8 @@
 package net.dainplay.rpgworldmod.item.custom;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public interface OrbitingItem {
@@ -21,8 +23,16 @@ public interface OrbitingItem {
 		return 1;
 	}
 
-	default float getYOffset(ItemStack stack, Entity entity) {
+	default float get1XOffset(ItemStack stack, Entity entity) {
+		return 0.15F;
+	}
+
+	default float get1YOffset(ItemStack stack, Entity entity) {
 		return 0F;
+	}
+
+	default float get1ZOffset(ItemStack stack, Entity entity) {
+		return -0.5F;
 	}
 
 	default float getX(ItemStack stack, Entity entity) {
@@ -43,5 +53,13 @@ public interface OrbitingItem {
 
 	default boolean shouldOrbit(ItemStack stack, Entity entity) {
 		return true;
+	}
+
+	default PoseStack getUsingPose(ItemStack stack, Player player, PoseStack poseStack, float flip) {
+		return poseStack;
+	}
+
+	default PoseStack getEffectUsingPose(ItemStack stack, Player player, PoseStack poseStack, float flip) {
+		return poseStack;
 	}
 }

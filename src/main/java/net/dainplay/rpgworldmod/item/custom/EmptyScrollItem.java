@@ -6,6 +6,7 @@ import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
@@ -38,12 +39,6 @@ public class EmptyScrollItem extends Item {
 				|| stack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0)
 			return false;
 		else return stack.isEnchanted();
-	}
-
-	@Override
-	public boolean canGrindstoneRepair(ItemStack stack)
-	{
-		return false;
 	}
 
 }

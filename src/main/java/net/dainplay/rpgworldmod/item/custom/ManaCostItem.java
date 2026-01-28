@@ -11,12 +11,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public interface ManaCostItem {
 
-    default int getManaCost(ItemStack item) {
+    default int getManaCost(ItemStack item, Player player) {
         return 0;
     }
 
-    default int getDisplayManaCost(ItemStack item) {
-        return getManaCost(item);
+    default int getDisplayManaCost(ItemStack item, Player player) {
+        return getManaCost(item, player);
     }
 
     default Component getManaCostAdditionalLine(ItemStack item) {
@@ -25,7 +25,7 @@ public interface ManaCostItem {
 
     default void updateManaTag(ItemStack stack, Player player) {
         CompoundTag tag = stack.getOrCreateTag();
-        boolean hasEnough = hasEnoughMana(player, stack);
+        boolean hasEnough = hasEnoughMana(player, stack) || player.getAbilities().instabuild;
 
         if (!hasEnough) {
             tag.putBoolean("notEnoughMana", true);
@@ -44,6 +44,6 @@ public interface ManaCostItem {
                 playerMana.set(mana.getMana());
             });
         }
-        return playerMana.get() >= getManaCost(item);
+        return playerMana.get() >= getManaCost(item, player);
     }
 }

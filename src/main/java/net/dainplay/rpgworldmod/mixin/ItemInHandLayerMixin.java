@@ -66,7 +66,7 @@ public class ItemInHandLayerMixin {
                 if (itemStack.hasTag() && itemStack.getTag().contains("notEnoughMana")) hasEnoughMana = false;
             }
 
-            if (hasEnoughMana || (entity instanceof Player player && player.getAbilities().instabuild)) {
+            if (hasEnoughMana) {
                 if (textureString != null && !textureString.isEmpty()) {
                     // Используем вертикальный спрайтшит (sprite sheet)
                     int animationSpeed = orbitingItem.getAnimationSpeed(itemStack, entity);
