@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "rpgworldmod:item/scroll_alteration",
+    "layer1": "rpgworldmod:item/ember_spell_overlay"
+  }
+}

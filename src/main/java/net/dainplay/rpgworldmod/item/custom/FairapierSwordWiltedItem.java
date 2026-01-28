@@ -18,6 +18,6 @@ public class FairapierSwordWiltedItem extends ItemNameBlockItem implements Vanis
 
     @Override
     public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-        pTooltip.add(this.getDisplayName().withStyle(ChatFormatting.DARK_GRAY));
+        pTooltip.add(this.getDisplayName(pStack).withStyle(ChatFormatting.DARK_GRAY));
     }
 }

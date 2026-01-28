@@ -36,6 +36,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -325,7 +326,7 @@ public class Drillhog extends Monster {
 	}
 
 	static void throwTarget(LivingEntity entity, LivingEntity pTarget) {
-		if (pTarget instanceof Player player) player.disableShield(false);
+		if (pTarget instanceof Player player && player.getUseItem().canPerformAction(ToolActions.SHIELD_BLOCK)) player.disableShield(false);
 		double d0 = entity.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
 		double d1 = pTarget.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
 		double d2 = d0 - d1;

@@ -27,21 +27,21 @@ public class ItemInHandLayerMixin {
 
     @Inject(method = "renderArmWithItem", at = @At(value = "HEAD"), cancellable = true)
     private void renderOrbitingItemTexture(
-        LivingEntity entity,
-        ItemStack itemStack,
-        ItemDisplayContext displayContext,
-        net.minecraft.world.entity.HumanoidArm arm,
-        PoseStack poseStack,
-        MultiBufferSource bufferSource,
-        int packedLight,
-        CallbackInfo ci
+            LivingEntity entity,
+            ItemStack itemStack,
+            ItemDisplayContext displayContext,
+            net.minecraft.world.entity.HumanoidArm arm,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight,
+            CallbackInfo ci
     ) {
-        if (itemStack.getItem() instanceof OrbitingItem orbitingItem) {
+        if (itemStack.getItem() instanceof OrbitingItem orbitingItem && orbitingItem.shouldOrbit(itemStack, entity)) {
             poseStack.pushPose();
 
             ((ArmedModel)iihl.getParentModel()).translateToHand(arm, poseStack);
             boolean flag = arm == HumanoidArm.LEFT;
-            poseStack.translate((float)(flag ? orbitingItem.getX()*-1 : orbitingItem.getX()), orbitingItem.getY(), orbitingItem.getZ());
+            poseStack.translate((float)(flag ? orbitingItem.getX(itemStack, entity)*-1 : orbitingItem.getX(itemStack, entity)), orbitingItem.getY(itemStack, entity), orbitingItem.getZ(itemStack, entity));
 
             // Получаем позицию руки из текущей матрицы
             Matrix4f originalMatrix = poseStack.last().pose();
@@ -51,43 +51,49 @@ public class ItemInHandLayerMixin {
             poseStack.setIdentity();
 
             // Восстанавливаем позицию руки
-            poseStack.translate(handPosition.x(), handPosition.y(), handPosition.z()+orbitingItem.getZOffset());
-
-            // Получаем вращение камеры
+            poseStack.translate(handPosition.x(), handPosition.y(), handPosition.z()+orbitingItem.getZOffset(itemStack, entity));
 
             // Получаем информацию о текстуре из OrbitingItem
-            String textureString = orbitingItem.getTexture();
-            int color = orbitingItem.getColor();
+            String textureString = orbitingItem.getTexture(itemStack, entity);
+            int color = orbitingItem.getColor(itemStack, entity);
             float size = 0.25F; // Размер текстуры
 
             VertexConsumer vertexConsumer;
             Matrix4f matrix = poseStack.last().pose();
 
-            int manacost;
-            if (orbitingItem instanceof ManaCostItem spell) manacost = spell.getManaCost();
-			else {
-				manacost = 0;
-			}
-			boolean hasEnoughMana = true;
-            if (orbitingItem instanceof ManaCostItem spell) {
+            boolean hasEnoughMana = true;
+            if (orbitingItem instanceof ManaCostItem) {
                 if (itemStack.hasTag() && itemStack.getTag().contains("notEnoughMana")) hasEnoughMana = false;
             }
 
             if (hasEnoughMana || (entity instanceof Player player && player.getAbilities().instabuild)) {
                 if (textureString != null && !textureString.isEmpty()) {
-                    // Используем анимированную текстуру
-                    int animationSpeed = orbitingItem.getAnimationSpeed();
-                    int animationLength = orbitingItem.getAnimationLength();
-                    String frame = textureString + "_" + (entity.tickCount / animationSpeed % animationLength);
+                    // Используем вертикальный спрайтшит (sprite sheet)
+                    int animationSpeed = orbitingItem.getAnimationSpeed(itemStack, entity);
+                    int animationLength = orbitingItem.getAnimationLength(itemStack, entity);
+
+                    // Вычисляем текущий кадр
+                    int currentFrame = (entity.tickCount / animationSpeed) % animationLength;
+
+                    // Рассчитываем UV координаты для текущего кадра
+                    // В вертикальном спрайтшите кадры расположены сверху вниз
+                    float frameHeight = 1.0F / animationLength; // Высота одного кадра в UV координатах
+                    float vMin = currentFrame * frameHeight; // Начало текущего кадра по V
+                    float vMax = vMin + frameHeight; // Конец текущего кадра по V
+
+                    // Загружаем единую текстуру спрайтшита
                     vertexConsumer = bufferSource.getBuffer(RenderType.itemEntityTranslucentCull(
-                            new net.minecraft.resources.ResourceLocation(net.dainplay.rpgworldmod.RPGworldMod.MOD_ID, frame + ".png")
+                            new net.minecraft.resources.ResourceLocation(
+                                    net.dainplay.rpgworldmod.RPGworldMod.MOD_ID,
+                                    textureString + ".png" // Теперь используем единое имя файла
+                            )
                     ));
 
-                    // Рендерим текстурированный квадрат
+                    // Рендерим текстурированный квадрат с правильными UV координатами
                     // Нижний левый
                     vertexConsumer.vertex(matrix, -size, -size, 0.0F)
                             .color(1.0F, 1.0F, 1.0F, 1F)
-                            .uv(0.0F, 1.0F)
+                            .uv(0.0F, vMax) // V теперь зависит от кадра
                             .overlayCoords(OverlayTexture.NO_OVERLAY)
                             .uv2(15728880)
                             .normal(0.0F, 0.0F, 1.0F)
@@ -96,7 +102,7 @@ public class ItemInHandLayerMixin {
                     // Нижний правый
                     vertexConsumer.vertex(matrix, size, -size, 0.0F)
                             .color(1.0F, 1.0F, 1.0F, 1F)
-                            .uv(1.0F, 1.0F)
+                            .uv(1.0F, vMax) // V теперь зависит от кадра
                             .overlayCoords(OverlayTexture.NO_OVERLAY)
                             .uv2(15728880)
                             .normal(0.0F, 0.0F, 1.0F)
@@ -105,7 +111,7 @@ public class ItemInHandLayerMixin {
                     // Верхний правый
                     vertexConsumer.vertex(matrix, size, size, 0.0F)
                             .color(1.0F, 1.0F, 1.0F, 1F)
-                            .uv(1.0F, 0.0F)
+                            .uv(1.0F, vMin) // V теперь зависит от кадра
                             .overlayCoords(OverlayTexture.NO_OVERLAY)
                             .uv2(15728880)
                             .normal(0.0F, 0.0F, 1.0F)
@@ -114,13 +120,55 @@ public class ItemInHandLayerMixin {
                     // Верхний левый
                     vertexConsumer.vertex(matrix, -size, size, 0.0F)
                             .color(1.0F, 1.0F, 1.0F, 1F)
-                            .uv(0.0F, 0.0F)
+                            .uv(0.0F, vMin) // V теперь зависит от кадра
+                            .overlayCoords(OverlayTexture.NO_OVERLAY)
+                            .uv2(15728880)
+                            .normal(0.0F, 0.0F, 1.0F)
+                            .endVertex();
+
+                    // ПЕРВЫЙ СЛОЙ: eyes (рендерится первым)
+                    VertexConsumer eyesVertexConsumer = bufferSource.getBuffer(RenderType.eyes(new net.minecraft.resources.ResourceLocation(
+                            net.dainplay.rpgworldmod.RPGworldMod.MOD_ID,
+                            textureString + ".png")));
+
+                    // Рендерим текстурированный квадрат с правильными UV координатами
+                    // Нижний левый
+                    eyesVertexConsumer.vertex(matrix, -size, -size, 0.0F)
+                            .color(1.0F, 1.0F, 1.0F, 1F)
+                            .uv(0.0F, vMax) // V теперь зависит от кадра
+                            .overlayCoords(OverlayTexture.NO_OVERLAY)
+                            .uv2(15728880)
+                            .normal(0.0F, 0.0F, 1.0F)
+                            .endVertex();
+
+                    // Нижний правый
+                    eyesVertexConsumer.vertex(matrix, size, -size, 0.0F)
+                            .color(1.0F, 1.0F, 1.0F, 1F)
+                            .uv(1.0F, vMax) // V теперь зависит от кадра
+                            .overlayCoords(OverlayTexture.NO_OVERLAY)
+                            .uv2(15728880)
+                            .normal(0.0F, 0.0F, 1.0F)
+                            .endVertex();
+
+                    // Верхний правый
+                    eyesVertexConsumer.vertex(matrix, size, size, 0.0F)
+                            .color(1.0F, 1.0F, 1.0F, 1F)
+                            .uv(1.0F, vMin) // V теперь зависит от кадра
+                            .overlayCoords(OverlayTexture.NO_OVERLAY)
+                            .uv2(15728880)
+                            .normal(0.0F, 0.0F, 1.0F)
+                            .endVertex();
+
+                    // Верхний левый
+                    eyesVertexConsumer.vertex(matrix, -size, size, 0.0F)
+                            .color(1.0F, 1.0F, 1.0F, 1F)
+                            .uv(0.0F, vMin) // V теперь зависит от кадра
                             .overlayCoords(OverlayTexture.NO_OVERLAY)
                             .uv2(15728880)
                             .normal(0.0F, 0.0F, 1.0F)
                             .endVertex();
                 } else {
-                    // Рендерим цветной квадрат
+                    // Рендерим цветной квадрат (без изменений)
                     vertexConsumer = bufferSource.getBuffer(RenderType.lightning());
                     int alpha = 150;
                     int red = (color >> 16) & 0xFF;

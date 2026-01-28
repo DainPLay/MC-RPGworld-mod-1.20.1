@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "rpgworldmod:item/scroll_necromancy",
+    "layer1": "rpgworldmod:item/empty_spell_overlay"
+  }
+}

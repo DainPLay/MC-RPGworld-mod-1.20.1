@@ -171,6 +171,8 @@ public class ModItems {
     public static final RegistryObject<Item> MUSIC_DISC_HOWLING = ITEMS.register("music_disc_howling", () -> new RecordItem(12, RPGSounds.MUSIC_DISC_HOWLING.get(), new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 184 * 20));
     public static final RegistryObject<Item> MUSIC_DISC_TIRE = ITEMS.register("music_disc_tire", () -> new RecordItem(9, RPGSounds.MUSIC_DISC_TIRE.get(), new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 164 * 20));
     public static final RegistryObject<Item> RIE_WEALD_BANNER_PATTERN = ITEMS.register("rie_weald_banner_pattern",  () -> new BannerPatternItem(ModTags.BannerPatterns.PATTERN_ITEM_RIE_WEALD, (new Item.Properties()).stacksTo(1).rarity(Rarity.EPIC)));
+    public static final RegistryObject<Item> EMPTY_SCROLL = ITEMS.register("empty_scroll",  () -> new EmptyScrollItem((new Item.Properties()).stacksTo(16)));
+    public static final RegistryObject<Item> EMBER_SCROLL = ITEMS.register("ember_scroll",  () -> new EmberScrollItem((new Item.Properties()).stacksTo(1).rarity(Rarity.UNCOMMON)));
 
     public static final RegistryObject<Item> FIRE_CATCHER_ITEM = ITEMS.register("fire_catcher",
             () -> new FireCatcherItem(ModBlocks.FIRE_CATCHER.get(),new Item.Properties().fireResistant()));

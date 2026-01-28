@@ -3,6 +3,7 @@ package net.dainplay.rpgworldmod;
 import net.dainplay.rpgworldmod.biome.RPGworldRegionProvider;
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.block.entity.ModBlockEntities;
+import net.dainplay.rpgworldmod.data.ModRecipeSerializers;
 import net.dainplay.rpgworldmod.data.tags.ActionRewardHandler;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.effect.FuelingHandler;
@@ -20,6 +21,8 @@ import net.dainplay.rpgworldmod.fluid.RPGFluidRegistry;
 import net.dainplay.rpgworldmod.item.ModBannerPatterns;
 import net.dainplay.rpgworldmod.item.ModCreativeModeTab;
 import net.dainplay.rpgworldmod.item.ModItems;
+import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
+import net.dainplay.rpgworldmod.item.custom.EmptyScrollItem;
 import net.dainplay.rpgworldmod.item.custom.WealdBladeItem;
 import net.dainplay.rpgworldmod.loot.ModLootModifiers;
 import net.dainplay.rpgworldmod.network.ModMessages;
@@ -129,6 +132,7 @@ public class RPGworldMod
         eventBus.addListener(this::loadComplete);
         MinecraftForge.EVENT_BUS.addListener(this::onLivingHurt);
         MinecraftForge.EVENT_BUS.addListener(this::onItemFished);
+        ModRecipeSerializers.RECIPE_SERIALIZERS.register(eventBus);
 
         SOUND_EVENT_REGISTER.register(eventBus);
 
@@ -319,6 +323,12 @@ public class RPGworldMod
             event.accept(ModItems.GASBASS_BUCKET);
             event.accept(ModItems.ARBOR_FUEL_BUCKET);
             event.accept(ModItems.EMBER_GEM);
+            event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.RESTORATION.get(), ModEnchantments.RESTORATION.get().getMaxLevel())));
+            event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
+            event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ILLUSION.get(), ModEnchantments.ILLUSION.get().getMaxLevel())));
+            event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
+            event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CREATION.get(), ModEnchantments.CREATION.get().getMaxLevel())));
+            event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
             event.accept(ModItems.FIREPROOF_SKIRT);
             event.accept(ModItems.LIVING_WOOD_HELMET);
             event.accept(ModItems.LIVING_WOOD_CHESTPLATE);
@@ -429,6 +439,14 @@ public class RPGworldMod
             event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.COLLECTION.get(), ModEnchantments.COLLECTION.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.BLOWING.get(), ModEnchantments.BLOWING.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.STRETCH.get(), ModEnchantments.STRETCH.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            event.accept(ModItems.EMPTY_SCROLL);
+            event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.RESTORATION.get(), ModEnchantments.RESTORATION.get().getMaxLevel())));
+            event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
+            event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ILLUSION.get(), ModEnchantments.ILLUSION.get().getMaxLevel())));
+            event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
+            event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CREATION.get(), ModEnchantments.CREATION.get().getMaxLevel())));
+            event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
+            event.accept(ModItems.EMBER_SCROLL);
         }
 
         if(event.getTab() == ModCreativeModeTab.RPGWORLD_SPAWN_EGGS_TAB.get()) {

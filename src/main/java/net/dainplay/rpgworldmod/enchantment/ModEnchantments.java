@@ -1,10 +1,14 @@
 package net.dainplay.rpgworldmod.enchantment;
 
 import net.dainplay.rpgworldmod.RPGworldMod;
+import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.DrillSpearItem;
+import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
+import net.dainplay.rpgworldmod.item.custom.EmptyScrollItem;
 import net.dainplay.rpgworldmod.item.custom.GuitarAxItem;
 import net.dainplay.rpgworldmod.item.custom.LivingWoodBowItem;
 import net.dainplay.rpgworldmod.item.custom.MintalTriangleItem;
+import net.dainplay.rpgworldmod.item.custom.ScrollItem;
 import net.dainplay.rpgworldmod.item.custom.WealdBladeItem;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -23,6 +27,7 @@ public class ModEnchantments {
     public static final EnchantmentCategory LIVING_WOOD_BOW = EnchantmentCategory.create("living_wood_bow", (item) -> {return (item instanceof LivingWoodBowItem); });
     public static final EnchantmentCategory TRIANGLE = EnchantmentCategory.create("triangle", (item) -> {return (item instanceof MintalTriangleItem); });
     public static final EnchantmentCategory GUITAR_AX = EnchantmentCategory.create("guitar_ax", (item) -> {return (item instanceof MintalTriangleItem || item instanceof GuitarAxItem); });
+    public static final EnchantmentCategory MAGIC_SCROLLS = EnchantmentCategory.create("magic_scrolls", (item) -> {return (item instanceof EmptyScrollItem || item instanceof ScrollItem); });
     public static RegistryObject<Enchantment> PITCH =
             ENCHANTMENTS.register("pitch",
                     () -> new PitchEnchantment(Enchantment.Rarity.COMMON,
@@ -55,6 +60,30 @@ public class ModEnchantments {
             ENCHANTMENTS.register("stretch",
                     () -> new StretchEnchantment(Enchantment.Rarity.RARE,
                             LIVING_WOOD_BOW, EquipmentSlot.MAINHAND));
+    public static RegistryObject<Enchantment> RESTORATION =
+            ENCHANTMENTS.register("restoration",
+                    () -> new RestorationEnchantment(Enchantment.Rarity.COMMON,
+                            MAGIC_SCROLLS, EquipmentSlot.MAINHAND));
+    public static RegistryObject<Enchantment> DESTRUCTION =
+            ENCHANTMENTS.register("destruction",
+                    () -> new DestructionEnchantment(Enchantment.Rarity.COMMON,
+                            MAGIC_SCROLLS, EquipmentSlot.MAINHAND));
+    public static RegistryObject<Enchantment> ILLUSION =
+            ENCHANTMENTS.register("illusion",
+                    () -> new IllusionEnchantment(Enchantment.Rarity.COMMON,
+                            MAGIC_SCROLLS, EquipmentSlot.MAINHAND));
+    public static RegistryObject<Enchantment> ALTERATION =
+            ENCHANTMENTS.register("alteration",
+                    () -> new AlterationEnchantment(Enchantment.Rarity.COMMON,
+                            MAGIC_SCROLLS, EquipmentSlot.MAINHAND));
+    public static RegistryObject<Enchantment> CREATION =
+            ENCHANTMENTS.register("creation",
+                    () -> new CreationEnchantment(Enchantment.Rarity.COMMON,
+                            MAGIC_SCROLLS, EquipmentSlot.MAINHAND));
+    public static RegistryObject<Enchantment> NECROMANCY =
+            ENCHANTMENTS.register("necromancy",
+                    () -> new NecromancyEnchantment(Enchantment.Rarity.RARE,
+                            MAGIC_SCROLLS, EquipmentSlot.MAINHAND));
 
 
     public static void register(IEventBus eventBus) {

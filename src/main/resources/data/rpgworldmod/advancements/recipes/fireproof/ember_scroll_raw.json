@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_ember_gem": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:ember_gem"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "rpgworldmod:ember_scroll"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_raw_recipe": {
+      "conditions": {
+        "recipe": "rpgworldmod:ember_scroll_raw"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_ember_gem",
+      "has_the_recipe",
+      "has_raw_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "rpgworldmod:ember_scroll_raw"
+    ]
+  },
+  "sends_telemetry_event": false
+}

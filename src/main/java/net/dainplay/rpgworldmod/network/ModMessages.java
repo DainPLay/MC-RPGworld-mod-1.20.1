@@ -94,6 +94,12 @@ public class ModMessages {
 				.encoder(PullPlayerPacket::toBytes)
 				.consumerMainThread(PullPlayerPacket::handle)
 				.add();
+
+		net.messageBuilder(UpdateItemTagMessage.class, id(), NetworkDirection.PLAY_TO_SERVER)
+				.decoder(UpdateItemTagMessage::decode)
+				.encoder(UpdateItemTagMessage::encode)
+				.consumerMainThread(UpdateItemTagMessage::handle)
+				.add();
 	}
 
 	public static <MSG> void sendToServer(MSG message) {

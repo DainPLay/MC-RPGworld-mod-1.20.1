@@ -10,6 +10,7 @@ import net.dainplay.rpgworldmod.item.custom.FireproofSkirtItem;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.SyncEntityMotionPacket;
 import net.dainplay.rpgworldmod.network.SyncRazorleafDataPacket;
+import net.dainplay.rpgworldmod.particle.ModParticles;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.dainplay.rpgworldmod.util.ModTags;
 import net.minecraft.advancements.Advancement;
@@ -959,7 +960,7 @@ public class Razorleaf extends Monster {
 		fireProjectiles.add(projectile);
 
 		if (this.level() instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(ParticleTypes.FLAME,
+			serverLevel.sendParticles(ModParticles.FLAMES.get(),
 					projectile.position.x, projectile.position.y, projectile.position.z,
 					3, 0.1, 0.1, 0.1, 0.01);
 		}
@@ -1011,7 +1012,7 @@ public class Razorleaf extends Monster {
 				}
 
 
-				level.sendParticles(ParticleTypes.FLAME,
+				level.sendParticles(ModParticles.FLAMES.get(),
 						projectile.position.x, projectile.position.y, projectile.position.z,
 						1, 0.1, 0.1, 0.1, 0.01);
 				level.sendParticles(ParticleTypes.SMOKE,
@@ -1092,16 +1093,6 @@ public class Razorleaf extends Monster {
 
 				// Заменяем блок земли на огонь
 				level.setBlockAndUpdate(hitPos, BaseFireBlock.getState(level, hitPos));
-
-				if (level instanceof ServerLevel serverLevel) {
-					// Частицы превращения
-					serverLevel.sendParticles(ParticleTypes.FLAME,
-							hitPos.getX() + 0.5, hitPos.getY() + 0.5, hitPos.getZ() + 0.5,
-							15, 0.5, 0.5, 0.5, 0.05);
-					serverLevel.sendParticles(ParticleTypes.SMOKE,
-							hitPos.getX() + 0.5, hitPos.getY() + 0.5, hitPos.getZ() + 0.5,
-							8, 0.3, 0.3, 0.3, 0.03);
-				}
 				return true;
 			}
 
@@ -1126,13 +1117,6 @@ public class Razorleaf extends Monster {
 
 					// Вызываем метод взаимодействия TNT со снарядом
 					tnt.onProjectileHit(level, hitState, blockHit, fireProjectile);
-
-					serverLevel.sendParticles(ParticleTypes.FLAME,
-							hitPos.getX() + 0.5, hitPos.getY() + 0.5, hitPos.getZ() + 0.5,
-							20, 0.5, 0.5, 0.5, 0.05);
-					serverLevel.sendParticles(ParticleTypes.SMOKE,
-							hitPos.getX() + 0.5, hitPos.getY() + 0.5, hitPos.getZ() + 0.5,
-							10, 0.3, 0.3, 0.3, 0.03);
 				}
 				return true;
 			}
@@ -1172,10 +1156,6 @@ public class Razorleaf extends Monster {
 				// Если зажигалка может быть использована (вернула SUCCESS или CONSUME),
 				// то не спавним огонь на соседнем блоке
 				if (useResult.consumesAction()) {
-
-					serverLevel.sendParticles(ParticleTypes.FLAME,
-							hitPos.getX() + 0.5, hitPos.getY() + 0.5, hitPos.getZ() + 0.5,
-							10, 0.5, 0.5, 0.5, 0.05);
 					return true;
 				}
 			}
@@ -1185,12 +1165,6 @@ public class Razorleaf extends Monster {
 
 			if (BaseFireBlock.canBePlacedAt(level, firePos, Direction.UP)) {
 				level.setBlockAndUpdate(firePos, BaseFireBlock.getState(level, firePos));
-
-				if (level instanceof ServerLevel serverLevel) {
-					serverLevel.sendParticles(ParticleTypes.FLAME,
-							hitPos.getX() + 0.5, hitPos.getY() + 0.5, hitPos.getZ() + 0.5,
-							10, 0.5, 0.5, 0.5, 0.05);
-				}
 			}
 			return true;
 		}
@@ -1223,7 +1197,7 @@ public class Razorleaf extends Monster {
 							if (!hasGoldenKill(player)) this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
 						}
 				}
-				return true;
+				return false;
 			}
 		}
 

@@ -1,0 +1,16 @@
+{
+  "type": "rpgworldmod:ember_scroll",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "rpgworldmod:empty_scroll"
+    },
+    {
+      "item": "rpgworldmod:ember_gem"
+    }
+  ],
+  "result": {
+    "item": "rpgworldmod:ember_scroll",
+    "count": 1
+  }
+}

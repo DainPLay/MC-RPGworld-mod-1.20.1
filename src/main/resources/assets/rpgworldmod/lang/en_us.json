@@ -139,6 +139,27 @@
   "block.minecraft.banner.rpgworldmod.rie_weald.white": "White Rie Weald",
   "block.minecraft.banner.rpgworldmod.rie_weald.yellow": "Yellow Rie Weald",
   "item.rpgworldmod.fire_catcher": "Flame Catcher",
+  "item.rpgworldmod.empty_scroll": "Scroll",
+  "item.rpgworldmod.ember_scroll": "Empty Spell",
+  "item.rpgworldmod.ember_scroll.desc": "With Ember Gem",
+  "item.rpgworldmod.ember_scroll.alteration": "Eruption Spell",
+  "item.rpgworldmod.ember_scroll.alteration.desc": "Volcanic type",
+  "item.rpgworldmod.ember_scroll.alteration.features": "Turns flowing lava into lava source blocks in a small radius around caster.",
+  "item.rpgworldmod.ember_scroll.destruction": "Flames Spell",
+  "item.rpgworldmod.ember_scroll.destruction.desc": "I hope you die in a fire!",
+  "item.rpgworldmod.ember_scroll.destruction.features": "Dissipates flames.",
+  "item.rpgworldmod.ember_scroll.restoration": "Fire Heal Spell",
+  "item.rpgworldmod.ember_scroll.restoration.desc": "Negative degree burn",
+  "item.rpgworldmod.ember_scroll.restoration.features": "While used, fire damage heals the caster instead of damaging them.",
+  "item.rpgworldmod.ember_scroll.illusion": "Burn Illusion Spell",
+  "item.rpgworldmod.ember_scroll.illusion.desc": "Flinches",
+  "item.rpgworldmod.ember_scroll.illusion.features": "Forces selected animate target to think it is on fire. Doesn't actually do damage.",
+  "item.rpgworldmod.ember_scroll.creation": "Summoned Campfire Spell",
+  "item.rpgworldmod.ember_scroll.creation.desc": "Marshmallow summoned separately",
+  "item.rpgworldmod.ember_scroll.creation.features": "Summons a magical campfire that can smelt items. Campfire will disappear if no one has used it for a long time, or if its summoner is not around for a long time.",
+  "item.rpgworldmod.ember_scroll.necromancy": "PLACEHOLDER Spell",
+  "item.rpgworldmod.ember_scroll.necromancy.desc": "PLACEHOLDER",
+  "item.rpgworldmod.ember_scroll.necromancy.features": "PLACEHOLDER",
 
   "item.rpgworldmod.platinumfish": "Platinumfish",
   "item.rpgworldmod.mossfront": "Mossfront",
@@ -191,7 +212,7 @@
   "block.rpgworldmod.quartzite_drill_tusk.features": "Mining blocks using a piston will have a silk touch effect.",
   "block.rpgworldmod.fire_catcher": "Flame Catcher",
   "block.rpgworldmod.fire_catcher.desc": "You are Venus, I'm earth",
-  "block.rpgworldmod.fire_catcher.features": "Installed under the ceiling. Prevents fire griefing within a radius of 5x5 chunks and extinguishes it if switched to hungry mode.",
+  "block.rpgworldmod.fire_catcher.features": "Installed under the ceiling. Prevents fire griefing within a radius of 5x5 chunks. Also extinguishes fire if switched to hungry mode.",
 
   "fluid_type.rpgworldmod.arbor_fuel_fluid": "Arbor Fuel",
 
@@ -445,6 +466,12 @@
   "enchantment.rpgworldmod.collection": "Collection",
   "enchantment.rpgworldmod.blowing": "Blowing",
   "enchantment.rpgworldmod.stretch": "Stretch",
+  "enchantment.rpgworldmod.restoration": "Restoration",
+  "enchantment.rpgworldmod.destruction": "Destruction",
+  "enchantment.rpgworldmod.illusion": "Illusion",
+  "enchantment.rpgworldmod.creation": "Creation",
+  "enchantment.rpgworldmod.alteration": "Alteration",
+  "enchantment.rpgworldmod.necromancy": "Necromancy",
 
   "enchantment.rpgworldmod.pitch.desc": "Increases damage and pitch of sonic weapons.",
   "enchantment.rpgworldmod.crescendo.desc": "Increases range and volume of sonic weapons.",
@@ -454,6 +481,12 @@
   "enchantment.rpgworldmod.collection.desc": "Sends mined resources directly to owner's inventory.",
   "enchantment.rpgworldmod.blowing.desc": "Replaces blocking with generating a strong stream of air that blows away everyone in its path.",
   "enchantment.rpgworldmod.stretch.desc": "Increases maximum length of vines bound to arrows.",
+  "enchantment.rpgworldmod.restoration.desc": "One of the six types of magic. Anything related to increasing and restoring characteristics, applying positive effects and protecting against negative effects.",
+  "enchantment.rpgworldmod.destruction.desc": "One of the six types of magic. Anything related to rearranging and changing any parameters and values, applying negative effects and turning one into another.",
+  "enchantment.rpgworldmod.illusion.desc": "One of the six types of magic. Anything that can distort someone's perception of reality, influence someone's emotions or actions, and that can be used secretly.",
+  "enchantment.rpgworldmod.creation.desc": "One of the six types of magic. Anything that is capable of creating something material or imaginary, or complementing something that already exists.",
+  "enchantment.rpgworldmod.alteration.desc": "One of the six types of magic. Anything that is aimed at causing damage to the environment or can be used as a weapon.",
+  "enchantment.rpgworldmod.necromancy.desc": "One of the six types of magic. Anything that cannot be used at the cost of mana, but can be used at the cost of health.",
 
   "trim_material.rpgworldmod.mintal": "Mintal Material",
 
@@ -558,6 +591,16 @@
   "subtitles.rpgworldmod.item.living_wood_bow.pull": "Vine pulls",
   "subtitles.rpgworldmod.item.living_wood_bow.break": "Vine breaks",
 
+  "subtitles.rpgworldmod.spell.destruction_ember_start": "Flames dissipate",
+  "subtitles.rpgworldmod.spell.destruction_ember_loop": "Flames dissipate",
+  "subtitles.rpgworldmod.spell.destruction_ember_stop": "Flames go out",
+  "subtitles.rpgworldmod.spell.restoration_loop": "Spell being casted",
+  "subtitles.rpgworldmod.spell.restoration_stop": "Spell is no longer casted",
+  "subtitles.rpgworldmod.spell.creation_start": "Object summoned",
+  "subtitles.rpgworldmod.spell.creation_stop": "Object revoked",
+  "subtitles.rpgworldmod.spell.illusion_start": "Illusion enforced",
+  "subtitles.rpgworldmod.spell.alteration_loop": "Spell being casted",
+
   "subtitles.rpgworldmod.platinumfish.death": "Platinumfish dies",
   "subtitles.rpgworldmod.platinumfish.hurt": "Platinumfish hurts",
   "subtitles.rpgworldmod.platinumfish.flop": "Platinumfish flops",
@@ -580,5 +623,6 @@
   "tooltip.rpgworldmod.hold_shift_for_features": "[Hold %s]",
   "tooltip.rpgworldmod.features": "Features:",
   "tooltip.rpgworldmod.cost_text": "Cost: ",
-  "tooltip.rpgworldmod.cost_number": "%s⭐"
+  "tooltip.rpgworldmod.cost_number": "%s⭐",
+  "tooltip.rpgworldmod.cost_per_second": " per second"
 }

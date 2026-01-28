@@ -478,7 +478,7 @@ public class ModBlocks {
 
 		@Override
 		public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
-			return 50;
+			return 500;
 		}
 	});
 

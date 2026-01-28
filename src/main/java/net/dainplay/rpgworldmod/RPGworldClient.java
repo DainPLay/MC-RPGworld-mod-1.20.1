@@ -1,9 +1,9 @@
 package net.dainplay.rpgworldmod;
 
-import com.google.common.collect.ImmutableList;
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.block.entity.ModBlockEntities;
 import net.dainplay.rpgworldmod.block.entity.ModWoodTypes;
+import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.entity.client.model.SkirtModel;
 import net.dainplay.rpgworldmod.entity.client.render.CurioLayers;
 import net.dainplay.rpgworldmod.entity.client.render.CurioRenderers;
@@ -14,11 +14,13 @@ import net.dainplay.rpgworldmod.gui.OverlayEventHandler;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.FireproofSkirtItem;
 import net.dainplay.rpgworldmod.item.custom.MintalTriangleItem;
-import net.dainplay.rpgworldmod.util.BakedModelShadeLayerFullbright;
-import net.dainplay.rpgworldmod.util.BreakingEntFaceRenderer;
-import net.dainplay.rpgworldmod.util.EnchantedBlockRenderer;
-import net.dainplay.rpgworldmod.util.PottedStareblossomBlockEntityRenderer;
-import net.dainplay.rpgworldmod.util.StareblossomBlockEntityRenderer;
+import net.dainplay.rpgworldmod.render.BakedModelShadeLayerFullbright;
+import net.dainplay.rpgworldmod.render.BreakingEntFaceRenderer;
+import net.dainplay.rpgworldmod.render.EnchantedBlockRenderer;
+import net.dainplay.rpgworldmod.render.PottedStareblossomBlockEntityRenderer;
+import net.dainplay.rpgworldmod.render.ScrollGlintItemModel;
+import net.dainplay.rpgworldmod.render.ScrollGlintItemModelSupport;
+import net.dainplay.rpgworldmod.render.StareblossomBlockEntityRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -28,25 +30,27 @@ import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.CrossbowItem;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+
+import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = RPGworldMod.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class RPGworldClient {
@@ -68,11 +72,122 @@ public class RPGworldClient {
     }
 
     private void bakeModels(final ModelEvent.ModifyBakingResult e) {
-            for (ResourceLocation id : e.getModels().keySet()) {
-                if (ImmutableList.of("rpgworldmod:ent_face#").stream().anyMatch(str -> id.toString().startsWith(str))) {
-                    e.getModels().put(id, new BakedModelShadeLayerFullbright(e.getModels().get(id)));
-                }
+        Map<ResourceLocation, BakedModel> map = e.getModels();
+        BakedModel alterationScrollModel = null;
+        BakedModel destructionScrollModel = null;
+        BakedModel restorationScrollModel = null;
+        BakedModel illusionScrollModel = null;
+        BakedModel creationScrollModel = null;
+        BakedModel necromancyScrollModel = null;
+        BakedModel alterationEmberScrollModel = null;
+        BakedModel destructionEmberScrollModel = null;
+        BakedModel restorationEmberScrollModel = null;
+        BakedModel illusionEmberScrollModel = null;
+        BakedModel creationEmberScrollModel = null;
+        BakedModel necromancyEmberScrollModel = null;
+
+        for (ResourceLocation id : map.keySet()) {
+            String idString = id.toString();
+            BakedModel originalModel = map.get(id);
+
+            if (originalModel == null) continue;
+
+            if (idString.startsWith("rpgworldmod:ent_face#")) {
+                map.put(id, new BakedModelShadeLayerFullbright(originalModel));
             }
+
+            if (idString.contains("rpgworldmod:item/scroll_alteration")) {
+                alterationScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/scroll_destruction")) {
+                destructionScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/scroll_restoration")) {
+                restorationScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/scroll_illusion")) {
+                illusionScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/scroll_creation")) {
+                creationScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/scroll_necromancy")) {
+                necromancyScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+            if (idString.contains("rpgworldmod:item/ember_scroll_alteration")) {
+                alterationEmberScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/ember_scroll_destruction")) {
+                destructionEmberScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/ember_scroll_restoration")) {
+                restorationEmberScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/ember_scroll_illusion")) {
+                illusionEmberScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/ember_scroll_creation")) {
+                creationEmberScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/ember_scroll_necromancy")) {
+                necromancyEmberScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+        }
+
+        // Отдельный цикл для свитков, если нужно явное разделение логики
+        for (ResourceLocation id : map.keySet()) {
+            String idString = id.toString();
+            BakedModel originalModel = map.get(id);
+            if (idString.contains("rpgworldmod:empty_scroll")) {
+                map.put(id, new ScrollGlintItemModel(
+                        originalModel,
+                        alterationScrollModel == null ? originalModel : alterationScrollModel,
+                        restorationScrollModel == null ? originalModel : restorationScrollModel,
+                        destructionScrollModel == null ? originalModel : destructionScrollModel,
+                        illusionScrollModel == null ? originalModel : illusionScrollModel,
+                        creationScrollModel == null ? originalModel : creationScrollModel,
+                        necromancyScrollModel == null ? originalModel : necromancyScrollModel
+                ));
+            }
+            if (idString.contains("rpgworldmod:ember_scroll")) {
+                map.put(id, new ScrollGlintItemModel(
+                        originalModel,
+                        alterationEmberScrollModel == null ? originalModel : alterationEmberScrollModel,
+                        restorationEmberScrollModel == null ? originalModel : restorationEmberScrollModel,
+                        destructionEmberScrollModel == null ? originalModel : destructionEmberScrollModel,
+                        illusionEmberScrollModel == null ? originalModel : illusionEmberScrollModel,
+                        creationEmberScrollModel == null ? originalModel : creationEmberScrollModel,
+                        necromancyEmberScrollModel == null ? originalModel : necromancyEmberScrollModel
+                ));
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
+        // Регистрируем модели свитков, которые используются в override
+        event.register(new ResourceLocation("rpgworldmod:item/scroll_restoration"));
+        event.register(new ResourceLocation("rpgworldmod:item/scroll_destruction"));
+        event.register(new ResourceLocation("rpgworldmod:item/scroll_illusion"));
+        event.register(new ResourceLocation("rpgworldmod:item/scroll_alteration"));
+        event.register(new ResourceLocation("rpgworldmod:item/scroll_creation"));
+        event.register(new ResourceLocation("rpgworldmod:item/scroll_necromancy"));
+        event.register(new ResourceLocation("rpgworldmod:item/ember_scroll_restoration"));
+        event.register(new ResourceLocation("rpgworldmod:item/ember_scroll_destruction"));
+        event.register(new ResourceLocation("rpgworldmod:item/ember_scroll_illusion"));
+        event.register(new ResourceLocation("rpgworldmod:item/ember_scroll_alteration"));
+        event.register(new ResourceLocation("rpgworldmod:item/ember_scroll_creation"));
+        event.register(new ResourceLocation("rpgworldmod:item/ember_scroll_necromancy"));
     }
 
     @SubscribeEvent
@@ -180,6 +295,32 @@ public class RPGworldClient {
 					return (float) tag.getInt("Token");
                 }
                 return 0.0F;
+            });
+
+            ItemProperties.register(ModItems.EMPTY_SCROLL.get().asItem(), new ResourceLocation( "magic_school"), (stack, world, entity, seed) -> {
+                if (stack.isEmpty()) {
+                    return 0F;
+                }
+                Map<Enchantment, Integer> enchants = EnchantmentHelper.getEnchantments(stack);
+                if (enchants.containsKey(ModEnchantments.RESTORATION.get())) {
+                    return 1F;
+                }
+                if (enchants.containsKey(ModEnchantments.DESTRUCTION.get())) {
+                    return 2F;
+                }
+                if (enchants.containsKey(ModEnchantments.ILLUSION.get())) {
+                    return 3F;
+                }
+                if (enchants.containsKey(ModEnchantments.ALTERATION.get())) {
+                    return 4F;
+                }
+                if (enchants.containsKey(ModEnchantments.CREATION.get())) {
+                    return 5F;
+                }
+                if (enchants.containsKey(ModEnchantments.NECROMANCY.get())) {
+                    return 6F;
+                }
+                return 0F;
             });
             ItemProperties.register(ModItems.WEALD_BLADE.get().asItem(), new ResourceLocation( "blocking"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
             ItemProperties.register(ModItems.DRILL_SPEAR.get().asItem(), new ResourceLocation( "throwing"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);

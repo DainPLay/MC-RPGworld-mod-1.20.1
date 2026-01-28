@@ -1,7 +1,7 @@
 package net.dainplay.rpgworldmod.biome;
 
 import net.dainplay.rpgworldmod.entity.ModEntities;
-import net.dainplay.rpgworldmod.util.ColorConstants;
+import net.dainplay.rpgworldmod.render.PottedStareblossomBlockEntityRenderer;
 import net.dainplay.rpgworldmod.world.feature.ModConfiguredFeatures;
 import net.dainplay.rpgworldmod.world.feature.ModPlacedFeatures;
 import net.minecraft.core.HolderGetter;
@@ -24,7 +24,7 @@ public class RPGworldBiomeDecorator {
 
     private static Biome biome(boolean precipitation, float temperature, float downfall, MobSpawnSettings.Builder spawnBuilder, BiomeGenerationSettings.Builder biomeBuilder)
     {
-        return biome(precipitation, temperature, downfall, ColorConstants.RIE_WEALD_WATER, ColorConstants.RIE_WEALD_WATERFOG, ColorConstants.RIE_WEALD_FOLIAGE_COLOR, ColorConstants.RIE_WEALD_GRASS_COLOR, spawnBuilder, biomeBuilder);
+        return biome(precipitation, temperature, downfall, PottedStareblossomBlockEntityRenderer.ColorConstants.RIE_WEALD_WATER, PottedStareblossomBlockEntityRenderer.ColorConstants.RIE_WEALD_WATERFOG, PottedStareblossomBlockEntityRenderer.ColorConstants.RIE_WEALD_FOLIAGE_COLOR, PottedStareblossomBlockEntityRenderer.ColorConstants.RIE_WEALD_GRASS_COLOR, spawnBuilder, biomeBuilder);
     }
 
     private static Biome biome(boolean precipitation, float temperature, float downfall, int waterColor, int waterFogColor, int grassColor, int foliageColor, MobSpawnSettings.Builder spawnBuilder, BiomeGenerationSettings.Builder biomeBuilder)
@@ -116,6 +116,6 @@ public class RPGworldBiomeDecorator {
         biomeFeatures.addFeature(GenerationStep.Decoration.TOP_LAYER_MODIFICATION , ModPlacedFeatures.TREE_HOLLOW_NORTH_PLACED_KEY);
         biomeFeatures.addFeature(GenerationStep.Decoration.TOP_LAYER_MODIFICATION , ModPlacedFeatures.TREE_HOLLOW_SOUTH_PLACED_KEY);
 
-        return biome(false, 0.7F, 0.7F, ColorConstants.RIE_WEALD_WATER, ColorConstants.RIE_WEALD_WATERFOG, ColorConstants.RIE_WEALD_FOLIAGE_COLOR, ColorConstants.RIE_WEALD_GRASS_COLOR, spawnSettings, biomeFeatures);
+        return biome(false, 0.7F, 0.7F, PottedStareblossomBlockEntityRenderer.ColorConstants.RIE_WEALD_WATER, PottedStareblossomBlockEntityRenderer.ColorConstants.RIE_WEALD_WATERFOG, PottedStareblossomBlockEntityRenderer.ColorConstants.RIE_WEALD_FOLIAGE_COLOR, PottedStareblossomBlockEntityRenderer.ColorConstants.RIE_WEALD_GRASS_COLOR, spawnSettings, biomeFeatures);
     }
 }

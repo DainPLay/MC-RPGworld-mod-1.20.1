@@ -1,8 +1,10 @@
 package net.dainplay.rpgworldmod.block.custom;
 
+import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.entity.ModEntities;
 import net.dainplay.rpgworldmod.entity.custom.TireSwingEntity;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -398,6 +400,89 @@ public class TireBlock extends Block {
 			Block.box(5, 0, 11, 11, 2, 15)
 	);
 
+	private static final VoxelShape SINGLE_NORTH_INTERACT = Block.box(1, 1, 10, 15, 15, 16); // 14x14x6, прижата к северу (Z=10..16)
+	private static final VoxelShape SINGLE_SOUTH_INTERACT = Block.box(1, 1, 0, 15, 15, 6);   // 14x14x6, прижата к югу (Z=0..6)
+	private static final VoxelShape SINGLE_EAST_INTERACT = Block.box(0, 1, 1, 6, 15, 15);     // 6x14x14, прижата к востоку (X=0..6)
+	private static final VoxelShape SINGLE_WEST_INTERACT = Block.box(10, 1, 1, 16, 15, 15);   // 6x14x14, прижата к западу (X=10..16)
+	private static final VoxelShape SINGLE_UP_INTERACT = Block.box(1, 0, 1, 15, 6, 15);       // 14x6x14, прижата к верху (Y=0..6)
+	private static final VoxelShape SINGLE_DOWN_INTERACT = Shapes.or(Block.box(1, 10, 1, 15, 16, 15));   // 14x6x14, прижата к низу (Y=10..16)
+
+	// DOUBLE формы: две шины с промежутком
+	private static final VoxelShape DOUBLE_NORTH_INTERACT = Shapes.or(
+			Block.box(1, 1, 10, 15, 15, 16),  // Первая шина
+			Block.box(2, 2, 8, 14, 14, 10),   // Промежуточная часть
+			Block.box(1, 1, 2, 15, 15, 8)     // Вторая шина
+	);
+	private static final VoxelShape DOUBLE_SOUTH_INTERACT = Shapes.or(
+			Block.box(1, 1, 0, 15, 15, 6),    // Первая шина
+			Block.box(2, 2, 6, 14, 14, 8),    // Промежуточная часть
+			Block.box(1, 1, 8, 15, 15, 14)    // Вторая шина
+	);
+	private static final VoxelShape DOUBLE_EAST_INTERACT = Shapes.or(
+			Block.box(0, 1, 1, 6, 15, 15),    // Первая шина
+			Block.box(6, 2, 2, 8, 14, 14),    // Промежуточная часть
+			Block.box(8, 1, 1, 14, 15, 15)    // Вторая шина
+	);
+	private static final VoxelShape DOUBLE_WEST_INTERACT = Shapes.or(
+			Block.box(10, 1, 1, 16, 15, 15),  // Первая шина
+			Block.box(8, 2, 2, 10, 14, 14),   // Промежуточная часть
+			Block.box(2, 1, 1, 8, 15, 15)     // Вторая шина
+	);
+	private static final VoxelShape DOUBLE_UP_INTERACT = Shapes.or(
+			Block.box(1, 0, 1, 15, 6, 15),    // Первая шина
+			Block.box(2, 6, 2, 14, 8, 14),    // Промежуточная часть
+			Block.box(1, 8, 1, 15, 14, 15)    // Вторая шина
+	);
+	private static final VoxelShape DOUBLE_DOWN_INTERACT = Shapes.or(
+			Block.box(1, 10, 1, 15, 16, 15),  // Первая шина
+			Block.box(2, 8, 2, 14, 10, 14),   // Промежуточная часть
+			Block.box(1, 2, 1, 15, 8, 15)     // Вторая шина
+	);
+
+	// TRIPLE формы: три шины с двумя промежутками
+	private static final VoxelShape TRIPLE_NORTH_INTERACT = Shapes.or(
+			Block.box(1, 1, 10, 15, 15, 16),  // Первая шина
+			Block.box(2, 2, 8, 14, 14, 10),   // Первый промежуток
+			Block.box(1, 1, 4, 15, 15, 8),    // Вторая шина
+			Block.box(2, 2, 2, 14, 14, 4),    // Второй промежуток
+			Block.box(1, 1, 0, 15, 15, 2)     // Третья шина
+	);
+	private static final VoxelShape TRIPLE_SOUTH_INTERACT = Shapes.or(
+			Block.box(1, 1, 0, 15, 15, 6),    // Первая шина
+			Block.box(2, 2, 6, 14, 14, 8),    // Первый промежуток
+			Block.box(1, 1, 8, 15, 15, 12),   // Вторая шина
+			Block.box(2, 2, 12, 14, 14, 14),  // Второй промежуток
+			Block.box(1, 1, 14, 15, 15, 16)   // Третья шина
+	);
+	private static final VoxelShape TRIPLE_EAST_INTERACT = Shapes.or(
+			Block.box(0, 1, 1, 6, 15, 15),    // Первая шина
+			Block.box(6, 2, 2, 8, 14, 14),    // Первый промежуток
+			Block.box(8, 1, 1, 12, 15, 15),   // Вторая шина
+			Block.box(12, 2, 2, 14, 14, 14),  // Второй промежуток
+			Block.box(14, 1, 1, 16, 15, 15)   // Третья шина
+	);
+	private static final VoxelShape TRIPLE_WEST_INTERACT = Shapes.or(
+			Block.box(10, 1, 1, 16, 15, 15),  // Первая шина
+			Block.box(8, 2, 2, 10, 14, 14),   // Первый промежуток
+			Block.box(4, 1, 1, 8, 15, 15),    // Вторая шина
+			Block.box(2, 2, 2, 4, 14, 14),    // Второй промежуток
+			Block.box(0, 1, 1, 2, 15, 15)     // Третья шина
+	);
+	private static final VoxelShape TRIPLE_UP_INTERACT = Shapes.or(
+			Block.box(1, 0, 1, 15, 6, 15),    // Первая шина
+			Block.box(2, 6, 2, 14, 8, 14),    // Первый промежуток
+			Block.box(1, 8, 1, 15, 12, 15),   // Вторая шина
+			Block.box(2, 12, 2, 14, 14, 14),  // Второй промежуток
+			Block.box(1, 14, 1, 15, 16, 15)   // Третья шина
+	);
+	private static final VoxelShape TRIPLE_DOWN_INTERACT = Shapes.or(
+			Block.box(1, 10, 1, 15, 16, 15),  // Первая шина
+			Block.box(2, 8, 2, 14, 10, 14),   // Первый промежуток
+			Block.box(1, 4, 1, 15, 8, 15),    // Вторая шина
+			Block.box(2, 2, 2, 14, 4, 14),    // Второй промежуток
+			Block.box(1, 0, 1, 15, 2, 15)     // Третья шина
+	);
+
 	public TireBlock(Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any()
@@ -494,56 +579,108 @@ public class TireBlock extends Block {
 	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		Direction facing = state.getValue(FACING);
 		Form form = state.getValue(FORM);
-
-		switch (form) {
-			case SINGLE:
-				switch (facing) {
-					case NORTH:
-						return SINGLE_NORTH;
-					case SOUTH:
-						return SINGLE_SOUTH;
-					case EAST:
-						return SINGLE_EAST;
-					case WEST:
-						return SINGLE_WEST;
-					case UP:
-						return SINGLE_UP;
-					case DOWN:
-						return SINGLE_DOWN;
-				}
-			case DOUBLE:
-				switch (facing) {
-					case NORTH:
-						return DOUBLE_NORTH;
-					case SOUTH:
-						return DOUBLE_SOUTH;
-					case EAST:
-						return DOUBLE_EAST;
-					case WEST:
-						return DOUBLE_WEST;
-					case UP:
-						return DOUBLE_UP;
-					case DOWN:
-						return DOUBLE_DOWN;
-				}
-			case TRIPLE:
-				switch (facing) {
-					case NORTH:
-						return TRIPLE_NORTH;
-					case SOUTH:
-						return TRIPLE_SOUTH;
-					case EAST:
-						return TRIPLE_EAST;
-					case WEST:
-						return TRIPLE_WEST;
-					case UP:
-						return TRIPLE_UP;
-					case DOWN:
-						return TRIPLE_DOWN;
-				}
-			default:
-				return SINGLE_NORTH;
+		if (!context.isHoldingItem(state.getBlock().asItem())) {
+			switch (form) {
+				case SINGLE:
+					switch (facing) {
+						case NORTH:
+							return SINGLE_NORTH;
+						case SOUTH:
+							return SINGLE_SOUTH;
+						case EAST:
+							return SINGLE_EAST;
+						case WEST:
+							return SINGLE_WEST;
+						case UP:
+							return SINGLE_UP;
+						case DOWN:
+							return SINGLE_DOWN;
+					}
+				case DOUBLE:
+					switch (facing) {
+						case NORTH:
+							return DOUBLE_NORTH;
+						case SOUTH:
+							return DOUBLE_SOUTH;
+						case EAST:
+							return DOUBLE_EAST;
+						case WEST:
+							return DOUBLE_WEST;
+						case UP:
+							return DOUBLE_UP;
+						case DOWN:
+							return DOUBLE_DOWN;
+					}
+				case TRIPLE:
+					switch (facing) {
+						case NORTH:
+							return TRIPLE_NORTH;
+						case SOUTH:
+							return TRIPLE_SOUTH;
+						case EAST:
+							return TRIPLE_EAST;
+						case WEST:
+							return TRIPLE_WEST;
+						case UP:
+							return TRIPLE_UP;
+						case DOWN:
+							return TRIPLE_DOWN;
+					}
+				default:
+					return SINGLE_NORTH;
+			}
+		} else {
+			switch (form) {
+				case SINGLE:
+					switch (facing) {
+						case NORTH:
+							return SINGLE_NORTH_INTERACT;
+						case SOUTH:
+							return SINGLE_SOUTH_INTERACT;
+						case EAST:
+							return SINGLE_EAST_INTERACT;
+						case WEST:
+							return SINGLE_WEST_INTERACT;
+						case UP:
+							return SINGLE_UP_INTERACT;
+						case DOWN:
+							return SINGLE_DOWN_INTERACT;
+					}
+				case DOUBLE:
+					switch (facing) {
+						case NORTH:
+							return DOUBLE_NORTH_INTERACT;
+						case SOUTH:
+							return DOUBLE_SOUTH_INTERACT;
+						case EAST:
+							return DOUBLE_EAST_INTERACT;
+						case WEST:
+							return DOUBLE_WEST_INTERACT;
+						case UP:
+							return DOUBLE_UP_INTERACT;
+						case DOWN:
+							return DOUBLE_DOWN_INTERACT;
+					}
+				case TRIPLE:
+					switch (facing) {
+						case NORTH:
+							return TRIPLE_NORTH_INTERACT;
+						case SOUTH:
+							return TRIPLE_SOUTH_INTERACT;
+						case EAST:
+							return TRIPLE_EAST_INTERACT;
+						case WEST:
+							return TRIPLE_WEST_INTERACT;
+						case UP:
+							return TRIPLE_UP_INTERACT;
+						case DOWN:
+							return TRIPLE_DOWN_INTERACT;
+					}
+				default:
+					return SINGLE_NORTH_INTERACT;
+			}
 		}
+
 	}
 
 

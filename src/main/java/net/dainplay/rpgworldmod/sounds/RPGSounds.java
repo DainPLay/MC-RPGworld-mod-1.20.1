@@ -121,4 +121,13 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> LIVING_WOOD_BOW_TIE;
     public static RegistryObject<SoundEvent> LIVING_WOOD_BOW_PULL;
     public static RegistryObject<SoundEvent> LIVING_WOOD_BOW_BREAK;
+    public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_EMBER_START;
+    public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_EMBER_LOOP;
+    public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_EMBER_STOP;
+    public static RegistryObject<SoundEvent> SPELL_RESTORATION_LOOP;
+    public static RegistryObject<SoundEvent> SPELL_RESTORATION_STOP;
+    public static RegistryObject<SoundEvent> SPELL_CREATION_START;
+    public static RegistryObject<SoundEvent> SPELL_CREATION_STOP;
+    public static RegistryObject<SoundEvent> SPELL_ILLUSION_START;
+    public static RegistryObject<SoundEvent> SPELL_ALTERATION_LOOP;
 }

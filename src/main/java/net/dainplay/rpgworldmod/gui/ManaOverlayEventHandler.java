@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.item.custom.ManaCostItem;
+import net.dainplay.rpgworldmod.item.custom.OrbitingItem;
 import net.dainplay.rpgworldmod.network.ClientIsManaRegenBlockedData;
 import net.dainplay.rpgworldmod.network.ClientManaData;
 import net.dainplay.rpgworldmod.network.ClientMaxManaData;
@@ -108,11 +109,13 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 
 				// Проверяем обе руки
 				if (mainHandItem.getItem() instanceof ManaCostItem) {
-					hasManaCostItem = true;
-					manaCostToShow = ((ManaCostItem) mainHandItem.getItem()).getManaCost();
+					if(mainHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(mainHandItem, mc.player);
+					else hasManaCostItem = true;
+					if (hasManaCostItem) manaCostToShow = ((ManaCostItem) mainHandItem.getItem()).getManaCost(mainHandItem);
 				} else if (offHandItem.getItem() instanceof ManaCostItem) {
-					hasManaCostItem = true;
-					manaCostToShow = ((ManaCostItem) offHandItem.getItem()).getManaCost();
+					if(offHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(offHandItem, mc.player);
+					else hasManaCostItem = true;
+					if (hasManaCostItem) manaCostToShow = ((ManaCostItem) offHandItem.getItem()).getManaCost(offHandItem);
 				}
 			}
 
@@ -146,11 +149,13 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		ItemStack mainHandItem = mc.player.getMainHandItem();
 		ItemStack offHandItem = mc.player.getOffhandItem();
 		if (mainHandItem.getItem() instanceof ManaCostItem) {
-			hasManaCostItem = true;
-			manaCostToShow = ((ManaCostItem) mainHandItem.getItem()).getManaCost();
+			if(mainHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(mainHandItem, mc.player);
+			else hasManaCostItem = true;
+			if (hasManaCostItem) manaCostToShow = ((ManaCostItem) mainHandItem.getItem()).getManaCost(mainHandItem);
 		} else if (offHandItem.getItem() instanceof ManaCostItem) {
-			hasManaCostItem = true;
-			manaCostToShow = ((ManaCostItem) offHandItem.getItem()).getManaCost();
+			if(offHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(offHandItem, mc.player);
+			else hasManaCostItem = true;
+			if (hasManaCostItem) manaCostToShow = ((ManaCostItem) offHandItem.getItem()).getManaCost(offHandItem);
 		}
 		return ClientManaData.get() < ClientMaxManaData.get() ||
 				System.currentTimeMillis() < fullManaDisplayTime ||
@@ -227,8 +232,13 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		if (mc.player != null) {
 			ItemStack mainHandItem = mc.player.getMainHandItem();
 			ItemStack offHandItem = mc.player.getOffhandItem();
-			hasManaCostItem = mainHandItem.getItem() instanceof ManaCostItem ||
-					offHandItem.getItem() instanceof ManaCostItem;
+			if (mainHandItem.getItem() instanceof ManaCostItem) {
+				if(mainHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(mainHandItem, mc.player);
+				else hasManaCostItem = true;
+			} else if (offHandItem.getItem() instanceof ManaCostItem) {
+				if(offHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(offHandItem, mc.player);
+				else hasManaCostItem = true;
+			}
 		}
 
 		if (currentTime > fullManaDisplayTime && currentMana == maxMana && !hasManaCostItem) {
@@ -307,7 +317,8 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		boolean isBlinking = (currentTime / 100) % 2 == 0;
 
 		for (int i = starsToDraw - 1; i >= 0; i--) {
-			int xPosition = xStart + (i % 10) * 8;
+			// ИЗМЕНЕНИЕ: Изменяем расчет X для отрисовки справа налево
+			int xPosition = xStart + ((9 - (i % 10)) * 8); // 9 - обратный порядок
 			int currentY = yPosition - max(3, (12 - ClientMaxManaData.get() / 50)) * (i / 10);
 
 			if (mana <= 10 || ClientIsManaRegenBlockedData.get() > 0 || mc.player.hasEffect(ModEffects.HAPPINESS.get())) {
@@ -394,7 +405,8 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		boolean isBlinking = (currentTime / 100) % 2 == 0;
 
 		for (int i = maxStarsToDraw - 1; i >= 0; i--) {
-			int xPosition = xStart + (i % 10) * 8;
+			// ИЗМЕНЕНИЕ: Изменяем расчет X для отрисовки справа налево
+			int xPosition = xStart + ((9 - (i % 10)) * 8); // 9 - обратный порядок
 			int currentY = yPosition - max(3, (12 - maxManaValue / 50)) * (i / 10);
 
 			if (mana <= 10 || ClientIsManaRegenBlockedData.get() > 0 || mc.player.hasEffect(ModEffects.HAPPINESS.get())) {
@@ -509,12 +521,11 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		int remainder = manaCostToShow % 5;
 		if (remainder == 0) remainder = 5;
 
-		// Отображаем все иконки стоимости с самого начала (слева направо)
+		// Отображаем все иконки стоимости с самого начала (справа налево)
 		for (int i = 0; i < costStars; i++) {
-			// Определяем координаты для текущей иконки
-			int xPosition = xStart + (i % 10) * 8;
+			// Определяем координаты для текущей иконки (справа налево)
+			int xPosition = xStart + ((9 - (i % 10)) * 8); // ИЗМЕНЕНИЕ: рисуем справа налево
 			int currentY = yPosition - max(3, (12 - maxManaValue / 50)) * (i / 10);
-
 
 			if (calculateManaValue() <= 10 || ClientIsManaRegenBlockedData.get() > 0 || mc.player.hasEffect(ModEffects.HAPPINESS.get())) {
 				currentY += randomOffset[i];
@@ -631,9 +642,8 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 			if (isAdditionalIcon) {
 				// Это дополнительная иконка слева от текущей маны
 				// Вычисляем абсолютный индекс для позиционирования
-				int xPosition = xStart + (iconIndex % 10) * 8;
+				int xPosition = xStart + ((9 - (iconIndex % 10)) * 8); // ИЗМЕНЕНИЕ: справа налево
 				int currentY = yPosition - max(3, (12 - maxManaValue / 50)) * (iconIndex / 10);
-
 
 				if (calculateManaValue() <= 10 || ClientIsManaRegenBlockedData.get() > 0 || mc.player.hasEffect(ModEffects.HAPPINESS.get())) {
 					currentY += randomOffset[iconIndex];
@@ -659,9 +669,8 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 				}
 			} else {
 				// Это существующая иконка текущей маны
-				int xPosition = xStart + (iconIndex % 10) * 8;
+				int xPosition = xStart + ((9 - (iconIndex % 10)) * 8); // ИЗМЕНЕНИЕ: справа налево
 				int currentY = yPosition - max(3, (12 - maxManaValue / 50)) * (iconIndex / 10);
-
 
 				if (calculateManaValue() <= 10 || ClientIsManaRegenBlockedData.get() > 0 || mc.player.hasEffect(ModEffects.HAPPINESS.get())) {
 					currentY += randomOffset[iconIndex];

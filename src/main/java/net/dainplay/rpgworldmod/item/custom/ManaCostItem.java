@@ -2,6 +2,7 @@ package net.dainplay.rpgworldmod.item.custom;
 
 import net.dainplay.rpgworldmod.network.PlayerManaProvider;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -10,13 +11,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public interface ManaCostItem {
 
-    default int getManaCost() {
+    default int getManaCost(ItemStack item) {
         return 0;
+    }
+
+    default int getDisplayManaCost(ItemStack item) {
+        return getManaCost(item);
+    }
+
+    default Component getManaCostAdditionalLine(ItemStack item) {
+        return Component.literal("");
     }
 
     default void updateManaTag(ItemStack stack, Player player) {
         CompoundTag tag = stack.getOrCreateTag();
-        boolean hasEnough = hasEnoughMana(player);
+        boolean hasEnough = hasEnoughMana(player, stack);
 
         if (!hasEnough) {
             tag.putBoolean("notEnoughMana", true);
@@ -28,13 +37,13 @@ public interface ManaCostItem {
         }
     }
 
-    default boolean hasEnoughMana(Player player) {
+    default boolean hasEnoughMana(Player player, ItemStack item) {
         AtomicInteger playerMana = new AtomicInteger();
         if(player instanceof ServerPlayer) {
             player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
                 playerMana.set(mana.getMana());
             });
         }
-        return playerMana.get() >= getManaCost();
+        return playerMana.get() >= getManaCost(item);
     }
 }

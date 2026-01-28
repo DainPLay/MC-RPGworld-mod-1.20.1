@@ -987,5 +987,59 @@
       }
     ],
     "subtitle": "subtitles.rpgworldmod.item.living_wood_bow.break"
+  },
+  "rpgworldmod.spell.destruction_ember_start": {
+    "sounds": [
+      "rpgworldmod:spell/destruction_ember_start"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.destruction_ember_start"
+  },
+  "rpgworldmod.spell.destruction_ember_loop": {
+    "sounds": [
+      "rpgworldmod:spell/destruction_ember_loop"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.destruction_ember_loop"
+  },
+  "rpgworldmod.spell.destruction_ember_stop": {
+    "sounds": [
+      "rpgworldmod:spell/destruction_ember_stop"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.destruction_ember_stop"
+  },
+  "rpgworldmod.spell.restoration_loop": {
+    "sounds": [
+      "rpgworldmod:spell/restoration_loop"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.restoration_loop"
+  },
+  "rpgworldmod.spell.restoration_stop": {
+    "sounds": [
+      "rpgworldmod:spell/restoration_stop"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.restoration_stop"
+  },
+  "rpgworldmod.spell.creation_start": {
+    "sounds": [
+      "rpgworldmod:spell/creation_start"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.creation_start"
+  },
+  "rpgworldmod.spell.creation_stop": {
+    "sounds": [
+      "rpgworldmod:spell/creation_stop"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.creation_stop"
+  },
+  "rpgworldmod.spell.illusion_start": {
+    "sounds": [
+      "rpgworldmod:spell/illusion_start"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.illusion_start"
+  },
+  "rpgworldmod.spell.alteration_loop": {
+    "sounds": [
+      "rpgworldmod:spell/alteration_loop"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.alteration_loop"
   }
 }

@@ -68,31 +68,30 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-
 	@Override
-	public String getTexture() {
+	public String getTexture(ItemStack stack, Entity entity) {
 		return texture;
 	}
 
 
 	@Override
-	public int getAnimationSpeed() {
+	public int getAnimationSpeed(ItemStack stack, Entity entity) {
 		return animationSpeed;
 	}
 
 
 	@Override
-	public int getAnimationLength() {
+	public int getAnimationLength(ItemStack stack, Entity entity) {
 		return animationLength;
 	}
 
 	@Override
-	public int getColor() {
+	public int getColor(ItemStack stack, Entity entity) {
 		return color;
 	}
 
 	@Override
-	public int getManaCost() {
+	public int getManaCost(ItemStack item) {
 		return manacost;
 	}
 
@@ -143,11 +142,10 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 			Vec3 lookAngle = player.getLookAngle();
 			Vec3 startPos = player.getEyePosition().add(lookAngle.scale(0.5));
 
-			// Увеличиваем скорость в 2 раза (1.0 вместо 0.5)
 			EmberProjectileData projectile = new EmberProjectileData(
 					player.getUUID(),
 					startPos,
-					lookAngle.scale(1.0), // В 2 раза быстрее
+					lookAngle.scale(1.0),
 					level.getGameTime()
 			);
 

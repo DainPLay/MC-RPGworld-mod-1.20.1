@@ -9,6 +9,8 @@ import net.dainplay.rpgworldmod.block.entity.custom.EntFaceBlockEntity;
 import net.dainplay.rpgworldmod.data.tags.DepressionDeathCheck;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.item.ModItems;
+import net.dainplay.rpgworldmod.item.custom.EmptyScrollItem;
+import net.dainplay.rpgworldmod.item.custom.ScrollItem;
 import net.dainplay.rpgworldmod.network.BoundEntitySyncPacket;
 import net.dainplay.rpgworldmod.network.IllusionForceDataSyncS2CPacket;
 import net.dainplay.rpgworldmod.network.IsManaRegenBlockedDataSyncS2CPacket;
@@ -23,6 +25,8 @@ import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.dainplay.rpgworldmod.util.BoundEntityHelper;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -44,8 +48,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraftforge.client.event.RegisterNamedRenderTypesEvent;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.GrindstoneEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
@@ -474,4 +480,16 @@ public class ModEvents {
 		}
 	}
 
+	@SubscribeEvent
+	public static void onGrindstoneUse(GrindstoneEvent.OnPlaceItem event) {
+		ItemStack topItem = event.getTopItem();
+		ItemStack bottomItem = event.getBottomItem();
+
+		if (topItem.getItem() instanceof EmptyScrollItem
+				|| bottomItem.getItem() instanceof EmptyScrollItem
+				|| bottomItem.getItem() instanceof ScrollItem
+				|| bottomItem.getItem() instanceof ScrollItem) {
+			event.setCanceled(true);
+		}
+	}
 }

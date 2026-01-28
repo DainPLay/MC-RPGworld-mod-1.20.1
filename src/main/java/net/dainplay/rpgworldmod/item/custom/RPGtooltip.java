@@ -22,7 +22,8 @@ public interface RPGtooltip {
             return;
         if(pStack.getItem() instanceof ManaCostItem item) {
             MutableComponent costText = Component.translatable("tooltip.rpgworldmod.cost_text").withStyle(ChatFormatting.WHITE);
-            costText.append(Component.translatable("tooltip.rpgworldmod.cost_number", item.getManaCost()).withStyle(ChatFormatting.BLUE));
+            costText.append(Component.translatable("tooltip.rpgworldmod.cost_number", item.getDisplayManaCost(pStack)).withStyle(ChatFormatting.BLUE));
+            costText.append(item.getManaCostAdditionalLine(pStack));
             pTooltip.add(costText);
         }
         if (InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), Minecraft.getInstance().options.keyShift.getKey().getValue())) {
@@ -34,15 +35,15 @@ public interface RPGtooltip {
             List<Component> combinedLines = this.getHoldShiftTooltipWithLineBreaks();
             pTooltip.addAll(combinedLines);
         }
-        pTooltip.add(this.getDisplayName().withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED));
+        pTooltip.add(this.getDisplayName(pStack).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED));
     }
 
-    default MutableComponent getDisplayName() {
-        return Component.translatable(((Item)this).getDescriptionId() + ".desc");
+    default MutableComponent getDisplayName(ItemStack item) {
+        return Component.translatable(((Item)this).getDescriptionId(item) + ".desc");
     }
 
     default MutableComponent getDisplayFeatures(ItemStack item) {
-        return Component.translatable(((Item)this).getDescriptionId() + ".features",
+        return Component.translatable(((Item)this).getDescriptionId(item) + ".features",
                 getFirstPredicate());
     }
 
