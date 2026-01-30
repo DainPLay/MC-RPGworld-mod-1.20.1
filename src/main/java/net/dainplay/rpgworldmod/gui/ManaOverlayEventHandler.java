@@ -400,17 +400,67 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		// Количество звезд для максимальной маны
 		int maxStarsToDraw = (maxManaValue + 4) / 5; // Округляем вверх
 
+		// Вычисляем количество строк (по 10 звезд в строке)
+		int totalRows = (maxStarsToDraw + 9) / 10; // Округляем вверх
+
+		// Определяем, какие строки пустые (без текущей маны)
+		boolean[] emptyRows = new boolean[totalRows];
+		int currentStars = (currentMana + 4) / 5; // Звезд текущей маны
+
+		for (int row = 0; row < totalRows; row++) {
+			int starsInCurrentRow = Math.min(10, maxStarsToDraw - row * 10);
+			if (starsInCurrentRow <= 0) {
+				emptyRows[row] = true;
+				continue;
+			}
+
+			// Проверяем, есть ли в этой строке текущая мана
+			int firstStarInRow = row * 10;
+			int lastStarInRow = Math.min(firstStarInRow + 9, maxStarsToDraw - 1);
+
+			// Строка считается пустой, если в ней нет ни одной звезды текущей маны
+			emptyRows[row] = true;
+			for (int starIndex = firstStarInRow; starIndex <= lastStarInRow; starIndex++) {
+				if (starIndex < currentStars) {
+					// В этой строке есть хотя бы одна звезда текущей маны
+					emptyRows[row] = false;
+					break;
+				}
+			}
+		}
+
 		int yPosition = screenHeight - 50 - isAirRender();
 		long currentTime = System.currentTimeMillis();
 		boolean isBlinking = (currentTime / 100) % 2 == 0;
 
+		// Рассчитываем отступы между строками с учетом пустых строк
+		int rowHeight = max(3, (12 - maxManaValue / 50));
+		int[] rowOffsets = new int[totalRows];
+
+		for (int row = 0; row < totalRows; row++) {
+			if (row == 0) {
+				rowOffsets[row] = 0;
+			} else {
+				// Если текущая строка или предыдущая строка пустые, используем минимальный отступ (3)
+				if (emptyRows[row] || emptyRows[row - 1]) {
+					rowOffsets[row] = rowOffsets[row - 1] + Math.min(5, (12 - maxManaValue / 50));
+				} else {
+					rowOffsets[row] = rowOffsets[row - 1] + rowHeight;
+				}
+			}
+		}
+
 		for (int i = maxStarsToDraw - 1; i >= 0; i--) {
 			// ИЗМЕНЕНИЕ: Изменяем расчет X для отрисовки справа налево
 			int xPosition = xStart + ((9 - (i % 10)) * 8); // 9 - обратный порядок
-			int currentY = yPosition - max(3, (12 - maxManaValue / 50)) * (i / 10);
+			int rowIndex = i / 10; // Определяем строку (0 - нижняя)
+			int currentY = yPosition - rowOffsets[rowIndex];
 
 			if (mana <= 10 || ClientIsManaRegenBlockedData.get() > 0 || mc.player.hasEffect(ModEffects.HAPPINESS.get())) {
-				currentY += randomOffset[i];
+				// Убедимся, что индекс не выходит за пределы массива
+				if (i < randomOffset.length) {
+					currentY += randomOffset[i];
+				}
 			}
 			if (i == regen) {
 				currentY -= 2;
@@ -419,8 +469,18 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 			// Определяем обводку в зависимости от типа мигания
 			int bgTextureY = 0; // Стандартная обводка по умолчанию (Y=0)
 
+			// Проверяем, является ли строка пустой
+			boolean isEmptyRow = emptyRows[rowIndex];
+
+			// Если строка пустая И это НЕ самая нижняя строка (rowIndex > 0), используем Y=60
+			if (isEmptyRow && rowIndex > 0) {
+				bgTextureY = 60;
+			} else if (rowIndex == 0) {
+				// Самая нижняя строка всегда использует стандартные спрайты (Y=0)
+				bgTextureY = 0;
+			}
 			// Подсветка при трате маны (темно-синяя обводка нескольких иконок, которые были полными ДО траты)
-			if (spendBlink && isBlinking && spentManaAmount > 0 && manaBeforeSpend > 0) {
+			else if (spendBlink && isBlinking && spentManaAmount > 0 && manaBeforeSpend > 0) {
 				// Вычисляем количество иконок, которые были полными ДО траты
 				int starsBeforeSpend = (manaBeforeSpend + 4) / 5;
 

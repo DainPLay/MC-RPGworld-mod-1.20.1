@@ -50,13 +50,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, OrbitingItem {
 
-	// Хранилище активных снарядов
-	private static final Map<UUID, EmberProjectileData> activeProjectiles = new HashMap<>();
-	private static int manacost;
-	private static int color;
-	private static String texture;
-	private static int animationSpeed;
-	private static int animationLength;
+	// Хранилище активных снарядов с привязкой к уровню
+	private static final Map<Level, Map<UUID, EmberProjectileData>> activeProjectiles = new HashMap<>();
+	private final int manacost;
+	private final int color;
+	private final String texture;
+	private final int animationSpeed;
+	private final int animationLength;
 
 	public EmberGemItem(Properties pProperties, int cost, int color, String texture, int animationSpeed, int animationLength) {
 		super(pProperties);
@@ -73,12 +73,10 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 		return texture;
 	}
 
-
 	@Override
 	public int getAnimationSpeed(ItemStack stack, Entity entity) {
 		return animationSpeed;
 	}
-
 
 	@Override
 	public int getAnimationLength(ItemStack stack, Entity entity) {
@@ -149,7 +147,7 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 					level.getGameTime()
 			);
 
-			activeProjectiles.put(UUID.randomUUID(), projectile);
+			getActiveProjectiles(level).put(UUID.randomUUID(), projectile);
 
 			// Звук использования
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -161,6 +159,11 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 		}
 
 		return InteractionResultHolder.sidedSuccess(itemstack, level.isClientSide());
+	}
+
+	// Вспомогательные методы для работы с данными
+	private static Map<UUID, EmberProjectileData> getActiveProjectiles(Level level) {
+		return activeProjectiles.computeIfAbsent(level, k -> new HashMap<>());
 	}
 
 	// Класс для хранения данных снаряда
@@ -182,66 +185,69 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 	@SubscribeEvent
 	public void onServerTick(TickEvent.ServerTickEvent event) {
 		if (event.phase == TickEvent.Phase.END) {
-			// Копируем для безопасного удаления
-			Map<UUID, EmberProjectileData> copy = new HashMap<>(activeProjectiles);
+			// Обрабатываем все уровни сервера
+			event.getServer().getAllLevels().forEach(this::processProjectiles);
+		}
+	}
 
-			for (Map.Entry<UUID, EmberProjectileData> entry : copy.entrySet()) {
-				UUID projectileId = entry.getKey();
-				EmberProjectileData projectile = entry.getValue();
+	private void processProjectiles(ServerLevel level) {
+		// Получаем снаряды для этого уровня
+		Map<UUID, EmberProjectileData> levelActiveProjectiles = getActiveProjectiles(level);
 
-				// Уменьшаем время жизни в 2 раза (10 тиков вместо 20)
-				if (event.getServer().getLevel(Level.OVERWORLD).getGameTime() - projectile.spawnTime >= 10) {
-					activeProjectiles.remove(projectileId);
+		if (levelActiveProjectiles.isEmpty()) return;
 
-					// Эффект исчезновения
-					Level level = event.getServer().getLevel(Level.OVERWORLD);
-					if (level instanceof ServerLevel serverLevel) {
-						serverLevel.sendParticles(ParticleTypes.SMOKE,
-								projectile.position.x, projectile.position.y, projectile.position.z,
-								3, 0.2, 0.2, 0.2, 0.02);
-					}
-					continue;
-				}
+		// Копируем для безопасного удаления
+		Map<UUID, EmberProjectileData> copy = new HashMap<>(levelActiveProjectiles);
 
-				// Проверяем контакт с жидкостью перед обновлением позиции
-				Level level = event.getServer().getLevel(Level.OVERWORLD);
-				if (checkWaterContact(level, projectile.position)) {
-					// Эффект шипения в воде
-					if (level instanceof ServerLevel serverLevel) {
-						serverLevel.sendParticles(ParticleTypes.SMOKE,
-								projectile.position.x, projectile.position.y, projectile.position.z,
-								5, 0.2, 0.2, 0.2, 0.05);
-						serverLevel.sendParticles(ParticleTypes.BUBBLE,
-								projectile.position.x, projectile.position.y, projectile.position.z,
-								3, 0.1, 0.1, 0.1, 0.1);
-					}
-					level.playSound(null,
-							projectile.position.x, projectile.position.y, projectile.position.z,
-							RPGSounds.EMBER_GEM_EXTINGUISH.get(), SoundSource.NEUTRAL,
-							0.3F, 1.0F);
-					activeProjectiles.remove(projectileId);
-					continue;
-				}
+		for (Map.Entry<UUID, EmberProjectileData> entry : copy.entrySet()) {
+			UUID projectileId = entry.getKey();
+			EmberProjectileData projectile = entry.getValue();
 
-				// Обновляем позицию
-				projectile.position = projectile.position.add(projectile.velocity);
+			// Уменьшаем время жизни в 2 раза (10 тиков вместо 20)
+			if (level.getGameTime() - projectile.spawnTime >= 10) {
+				levelActiveProjectiles.remove(projectileId);
 
-				// Проверяем столкновения
-				if (checkCollisions(level, projectile, projectileId)) {
-					activeProjectiles.remove(projectileId);
-				}
-
-				// Спавним частицы
-				if (level instanceof ServerLevel serverLevel) {
-					serverLevel.sendParticles(ParticleTypes.FLAME,
-							projectile.position.x, projectile.position.y, projectile.position.z,
-							1, 0.1, 0.1, 0.1, 0.01);
-					// Добавляем больше частиц для эффекта скорости
-					serverLevel.sendParticles(ParticleTypes.SMOKE,
-							projectile.position.x, projectile.position.y, projectile.position.z,
-							1, 0.05, 0.05, 0.05, 0.005);
-				}
+				// Эффект исчезновения
+				level.sendParticles(ParticleTypes.SMOKE,
+						projectile.position.x, projectile.position.y, projectile.position.z,
+						3, 0.2, 0.2, 0.2, 0.02);
+				continue;
 			}
+
+			// Проверяем контакт с жидкостью перед обновлением позиции
+			if (checkWaterContact(level, projectile.position)) {
+				// Эффект шипения в воде
+				level.sendParticles(ParticleTypes.SMOKE,
+						projectile.position.x, projectile.position.y, projectile.position.z,
+						5, 0.2, 0.2, 0.2, 0.05);
+				level.sendParticles(ParticleTypes.BUBBLE,
+						projectile.position.x, projectile.position.y, projectile.position.z,
+						3, 0.1, 0.1, 0.1, 0.1);
+
+				level.playSound(null,
+						projectile.position.x, projectile.position.y, projectile.position.z,
+						RPGSounds.EMBER_GEM_EXTINGUISH.get(), SoundSource.NEUTRAL,
+						0.3F, 1.0F);
+				levelActiveProjectiles.remove(projectileId);
+				continue;
+			}
+
+			// Обновляем позицию
+			projectile.position = projectile.position.add(projectile.velocity);
+
+			// Проверяем столкновения
+			if (checkCollisions(level, projectile, projectileId)) {
+				levelActiveProjectiles.remove(projectileId);
+			}
+
+			// Спавним частицы
+			level.sendParticles(ParticleTypes.FLAME,
+					projectile.position.x, projectile.position.y, projectile.position.z,
+					1, 0.1, 0.1, 0.1, 0.01);
+			// Добавляем больше частиц для эффекта скорости
+			level.sendParticles(ParticleTypes.SMOKE,
+					projectile.position.x, projectile.position.y, projectile.position.z,
+					1, 0.05, 0.05, 0.05, 0.005);
 		}
 	}
 

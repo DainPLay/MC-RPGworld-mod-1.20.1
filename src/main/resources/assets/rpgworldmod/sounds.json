@@ -997,8 +997,7 @@
   "rpgworldmod.spell.destruction_ember_loop": {
     "sounds": [
       "rpgworldmod:spell/destruction_ember_loop"
-    ],
-    "subtitle": "subtitles.rpgworldmod.spell.destruction_ember_loop"
+    ]
   },
   "rpgworldmod.spell.destruction_ember_stop": {
     "sounds": [
@@ -1006,11 +1005,16 @@
     ],
     "subtitle": "subtitles.rpgworldmod.spell.destruction_ember_stop"
   },
+  "rpgworldmod.spell.restoration_start": {
+    "sounds": [
+      "rpgworldmod:spell/restoration_start"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.restoration_start"
+  },
   "rpgworldmod.spell.restoration_loop": {
     "sounds": [
       "rpgworldmod:spell/restoration_loop"
-    ],
-    "subtitle": "subtitles.rpgworldmod.spell.restoration_loop"
+    ]
   },
   "rpgworldmod.spell.restoration_stop": {
     "sounds": [
@@ -1039,7 +1043,18 @@
   "rpgworldmod.spell.alteration_loop": {
     "sounds": [
       "rpgworldmod:spell/alteration_loop"
+    ]
+  },
+  "rpgworldmod.spell.alteration_start": {
+    "sounds": [
+      "rpgworldmod:spell/alteration_start"
     ],
-    "subtitle": "subtitles.rpgworldmod.spell.alteration_loop"
+    "subtitle": "subtitles.rpgworldmod.spell.alteration_start"
+  },
+  "rpgworldmod.spell.alteration_stop": {
+    "sounds": [
+      "rpgworldmod:spell/alteration_stop"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.alteration_stop"
   }
 }

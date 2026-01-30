@@ -1,8 +1,11 @@
 package net.dainplay.rpgworldmod.network;
 
+import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.sounds.EmberScrollSound;
+import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -37,7 +40,12 @@ public class EmberScrollLoopSoundPacket {
                 if (player != null) {
                     if (this.start) {
                         // Запускаем зацикленный звук на клиенте
-                        EmberScrollSound sound = new EmberScrollSound(player, player.getUseItem());
+                        SoundEvent soundEvent = RPGSounds.SPELL_DESTRUCTION_EMBER_LOOP.get();
+                        if(player.getUseItem().getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0)
+                            soundEvent = RPGSounds.SPELL_RESTORATION_LOOP.get();
+                        if(player.getUseItem().getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0)
+                            soundEvent = RPGSounds.SPELL_ALTERATION_LOOP.get();
+                        EmberScrollSound sound = new EmberScrollSound(player, player.getUseItem(), soundEvent);
                         Minecraft.getInstance().getSoundManager().play(sound);
                         // Сохраняем звук для возможности остановки
                         EmberScrollSoundManager.addSound(player.getUUID(), sound);

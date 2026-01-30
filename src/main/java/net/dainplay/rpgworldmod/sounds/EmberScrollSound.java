@@ -2,6 +2,7 @@ package net.dainplay.rpgworldmod.sounds;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -10,8 +11,8 @@ public class EmberScrollSound extends AbstractTickableSoundInstance {
     private final LivingEntity living;
     private final ItemStack stack;
 
-    public EmberScrollSound(LivingEntity living, ItemStack stack) {
-        super(RPGSounds.SPELL_DESTRUCTION_EMBER_LOOP.get(), SoundSource.PLAYERS, living.getRandom());
+    public EmberScrollSound(LivingEntity living, ItemStack stack, SoundEvent sound) {
+        super(sound, SoundSource.PLAYERS, living.getRandom());
         this.living = living;
         this.stack = stack;
         this.looping = true;
