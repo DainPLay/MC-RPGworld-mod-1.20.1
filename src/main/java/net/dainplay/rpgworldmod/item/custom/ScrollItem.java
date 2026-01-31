@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ScrollItem extends Item  implements RPGtooltip, ManaCostItem, OrbitingItem {
+public class ScrollItem extends Item  implements RPGtooltip, ManaCostItem, OrbitingItem, ChooseAnimateTargetItem {
 	public ScrollItem(Properties pProperties) {
 		super(pProperties);
 	}

@@ -1034,12 +1034,6 @@
     ],
     "subtitle": "subtitles.rpgworldmod.spell.creation_stop"
   },
-  "rpgworldmod.spell.illusion_start": {
-    "sounds": [
-      "rpgworldmod:spell/illusion_start"
-    ],
-    "subtitle": "subtitles.rpgworldmod.spell.illusion_start"
-  },
   "rpgworldmod.spell.alteration_loop": {
     "sounds": [
       "rpgworldmod:spell/alteration_loop"
@@ -1056,5 +1050,28 @@
       "rpgworldmod:spell/alteration_stop"
     ],
     "subtitle": "subtitles.rpgworldmod.spell.alteration_stop"
+  },
+  "rpgworldmod.spell.illusion_start": {
+    "sounds": [
+      "rpgworldmod:spell/illusion_start"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.illusion_start"
+  },
+  "rpgworldmod.spell.illusion_loop": {
+    "sounds": [
+      "rpgworldmod:spell/illusion_loop"
+    ]
+  },
+  "rpgworldmod.spell.illusion_stop": {
+    "sounds": [
+      "rpgworldmod:spell/illusion_stop"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.illusion_stop"
+  },
+  "rpgworldmod.spell.illusion_cast": {
+    "sounds": [
+      "rpgworldmod:spell/illusion_cast"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.illusion_cast"
   }
 }

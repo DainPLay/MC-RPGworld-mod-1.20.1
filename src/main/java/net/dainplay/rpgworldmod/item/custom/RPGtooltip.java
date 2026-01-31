@@ -44,10 +44,15 @@ public interface RPGtooltip {
 
     default MutableComponent getDisplayFeatures(ItemStack item) {
         return Component.translatable(((Item)this).getDescriptionId(item) + ".features",
-                getFirstPredicate());
+                getFirstPredicate(item),
+                getSecondPredicate(item));
     }
 
-    default String getFirstPredicate() {
+    default String getFirstPredicate(ItemStack item) {
+        return "";
+    }
+
+    default String getSecondPredicate(ItemStack item) {
         return "";
     }
 

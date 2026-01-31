@@ -30,6 +30,9 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> HAPPINESS = MOB_EFFECTS.register("happiness",
             () -> new HappinessEffect(MobEffectCategory.BENEFICIAL, 0x00000000));
 
+    public static final RegistryObject<MobEffect> BURN_ILLUSION = MOB_EFFECTS.register("burn_illusion",
+            () -> new BurnIllusionEffect(MobEffectCategory.HARMFUL, 0x00000000));
+
     public static void register(IEventBus eventBus) {
         MOB_EFFECTS.register(eventBus);
     }

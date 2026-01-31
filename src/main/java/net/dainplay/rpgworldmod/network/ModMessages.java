@@ -112,6 +112,24 @@ public class ModMessages {
 				.encoder(EmberScrollLoopSoundPacket::encode)
 				.consumerMainThread(EmberScrollLoopSoundPacket::handle)
 				.add();
+
+		net.messageBuilder(CancelScrollUsagePacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+				.decoder(CancelScrollUsagePacket::new)
+				.encoder(CancelScrollUsagePacket::toBytes)
+				.consumerMainThread(CancelScrollUsagePacket::handle)
+				.add();
+
+		net.messageBuilder(C2SRequestTargetValidationPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+				.decoder(C2SRequestTargetValidationPacket::new)
+				.encoder(C2SRequestTargetValidationPacket::toBytes)
+				.consumerMainThread(C2SRequestTargetValidationPacket::handle)
+				.add();
+
+		net.messageBuilder(S2CTargetValidationResultPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(S2CTargetValidationResultPacket::new)
+				.encoder(S2CTargetValidationResultPacket::toBytes)
+				.consumerMainThread(S2CTargetValidationResultPacket::handle)
+				.add();
 	}
 
 	public static <MSG> void sendToServer(MSG message) {

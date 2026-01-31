@@ -129,8 +129,11 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> SPELL_RESTORATION_STOP;
     public static RegistryObject<SoundEvent> SPELL_CREATION_START;
     public static RegistryObject<SoundEvent> SPELL_CREATION_STOP;
-    public static RegistryObject<SoundEvent> SPELL_ILLUSION_START;
     public static RegistryObject<SoundEvent> SPELL_ALTERATION_START;
     public static RegistryObject<SoundEvent> SPELL_ALTERATION_LOOP;
     public static RegistryObject<SoundEvent> SPELL_ALTERATION_STOP;
+    public static RegistryObject<SoundEvent> SPELL_ILLUSION_START;
+    public static RegistryObject<SoundEvent> SPELL_ILLUSION_LOOP;
+    public static RegistryObject<SoundEvent> SPELL_ILLUSION_STOP;
+    public static RegistryObject<SoundEvent> SPELL_ILLUSION_CAST;
 }

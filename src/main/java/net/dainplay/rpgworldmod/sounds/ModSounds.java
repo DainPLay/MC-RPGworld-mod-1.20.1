@@ -173,10 +173,13 @@ public class ModSounds
         SPELL_RESTORATION_STOP = registerSound("rpgworldmod.spell.restoration_stop");
         SPELL_CREATION_START = registerSound("rpgworldmod.spell.creation_start");
         SPELL_CREATION_STOP = registerSound("rpgworldmod.spell.creation_stop");
-        SPELL_ILLUSION_START = registerSound("rpgworldmod.spell.illusion_start");
         SPELL_ALTERATION_START = registerSound("rpgworldmod.spell.alteration_start");
         SPELL_ALTERATION_LOOP = registerSound("rpgworldmod.spell.alteration_loop");
         SPELL_ALTERATION_STOP = registerSound("rpgworldmod.spell.alteration_stop");
+        SPELL_ILLUSION_START = registerSound("rpgworldmod.spell.illusion_start");
+        SPELL_ILLUSION_LOOP = registerSound("rpgworldmod.spell.illusion_loop");
+        SPELL_ILLUSION_STOP = registerSound("rpgworldmod.spell.illusion_stop");
+        SPELL_ILLUSION_CAST = registerSound("rpgworldmod.spell.illusion_cast");
     }
 
     private static RegistryObject<SoundEvent> registerSound(String name)

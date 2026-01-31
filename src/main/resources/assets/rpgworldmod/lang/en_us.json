@@ -153,7 +153,7 @@
   "item.rpgworldmod.ember_scroll.restoration.features": "While used, fire damage heals the caster instead of damaging them.",
   "item.rpgworldmod.ember_scroll.illusion": "Burn Illusion Spell",
   "item.rpgworldmod.ember_scroll.illusion.desc": "Flinches",
-  "item.rpgworldmod.ember_scroll.illusion.features": "Forces selected animate target to think it is on fire. Doesn't actually do damage.",
+  "item.rpgworldmod.ember_scroll.illusion.features": "Press [%2$s] while using to select an animate target. Use while holding [%1$s] to select yourself. For a minute forces target to think it is on fire. Doesn't actually do damage.",
   "item.rpgworldmod.ember_scroll.creation": "Summoned Campfire Spell",
   "item.rpgworldmod.ember_scroll.creation.desc": "Marshmallow summoned separately",
   "item.rpgworldmod.ember_scroll.creation.features": "Summons a magical campfire that can smelt items. Campfire will disappear if no one has used it for a long time, or if its summoner is not around for a long time.",
@@ -312,6 +312,8 @@
   "effect.rpgworldmod.paranoia.description": "Disables natural mana regeneration and drains mana.",
   "effect.rpgworldmod.happiness": "Happiness",
   "effect.rpgworldmod.happiness.description": "Increases maximum mana and regenerates it.",
+  "effect.rpgworldmod.burn_illusion": "Burn Illusion",
+  "effect.rpgworldmod.burn_illusion.description": "The target thinks it's on fire, but it doesn't actually take damage.",
 
   "item.minecraft.potion.effect.paralysis_potion": "Nerve Paralysis Potion",
   "item.minecraft.potion.effect.long_paralysis_potion": "Nerve Paralysis Potion",
@@ -597,7 +599,9 @@
   "subtitles.rpgworldmod.spell.restoration_stop": "Spell is no longer casted",
   "subtitles.rpgworldmod.spell.creation_start": "Object summoned",
   "subtitles.rpgworldmod.spell.creation_stop": "Object revoked",
-  "subtitles.rpgworldmod.spell.illusion_start": "Illusion enforced",
+  "subtitles.rpgworldmod.spell.illusion_start": "Spell being casted",
+  "subtitles.rpgworldmod.spell.illusion_stop": "Spell is no longer casted",
+  "subtitles.rpgworldmod.spell.illusion_cast": "Illusion enforced",
   "subtitles.rpgworldmod.spell.alteration_start": "Spell being casted",
   "subtitles.rpgworldmod.spell.alteration_stop": "Spell is no longer casted",
 

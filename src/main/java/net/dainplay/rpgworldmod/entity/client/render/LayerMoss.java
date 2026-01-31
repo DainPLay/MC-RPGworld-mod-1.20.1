@@ -3,7 +3,6 @@ package net.dainplay.rpgworldmod.entity.client.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.dainplay.rpgworldmod.RPGworldMod;
-import net.dainplay.rpgworldmod.effect.FuelingEffect;
 import net.dainplay.rpgworldmod.effect.MossiosisEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;

@@ -30,7 +30,7 @@ public class EmberScrollSound extends AbstractTickableSoundInstance {
     public void tick() {
         if (this.living == null || !this.living.isAlive() ||
                 (this.living == Minecraft.getInstance().player &&
-                        (!this.living.isUsingItem() || this.living.getUseItem() != this.stack))) {
+                        (!this.living.isUsingItem() || this.living.getUseItem().getItem() != this.stack.getItem()))) {
             this.stop();
             return;
         }

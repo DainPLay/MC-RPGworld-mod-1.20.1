@@ -153,7 +153,7 @@
   "item.rpgworldmod.ember_scroll.restoration.features": "Пока используется, огненный урон лечит чтеца вместо нанесения ему урона.",
   "item.rpgworldmod.ember_scroll.illusion": "Заклинание иллюзии горения",
   "item.rpgworldmod.ember_scroll.illusion.desc": "Передёргивает",
-  "item.rpgworldmod.ember_scroll.illusion.features": "Заставляет выбранную одушевлённую цель думать, что она горит. На самом деле не наносит урона.",
+  "item.rpgworldmod.ember_scroll.illusion.features": "Нажмите [%2$s] во время использования, чтобы выбрать одушевлённую цель. Используйте с зажатой клавишей [%1$s] чтобы выбрать себя. На минуту заставляет цель думать, что она горит. На самом деле не наносит урона.",
   "item.rpgworldmod.ember_scroll.creation": "Заклинание призывного костра",
   "item.rpgworldmod.ember_scroll.creation.desc": "Гитара призывается отдельно",
   "item.rpgworldmod.ember_scroll.creation.features": "Призывает волшебный костёр, способный печь предметы. Костёр исчезнет, если им давно никто не пользовался, или если его призывателя долго нет рядом.",
@@ -312,6 +312,8 @@
   "effect.rpgworldmod.paranoia.description": "Отключает естественную регенерацию маны и истощает ману.",
   "effect.rpgworldmod.happiness": "Счастье",
   "effect.rpgworldmod.happiness.description": "Увеличивает максимальный запас маны и восстанавливает её со временем.",
+  "effect.rpgworldmod.burn_illusion": "Иллюзия горения",
+  "effect.rpgworldmod.burn_illusion.description": "Цель думает, что горит, но на самом деле она не получает урона.",
 
   "item.minecraft.potion.effect.paralysis_potion": "Зелье нервного паралича",
   "item.minecraft.potion.effect.long_paralysis_potion": "Зелье нервного паралича",
@@ -597,7 +599,9 @@
   "subtitles.rpgworldmod.spell.restoration_stop": "Заклинание больше не используется",
   "subtitles.rpgworldmod.spell.creation_start": "Объект призван",
   "subtitles.rpgworldmod.spell.creation_stop": "Объект отозван",
-  "subtitles.rpgworldmod.spell.illusion_start": "Иллюзия накладывается",
+  "subtitles.rpgworldmod.spell.illusion_start": "Заклинание используется",
+  "subtitles.rpgworldmod.spell.illusion_stop": "Заклинание больше не используется",
+  "subtitles.rpgworldmod.spell.illusion_cast": "Иллюзия накладывается",
   "subtitles.rpgworldmod.spell.alteration_start": "Заклинание используется",
   "subtitles.rpgworldmod.spell.alteration_stop": "Заклинание больше не используется",
 
