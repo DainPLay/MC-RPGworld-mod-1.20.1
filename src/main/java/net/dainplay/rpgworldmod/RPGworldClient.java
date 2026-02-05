@@ -21,6 +21,7 @@ import net.dainplay.rpgworldmod.render.PottedStareblossomBlockEntityRenderer;
 import net.dainplay.rpgworldmod.render.ScrollGlintItemModel;
 import net.dainplay.rpgworldmod.render.ScrollGlintItemModelSupport;
 import net.dainplay.rpgworldmod.render.StareblossomBlockEntityRenderer;
+import net.dainplay.rpgworldmod.render.BoundCampfireBlockRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -43,7 +44,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
-import net.minecraftforge.client.extensions.common.IClientMobEffectExtensions;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -78,14 +78,16 @@ public class RPGworldClient {
         BakedModel destructionScrollModel = null;
         BakedModel restorationScrollModel = null;
         BakedModel illusionScrollModel = null;
-        BakedModel creationScrollModel = null;
+        BakedModel conjurationScrollModel = null;
         BakedModel necromancyScrollModel = null;
         BakedModel alterationEmberScrollModel = null;
         BakedModel destructionEmberScrollModel = null;
         BakedModel restorationEmberScrollModel = null;
         BakedModel illusionEmberScrollModel = null;
-        BakedModel creationEmberScrollModel = null;
+        BakedModel conjurationEmberScrollModel = null;
         BakedModel necromancyEmberScrollModel = null;
+
+        BakedModel boundCampfireModel = null;
 
         for (ResourceLocation id : map.keySet()) {
             String idString = id.toString();
@@ -113,8 +115,8 @@ public class RPGworldClient {
                 illusionScrollModel = new ScrollGlintItemModelSupport(originalModel);
             }
 
-            if (idString.contains("rpgworldmod:item/scroll_creation")) {
-                creationScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            if (idString.contains("rpgworldmod:item/scroll_conjuration")) {
+                conjurationScrollModel = new ScrollGlintItemModelSupport(originalModel);
             }
 
             if (idString.contains("rpgworldmod:item/scroll_necromancy")) {
@@ -136,12 +138,16 @@ public class RPGworldClient {
                 illusionEmberScrollModel = new ScrollGlintItemModelSupport(originalModel);
             }
 
-            if (idString.contains("rpgworldmod:item/ember_scroll_creation")) {
-                creationEmberScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            if (idString.contains("rpgworldmod:item/ember_scroll_conjuration")) {
+                conjurationEmberScrollModel = new ScrollGlintItemModelSupport(originalModel);
             }
 
             if (idString.contains("rpgworldmod:item/ember_scroll_necromancy")) {
                 necromancyEmberScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/bound_campfire")) {
+                boundCampfireModel = new ScrollGlintItemModelSupport(originalModel);
             }
         }
 
@@ -156,8 +162,9 @@ public class RPGworldClient {
                         restorationScrollModel == null ? originalModel : restorationScrollModel,
                         destructionScrollModel == null ? originalModel : destructionScrollModel,
                         illusionScrollModel == null ? originalModel : illusionScrollModel,
-                        creationScrollModel == null ? originalModel : creationScrollModel,
-                        necromancyScrollModel == null ? originalModel : necromancyScrollModel
+                        conjurationScrollModel == null ? originalModel : conjurationScrollModel,
+                        necromancyScrollModel == null ? originalModel : necromancyScrollModel,
+                        originalModel
                 ));
             }
             if (idString.contains("rpgworldmod:ember_scroll")) {
@@ -167,8 +174,9 @@ public class RPGworldClient {
                         restorationEmberScrollModel == null ? originalModel : restorationEmberScrollModel,
                         destructionEmberScrollModel == null ? originalModel : destructionEmberScrollModel,
                         illusionEmberScrollModel == null ? originalModel : illusionEmberScrollModel,
-                        creationEmberScrollModel == null ? originalModel : creationEmberScrollModel,
-                        necromancyEmberScrollModel == null ? originalModel : necromancyEmberScrollModel
+                        conjurationEmberScrollModel == null ? originalModel : conjurationEmberScrollModel,
+                        necromancyEmberScrollModel == null ? originalModel : necromancyEmberScrollModel,
+                        boundCampfireModel == null ? originalModel : boundCampfireModel
                 ));
             }
         }
@@ -181,14 +189,15 @@ public class RPGworldClient {
         event.register(new ResourceLocation("rpgworldmod:item/scroll_destruction"));
         event.register(new ResourceLocation("rpgworldmod:item/scroll_illusion"));
         event.register(new ResourceLocation("rpgworldmod:item/scroll_alteration"));
-        event.register(new ResourceLocation("rpgworldmod:item/scroll_creation"));
+        event.register(new ResourceLocation("rpgworldmod:item/scroll_conjuration"));
         event.register(new ResourceLocation("rpgworldmod:item/scroll_necromancy"));
         event.register(new ResourceLocation("rpgworldmod:item/ember_scroll_restoration"));
         event.register(new ResourceLocation("rpgworldmod:item/ember_scroll_destruction"));
         event.register(new ResourceLocation("rpgworldmod:item/ember_scroll_illusion"));
         event.register(new ResourceLocation("rpgworldmod:item/ember_scroll_alteration"));
-        event.register(new ResourceLocation("rpgworldmod:item/ember_scroll_creation"));
+        event.register(new ResourceLocation("rpgworldmod:item/ember_scroll_conjuration"));
         event.register(new ResourceLocation("rpgworldmod:item/ember_scroll_necromancy"));
+        event.register(new ResourceLocation("rpgworldmod:item/bound_campfire"));
     }
 
     @SubscribeEvent
@@ -208,6 +217,7 @@ public class RPGworldClient {
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.EMULSION_BLOCK.get(), RenderType.translucent());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.MASKONITE_GLASS.get(), RenderType.translucent());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.MASKONITE_GLASS_PANE.get(), RenderType.translucent());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.BOUND_CAMPFIRE.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.ENT_FACE.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.TIRE.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.SHIVERALIS.get(), RenderType.cutout());
@@ -266,10 +276,22 @@ public class RPGworldClient {
         BlockEntityRenderers.register(ModBlockEntities.STAREBLOSSOM_BLOCK_ENTITY.get(), StareblossomBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.POTTED_STAREBLOSSOM_BLOCK_ENTITY.get(), PottedStareblossomBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.ENT_FACE_BLOCK_ENTITY.get(), BreakingEntFaceRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.BOUND_CAMPFIRE_BLOCK_ENTITY.get(), BoundCampfireBlockRenderer::new);
         CurioRenderers.register();
 
 
         event.enqueueWork(() -> {
+
+            ItemProperties.register(ModItems.EMBER_SCROLL.get().asItem(), new ResourceLocation( "summoned_object"), (stack, world, entity, seed) -> {
+                if (stack.isEmpty()) {
+                    return 0.0F;
+                }
+                CompoundTag tag = stack.getTag();
+                if (tag != null && tag.contains("SummonedObject", Tag.TAG_INT)) {
+                    return 1.0F;
+                }
+                return 0.0F;
+            });
 
             ItemProperties.register(ModItems.FAIRAPIER_SWORD.get().asItem(), new ResourceLocation( "growing"), (stack, world, entity, seed) -> {
                 if (stack.isEmpty()) {
@@ -315,7 +337,7 @@ public class RPGworldClient {
                 if (enchants.containsKey(ModEnchantments.ALTERATION.get())) {
                     return 4F;
                 }
-                if (enchants.containsKey(ModEnchantments.CREATION.get())) {
+                if (enchants.containsKey(ModEnchantments.CONJURATION.get())) {
                     return 5F;
                 }
                 if (enchants.containsKey(ModEnchantments.NECROMANCY.get())) {

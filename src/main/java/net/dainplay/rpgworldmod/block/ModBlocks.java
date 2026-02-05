@@ -29,6 +29,7 @@ import net.dainplay.rpgworldmod.block.custom.ShiveralisPlantBlock;
 import net.dainplay.rpgworldmod.block.custom.SpikyIvyBlock;
 import net.dainplay.rpgworldmod.block.custom.StareblossomBlock;
 import net.dainplay.rpgworldmod.block.custom.StareblossomPotBlock;
+import net.dainplay.rpgworldmod.block.custom.BoundCampfireBlock;
 import net.dainplay.rpgworldmod.block.custom.TireBlock;
 import net.dainplay.rpgworldmod.block.custom.TreeHollowBlock;
 import net.dainplay.rpgworldmod.block.custom.TyphonBlock;
@@ -43,7 +44,6 @@ import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.dainplay.rpgworldmod.world.feature.tree.RieTreeGrower;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -61,7 +61,6 @@ import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraft.world.level.block.GlassBlock;
 import net.minecraft.world.level.block.IronBarsBlock;
-import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.PinkPetalsBlock;
 import net.minecraft.world.level.block.PressurePlateBlock;
@@ -118,6 +117,8 @@ public class ModBlocks {
 					return 5;
 				}
 			}, 300);
+	public static final RegistryObject<Block> BOUND_CAMPFIRE = registerBlockWithoutBlockItem("bound_campfire",
+			() -> new BoundCampfireBlock(true, 2, BlockBehaviour.Properties.copy(Blocks.CAMPFIRE).noLootTable()));
 	public static final RegistryObject<Block> FIRE_CATCHER = BLOCKS.register("fire_catcher",
 			() -> new FireCatcherBlock(BlockBehaviour.Properties.copy(Blocks.MOSS_BLOCK)
 					.mapColor(MapColor.CRIMSON_NYLIUM)

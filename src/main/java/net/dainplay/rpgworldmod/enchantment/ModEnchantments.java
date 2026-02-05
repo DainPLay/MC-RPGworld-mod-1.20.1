@@ -76,9 +76,9 @@ public class ModEnchantments {
             ENCHANTMENTS.register("alteration",
                     () -> new AlterationEnchantment(Enchantment.Rarity.COMMON,
                             MAGIC_SCROLLS, EquipmentSlot.MAINHAND));
-    public static RegistryObject<Enchantment> CREATION =
-            ENCHANTMENTS.register("creation",
-                    () -> new CreationEnchantment(Enchantment.Rarity.COMMON,
+    public static RegistryObject<Enchantment> CONJURATION =
+            ENCHANTMENTS.register("conjuration",
+                    () -> new ConjurationEnchantment(Enchantment.Rarity.COMMON,
                             MAGIC_SCROLLS, EquipmentSlot.MAINHAND));
     public static RegistryObject<Enchantment> NECROMANCY =
             ENCHANTMENTS.register("necromancy",

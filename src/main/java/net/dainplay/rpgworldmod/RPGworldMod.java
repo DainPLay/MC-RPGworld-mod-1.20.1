@@ -327,7 +327,7 @@ public class RPGworldMod
             event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
             event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ILLUSION.get(), ModEnchantments.ILLUSION.get().getMaxLevel())));
             event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
-            event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CREATION.get(), ModEnchantments.CREATION.get().getMaxLevel())));
+            event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
             event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
             event.accept(ModItems.FIREPROOF_SKIRT);
             event.accept(ModItems.LIVING_WOOD_HELMET);
@@ -444,7 +444,7 @@ public class RPGworldMod
             event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
             event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ILLUSION.get(), ModEnchantments.ILLUSION.get().getMaxLevel())));
             event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
-            event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CREATION.get(), ModEnchantments.CREATION.get().getMaxLevel())));
+            event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
             event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
             event.accept(ModItems.EMBER_SCROLL);
         }

@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -25,22 +26,24 @@ public class ScrollGlintItemModel implements BakedModel {
     private final BakedModel destructionModel;
     private final BakedModel restorationModel;
     private final BakedModel illusionModel;
-    private final BakedModel creationModel;
+    private final BakedModel conjurationModel;
     private final BakedModel alterationModel;
     private final BakedModel necromancyModel;
+    private final BakedModel boundCampFireModel;
     private final ItemOverrides overrides;
 
     public ScrollGlintItemModel(BakedModel originalModel, BakedModel alterationModel,
                                 BakedModel restorationModel, BakedModel destructionModel, BakedModel illusionModel,
-                                BakedModel creationModel, BakedModel necromancyModel) {
+                                BakedModel conjurationModel, BakedModel necromancyModel, BakedModel boundCampFireModel) {
 
         this.originalModel = originalModel;
         this.destructionModel = destructionModel;
         this.restorationModel = restorationModel;
         this.illusionModel = illusionModel;
-        this.creationModel = creationModel;
+        this.conjurationModel = conjurationModel;
         this.alterationModel = alterationModel;
         this.necromancyModel = necromancyModel;
+        this.boundCampFireModel = boundCampFireModel;
 
         this.overrides = new ItemOverrides() {
             @Override
@@ -61,18 +64,16 @@ public class ScrollGlintItemModel implements BakedModel {
                 return restorationModel;
             } else if (stack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0) {
                 return illusionModel;
-            } else if (stack.getEnchantmentLevel(ModEnchantments.CREATION.get()) > 0) {
-                return creationModel;
+            } else if (stack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0) {
+                if (stack.getTag() != null && stack.getTag().contains("SummonedObject", Tag.TAG_INT)) {
+                    return boundCampFireModel;
+                }
+                return conjurationModel;
             } else if (stack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0) {
                 return necromancyModel;
             }
         }
         return originalModel;
-    }
-
-    private BakedModel getModelForStackOrOriginal(@Nullable ItemStack stack) {
-        BakedModel model = getModelForStack(stack);
-        return model != null ? model : originalModel;
     }
 
     @Override
@@ -144,10 +145,16 @@ public class ScrollGlintItemModel implements BakedModel {
                 renderTypes.add(ModRenderTypes.getItemEntityTranslucentCull(illusionModel.getParticleIcon().atlasLocation()));
                 renderTypes.add(ModRenderTypes.ILLUSION_GLINT);
                 renderTypes.add(ModRenderTypes.ILLUSION_GLINT);
-            } else if (stack.getEnchantmentLevel(ModEnchantments.CREATION.get()) > 0) {
-                renderTypes.add(ModRenderTypes.getItemEntityTranslucentCull(creationModel.getParticleIcon().atlasLocation()));
-                renderTypes.add(ModRenderTypes.CREATION_GLINT);
-                renderTypes.add(ModRenderTypes.CREATION_GLINT);
+            } else if (stack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0) {
+                if (stack.getTag() != null && stack.getTag().contains("SummonedObject", Tag.TAG_INT)) {
+                    renderTypes.add(ModRenderTypes.getItemEntityTranslucentCull(boundCampFireModel.getParticleIcon().atlasLocation()));
+                    renderTypes.add(ModRenderTypes.SUMMONED_GLINT);
+                    renderTypes.add(ModRenderTypes.SUMMONED_GLINT);
+                } else {
+                    renderTypes.add(ModRenderTypes.getItemEntityTranslucentCull(conjurationModel.getParticleIcon().atlasLocation()));
+                    renderTypes.add(ModRenderTypes.CONJURATION_GLINT);
+                    renderTypes.add(ModRenderTypes.CONJURATION_GLINT);
+                }
             } else if (stack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0) {
                 renderTypes.add(ModRenderTypes.getItemEntityTranslucentCull(necromancyModel.getParticleIcon().atlasLocation()));
                 renderTypes.add(ModRenderTypes.NECROMANCY_GLINT);

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/campfire_off",
+  "textures": {
+    "particle": "minecraft:block/campfire_log",
+    "log": "rpgworldmod:block/empty"
+  }
+}

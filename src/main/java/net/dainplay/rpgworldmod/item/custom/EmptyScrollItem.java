@@ -35,7 +35,7 @@ public class EmptyScrollItem extends Item {
 				|| stack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0
 				|| stack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0
 				|| stack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0
-				|| stack.getEnchantmentLevel(ModEnchantments.CREATION.get()) > 0
+				|| stack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0
 				|| stack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0)
 			return false;
 		else return stack.isEnchanted();

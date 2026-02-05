@@ -108,13 +108,13 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 				ItemStack offHandItem = mc.player.getOffhandItem();
 
 				// Проверяем обе руки
-				if (mainHandItem.getItem() instanceof ManaCostItem) {
-					if(mainHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(mainHandItem, mc.player);
-					else hasManaCostItem = true;
+				if (mainHandItem.getItem() instanceof ManaCostItem manaCostItem) {
+					if(mainHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(mainHandItem, mc.player) && !manaCostItem.usesHealthInsteadOfMana(mainHandItem);
+					else hasManaCostItem = !manaCostItem.usesHealthInsteadOfMana(mainHandItem);
 					if (hasManaCostItem) manaCostToShow = ((ManaCostItem) mainHandItem.getItem()).getManaCost(mainHandItem, mc.player);
-				} else if (offHandItem.getItem() instanceof ManaCostItem) {
-					if(offHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(offHandItem, mc.player);
-					else hasManaCostItem = true;
+				} else if (offHandItem.getItem() instanceof ManaCostItem manaCostItem) {
+					if(offHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(offHandItem, mc.player) && !manaCostItem.usesHealthInsteadOfMana(offHandItem);
+					else hasManaCostItem = !manaCostItem.usesHealthInsteadOfMana(offHandItem);
 					if (hasManaCostItem) manaCostToShow = ((ManaCostItem) offHandItem.getItem()).getManaCost(offHandItem, mc.player);
 				}
 			}
@@ -148,13 +148,13 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		boolean hasManaCostItem = false;
 		ItemStack mainHandItem = mc.player.getMainHandItem();
 		ItemStack offHandItem = mc.player.getOffhandItem();
-		if (mainHandItem.getItem() instanceof ManaCostItem) {
-			if(mainHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(mainHandItem, mc.player);
-			else hasManaCostItem = true;
+		if (mainHandItem.getItem() instanceof ManaCostItem manaCostItem) {
+			if(mainHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(mainHandItem, mc.player) && !manaCostItem.usesHealthInsteadOfMana(mainHandItem);
+			else hasManaCostItem =  !manaCostItem.usesHealthInsteadOfMana(mainHandItem);
 			if (hasManaCostItem) manaCostToShow = ((ManaCostItem) mainHandItem.getItem()).getManaCost(mainHandItem, mc.player);
-		} else if (offHandItem.getItem() instanceof ManaCostItem) {
-			if(offHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(offHandItem, mc.player);
-			else hasManaCostItem = true;
+		} else if (offHandItem.getItem() instanceof ManaCostItem manaCostItem) {
+			if(offHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(offHandItem, mc.player) && !manaCostItem.usesHealthInsteadOfMana(offHandItem);
+			else hasManaCostItem =  !manaCostItem.usesHealthInsteadOfMana(offHandItem);
 			if (hasManaCostItem) manaCostToShow = ((ManaCostItem) offHandItem.getItem()).getManaCost(offHandItem, mc.player);
 		}
 		return ClientManaData.get() < ClientMaxManaData.get() ||
@@ -232,12 +232,12 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		if (mc.player != null) {
 			ItemStack mainHandItem = mc.player.getMainHandItem();
 			ItemStack offHandItem = mc.player.getOffhandItem();
-			if (mainHandItem.getItem() instanceof ManaCostItem) {
-				if(mainHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(mainHandItem, mc.player);
-				else hasManaCostItem = true;
-			} else if (offHandItem.getItem() instanceof ManaCostItem) {
-				if(offHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(offHandItem, mc.player);
-				else hasManaCostItem = true;
+			if (mainHandItem.getItem() instanceof ManaCostItem manaCostItem) {
+				if(mainHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(mainHandItem, mc.player) && !manaCostItem.usesHealthInsteadOfMana(mainHandItem);
+				else hasManaCostItem = !manaCostItem.usesHealthInsteadOfMana(mainHandItem);
+			} else if (offHandItem.getItem() instanceof ManaCostItem manaCostItem) {
+				if(offHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(offHandItem, mc.player) && !manaCostItem.usesHealthInsteadOfMana(offHandItem);
+				else hasManaCostItem = !manaCostItem.usesHealthInsteadOfMana(offHandItem);
 			}
 		}
 

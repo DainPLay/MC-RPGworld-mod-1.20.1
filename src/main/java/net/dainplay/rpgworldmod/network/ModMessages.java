@@ -130,6 +130,12 @@ public class ModMessages {
 				.encoder(S2CTargetValidationResultPacket::toBytes)
 				.consumerMainThread(S2CTargetValidationResultPacket::handle)
 				.add();
+
+		net.messageBuilder(SyncEffectPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(SyncEffectPacket::new)
+				.encoder(SyncEffectPacket::toBytes)
+				.consumerMainThread(SyncEffectPacket::handle)
+				.add();
 	}
 
 	public static <MSG> void sendToServer(MSG message) {

@@ -330,7 +330,8 @@ public class LivingWoodBowItem extends BowItem implements RPGtooltip {
 		RPGappendHoverText(pStack, pLevel, pTooltip, pFlag);
 	}
 
-	public String getFirstPredicate() {
+	@Override
+	public String getFirstPredicate(ItemStack item) {
 		return Minecraft.getInstance().options.keyShift.getKey().getDisplayName().getString();
 	}
 }

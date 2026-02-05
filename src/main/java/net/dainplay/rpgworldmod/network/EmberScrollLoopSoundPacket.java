@@ -51,6 +51,8 @@ public class EmberScrollLoopSoundPacket {
                             soundEvent = RPGSounds.SPELL_ALTERATION_LOOP.get();
                         if(this.itemStack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0)
                             soundEvent = RPGSounds.SPELL_ILLUSION_LOOP.get();
+                        if(this.itemStack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0)
+                            soundEvent = RPGSounds.SPELL_NECROMANCY_LOOP.get();
                         EmberScrollSound sound = new EmberScrollSound(player, this.itemStack, soundEvent);
                         Minecraft.getInstance().getSoundManager().play(sound);
                         // Сохраняем звук для возможности остановки

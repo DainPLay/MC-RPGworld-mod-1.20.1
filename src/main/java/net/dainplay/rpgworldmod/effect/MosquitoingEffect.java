@@ -33,8 +33,7 @@ public class MosquitoingEffect extends MobEffect {
     }
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
-        int HIT_TICK = 100-20*amplifier;
-        if (HIT_TICK <= 0) HIT_TICK = 1;
+        int HIT_TICK = Math.max(5,100-20*amplifier);
         Level level = entity.level();
         BlockPos pos = entity.blockPosition();
         BlockPos newpos = new BlockPos(pos.getX(), (int) entity.getEyeY(), pos.getZ());
@@ -55,6 +54,7 @@ public class MosquitoingEffect extends MobEffect {
         var effectInstance = entity.getEffect(this);
         if (effectInstance != null) {
             int duration = effectInstance.getDuration();
+            if (duration == -1) duration = entity.tickCount;
 
             if (duration % 60 == 0) {
                 level.playSound(entity, entity.blockPosition(), RPGSounds.MOSQUITO_SWARM_AMBIENT.get(), SoundSource.PLAYERS, 1F, (random.nextFloat() - random.nextFloat()) * 0.05F + 1.0F);

@@ -1,5 +1,6 @@
 package net.dainplay.rpgworldmod.item.custom;
 
+import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.network.PlayerManaProvider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -15,12 +16,16 @@ public interface ManaCostItem {
         return 0;
     }
 
-    default int getDisplayManaCost(ItemStack item, Player player) {
-        return getManaCost(item, player);
+    default String getDisplayManaCost(ItemStack item, Player player) {
+        return ""+getManaCost(item, player);
     }
 
     default Component getManaCostAdditionalLine(ItemStack item) {
         return Component.literal("");
+    }
+
+    default Boolean usesHealthInsteadOfMana(ItemStack item) {
+        return item.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0;
     }
 
     default void updateManaTag(ItemStack stack, Player player) {

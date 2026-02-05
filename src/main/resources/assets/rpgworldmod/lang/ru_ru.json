@@ -153,13 +153,15 @@
   "item.rpgworldmod.ember_scroll.restoration.features": "Пока используется, огненный урон лечит чтеца вместо нанесения ему урона.",
   "item.rpgworldmod.ember_scroll.illusion": "Заклинание иллюзии горения",
   "item.rpgworldmod.ember_scroll.illusion.desc": "Передёргивает",
-  "item.rpgworldmod.ember_scroll.illusion.features": "Нажмите [%2$s] во время использования, чтобы выбрать одушевлённую цель. Используйте с зажатой клавишей [%1$s] чтобы выбрать себя. На минуту заставляет цель думать, что она горит. На самом деле не наносит урона.",
-  "item.rpgworldmod.ember_scroll.creation": "Заклинание призывного костра",
-  "item.rpgworldmod.ember_scroll.creation.desc": "Гитара призывается отдельно",
-  "item.rpgworldmod.ember_scroll.creation.features": "Призывает волшебный костёр, способный печь предметы. Костёр исчезнет, если им давно никто не пользовался, или если его призывателя долго нет рядом.",
-  "item.rpgworldmod.ember_scroll.necromancy": "Заклинание PLACEHOLDER",
-  "item.rpgworldmod.ember_scroll.necromancy.desc": "PLACEHOLDER",
-  "item.rpgworldmod.ember_scroll.necromancy.features": "PLACEHOLDER",
+  "item.rpgworldmod.ember_scroll.illusion.features": "На минуту заставляет выбранную одушевлённую цель думать, что она горит. На самом деле не наносит урона.",
+  "item.rpgworldmod.ember_scroll.illusion.controls": "Нажмите [%2$s] во время использования, чтобы выбрать одушевлённую цель. Используйте с зажатой клавишей [%1$s] чтобы выбрать себя.",
+  "item.rpgworldmod.ember_scroll.conjuration": "Заклинание призывного костра",
+  "item.rpgworldmod.ember_scroll.conjuration.desc": "Гитара призывается отдельно",
+  "item.rpgworldmod.ember_scroll.conjuration.features": "Призывает волшебный костёр, способный печь любые предметы. Костёр исчезнет, если им давно никто не пользовался, или если его призывателя долго нет рядом.",
+  "item.rpgworldmod.ember_scroll.necromancy": "Заклинание зажигания",
+  "item.rpgworldmod.ember_scroll.necromancy.desc": "Глаголом жги сердца людей",
+  "item.rpgworldmod.ember_scroll.necromancy.features": "Поджигает чтеца и сколько-то его сердец. Потухание или использование с зажатой клавишей [%1$s] тушит сердца. При следующем получении урона от живого существа, моментально сжигает все горящие сердца, превращая их в урон по этому существу.",
+  "item.rpgworldmod.ember_scroll.necromancy.controls": "Нажмите [%2$s] во время использования, чтобы применить эффект. Количество поджигаемых сердец задаётся разницей в угле камеры между началом и концом использования.",
 
   "item.rpgworldmod.platinumfish": "Платиновая рыбка",
   "item.rpgworldmod.mossfront": "Мохолобик",
@@ -213,6 +215,7 @@
   "block.rpgworldmod.fire_catcher": "Огнеловка",
   "block.rpgworldmod.fire_catcher.desc": "Ты Венера, я Земля",
   "block.rpgworldmod.fire_catcher.features": "Устанавливается под потолок. Блокирует сгорание блоков в радиусе 5x5 чанков. Также тушит огонь, если переключена в голодный режим.",
+  "block.rpgworldmod.bound_campfire": "Призванный костёр",
 
   "fluid_type.rpgworldmod.arbor_fuel_fluid": "Древесное горючее",
 
@@ -471,7 +474,7 @@
   "enchantment.rpgworldmod.restoration": "Восстановление",
   "enchantment.rpgworldmod.destruction": "Разрушение",
   "enchantment.rpgworldmod.illusion": "Иллюзия",
-  "enchantment.rpgworldmod.creation": "Колдовство",
+  "enchantment.rpgworldmod.conjuration": "Колдовство",
   "enchantment.rpgworldmod.alteration": "Изменение",
   "enchantment.rpgworldmod.necromancy": "Некромантия",
 
@@ -486,7 +489,7 @@
   "enchantment.rpgworldmod.restoration.desc": "Один из шести типов магии. Всё, что связано с увеличением и восстановлением характеристик, накладыванием положительных эффектов и защитой от отрицательных эффектов.",
   "enchantment.rpgworldmod.destruction.desc": "Один из шести типов магии. Всё, что связано с перестановкой и изменением каких-либо параметров и значений, накладыванием отрицательных эффектов и превращением одного в другое.",
   "enchantment.rpgworldmod.illusion.desc": "Один из шести типов магии. Всё, что способно исказить чьё-либо восприятие реальности, повлиять на чьи-либо эмоции или действия и что может быть применено скрытно.",
-  "enchantment.rpgworldmod.creation.desc": "Один из шести типов магии. Всё, что способно создать что-либо материальное или мнимое, или дополнить существующее.",
+  "enchantment.rpgworldmod.conjuration.desc": "Один из шести типов магии. Всё, что способно создать что-либо материальное или мнимое, или дополнить существующее.",
   "enchantment.rpgworldmod.alteration.desc": "Один из шести типов магии. Всё, что нацелено на нанесение урона окружающей среде или может быть использовано в роли оружия.",
   "enchantment.rpgworldmod.necromancy.desc": "Один из шести типов магии. Всё, что недоступно в использовании ценой маны, но доступно в использовании ценой здоровья.",
 
@@ -595,15 +598,17 @@
 
   "subtitles.rpgworldmod.spell.destruction_ember_start": "Пламя рассеивается",
   "subtitles.rpgworldmod.spell.destruction_ember_stop": "Пламя гаснет",
-  "subtitles.rpgworldmod.spell.restoration_start": "Заклинание используется",
-  "subtitles.rpgworldmod.spell.restoration_stop": "Заклинание больше не используется",
-  "subtitles.rpgworldmod.spell.creation_start": "Объект призван",
-  "subtitles.rpgworldmod.spell.creation_stop": "Объект отозван",
-  "subtitles.rpgworldmod.spell.illusion_start": "Заклинание используется",
-  "subtitles.rpgworldmod.spell.illusion_stop": "Заклинание больше не используется",
+  "subtitles.rpgworldmod.spell.restoration_start": "Заклинание восстановления используется",
+  "subtitles.rpgworldmod.spell.restoration_stop": "Заклинание восстановления больше не используется",
+  "subtitles.rpgworldmod.spell.conjuration_start": "Объект призван",
+  "subtitles.rpgworldmod.spell.conjuration_stop": "Объект отозван",
+  "subtitles.rpgworldmod.spell.illusion_start": "Заклинание иллюзии используется",
+  "subtitles.rpgworldmod.spell.illusion_stop": "Заклинание иллюзии больше не используется",
   "subtitles.rpgworldmod.spell.illusion_cast": "Иллюзия накладывается",
-  "subtitles.rpgworldmod.spell.alteration_start": "Заклинание используется",
-  "subtitles.rpgworldmod.spell.alteration_stop": "Заклинание больше не используется",
+  "subtitles.rpgworldmod.spell.alteration_start": "Заклинание изменения используется",
+  "subtitles.rpgworldmod.spell.alteration_stop": "Заклинание изменения больше не используется",
+  "subtitles.rpgworldmod.spell.necromancy_start": "Заклинание некромантии используется",
+  "subtitles.rpgworldmod.spell.necromancy_stop": "Заклинание некромантии больше не используется",
 
   "subtitles.rpgworldmod.platinumfish.death": "Платиновая рыбка погибает",
   "subtitles.rpgworldmod.platinumfish.hurt": "Платиновая рыбка ранена",
@@ -626,8 +631,10 @@
 
   "tooltip.rpgworldmod.hold_shift_for_features": "[Зажмите %s]",
   "tooltip.rpgworldmod.features": "Особенность:",
+  "tooltip.rpgworldmod.controls": "Управление:",
   "tooltip.rpgworldmod.cost_text": "Цена: ",
   "tooltip.rpgworldmod.cost_number": "%s⭐",
   "tooltip.rpgworldmod.cost_per_second": " в секунду",
-  "tooltip.rpgworldmod.plus_cost_per_second": " + %s⭐ в секунду"
+  "tooltip.rpgworldmod.plus_cost_per_second": " + %s⭐ в секунду",
+  "tooltip.rpgworldmod.hp_cost_number": "%s❤"
 }

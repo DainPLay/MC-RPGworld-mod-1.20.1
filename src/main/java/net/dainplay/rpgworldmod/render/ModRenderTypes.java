@@ -13,12 +13,14 @@ public class ModRenderTypes extends RenderType {
 			new ResourceLocation("rpgworldmod", "textures/misc/destruction_glint.png");
 	private static final ResourceLocation RESTORATION_GLINT_TEXTURE =
 			new ResourceLocation("rpgworldmod", "textures/misc/restoration_glint.png");
-	private static final ResourceLocation CREATION_GLINT_TEXTURE =
-			new ResourceLocation("rpgworldmod", "textures/misc/creation_glint.png");
+	private static final ResourceLocation CONJURATION_GLINT_TEXTURE =
+			new ResourceLocation("rpgworldmod", "textures/misc/conjuration_glint.png");
 	private static final ResourceLocation ILLUSION_GLINT_TEXTURE =
 			new ResourceLocation("rpgworldmod", "textures/misc/illusion_glint.png");
 	private static final ResourceLocation NECROMANCY_GLINT_TEXTURE =
 			new ResourceLocation("rpgworldmod", "textures/misc/necromancy_glint.png");
+	private static final ResourceLocation SUMMONED_GLINT_TEXTURE =
+			new ResourceLocation("rpgworldmod", "textures/misc/summoned_glint.png");
 
 	private ModRenderTypes(String name, VertexFormat format, VertexFormat.Mode mode,
 						   int bufferSize, boolean affectsCrumbling, boolean sortOnUpload,
@@ -80,8 +82,8 @@ public class ModRenderTypes extends RenderType {
 					.createCompositeState(false)
 	);
 
-	public static final RenderType CREATION_GLINT = create(
-			"creation_glint",
+	public static final RenderType CONJURATION_GLINT = create(
+			"conjuration_glint",
 			DefaultVertexFormat.POSITION_TEX,
 			VertexFormat.Mode.QUADS,
 			256,
@@ -89,7 +91,25 @@ public class ModRenderTypes extends RenderType {
 			false,
 			CompositeState.builder()
 					.setShaderState(RENDERTYPE_GLINT_SHADER)
-					.setTextureState(new TextureStateShard(CREATION_GLINT_TEXTURE, true, false))
+					.setTextureState(new TextureStateShard(CONJURATION_GLINT_TEXTURE, true, false))
+					.setWriteMaskState(COLOR_WRITE)
+					.setCullState(NO_CULL)
+					.setDepthTestState(EQUAL_DEPTH_TEST)
+					.setTransparencyState(GLINT_TRANSPARENCY)
+					.setTexturingState(GLINT_TEXTURING)
+					.createCompositeState(false)
+	);
+
+	public static final RenderType SUMMONED_GLINT = create(
+			"summoned_glint",
+			DefaultVertexFormat.POSITION_TEX,
+			VertexFormat.Mode.QUADS,
+			256,
+			false,
+			false,
+			CompositeState.builder()
+					.setShaderState(RENDERTYPE_GLINT_SHADER)
+					.setTextureState(new TextureStateShard(SUMMONED_GLINT_TEXTURE, true, false))
 					.setWriteMaskState(COLOR_WRITE)
 					.setCullState(NO_CULL)
 					.setDepthTestState(EQUAL_DEPTH_TEST)

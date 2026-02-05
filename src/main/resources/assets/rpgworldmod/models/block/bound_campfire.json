@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/campfire",
+  "textures": {
+    "fire": "minecraft:block/campfire_fire",
+    "lit_log": "rpgworldmod:block/empty",
+    "log": "rpgworldmod:block/empty"
+  }
+}

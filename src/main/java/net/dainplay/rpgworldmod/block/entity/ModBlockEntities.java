@@ -25,6 +25,8 @@ public class ModBlockEntities {
             BlockEntityType.Builder.of(PottedStareblossomBlockEntity::new, ModBlocks.POTTED_STAREBLOSSOM.get()).build(null));
     public static final RegistryObject<BlockEntityType<DirectionalFlowerBlockEntity>> DIRECTIONAL_FLOWER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("directional_flower_block_entity", () ->
             BlockEntityType.Builder.of(DirectionalFlowerBlockEntity::new).build(null));
+    public static final RegistryObject<BlockEntityType<BoundCampfireBlockEntity>> BOUND_CAMPFIRE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("bound_campfire_block_entity", () ->
+            BlockEntityType.Builder.of(BoundCampfireBlockEntity::new, ModBlocks.BOUND_CAMPFIRE.get()).build(null));
 
     public static final RegistryObject<BlockEntityType<BlowerBlockEntity>> BLOWER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("blower",
             () -> BlockEntityType.Builder.of(BlowerBlockEntity::new, ModBlocks.BLOWER.get()).build(null));

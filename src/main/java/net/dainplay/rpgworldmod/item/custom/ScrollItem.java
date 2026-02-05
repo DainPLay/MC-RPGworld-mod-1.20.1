@@ -28,7 +28,7 @@ public class ScrollItem extends Item  implements RPGtooltip, ManaCostItem, Orbit
 				|| stack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0
 				|| stack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0
 				|| stack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0
-				|| stack.getEnchantmentLevel(ModEnchantments.CREATION.get()) > 0
+				|| stack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0
 				|| stack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0)
 			return false;
 		else return stack.isEnchanted();
@@ -40,7 +40,7 @@ public class ScrollItem extends Item  implements RPGtooltip, ManaCostItem, Orbit
 				|| pStack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0
 				|| pStack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0
 				|| pStack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0
-				|| pStack.getEnchantmentLevel(ModEnchantments.CREATION.get()) > 0
+				|| pStack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0
 				|| pStack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0)
 			RPGappendHoverText(pStack, pLevel, pTooltip, pFlag);
 		else {
@@ -55,7 +55,7 @@ public class ScrollItem extends Item  implements RPGtooltip, ManaCostItem, Orbit
 				|| stack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0
 				|| stack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0
 				|| stack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0
-				|| stack.getEnchantmentLevel(ModEnchantments.CREATION.get()) > 0
+				|| stack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0
 				|| stack.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0);
 	}
 
@@ -92,7 +92,7 @@ public class ScrollItem extends Item  implements RPGtooltip, ManaCostItem, Orbit
 		if (pStack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0) addition = ".restoration";
 		if (pStack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0) addition = ".destruction";
 		if (pStack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0) addition = ".illusion";
-		if (pStack.getEnchantmentLevel(ModEnchantments.CREATION.get()) > 0) addition = ".creation";
+		if (pStack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0) addition = ".conjuration";
 		if (pStack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0) addition = ".necromancy";
 		return this.getDescriptionId() + addition;
 	}

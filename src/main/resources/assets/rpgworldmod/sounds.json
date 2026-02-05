@@ -1022,17 +1022,17 @@
     ],
     "subtitle": "subtitles.rpgworldmod.spell.restoration_stop"
   },
-  "rpgworldmod.spell.creation_start": {
+  "rpgworldmod.spell.conjuration_start": {
     "sounds": [
-      "rpgworldmod:spell/creation_start"
+      "rpgworldmod:spell/conjuration_start"
     ],
-    "subtitle": "subtitles.rpgworldmod.spell.creation_start"
+    "subtitle": "subtitles.rpgworldmod.spell.conjuration_start"
   },
-  "rpgworldmod.spell.creation_stop": {
+  "rpgworldmod.spell.conjuration_stop": {
     "sounds": [
-      "rpgworldmod:spell/creation_stop"
+      "rpgworldmod:spell/conjuration_stop"
     ],
-    "subtitle": "subtitles.rpgworldmod.spell.creation_stop"
+    "subtitle": "subtitles.rpgworldmod.spell.conjuration_stop"
   },
   "rpgworldmod.spell.alteration_loop": {
     "sounds": [
@@ -1073,5 +1073,22 @@
       "rpgworldmod:spell/illusion_cast"
     ],
     "subtitle": "subtitles.rpgworldmod.spell.illusion_cast"
+  },
+  "rpgworldmod.spell.necromancy_start": {
+    "sounds": [
+      "rpgworldmod:spell/necromancy_start"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.necromancy_start"
+  },
+  "rpgworldmod.spell.necromancy_loop": {
+    "sounds": [
+      "rpgworldmod:spell/necromancy_loop"
+    ]
+  },
+  "rpgworldmod.spell.necromancy_stop": {
+    "sounds": [
+      "rpgworldmod:spell/necromancy_stop"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.necromancy_stop"
   }
 }

@@ -4,8 +4,10 @@ import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.particle.custom.AirParticle;
 import net.dainplay.rpgworldmod.particle.custom.FlamesParticle;
 import net.dainplay.rpgworldmod.particle.custom.LeavesParticle;
+import net.dainplay.rpgworldmod.particle.custom.ManaParticle;
 import net.dainplay.rpgworldmod.particle.custom.MosquitosParticles;
 import net.dainplay.rpgworldmod.particle.custom.QuartziteParticles;
+import net.dainplay.rpgworldmod.particle.custom.SummonRevokeParticle;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.item.Item;
@@ -27,6 +29,8 @@ public class ModParticles {
     public static final RegistryObject<SimpleParticleType> AIR = PARTICLE_TYPES.register("air",() -> new SimpleParticleType(true));
     public static final RegistryObject<SimpleParticleType> MOSQUITOS = PARTICLE_TYPES.register("mosquitos",() -> new SimpleParticleType(true));
     public static final RegistryObject<SimpleParticleType> FLAMES = PARTICLE_TYPES.register("flames",() -> new SimpleParticleType(true));
+    public static final RegistryObject<SimpleParticleType> MANA = PARTICLE_TYPES.register("mana",() -> new SimpleParticleType(true));
+    public static final RegistryObject<SimpleParticleType> SUMMON_REVOKE = PARTICLE_TYPES.register("summon_revoke",() -> new SimpleParticleType(true));
 
     @SubscribeEvent
     public static void registerFactories(RegisterParticleProvidersEvent event) {
@@ -35,5 +39,7 @@ public class ModParticles {
         event.registerSpriteSet(ModParticles.AIR.get(), AirParticle.Provider::new);
         event.registerSpriteSet(ModParticles.MOSQUITOS.get(), MosquitosParticles.Provider::new);
         event.registerSpriteSet(ModParticles.FLAMES.get(), FlamesParticle.Provider::new);
+        event.registerSpriteSet(ModParticles.MANA.get(), ManaParticle.Provider::new);
+        event.registerSpriteSet(ModParticles.SUMMON_REVOKE.get(), SummonRevokeParticle.Provider::new);
     }
 }

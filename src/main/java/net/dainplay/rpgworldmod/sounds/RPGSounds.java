@@ -127,8 +127,8 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> SPELL_RESTORATION_START;
     public static RegistryObject<SoundEvent> SPELL_RESTORATION_LOOP;
     public static RegistryObject<SoundEvent> SPELL_RESTORATION_STOP;
-    public static RegistryObject<SoundEvent> SPELL_CREATION_START;
-    public static RegistryObject<SoundEvent> SPELL_CREATION_STOP;
+    public static RegistryObject<SoundEvent> SPELL_CONJURATION_START;
+    public static RegistryObject<SoundEvent> SPELL_CONJURATION_STOP;
     public static RegistryObject<SoundEvent> SPELL_ALTERATION_START;
     public static RegistryObject<SoundEvent> SPELL_ALTERATION_LOOP;
     public static RegistryObject<SoundEvent> SPELL_ALTERATION_STOP;
@@ -136,4 +136,8 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> SPELL_ILLUSION_LOOP;
     public static RegistryObject<SoundEvent> SPELL_ILLUSION_STOP;
     public static RegistryObject<SoundEvent> SPELL_ILLUSION_CAST;
+    public static RegistryObject<SoundEvent> SPELL_NECROMANCY_START;
+    public static RegistryObject<SoundEvent> SPELL_NECROMANCY_LOOP;
+    public static RegistryObject<SoundEvent> SPELL_NECROMANCY_STOP;
+    public static RegistryObject<SoundEvent> SPELL_NECROMANCY_CAST;
 }

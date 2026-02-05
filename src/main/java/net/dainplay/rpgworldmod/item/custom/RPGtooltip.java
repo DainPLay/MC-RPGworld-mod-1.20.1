@@ -22,7 +22,10 @@ public interface RPGtooltip {
             return;
         if(pStack.getItem() instanceof ManaCostItem item) {
             MutableComponent costText = Component.translatable("tooltip.rpgworldmod.cost_text").withStyle(ChatFormatting.WHITE);
-            costText.append(Component.translatable("tooltip.rpgworldmod.cost_number", item.getDisplayManaCost(pStack, Minecraft.getInstance().player)).withStyle(ChatFormatting.BLUE));
+            if (item.usesHealthInsteadOfMana(pStack))
+                    costText.append(Component.translatable("tooltip.rpgworldmod.hp_cost_number", item.getDisplayManaCost(pStack, Minecraft.getInstance().player)).withStyle(ChatFormatting.RED));
+            else
+                costText.append(Component.translatable("tooltip.rpgworldmod.cost_number", item.getDisplayManaCost(pStack, Minecraft.getInstance().player)).withStyle(ChatFormatting.BLUE));
             costText.append(item.getManaCostAdditionalLine(pStack));
             pTooltip.add(costText);
         }
@@ -30,6 +33,10 @@ public interface RPGtooltip {
             // При зажатом Shift: заголовок белый, текст особенностей серый с переносами
             List<Component> featureLines = this.getDisplayFeaturesWithLineBreaks(pStack);
             pTooltip.addAll(featureLines);
+            if(hasControls(pStack)) {
+                List<Component> controlsLines = this.getDisplayControlsWithLineBreaks(pStack);
+                pTooltip.addAll(controlsLines);
+            }
         } else {
             // При отжатом Shift: объединяем с переносами при необходимости
             List<Component> combinedLines = this.getHoldShiftTooltipWithLineBreaks();
@@ -48,12 +55,22 @@ public interface RPGtooltip {
                 getSecondPredicate(item));
     }
 
+    default MutableComponent getDisplayControls(ItemStack item) {
+        return Component.translatable(((Item)this).getDescriptionId(item) + ".controls",
+                getFirstPredicate(item),
+                getSecondPredicate(item));
+    }
+
     default String getFirstPredicate(ItemStack item) {
         return "";
     }
 
     default String getSecondPredicate(ItemStack item) {
         return "";
+    }
+
+    default Boolean hasControls(ItemStack item) {
+        return false;
     }
 
     /**
@@ -91,6 +108,43 @@ public interface RPGtooltip {
 
             for (int i = 1; i < wrappedLines.size(); i++) {
                 result.add(Component.literal(wrappedLines.get(i)).withStyle(ChatFormatting.GRAY));
+            }
+        }
+
+        return result;
+    }
+
+    private List<Component> getDisplayControlsWithLineBreaks(ItemStack item) {
+        List<Component> result = new ArrayList<>();
+
+        // Получаем текст заголовка и особенностей
+        String header = Component.translatable("tooltip.rpgworldmod.controls").getString();
+        String controlsText = this.getDisplayControls(item).getString();
+        String fullText = header + " " + controlsText;
+
+        // Разбиваем текст на строки не более 25 символов
+        List<String> wrappedLines = wrapText(fullText, 25);
+
+        // Первая строка - заголовок белый
+        if (!wrappedLines.isEmpty()) {
+            String firstLine = wrappedLines.get(0);
+            int controlsEndIndex = firstLine.indexOf(header) + header.length();
+            if (controlsEndIndex <= firstLine.length()) {
+                // Разделяем первую строку на две части по цветам
+                String whitePart = firstLine.substring(0, Math.min(controlsEndIndex, firstLine.length()));
+                String grayPart = firstLine.substring(Math.min(controlsEndIndex, firstLine.length()));
+
+                MutableComponent firstLineComponent = Component.literal(whitePart).withStyle(ChatFormatting.WHITE);
+                if (!grayPart.isEmpty()) {
+                    firstLineComponent.append(Component.literal(grayPart).withStyle(ChatFormatting.DARK_GRAY));
+                }
+                result.add(firstLineComponent);
+            } else {
+                result.add(Component.literal(firstLine).withStyle(ChatFormatting.WHITE));
+            }
+
+            for (int i = 1; i < wrappedLines.size(); i++) {
+                result.add(Component.literal(wrappedLines.get(i)).withStyle(ChatFormatting.DARK_GRAY));
             }
         }
 

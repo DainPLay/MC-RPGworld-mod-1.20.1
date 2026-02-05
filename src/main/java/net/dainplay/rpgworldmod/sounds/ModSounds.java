@@ -171,8 +171,8 @@ public class ModSounds
         SPELL_RESTORATION_START = registerSound("rpgworldmod.spell.restoration_start");
         SPELL_RESTORATION_LOOP = registerSound("rpgworldmod.spell.restoration_loop");
         SPELL_RESTORATION_STOP = registerSound("rpgworldmod.spell.restoration_stop");
-        SPELL_CREATION_START = registerSound("rpgworldmod.spell.creation_start");
-        SPELL_CREATION_STOP = registerSound("rpgworldmod.spell.creation_stop");
+        SPELL_CONJURATION_START = registerSound("rpgworldmod.spell.conjuration_start");
+        SPELL_CONJURATION_STOP = registerSound("rpgworldmod.spell.conjuration_stop");
         SPELL_ALTERATION_START = registerSound("rpgworldmod.spell.alteration_start");
         SPELL_ALTERATION_LOOP = registerSound("rpgworldmod.spell.alteration_loop");
         SPELL_ALTERATION_STOP = registerSound("rpgworldmod.spell.alteration_stop");
@@ -180,6 +180,10 @@ public class ModSounds
         SPELL_ILLUSION_LOOP = registerSound("rpgworldmod.spell.illusion_loop");
         SPELL_ILLUSION_STOP = registerSound("rpgworldmod.spell.illusion_stop");
         SPELL_ILLUSION_CAST = registerSound("rpgworldmod.spell.illusion_cast");
+        SPELL_NECROMANCY_START = registerSound("rpgworldmod.spell.necromancy_start");
+        SPELL_NECROMANCY_LOOP = registerSound("rpgworldmod.spell.necromancy_loop");
+        SPELL_NECROMANCY_STOP = registerSound("rpgworldmod.spell.necromancy_stop");
+        SPELL_NECROMANCY_CAST = registerSound("rpgworldmod.spell.necromancy_cast");
     }
 
     private static RegistryObject<SoundEvent> registerSound(String name)

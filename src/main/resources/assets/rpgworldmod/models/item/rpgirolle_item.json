@@ -33,6 +33,12 @@
         "token": 5.0
       },
       "model": "rpgworldmod:item/living_wood_bow_pulling_projectruffle_0"
+    },
+    {
+      "predicate": {
+        "token": 6.0
+      },
+      "model": "block/campfire_off"
     }
   ]
 }
