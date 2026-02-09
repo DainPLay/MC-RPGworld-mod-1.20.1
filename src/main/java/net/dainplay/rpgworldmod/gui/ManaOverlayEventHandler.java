@@ -25,8 +25,6 @@ import static java.lang.Math.max;
 public class ManaOverlayEventHandler implements IGuiOverlay {
 	public static final ResourceLocation ICONS = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/icons.png");
 
-	static int regen = -1;
-
 	// Переменные для мигания
 	private static long lastManaTime = 0;
 	private static long manaBlinkTime = 0;
@@ -88,7 +86,7 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		if (maxMana > 0) {
 			// Вычисляем позицию единицы: двигаемся по массиву с каждым тиком
 			int position = tickCount % maxMana;
-			offset[position] = -1;
+			offset[position] = -2;
 		}
 		return offset;
 	}
@@ -255,26 +253,12 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 	 * Обновление состояния подсветки требуемой маны
 	 */
 	private static void updateManaCostHighlight() {
-		long currentTime = System.currentTimeMillis();
-		long deltaTime = currentTime - lastHighlightTime;
-		lastHighlightTime = currentTime;
+		if (mc.player == null) return;
 
-		// Плавное изменение альфа-канала для мигания
-		float alphaChange = 0.02f; // Скорость изменения прозрачности
+		int tick = mc.player.tickCount;
 
-		if (highlightIncreasing) {
-			highlightAlpha += alphaChange;
-			if (highlightAlpha >= 1.0f) {
-				highlightAlpha = 1.0f;
-				highlightIncreasing = false;
-			}
-		} else {
-			highlightAlpha -= alphaChange;
-			if (highlightAlpha <= 0.3f) {
-				highlightAlpha = 0.3f;
-				highlightIncreasing = true;
-			}
-		}
+		float progress = (tick % 20) / 20.0f;
+		highlightAlpha = 0.3f + 0.7f * (progress < 0.5f ? progress * 2 : 2 - progress * 2);
 	}
 
 	private static int calculateManaValue() {
@@ -323,9 +307,6 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 
 			if (mana <= 10 || ClientIsManaRegenBlockedData.get() > 0 || mc.player.hasEffect(ModEffects.HAPPINESS.get())) {
 				currentY += randomOffset[i];
-			}
-			if (i == regen) {
-				currentY -= 2;
 			}
 
 			// Определяем смещение по Y для текстуры
@@ -461,9 +442,6 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 				if (i < randomOffset.length) {
 					currentY += randomOffset[i];
 				}
-			}
-			if (i == regen) {
-				currentY -= 2;
 			}
 
 			// Определяем обводку в зависимости от типа мигания

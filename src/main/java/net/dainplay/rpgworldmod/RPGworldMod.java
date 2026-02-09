@@ -6,6 +6,7 @@ import net.dainplay.rpgworldmod.block.entity.ModBlockEntities;
 import net.dainplay.rpgworldmod.data.ModRecipeSerializers;
 import net.dainplay.rpgworldmod.data.tags.ActionRewardHandler;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
+import net.dainplay.rpgworldmod.effect.BurnoutHandler;
 import net.dainplay.rpgworldmod.effect.FuelingHandler;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
@@ -140,6 +141,7 @@ public class RPGworldMod
         MinecraftForge.EVENT_BUS.register(new AIHandler());
         MinecraftForge.EVENT_BUS.register(ActionRewardHandler.class);
         MinecraftForge.EVENT_BUS.register(FuelingHandler.class);
+        MinecraftForge.EVENT_BUS.register(BurnoutHandler.class);
         MinecraftForge.EVENT_BUS.register(TriangleAnimationHandler.class);
         MinecraftForge.EVENT_BUS.register(CauldronInteractionHandler.class);
         MinecraftForge.EVENT_BUS.register(WaterBucketInteractionHandler.class);

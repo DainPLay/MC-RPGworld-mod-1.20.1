@@ -2,13 +2,16 @@ package net.dainplay.rpgworldmod.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.item.custom.ManaCostItem;
 import net.dainplay.rpgworldmod.item.custom.OrbitingItem;
+import net.dainplay.rpgworldmod.render.ModRenderTypes;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -43,20 +46,16 @@ public class ItemInHandLayerMixin {
             boolean flag = arm == HumanoidArm.LEFT;
             poseStack.translate((float)(flag ? orbitingItem.getX(itemStack, entity)*-1 : orbitingItem.getX(itemStack, entity)), orbitingItem.getY(itemStack, entity), orbitingItem.getZ(itemStack, entity));
 
-            // Получаем позицию руки из текущей матрицы
             Matrix4f originalMatrix = poseStack.last().pose();
             Vector3f handPosition = originalMatrix.getTranslation(new Vector3f());
 
-            // Сбрасываем матрицу (убираем вращение руки)
             poseStack.setIdentity();
 
-            // Восстанавливаем позицию руки
             poseStack.translate(handPosition.x(), handPosition.y(), handPosition.z()+orbitingItem.getZOffset(itemStack, entity));
 
-            // Получаем информацию о текстуре из OrbitingItem
             String textureString = orbitingItem.getTexture(itemStack, entity);
             int color = orbitingItem.getColor(itemStack, entity);
-            float size = 0.25F; // Размер текстуры
+            float size = 0.25F;
 
             VertexConsumer vertexConsumer;
             Matrix4f matrix = poseStack.last().pose();
@@ -68,29 +67,17 @@ public class ItemInHandLayerMixin {
 
             if (hasEnoughMana) {
                 if (textureString != null && !textureString.isEmpty()) {
-                    // Используем вертикальный спрайтшит (sprite sheet)
                     int animationSpeed = orbitingItem.getAnimationSpeed(itemStack, entity);
                     int animationLength = orbitingItem.getAnimationLength(itemStack, entity);
 
-                    // Вычисляем текущий кадр
                     int currentFrame = (entity.tickCount / animationSpeed) % animationLength;
 
-                    // Рассчитываем UV координаты для текущего кадра
-                    // В вертикальном спрайтшите кадры расположены сверху вниз
-                    float frameHeight = 1.0F / animationLength; // Высота одного кадра в UV координатах
-                    float vMin = currentFrame * frameHeight; // Начало текущего кадра по V
-                    float vMax = vMin + frameHeight; // Конец текущего кадра по V
+                    float frameHeight = 1.0F / animationLength;
+                    float vMin = currentFrame * frameHeight;
+                    float vMax = vMin + frameHeight;
 
-                    // Загружаем единую текстуру спрайтшита
-                    vertexConsumer = bufferSource.getBuffer(RenderType.itemEntityTranslucentCull(
-                            new net.minecraft.resources.ResourceLocation(
-                                    net.dainplay.rpgworldmod.RPGworldMod.MOD_ID,
-                                    textureString + ".png" // Теперь используем единое имя файла
-                            )
-                    ));
+                    vertexConsumer = bufferSource.getBuffer(ModRenderTypes.SPELL_EFFECT.apply(new ResourceLocation(RPGworldMod.MOD_ID,textureString + ".png")));
 
-                    // Рендерим текстурированный квадрат с правильными UV координатами
-                    // Нижний левый
                     vertexConsumer.vertex(matrix, -size, -size, 0.0F)
                             .color(1.0F, 1.0F, 1.0F, 1F)
                             .uv(0.0F, vMax) // V теперь зависит от кадра
@@ -99,7 +86,6 @@ public class ItemInHandLayerMixin {
                             .normal(0.0F, 0.0F, 1.0F)
                             .endVertex();
 
-                    // Нижний правый
                     vertexConsumer.vertex(matrix, size, -size, 0.0F)
                             .color(1.0F, 1.0F, 1.0F, 1F)
                             .uv(1.0F, vMax) // V теперь зависит от кадра
@@ -108,7 +94,6 @@ public class ItemInHandLayerMixin {
                             .normal(0.0F, 0.0F, 1.0F)
                             .endVertex();
 
-                    // Верхний правый
                     vertexConsumer.vertex(matrix, size, size, 0.0F)
                             .color(1.0F, 1.0F, 1.0F, 1F)
                             .uv(1.0F, vMin) // V теперь зависит от кадра
@@ -117,7 +102,6 @@ public class ItemInHandLayerMixin {
                             .normal(0.0F, 0.0F, 1.0F)
                             .endVertex();
 
-                    // Верхний левый
                     vertexConsumer.vertex(matrix, -size, size, 0.0F)
                             .color(1.0F, 1.0F, 1.0F, 1F)
                             .uv(0.0F, vMin) // V теперь зависит от кадра
@@ -125,57 +109,13 @@ public class ItemInHandLayerMixin {
                             .uv2(15728880)
                             .normal(0.0F, 0.0F, 1.0F)
                             .endVertex();
-
-                    // ПЕРВЫЙ СЛОЙ: eyes (рендерится первым)
-                    VertexConsumer eyesVertexConsumer = bufferSource.getBuffer(RenderType.eyes(new net.minecraft.resources.ResourceLocation(
-                            net.dainplay.rpgworldmod.RPGworldMod.MOD_ID,
-                            textureString + ".png")));
-
-                    // Рендерим текстурированный квадрат с правильными UV координатами
-                    // Нижний левый
-                    eyesVertexConsumer.vertex(matrix, -size, -size, 0.0F)
-                            .color(1.0F, 1.0F, 1.0F, 1F)
-                            .uv(0.0F, vMax) // V теперь зависит от кадра
-                            .overlayCoords(OverlayTexture.NO_OVERLAY)
-                            .uv2(15728880)
-                            .normal(0.0F, 0.0F, 1.0F)
-                            .endVertex();
-
-                    // Нижний правый
-                    eyesVertexConsumer.vertex(matrix, size, -size, 0.0F)
-                            .color(1.0F, 1.0F, 1.0F, 1F)
-                            .uv(1.0F, vMax) // V теперь зависит от кадра
-                            .overlayCoords(OverlayTexture.NO_OVERLAY)
-                            .uv2(15728880)
-                            .normal(0.0F, 0.0F, 1.0F)
-                            .endVertex();
-
-                    // Верхний правый
-                    eyesVertexConsumer.vertex(matrix, size, size, 0.0F)
-                            .color(1.0F, 1.0F, 1.0F, 1F)
-                            .uv(1.0F, vMin) // V теперь зависит от кадра
-                            .overlayCoords(OverlayTexture.NO_OVERLAY)
-                            .uv2(15728880)
-                            .normal(0.0F, 0.0F, 1.0F)
-                            .endVertex();
-
-                    // Верхний левый
-                    eyesVertexConsumer.vertex(matrix, -size, size, 0.0F)
-                            .color(1.0F, 1.0F, 1.0F, 1F)
-                            .uv(0.0F, vMin) // V теперь зависит от кадра
-                            .overlayCoords(OverlayTexture.NO_OVERLAY)
-                            .uv2(15728880)
-                            .normal(0.0F, 0.0F, 1.0F)
-                            .endVertex();
                 } else {
-                    // Рендерим цветной квадрат (без изменений)
                     vertexConsumer = bufferSource.getBuffer(RenderType.lightning());
                     int alpha = 150;
                     int red = (color >> 16) & 0xFF;
                     int green = (color >> 8) & 0xFF;
                     int blue = color & 0xFF;
 
-                    // Второй треугольник квадрата
                     vertexConsumer.vertex(matrix, size, size, 0.0F)
                             .color(red, green, blue, alpha)
                             .endVertex();
@@ -191,7 +131,6 @@ public class ItemInHandLayerMixin {
                 }
             }
 
-            // Восстанавливаем матрицу
             poseStack.popPose();
             ci.cancel();
         }

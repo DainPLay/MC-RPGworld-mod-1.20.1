@@ -1,21 +1,23 @@
 package net.dainplay.rpgworldmod.effect;
 
 import net.dainplay.rpgworldmod.RPGworldMod;
+import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
-import net.dainplay.rpgworldmod.network.CancelScrollUsagePacket;
+import net.dainplay.rpgworldmod.network.ClientAdditionalHealthCostData;
+import net.dainplay.rpgworldmod.network.IgniteSelfPacket;
+import net.dainplay.rpgworldmod.network.UseOnAnimateTargetPacket;
 import net.dainplay.rpgworldmod.network.ClientAnimateTargetData;
 import net.dainplay.rpgworldmod.network.ModMessages;
-import net.dainplay.rpgworldmod.sounds.ModSounds;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -170,12 +172,11 @@ public class ParalysisHandler {
 	}
 
 
-
 	private static void handleAttackKey() {
 		Minecraft mc = Minecraft.getInstance();
 		Player player = mc.player;
 
-		if (player == null || ClientAnimateTargetData.get() == null) return;
+		if (player == null) return;
 
 		boolean isAttackKeyPressed = mc.options.keyAttack.isDown();
 
@@ -184,11 +185,13 @@ public class ParalysisHandler {
 			if (player.isUsingItem()) {
 				ItemStack useItem = player.getUseItem();
 
-				if (useItem.getItem() instanceof EmberScrollItem) {
-					if (EnchantmentHelper.getItemEnchantmentLevel(
-							net.dainplay.rpgworldmod.enchantment.ModEnchantments.ILLUSION.get(),
-							useItem) > 0) {
-						ModMessages.sendToServer(new CancelScrollUsagePacket(player.getId(), ClientAnimateTargetData.get().getId()));
+				if (useItem.getItem() instanceof EmberScrollItem scroll) {
+					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), useItem) > 0 && ClientAnimateTargetData.get() != null) {
+						ModMessages.sendToServer(new UseOnAnimateTargetPacket(player.getId(), ClientAnimateTargetData.get().getId()));
+						player.swing(player.getUsedItemHand());
+					}
+					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), useItem) > 0 && !player.isShiftKeyDown() && Mth.ceil(player.getHealth()) >= (ClientAdditionalHealthCostData.get() + scroll.getManaCost(useItem, player))) {
+						ModMessages.sendToServer(new IgniteSelfPacket(player.getId(), ClientAdditionalHealthCostData.get() + scroll.getManaCost(useItem, player)));
 						player.swing(player.getUsedItemHand());
 					}
 				}

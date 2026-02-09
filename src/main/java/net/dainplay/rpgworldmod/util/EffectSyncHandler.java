@@ -1,5 +1,6 @@
 package net.dainplay.rpgworldmod.util;
 
+import net.dainplay.rpgworldmod.damage.ModDamageTypes;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.SyncEffectPacket;
@@ -29,6 +30,13 @@ public class EffectSyncHandler {
                 effect.getDuration()
             ));
         }
+//        if(!event.getEntity().level().isClientSide() &&
+//                event.getEffectInstance().getEffect() == ModEffects.NECROSIS.get()) {
+//
+//            if(event.getEntity().getMaxHealth() - (event.getEffectInstance().getAmplifier()+1) <= 0) {
+//                event.getEntity().hurt(ModDamageTypes.getDamageSource(event.getEntity().level(), ModDamageTypes.NECROSIS), Float.MAX_VALUE);
+//            }
+//        }
     }
     
     @SubscribeEvent

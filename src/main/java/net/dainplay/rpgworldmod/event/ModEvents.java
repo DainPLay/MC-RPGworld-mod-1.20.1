@@ -10,6 +10,7 @@ import net.dainplay.rpgworldmod.data.tags.DepressionDeathCheck;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.EmptyScrollItem;
+import net.dainplay.rpgworldmod.item.custom.LongFoodItem;
 import net.dainplay.rpgworldmod.item.custom.ScrollItem;
 import net.dainplay.rpgworldmod.network.BoundEntitySyncPacket;
 import net.dainplay.rpgworldmod.network.IllusionForceDataSyncS2CPacket;
@@ -23,6 +24,7 @@ import net.dainplay.rpgworldmod.network.PlayerMana;
 import net.dainplay.rpgworldmod.network.PlayerManaProvider;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.dainplay.rpgworldmod.util.BoundEntityHelper;
+import net.dainplay.rpgworldmod.util.ModTags;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.client.renderer.RenderType;
@@ -45,6 +47,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CakeBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.EntityHitResult;
@@ -56,6 +59,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -490,6 +494,40 @@ public class ModEvents {
 				|| bottomItem.getItem() instanceof ScrollItem
 				|| bottomItem.getItem() instanceof ScrollItem) {
 			event.setCanceled(true);
+		}
+	}
+
+	@SubscribeEvent
+	public static void onFoodEaten(LivingEntityUseItemEvent.Finish event) {
+		if (!(event.getEntity() instanceof ServerPlayer serverPlayer)) {
+			return;
+		}
+
+		ItemStack itemStack = event.getItem();
+
+		if (itemStack.getItem().isEdible() && itemStack.is(ModTags.Items.SWEET_FOOD)) {
+			serverPlayer.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+				if (mana.getMana() > 0) {
+					mana.addMana(serverPlayer, itemStack.getItem().getFoodProperties(itemStack, serverPlayer).getNutrition() * 2);
+				}
+			});
+		}
+	}
+
+	@SubscribeEvent
+	public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+		Player player = event.getEntity();
+
+		BlockState blockState = event.getLevel().getBlockState(event.getPos());
+
+		if (blockState.getBlock() instanceof CakeBlock) {
+			if (player.canEat(false) && player instanceof ServerPlayer serverPlayer) {
+				serverPlayer.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+					if (mana.getMana() > 0) {
+						mana.addMana(serverPlayer, 4);
+					}
+				});
+			}
 		}
 	}
 }

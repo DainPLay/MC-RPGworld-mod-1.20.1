@@ -113,10 +113,10 @@ public class ModMessages {
 				.consumerMainThread(EmberScrollLoopSoundPacket::handle)
 				.add();
 
-		net.messageBuilder(CancelScrollUsagePacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
-				.decoder(CancelScrollUsagePacket::new)
-				.encoder(CancelScrollUsagePacket::toBytes)
-				.consumerMainThread(CancelScrollUsagePacket::handle)
+		net.messageBuilder(UseOnAnimateTargetPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+				.decoder(UseOnAnimateTargetPacket::new)
+				.encoder(UseOnAnimateTargetPacket::toBytes)
+				.consumerMainThread(UseOnAnimateTargetPacket::handle)
 				.add();
 
 		net.messageBuilder(C2SRequestTargetValidationPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
@@ -135,6 +135,12 @@ public class ModMessages {
 				.decoder(SyncEffectPacket::new)
 				.encoder(SyncEffectPacket::toBytes)
 				.consumerMainThread(SyncEffectPacket::handle)
+				.add();
+
+		net.messageBuilder(IgniteSelfPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+				.decoder(IgniteSelfPacket::new)
+				.encoder(IgniteSelfPacket::toBytes)
+				.consumerMainThread(IgniteSelfPacket::handle)
 				.add();
 	}
 

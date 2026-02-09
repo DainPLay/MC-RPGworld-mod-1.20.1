@@ -22,14 +22,14 @@ public class DamageTypeTagGenerator extends TagsProvider<DamageType> {
 	}
 
 	protected void addTags(HolderLookup.Provider provider) {
-		this.tag(DamageTypeTags.BYPASSES_ARMOR).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS);
-		this.tag(DamageTypeTags.BYPASSES_ENCHANTMENTS).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.MOSQUITOS);
-		this.tag(DamageTypeTags.BYPASSES_COOLDOWN).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.SWALLOW,ModDamageTypes.ENT_SNAP);
+		this.tag(DamageTypeTags.BYPASSES_ARMOR).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS, ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS);
+		this.tag(DamageTypeTags.BYPASSES_ENCHANTMENTS).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS, ModDamageTypes.MOSQUITOS);
+		this.tag(DamageTypeTags.BYPASSES_COOLDOWN).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS, ModDamageTypes.SWALLOW,ModDamageTypes.ENT_SNAP);
 		this.tag(DamageTypeTags.IS_FIRE).add(ModDamageTypes.SWALLOW);
-		this.tag(DamageTypeTags.BYPASSES_INVULNERABILITY).add(ModDamageTypes.SWALLOW);
-		this.tag(DamageTypeTags.BYPASSES_EFFECTS).add(ModDamageTypes.MOSSIOSIS);
-		this.tag(DamageTypeTags.BYPASSES_RESISTANCE).add(ModDamageTypes.MOSSIOSIS);
-		this.tag(DamageTypeTags.BYPASSES_SHIELD).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS, ModDamageTypes.SWALLOW,ModDamageTypes.ENT_ROOTS);
+		this.tag(DamageTypeTags.BYPASSES_INVULNERABILITY).add(ModDamageTypes.SWALLOW, ModDamageTypes.NECROSIS);
+		this.tag(DamageTypeTags.BYPASSES_EFFECTS).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS);
+		this.tag(DamageTypeTags.BYPASSES_RESISTANCE).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS);
+		this.tag(DamageTypeTags.BYPASSES_SHIELD).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS, ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS, ModDamageTypes.SWALLOW,ModDamageTypes.ENT_ROOTS);
 		this.tag(DamageTypeTags.DAMAGES_HELMET).add(ModDamageTypes.SCREAM, ModDamageTypes.DING);
 		this.tag(DamageTypeTags.IS_PROJECTILE).add(ModDamageTypes.FAIRAPIER_SEED,ModDamageTypes.BURR_SPIKE,ModDamageTypes.ENT_RIE_FRUIT,ModDamageTypes.ENT_ROOTS);
 		this.tag(DamageTypeTags.AVOIDS_GUARDIAN_THORNS).add(ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS,ModDamageTypes.FAIRAPIER_SEED,ModDamageTypes.BURR_SPIKE,ModDamageTypes.ENT_RIE_FRUIT);

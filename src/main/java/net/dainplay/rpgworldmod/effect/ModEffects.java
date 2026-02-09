@@ -33,6 +33,12 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> BURN_ILLUSION = MOB_EFFECTS.register("burn_illusion",
             () -> new BurnIllusionEffect(MobEffectCategory.HARMFUL, 0x00000000));
 
+    public static final RegistryObject<MobEffect> NECROSIS = MOB_EFFECTS.register("necrosis",
+            () -> new NecrosisEffect(MobEffectCategory.HARMFUL, 0x00000000));
+
+    public static final RegistryObject<MobEffect> BURNOUT = MOB_EFFECTS.register("burnout",
+            () -> new BurnoutEffect(MobEffectCategory.NEUTRAL, 0x00000000));
+
     public static void register(IEventBus eventBus) {
         MOB_EFFECTS.register(eventBus);
     }

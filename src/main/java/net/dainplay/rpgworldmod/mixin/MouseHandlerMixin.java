@@ -1,12 +1,17 @@
 package net.dainplay.rpgworldmod.mixin;
 
 import net.dainplay.rpgworldmod.effect.ModEffects;
+import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
+import net.dainplay.rpgworldmod.item.custom.ChooseAnimateTargetItem;
+import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
+import net.dainplay.rpgworldmod.network.ClientAdditionalHealthCostData;
 import net.dainplay.rpgworldmod.network.ClientEntPositionData;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,24 +24,69 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(MouseHandler.class)
 public class MouseHandlerMixin {
 
-	@Shadow private double xpos;
-	@Shadow private double ypos;
-	@Shadow private double accumulatedDX;
-	@Shadow private double accumulatedDY;
+	@Shadow
+	private double xpos;
+	@Shadow
+	private double ypos;
+	@Shadow
+	private double accumulatedDX;
+	@Shadow
+	private double accumulatedDY;
 
-	@Unique private double frozenAccumulatedDX = 0;
-	@Unique private double frozenAccumulatedDY = 0;
+	@Unique
+	private double frozenAccumulatedDX = 0;
+	@Unique
+	private double frozenAccumulatedDY = 0;
 
-	@Unique private float targetYaw = 0;
-	@Unique private float targetPitch = 0;
-	@Unique private float currentYaw = 0;
-	@Unique private float currentPitch = 0;
-	@Unique private boolean isTracking = false;
+	@Unique
+	private float targetYaw = 0;
+	@Unique
+	private float targetPitch = 0;
+	@Unique
+	private float currentYaw = 0;
+	@Unique
+	private float currentPitch = 0;
+	@Unique
+	private boolean isTracking = false;
 
 	@Inject(method = "turnPlayer", at = @At(value = "HEAD"), cancellable = true)
 	private void onTurnPlayer(CallbackInfo ci) {
 		if (Minecraft.getInstance().player != null) {
 			Player player = Minecraft.getInstance().player;
+
+
+			if (player.isUsingItem() &&
+					player.getUseItemRemainingTicks() > 0 &&
+					player.getUseItem().getItem() instanceof EmberScrollItem &&
+					player.getUseItem().getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0 &&
+					!player.isShiftKeyDown()) {
+				if (ClientAdditionalHealthCostData.hasRotationStored()) {
+					// Второе использование - вычисляем разницу
+					float angleDifference = ClientAdditionalHealthCostData.calculateAngleDifference(player);
+
+					// Рассчитываем здоровье игрока
+					int maxHealthCost = 18;
+					if (maxHealthCost < 0) maxHealthCost = 0;
+
+					// Рассчитываем стоимость здоровья
+					int healthCost = 0;
+					if (maxHealthCost > 0) {
+						// Шаг в 10 градусов
+						float step = 90.0f / maxHealthCost;
+						healthCost = (int) (angleDifference / step);
+
+						// Ограничиваем максимальным значением
+						healthCost = Math.min(healthCost, maxHealthCost);
+					}
+					if (healthCost > Mth.ceil(player.getHealth())-2) healthCost = Math.max(0, Mth.ceil(player.getHealth())-2);
+					// Устанавливаем значение
+					ClientAdditionalHealthCostData.set(healthCost);
+				} else {
+					ClientAdditionalHealthCostData.storeRotation(player);
+				}
+			} else if (ClientAdditionalHealthCostData.hasRotationStored()) {
+				ClientAdditionalHealthCostData.reset();
+			}
 
 			// Проверяем эффект паралича
 			if (player.hasEffect(ModEffects.PARALYSIS.get()) && !player.isCreative() && !player.isSpectator() &&

@@ -1,6 +1,7 @@
 package net.dainplay.rpgworldmod.item.custom;
 
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -23,7 +24,7 @@ public class ExtinguishingItem extends Item {
     public ItemStack finishUsingItem(ItemStack pStack, Level pLevel, LivingEntity pEntityLiving) {
     if (pEntityLiving.isOnFire()) {
         pEntityLiving.clearFire();
-        pEntityLiving.playSound(SoundEvents.GENERIC_EXTINGUISH_FIRE, 0.7F, 1.6F + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
+        pEntityLiving.level().playSound(null, pEntityLiving.blockPosition(), SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.PLAYERS, 0.7F, 1.6F + (pEntityLiving.getRandom().nextFloat() - pEntityLiving.getRandom().nextFloat()) * 0.4F);
     }
         if (pEntityLiving instanceof Player && !((Player)pEntityLiving).getAbilities().instabuild) {
             pEntityLiving.eat(pLevel, pStack);

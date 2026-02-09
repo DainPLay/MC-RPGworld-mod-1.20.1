@@ -2,9 +2,12 @@ package net.dainplay.rpgworldmod.render;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.Util;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.function.Function;
 
 public class ModRenderTypes extends RenderType {
 	private static final ResourceLocation ALTERATION_GLINT_TEXTURE =
@@ -172,4 +175,14 @@ public class ModRenderTypes extends RenderType {
 						.setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
 						.createCompositeState(true));
 	}
+
+	public static final Function<ResourceLocation, RenderType> SPELL_EFFECT = Util.memoize((texture) -> {
+		RenderType.CompositeState rendertype$compositestate = RenderType.CompositeState.builder()
+				.setShaderState(RENDERTYPE_ENTITY_ALPHA_SHADER)
+				.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+				.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+				.setWriteMaskState(COLOR_DEPTH_WRITE)
+				.createCompositeState(false);
+		return create("spell_effect", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, true, rendertype$compositestate);
+	});
 }

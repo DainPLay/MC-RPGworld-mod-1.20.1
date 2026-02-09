@@ -1090,5 +1090,13 @@
       "rpgworldmod:spell/necromancy_stop"
     ],
     "subtitle": "subtitles.rpgworldmod.spell.necromancy_stop"
+  },
+  "rpgworldmod.spell.necromancy_cast": {
+    "sounds": [
+      "rpgworldmod:spell/necromancy_cast_1",
+      "rpgworldmod:spell/necromancy_cast_2",
+      "rpgworldmod:spell/necromancy_cast_3"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.necromancy_cast"
   }
 }

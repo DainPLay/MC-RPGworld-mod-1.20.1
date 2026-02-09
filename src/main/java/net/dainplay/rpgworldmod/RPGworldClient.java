@@ -10,7 +10,7 @@ import net.dainplay.rpgworldmod.entity.client.render.CurioRenderers;
 import net.dainplay.rpgworldmod.entity.client.render.SkirtArmorLayer;
 import net.dainplay.rpgworldmod.fluid.ModFluids;
 import net.dainplay.rpgworldmod.gui.ManaOverlayEventHandler;
-import net.dainplay.rpgworldmod.gui.OverlayEventHandler;
+import net.dainplay.rpgworldmod.gui.HealthOverlayEventHandler;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.FireproofSkirtItem;
 import net.dainplay.rpgworldmod.item.custom.MintalTriangleItem;
@@ -68,7 +68,7 @@ public class RPGworldClient {
     }
     public void guiSetup(final RegisterGuiOverlaysEvent event) {
         //Register Armor Renderer for events
-        event.registerAbove(VanillaGuiOverlay.PLAYER_HEALTH.id(),RPGworldMod.MOD_ID+"_hearts_overlay", new OverlayEventHandler());
+        event.registerAbove(VanillaGuiOverlay.PLAYER_HEALTH.id(),RPGworldMod.MOD_ID+"_hearts_overlay", new HealthOverlayEventHandler());
         event.registerAbove(VanillaGuiOverlay.FOOD_LEVEL.id(),RPGworldMod.MOD_ID+"_mana_overlay", new ManaOverlayEventHandler());
     }
 
@@ -318,32 +318,6 @@ public class RPGworldClient {
 					return (float) tag.getInt("Token");
                 }
                 return 0.0F;
-            });
-
-            ItemProperties.register(ModItems.EMPTY_SCROLL.get().asItem(), new ResourceLocation( "magic_school"), (stack, world, entity, seed) -> {
-                if (stack.isEmpty()) {
-                    return 0F;
-                }
-                Map<Enchantment, Integer> enchants = EnchantmentHelper.getEnchantments(stack);
-                if (enchants.containsKey(ModEnchantments.RESTORATION.get())) {
-                    return 1F;
-                }
-                if (enchants.containsKey(ModEnchantments.DESTRUCTION.get())) {
-                    return 2F;
-                }
-                if (enchants.containsKey(ModEnchantments.ILLUSION.get())) {
-                    return 3F;
-                }
-                if (enchants.containsKey(ModEnchantments.ALTERATION.get())) {
-                    return 4F;
-                }
-                if (enchants.containsKey(ModEnchantments.CONJURATION.get())) {
-                    return 5F;
-                }
-                if (enchants.containsKey(ModEnchantments.NECROMANCY.get())) {
-                    return 6F;
-                }
-                return 0F;
             });
             ItemProperties.register(ModItems.WEALD_BLADE.get().asItem(), new ResourceLocation( "blocking"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
             ItemProperties.register(ModItems.DRILL_SPEAR.get().asItem(), new ResourceLocation( "throwing"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);

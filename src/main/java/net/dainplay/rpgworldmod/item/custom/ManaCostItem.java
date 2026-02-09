@@ -31,6 +31,7 @@ public interface ManaCostItem {
     default void updateManaTag(ItemStack stack, Player player) {
         CompoundTag tag = stack.getOrCreateTag();
         boolean hasEnough = hasEnoughMana(player, stack) || player.getAbilities().instabuild;
+        if(usesHealthInsteadOfMana(stack)) hasEnough = hasEnoughHealth(player, stack) || player.getAbilities().instabuild;
 
         if (!hasEnough) {
             tag.putBoolean("notEnoughMana", true);
@@ -50,5 +51,9 @@ public interface ManaCostItem {
             });
         }
         return playerMana.get() >= getManaCost(item, player);
+    }
+
+    default boolean hasEnoughHealth(Player player, ItemStack item) {
+        return (int) Math.ceil(player.getHealth()) >= getManaCost(item, player);
     }
 }

@@ -1,4 +1,4 @@
-// 1.20.1	2026-01-12T17:31:09.1681873	Registries
+// 1.20.1	2026-02-08T01:51:38.3807583	Registries
 121735c6130e035c30f2237589573dcc7be465f7 data/rpgworldmod/damage_type/burr_spike.json
 6f9914ff666f6b60934d30c915ed6849cfc7792e data/rpgworldmod/damage_type/ding.json
 9bdc9e0523daa7364d0740cb27b276e44cc2ea19 data/rpgworldmod/damage_type/ent_rie_fruit.json
@@ -7,6 +7,7 @@ a24718e2427287074077f6d14bb8c094bd55b056 data/rpgworldmod/damage_type/ent_snap.j
 995f5ea194d343db1d00c385a5e20786a6d40b86 data/rpgworldmod/damage_type/fairapier_seed.json
 28f0f1c0f2338041e44018cec2b748fb30f3c250 data/rpgworldmod/damage_type/mosquitos.json
 7940f4b263e22528515169af938702e7b75ca283 data/rpgworldmod/damage_type/mossiosis.json
+f6f58e13c6b8105150d241540d716d0402a41ea8 data/rpgworldmod/damage_type/necrosis.json
 6282cf86d8045b378d73e385ff083698f506afdb data/rpgworldmod/damage_type/scream.json
 d72358ea4a37a59ed948d45092394f3b3fc4712e data/rpgworldmod/damage_type/spiky_ivy.json
 797bfd2520f054e564c4427b0436e60aac012418 data/rpgworldmod/damage_type/swallow.json

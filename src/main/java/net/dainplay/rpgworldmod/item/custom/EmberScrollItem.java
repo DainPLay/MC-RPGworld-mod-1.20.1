@@ -25,8 +25,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -301,7 +303,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 			return "10";
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), item) > 0) {
-			return "2+";
+			return "2-20";
 		}
 		return "5";
 	}
@@ -327,7 +329,8 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 			return 10;
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), item) > 0) {
-			return 2;
+			if (player.isShiftKeyDown()) return 0;
+			else return 2;
 		}
 		return 5;
 	}
@@ -384,6 +387,15 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), itemstack) > 0) {
 				return InteractionResultHolder.pass(itemstack);
 			}
+			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), itemstack) > 0 && player.isShiftKeyDown()) {
+				if(player.hasEffect(ModEffects.BURNOUT.get())) {
+					player.removeEffect(ModEffects.BURNOUT.get());
+					player.extinguishFire();
+					player.level().playSound(null, player.blockPosition(), SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.PLAYERS, 0.7F, 1.6F + (player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.4F);
+				}
+				player.getCooldowns().addCooldown(this, 15);
+				return InteractionResultHolder.success(itemstack);
+			}
 
 			// На сервере
 			UUID playerId = player.getUUID();
@@ -391,15 +403,21 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 			AtomicBoolean cir = new AtomicBoolean(false);
 
 			if (!player.getAbilities().instabuild) {
-				player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-					if (mana.getMana() < getManaCost(itemstack, player)) {
+				if (usesHealthInsteadOfMana(itemstack)) {
+					if (Mth.ceil(player.getHealth()) < getManaCost(itemstack, player)) {
 						cir.set(true);
-						return;
 					}
-					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), itemstack) <= 0
-					&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), itemstack) <= 0)
-						mana.reduceMana((ServerPlayer) player, getManaCost(itemstack, player));
-				});
+				} else {
+					player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+						if (mana.getMana() < getManaCost(itemstack, player)) {
+							cir.set(true);
+							return;
+						}
+						if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), itemstack) <= 0)
+							mana.reduceMana((ServerPlayer) player, getManaCost(itemstack, player));
+					});
+
+				}
 			}
 
 			if (cir.get()) {
@@ -507,10 +525,19 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), itemstack) > 0) {
 				return InteractionResultHolder.pass(itemstack);
 			}
+			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), itemstack) > 0 && player.isShiftKeyDown()) {
+				return InteractionResultHolder.success(itemstack);
+			}
 
 			// Клиентская проверка маны
-			if (!player.getAbilities().instabuild && ClientManaData.get() < getManaCost(itemstack, player))
-				return InteractionResultHolder.fail(itemstack);
+			if (usesHealthInsteadOfMana(itemstack)) {
+				if (!player.getAbilities().instabuild && Mth.ceil(player.getHealth()) < getManaCost(itemstack, player))
+					return InteractionResultHolder.fail(itemstack);
+			}
+			else {
+				if (!player.getAbilities().instabuild && ClientManaData.get() < getManaCost(itemstack, player))
+					return InteractionResultHolder.fail(itemstack);
+			}
 			player.startUsingItem(hand);
 		}
 
@@ -655,6 +682,20 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 		return level.setBlock(blockpos, state, 11);
 	}
 
+	public void igniteSelf(Player player, int healthToIgnite, ItemStack item) {
+		player.getCooldowns().addCooldown(item.getItem(), 15);
+		player.swing(player.getUsedItemHand());
+		player.setSecondsOnFire(72000);
+		MobEffectInstance burnout = new MobEffectInstance(ModEffects.BURNOUT.get(), -1, healthToIgnite - 1);
+		burnout.setCurativeItems(new ArrayList<>());
+		player.addEffect(burnout);
+		player.level().playSound(null,
+				player.getX(), player.getY(), player.getZ(),
+				RPGSounds.EMBER_GEM_IGNITE_ENTITY.get(),
+				SoundSource.PLAYERS, 1.0F, 1.0F
+		);
+	}
+
 	public void cast(Player player, LivingEntity target, ItemStack item) {
 
 		AtomicBoolean hasEnoughMana = new AtomicBoolean(true);
@@ -785,7 +826,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 
 	@Override
 	public int getUseDuration(ItemStack stack) {
-		if(stack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0) return 0;
+		if (stack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0) return 0;
 		return 72000;
 	}
 
@@ -849,7 +890,8 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 			int tick = 4;
 			if (item.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0) tick = 7;
 			if (item.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0) tick = 5;
-			if (item.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0 || item.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0) return false;
+			if (item.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0 || item.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0)
+				return false;
 			if (useTicks - lastManaTick >= tick) {
 				lastManaTick = useTicks;
 				return true;
@@ -905,17 +947,18 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 		for (Map.Entry<UUID, PlayerUseData> entry : copy.entrySet()) {
 			UUID playerId = entry.getKey();
 			PlayerUseData useData = entry.getValue();
+			AtomicBoolean continueUsing = new AtomicBoolean(true);
 
 			Player player = level.getPlayerByUUID(playerId);
 			if (player == null || !player.isUsingItem()) {
 				levelPlayerUseData.remove(playerId);
-				continue;
+				continueUsing.set(false);
 			}
 
 			ItemStack usingItem = player.getUseItem();
 			if (!(usingItem.getItem() instanceof EmberScrollItem)) {
 				levelPlayerUseData.remove(playerId);
-				continue;
+				continueUsing.set(false);
 			}
 
 			// Проверяем наличие зачарования
@@ -926,123 +969,129 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 					&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), usingItem) <= 0) {
 				levelPlayerUseData.remove(playerId);
 				player.stopUsingItem();
-				continue;
+				continueUsing.set(false);
+			}
+
+			// Проверяем наличие зачарования
+			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), usingItem) > 0 && player.isShiftKeyDown()) {
+				levelPlayerUseData.remove(playerId);
+				player.stopUsingItem();
+				continueUsing.set(false);
 			}
 
 			useData.tick();
 
 			if (useData.shouldConsumeMana(usingItem)) {
 				if (!player.getAbilities().instabuild) {
-					AtomicBoolean hasEnoughMana = new AtomicBoolean(true);
 					player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
 						if (mana.getMana() < getManaCost(usingItem, player)) {
-							hasEnoughMana.set(false);
+							continueUsing.set(false);
 						} else {
 							mana.reduceMana((ServerPlayer) player, getManaCost(usingItem, player));
 						}
 					});
-
-					if (!hasEnoughMana.get()) {
-						levelPlayerUseData.remove(playerId);
-						player.stopUsingItem();
-
-						// Отправляем пакет остановки звука
-						ModMessages.sendToNearbyPlayers(
-								new EmberScrollLoopSoundPacket(player.getId(), false, usingItem),
-								level,
-								player.blockPosition(),
-								64.0
-						);
-
-						if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), usingItem) > 0) {
-							// Воспроизводим звук окончания для всех игроков
-							level.playSound(null,
-									player.getX(), player.getY(), player.getZ(),
-									RPGSounds.SPELL_DESTRUCTION_EMBER_STOP.get(),
-									SoundSource.PLAYERS, 1.0F, 1.0F
-							);
-
-							// Отправляем пакет для остановки зацикленного звука
-							ModMessages.sendToNearbyPlayers(
-									new EmberScrollLoopSoundPacket(player.getId(), false, usingItem),
-									(ServerLevel) level,
-									player.blockPosition(),
-									64.0
-							);
-						}
-
-						if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), usingItem) > 0) {
-							// Воспроизводим звук окончания для всех игроков
-							level.playSound(null,
-									player.getX(), player.getY(), player.getZ(),
-									RPGSounds.SPELL_ALTERATION_STOP.get(),
-									SoundSource.PLAYERS, 1.0F, 1.0F
-							);
-
-							// Отправляем пакет для остановки зацикленного звука
-							ModMessages.sendToNearbyPlayers(
-									new EmberScrollLoopSoundPacket(player.getId(), false, usingItem),
-									(ServerLevel) level,
-									player.blockPosition(),
-									64.0
-							);
-						}
-
-						if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), usingItem) > 0) {
-							// Воспроизводим звук окончания для всех игроков
-							level.playSound(null,
-									player.getX(), player.getY(), player.getZ(),
-									RPGSounds.SPELL_RESTORATION_STOP.get(),
-									SoundSource.PLAYERS, 1.0F, 1.0F
-							);
-
-							// Отправляем пакет для остановки зацикленного звука
-							ModMessages.sendToNearbyPlayers(
-									new EmberScrollLoopSoundPacket(player.getId(), false, usingItem),
-									(ServerLevel) level,
-									player.blockPosition(),
-									64.0
-							);
-
-							player.extinguishFire();
-						}
-
-						if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), usingItem) > 0) {
-							// Воспроизводим звук окончания для всех игроков
-							level.playSound(null,
-									player.getX(), player.getY(), player.getZ(),
-									RPGSounds.SPELL_ILLUSION_STOP.get(),
-									SoundSource.PLAYERS, 1.0F, 1.0F
-							);
-
-							// Отправляем пакет для остановки зацикленного звука
-							ModMessages.sendToNearbyPlayers(
-									new EmberScrollLoopSoundPacket(player.getId(), false, usingItem),
-									(ServerLevel) level,
-									player.blockPosition(),
-									64.0
-							);
-						}
-
-						if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), usingItem) > 0) {
-							// Воспроизводим звук окончания для всех игроков
-							level.playSound(null,
-									player.getX(), player.getY(), player.getZ(),
-									RPGSounds.SPELL_NECROMANCY_STOP.get(),
-									SoundSource.PLAYERS, 1.0F, 1.0F
-							);
-
-							// Отправляем пакет для остановки зацикленного звука
-							ModMessages.sendToNearbyPlayers(
-									new EmberScrollLoopSoundPacket(player.getId(), false, usingItem),
-									(ServerLevel) level,
-									player.blockPosition(),
-									64.0
-							);
-						}
-						continue;
-					}
 				}
+			}
+
+			if (!continueUsing.get()) {
+				levelPlayerUseData.remove(playerId);
+				player.stopUsingItem();
+
+				// Отправляем пакет остановки звука
+				ModMessages.sendToNearbyPlayers(
+						new EmberScrollLoopSoundPacket(player.getId(), false, usingItem),
+						level,
+						player.blockPosition(),
+						64.0
+				);
+
+				if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), usingItem) > 0) {
+					// Воспроизводим звук окончания для всех игроков
+					level.playSound(null,
+							player.getX(), player.getY(), player.getZ(),
+							RPGSounds.SPELL_DESTRUCTION_EMBER_STOP.get(),
+							SoundSource.PLAYERS, 1.0F, 1.0F
+					);
+
+					// Отправляем пакет для остановки зацикленного звука
+					ModMessages.sendToNearbyPlayers(
+							new EmberScrollLoopSoundPacket(player.getId(), false, usingItem),
+							(ServerLevel) level,
+							player.blockPosition(),
+							64.0
+					);
+				}
+
+				if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), usingItem) > 0) {
+					// Воспроизводим звук окончания для всех игроков
+					level.playSound(null,
+							player.getX(), player.getY(), player.getZ(),
+							RPGSounds.SPELL_ALTERATION_STOP.get(),
+							SoundSource.PLAYERS, 1.0F, 1.0F
+					);
+
+					// Отправляем пакет для остановки зацикленного звука
+					ModMessages.sendToNearbyPlayers(
+							new EmberScrollLoopSoundPacket(player.getId(), false, usingItem),
+							(ServerLevel) level,
+							player.blockPosition(),
+							64.0
+					);
+				}
+
+				if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), usingItem) > 0) {
+					// Воспроизводим звук окончания для всех игроков
+					level.playSound(null,
+							player.getX(), player.getY(), player.getZ(),
+							RPGSounds.SPELL_RESTORATION_STOP.get(),
+							SoundSource.PLAYERS, 1.0F, 1.0F
+					);
+
+					// Отправляем пакет для остановки зацикленного звука
+					ModMessages.sendToNearbyPlayers(
+							new EmberScrollLoopSoundPacket(player.getId(), false, usingItem),
+							(ServerLevel) level,
+							player.blockPosition(),
+							64.0
+					);
+
+					player.extinguishFire();
+				}
+
+				if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), usingItem) > 0) {
+					// Воспроизводим звук окончания для всех игроков
+					level.playSound(null,
+							player.getX(), player.getY(), player.getZ(),
+							RPGSounds.SPELL_ILLUSION_STOP.get(),
+							SoundSource.PLAYERS, 1.0F, 1.0F
+					);
+
+					// Отправляем пакет для остановки зацикленного звука
+					ModMessages.sendToNearbyPlayers(
+							new EmberScrollLoopSoundPacket(player.getId(), false, usingItem),
+							(ServerLevel) level,
+							player.blockPosition(),
+							64.0
+					);
+				}
+
+				if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), usingItem) > 0) {
+					// Воспроизводим звук окончания для всех игроков
+					level.playSound(null,
+							player.getX(), player.getY(), player.getZ(),
+							RPGSounds.SPELL_NECROMANCY_STOP.get(),
+							SoundSource.PLAYERS, 1.0F, 1.0F
+					);
+
+					// Отправляем пакет для остановки зацикленного звука
+					ModMessages.sendToNearbyPlayers(
+							new EmberScrollLoopSoundPacket(player.getId(), false, usingItem),
+							(ServerLevel) level,
+							player.blockPosition(),
+							64.0
+					);
+				}
+				continue;
 			}
 
 			// Обработка ALTERATION - управление лавой

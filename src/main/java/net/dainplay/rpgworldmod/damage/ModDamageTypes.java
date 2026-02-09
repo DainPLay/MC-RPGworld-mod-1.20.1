@@ -25,6 +25,7 @@ public class ModDamageTypes {
     public static final ResourceKey<DamageType> ENT_RIE_FRUIT = create("ent_rie_fruit");
     public static final ResourceKey<DamageType> ENT_SNAP = create("ent_snap");
     public static final ResourceKey<DamageType> ENT_ROOTS = create("ent_roots");
+    public static final ResourceKey<DamageType> NECROSIS = create("necrosis");
 
     public static ResourceKey<DamageType> create(String name) {
         return ResourceKey.create(Registries.DAMAGE_TYPE, RPGworldMod.prefix(name));
@@ -55,5 +56,6 @@ public class ModDamageTypes {
         context.register(ENT_RIE_FRUIT, new DamageType("ent_rie_fruit", 0.0F));
         context.register(ENT_SNAP, new DamageType("ent_snap", 0.0F));
         context.register(ENT_ROOTS, new DamageType("ent_roots", 0.0F));
+        context.register(NECROSIS, new DamageType("necrosis", 0.0F));
     }
 }

@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.entity.BannerPattern;
 public class ModTags {
     public static class Blocks {
         public static final TagKey<Block> STICKY_FOR_MOSQUITOS = forgeTag("sticky_for_mosquitos");
+        public static final TagKey<Block> SWEET_FOOD = forgeTag("sweet_food");
         private static TagKey<Block> forgeTag (String name) {
             return BlockTags.create(new ResourceLocation("forge", name));
         }
@@ -37,6 +38,7 @@ public class ModTags {
         public static final TagKey<Item> WIDOWEED_CONSUMABLE = forgeTag("widoweed_consumable");
         public static final TagKey<Item> BRAMBLEFOX_FOOD = forgeTag("bramblefox_food");
         public static final TagKey<Item> LIVING_WOOD_LOGS = modTag("living_wood_logs");
+        public static final TagKey<Item> SWEET_FOOD = forgeTag("sweet_food");
         private static TagKey<Item> forgeTag (String name) {
             return ItemTags.create(new ResourceLocation("forge", name));
         }
