@@ -8,6 +8,7 @@ import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
 import net.dainplay.rpgworldmod.item.custom.ManaCostItem;
 import net.dainplay.rpgworldmod.item.custom.OrbitingItem;
+import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.dainplay.rpgworldmod.network.ClientManaData;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -225,6 +226,107 @@ public class OrbitingItemRenderer {
 			ms.popPose();
 
 			event.setCanceled(true);
+		}
+		if (event.getItemStack().getItem() instanceof StaffItem item1 && Minecraft.getInstance().player != null && item1.isOffCooldown(event.getItemStack(), Minecraft.getInstance().player)) {
+			Minecraft mc = Minecraft.getInstance();
+			AbstractClientPlayer player = mc.player;
+
+			PoseStack ms = event.getPoseStack();
+			MultiBufferSource buffer = event.getMultiBufferSource();
+
+			boolean rightHand = event.getHand() == InteractionHand.MAIN_HAND ^ mc.player.getMainArm() == HumanoidArm.LEFT;
+			float equipProgress = event.getEquipProgress();
+			float swingProgress = event.getSwingProgress();
+
+			float flip = rightHand ? 1.0F : -1.0F;
+			float f1 = Mth.sqrt(swingProgress);
+			float f2 = -0.3F * Mth.sin(f1 * (float) Math.PI);
+			float f3 = 0.4F * Mth.sin(f1 * ((float) Math.PI * 2F));
+			float f4 = -0.4F * Mth.sin(swingProgress * (float) Math.PI);
+
+			String textureString = item1.getTexture(event.getItemStack(), player);
+			int animationSpeed = item1.getAnimationSpeed(event.getItemStack(), player);
+			int animationLength = item1.getAnimationLength(event.getItemStack(), player);
+
+			ms.pushPose();
+			ms.translate(
+					flip * (f2 + 0.64000005F),
+					f3 + -0.6F + equipProgress * -0.6F,
+					f4 + -0.71999997F
+			);
+
+			ms.translate(flip * item1.get1XOffset(event.getItemStack(), player), item1.get1YOffset(event.getItemStack(), player), item1.get1ZOffset(event.getItemStack(), player));
+			if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUsedItemHand() == event.getHand()) {
+				ms = item1.getEffectUsingPose(event.getItemStack(), player, ms, flip);
+			}
+			VertexConsumer vertexconsumer;
+			float size = 0.35F;
+			Matrix4f matrix4f = ms.last().pose();
+			if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUsedItemHand() == event.getHand()) {
+				if (textureString != null && !textureString.isEmpty()) {
+					int currentFrame = (player.tickCount / animationSpeed) % animationLength;
+					float frameHeight = 1.0F / animationLength;
+					float vMin = currentFrame * frameHeight;
+					float vMax = vMin + frameHeight;
+
+					vertexconsumer = buffer.getBuffer(ModRenderTypes.SPELL_EFFECT.apply(new ResourceLocation(RPGworldMod.MOD_ID, textureString + ".png")));
+
+					vertexconsumer.vertex(matrix4f, -size, -size, 0.0F)
+							.color(1.0F, 1.0F, 1.0F, 1.0F)
+							.uv(0.0F, vMax)
+							.overlayCoords(OverlayTexture.NO_OVERLAY)
+							.uv2(15728880)
+							.normal(0.0F, 0.0F, 1.0F)
+							.endVertex();
+
+					vertexconsumer.vertex(matrix4f, size, -size, 0.0F)
+							.color(1.0F, 1.0F, 1.0F, 1.0F)
+							.uv(1.0F, vMax)
+							.overlayCoords(OverlayTexture.NO_OVERLAY)
+							.uv2(15728880)
+							.normal(0.0F, 0.0F, 1.0F)
+							.endVertex();
+
+					vertexconsumer.vertex(matrix4f, size, size, 0.0F)
+							.color(1.0F, 1.0F, 1.0F, 1.0F)
+							.uv(1.0F, vMin)
+							.overlayCoords(OverlayTexture.NO_OVERLAY)
+							.uv2(15728880)
+							.normal(0.0F, 0.0F, 1.0F)
+							.endVertex();
+
+					vertexconsumer.vertex(matrix4f, -size, size, 0.0F)
+							.color(1.0F, 1.0F, 1.0F, 1.0F)
+							.uv(0.0F, vMin)
+							.overlayCoords(OverlayTexture.NO_OVERLAY)
+							.uv2(15728880)
+							.normal(0.0F, 0.0F, 1.0F)
+							.endVertex();
+				} else {
+					int color = item1.getColor(event.getItemStack(), player);
+					int alpha = 150;
+					int red = (color >> 16) & 0xFF;
+					int green = (color >> 8) & 0xFF;
+					int blue = color & 0xFF;
+
+					vertexconsumer = buffer.getBuffer(RenderType.lightning());
+
+					vertexconsumer.vertex(matrix4f, size, size, 0.0F)
+							.color(red, green, blue, alpha)
+							.endVertex();
+					vertexconsumer.vertex(matrix4f, -size, size, 0.0F)
+							.color(red, green, blue, alpha)
+							.endVertex();
+					vertexconsumer.vertex(matrix4f, -size, -size, 0.0F)
+							.color(red, green, blue, alpha)
+							.endVertex();
+					vertexconsumer.vertex(matrix4f, size, -size, 0.0F)
+							.color(red, green, blue, alpha)
+							.endVertex();
+				}
+			}
+
+			ms.popPose();
 		}
 	}
 

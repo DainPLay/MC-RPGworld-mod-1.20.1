@@ -1,6 +1,7 @@
 package net.dainplay.rpgworldmod.block.custom;
 
 import com.google.common.collect.ImmutableMap;
+import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -11,6 +12,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
@@ -34,10 +36,16 @@ import org.checkerframework.checker.builder.qual.ReturnsReceiver;
 
 import java.util.Random;
 
-public class ParalilyBlock extends WaterlilyBlock implements BonemealableBlock {
+public class ParalilyBlock extends WaterlilyBlock implements BonemealableBlock, SuspiciousEffectHolder {
 public static final IntegerProperty AGE = BlockStateProperties.AGE_1;
-    public ParalilyBlock(Properties properties) {
+    private final MobEffect suspiciousStewEffect;
+    private final int effectDuration;
+    private final java.util.function.Supplier<MobEffect> suspiciousStewEffectSupplier;
+    public ParalilyBlock(java.util.function.Supplier<MobEffect> effectSupplier, int pEffectDuration, Properties properties) {
         super(properties);
+        this.suspiciousStewEffect = null;
+        this.suspiciousStewEffectSupplier = effectSupplier;
+        this.effectDuration = pEffectDuration;
     }
 @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
@@ -118,4 +126,13 @@ public static final IntegerProperty AGE = BlockStateProperties.AGE_1;
         if (pRand.nextInt(4) == 0) pLevel.setBlock(pPos, pState.setValue(AGE, 1), 2);
     }
 
+    public MobEffect getSuspiciousEffect() {
+        if (true) return this.suspiciousStewEffectSupplier.get();
+        return this.suspiciousStewEffect;
+    }
+
+    public int getEffectDuration() {
+        if (this.suspiciousStewEffect == null && !this.suspiciousStewEffectSupplier.get().isInstantenous()) return this.effectDuration * 20;
+        return this.effectDuration;
+    }
 }

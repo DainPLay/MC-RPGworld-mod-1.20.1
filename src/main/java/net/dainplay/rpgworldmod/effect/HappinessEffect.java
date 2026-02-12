@@ -15,12 +15,10 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import java.util.UUID;
 
 public class HappinessEffect extends MobEffect {
-	public static final UUID MODIFIER_UUID = UUID.fromString("db65fd7e-1124-456a-9d0e-9124cbf1511f");
 	protected final RandomSource random = RandomSource.create();
 
 	public HappinessEffect(MobEffectCategory mobEffectCategory, int color) {
 		super(mobEffectCategory, color);
-		addAttributeModifier(Attributes.LUCK, HappinessEffect.MODIFIER_UUID.toString(), 0D, AttributeModifier.Operation.MULTIPLY_TOTAL);
 	}
 
 	@Override

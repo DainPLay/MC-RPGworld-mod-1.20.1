@@ -15,11 +15,9 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 public class BurnIllusionEffect extends MobEffect {
-	public static final UUID MODIFIER_UUID = UUID.fromString("8a29b055-9257-4db7-8bce-d816a8f6594c");
 
 	public BurnIllusionEffect(MobEffectCategory mobEffectCategory, int color) {
 		super(mobEffectCategory, color);
-		addAttributeModifier(Attributes.MOVEMENT_SPEED, MODIFIER_UUID.toString(), 0D, AttributeModifier.Operation.MULTIPLY_TOTAL);
 	}
 
 	@Override

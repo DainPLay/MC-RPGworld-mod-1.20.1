@@ -5,6 +5,7 @@ import net.dainplay.rpgworldmod.item.custom.ChooseAnimateTargetItem;
 import net.dainplay.rpgworldmod.network.C2SRequestTargetValidationPacket;
 import net.dainplay.rpgworldmod.network.ClientAnimateTargetData;
 import net.dainplay.rpgworldmod.network.ModMessages;
+import net.dainplay.rpgworldmod.util.ModTags;
 import net.dainplay.rpgworldmod.world.feature.ModConfiguredFeatures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -121,7 +122,8 @@ public abstract class MinecraftMixin {
 
 			if (angle < angleThreshold) {
 				// Проверяем видимость до хитбокса
-				if (hasLineOfSightToBoundingBox(player, entity, eyePos, maxDistance)) {
+				if (hasLineOfSightToBoundingBox(player, entity, eyePos, maxDistance)
+						&& !entity.getType().is(ModTags.Entity.SOULLESS)) {
 					if (angle < closestAngle) {
 						closestAngle = angle;
 						closest = entity;

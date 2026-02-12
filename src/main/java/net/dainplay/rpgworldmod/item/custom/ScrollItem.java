@@ -1,8 +1,10 @@
 package net.dainplay.rpgworldmod.item.custom;
 
+import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -17,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ScrollItem extends Item  implements RPGtooltip, ManaCostItem, OrbitingItem, ChooseAnimateTargetItem {
+public class ScrollItem extends Item implements RPGtooltip, ManaCostItem, OrbitingItem, ChooseAnimateTargetItem {
 	public ScrollItem(Properties pProperties) {
 		super(pProperties);
 	}
@@ -74,6 +76,15 @@ public class ScrollItem extends Item  implements RPGtooltip, ManaCostItem, Orbit
 		if (!level.isClientSide && entity instanceof Player player) {
 			if (isSelected || player.getOffhandItem() == stack) {
 				updateManaTag(stack, player);
+			}
+			if ((entity instanceof ServerPlayer serverPlayer)
+					&& ((EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), stack) > 0)
+					|| (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), stack) > 0)
+					|| (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) > 0)
+					|| (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), stack) > 0)
+					|| (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), stack) > 0)
+					|| (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), stack) > 0))) {
+				ModAdvancements.OBTAIN_SPELL_TRIGGER.trigger(serverPlayer);
 			}
 		}
 	}

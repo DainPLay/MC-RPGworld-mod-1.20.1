@@ -18,6 +18,8 @@ public class ModLootModifiers {
             LOOT_MODIFIER_SERIALIZERS.register("replace_item", ReplaceItemModifier.CODEC);
     public static final RegistryObject<Codec<SmeltingModifier>> TOOL_SMELTING =
             LOOT_MODIFIER_SERIALIZERS.register("tool_smelting", () -> SmeltingModifier.CODEC);
+    public static final RegistryObject<Codec<? extends IGlobalLootModifier>> ADD_ENCHANTED_SCROLL =
+            LOOT_MODIFIER_SERIALIZERS.register("add_enchanted_scroll", AddEnchantedScrollModifier.CODEC);
 
 
     public static void register(IEventBus eventBus) {

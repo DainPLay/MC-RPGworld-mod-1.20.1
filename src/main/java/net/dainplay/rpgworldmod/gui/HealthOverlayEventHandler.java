@@ -326,12 +326,15 @@ public class HealthOverlayEventHandler implements IGuiOverlay {
 		int maxHealth = Mth.ceil(mc.player.getMaxHealth());
 		int absorption = Mth.ceil(mc.player.getAbsorptionAmount());
 
-		// Рассчитываем количество сердец
-		int regularHeartsToDraw = maxHealth / 2 + maxHealth % 2; // Все обычные сердца (полные и пустые)
-		int absorptionHeartsToDraw = absorption / 2 + absorption % 2; // Абсорбционные сердца
+		// Общее количество здоровья (включая абсорбцию)
+		int totalHealth = health + absorption;
+
+		// Рассчитываем количество заполненных и пустых сердец
+		int totalRegularHearts = (maxHealth + 1) / 2; // Все обычные сердца
+		int absorptionHearts = (absorption + 1) / 2; // Абсорбционные сердца
 
 		// Общее количество сердец для расчета отступа
-		int totalHeartsToDraw = regularHeartsToDraw + absorptionHeartsToDraw;
+		int totalHeartsToDraw = totalRegularHearts + absorptionHearts;
 
 		// Обновляем mosquitoIcons если значение изменилось
 		if (currentMosquitoValue != previousMosquitoValue) {
@@ -344,81 +347,71 @@ public class HealthOverlayEventHandler implements IGuiOverlay {
 			return;
 		}
 
-		// Сколько сердец нужно нарисовать москитными
-		int heartsToDraw = currentMosquitoValue / 2 + currentMosquitoValue % 2;
+		// Сколько москитных сердец нужно нарисовать (в единицах иконок)
+		int mosquitoHeartsToDraw = mosquitoIcons.length;
 
 		// Определяем позицию Y
 		int yPosition = renderHeartY;
 
 		if (currentMosquitoValue > 0) {
-			int drawnHearts = 0;
+			int drawnHearts = 0; // Сколько москитных иконок мы уже нарисовали
+			int remainingHealth = currentMosquitoValue; // Сколько москитного здоровья осталось распределить
 
-			// Рисуем поверх обычных сердец
-			for (int i = 0; i < regularHeartsToDraw && drawnHearts < heartsToDraw; i++) {
-				int xPosition = xStart + (i % 10) * 8;
+			// Проходим по всем позициям сердец
+			for (int heartIndex = 0; heartIndex < totalHeartsToDraw && drawnHearts < mosquitoHeartsToDraw && remainingHealth > 0; heartIndex++) {
+				// Определяем, является ли это сердце заполненным и сколько здоровья в нем
+				int healthInThisHeart = 0;
 
-				// Динамический отступ для рядов
-				int currentY = yPosition - max(3, (11 - (totalHeartsToDraw - 1) / 10)) * (i / 10);
-
-				if (health + absorption <= 4) {
-					currentY = randomOffsets[i];
+				if (heartIndex < totalRegularHearts) {
+					// Это обычное сердце
+					// Вычисляем, сколько здоровья в этом сердце у игрока
+					int heartStartHealth = heartIndex * 2;
+					healthInThisHeart = Math.max(0, Math.min(2, health - heartStartHealth));
+				} else {
+					// Это абсорбционное сердце
+					int absorptionHeartIndex = heartIndex - totalRegularHearts;
+					int absorptionStart = absorptionHeartIndex * 2;
+					healthInThisHeart = Math.max(0, Math.min(2, absorption - absorptionStart));
 				}
-				else if (i == regen) {
-					currentY -= 2;
+
+				// Если в этом сердце нет здоровья у игрока, пропускаем
+				if (healthInThisHeart <= 0) {
+					continue;
 				}
 
-				// Безопасный доступ к массиву
-				if (drawnHearts < mosquitoIcons.length) {
-					switch (mosquitoIcons[drawnHearts].heartIconType) {
-						case NONE:
-							drawMosquitoHeart(stack, xPosition, currentY, 0, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
-							break;
-						case HALF:
-							drawMosquitoHeart(stack, xPosition, currentY, 9, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
-							break;
-						case FULL:
-							drawMosquitoHeart(stack, xPosition, currentY, 0, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
-							break;
-						default:
-							break;
-					}
-					drawnHearts++;
-				}
-			}
+				// Определяем, сколько москитного здоровья должно быть в этом сердце
+				int mosquitoHealthInThisHeart = Math.min(healthInThisHeart, remainingHealth);
 
-			// Рисуем поверх абсорбционных сердец (если есть и если еще нужно рисовать москитные иконки)
-			for (int i = 0; i < absorptionHeartsToDraw && drawnHearts < heartsToDraw; i++) {
-				// Индекс для позиционирования (продолжаем с того места, где закончили обычные сердца)
-				int heartIndex = regularHeartsToDraw + i;
+				// Если москитного здоровья для этого сердца нет, переходим к следующему
+				if (mosquitoHealthInThisHeart <= 0) {
+					continue;
+				}
+
+				// Вычисляем позицию для рисования
 				int xPosition = xStart + (heartIndex % 10) * 8;
 
 				// Динамический отступ для рядов
 				int currentY = yPosition - max(3, (11 - (totalHeartsToDraw - 1) / 10)) * (heartIndex / 10);
 
-				if (health + absorption <= 4) {
+				if (totalHealth <= 4) {
 					currentY = randomOffsets[heartIndex];
-				}
-				else if (heartIndex == regen) {
+				} else if (heartIndex == regen) {
 					currentY -= 2;
 				}
 
-				// Безопасный доступ к массиву
-				if (drawnHearts < mosquitoIcons.length) {
-					switch (mosquitoIcons[drawnHearts].heartIconType) {
-						case NONE:
-							drawMosquitoHeart(stack, xPosition, currentY, 0, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
-							break;
-						case HALF:
-							drawMosquitoHeart(stack, xPosition, currentY, 9, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
-							break;
-						case FULL:
-							drawMosquitoHeart(stack, xPosition, currentY, 0, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
-							break;
-						default:
-							break;
-					}
-					drawnHearts++;
+				// Определяем тип иконки на основе количества москитного здоровья в этом сердце
+				if (mosquitoHealthInThisHeart == 2) {
+					// Полное москитное сердце
+					drawMosquitoHeart(stack, xPosition, currentY, 0, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
+				} else if (mosquitoHealthInThisHeart == 1) {
+					// Половинчатое москитное сердце
+					drawMosquitoHeart(stack, xPosition, currentY, 9, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
 				}
+
+				// Увеличиваем счетчик нарисованных иконок
+				drawnHearts++;
+				// Уменьшаем остаток москитного здоровья
+				remainingHealth -= mosquitoHealthInThisHeart;
 			}
 		}
 

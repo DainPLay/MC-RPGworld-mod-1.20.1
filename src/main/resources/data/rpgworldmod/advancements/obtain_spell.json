@@ -1,0 +1,30 @@
+{
+  "parent": "rpgworldmod:root",
+  "criteria": {
+    "obtain_spell": {
+      "conditions": {},
+      "trigger": "rpgworldmod:obtain_spell"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.obtain_spell.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:empty_scroll"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.obtain_spell.title"
+    }
+  },
+  "requirements": [
+    [
+      "obtain_spell"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

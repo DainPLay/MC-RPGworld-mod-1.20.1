@@ -1,0 +1,20 @@
+{
+  "type": "rpgworldmod:add_enchanted_scroll",
+  "conditions": [
+    {
+      "condition": "forge:loot_table_id",
+      "loot_table_id": "minecraft:chests/ancient_city"
+    },
+    {
+      "chance": 0.3,
+      "condition": "minecraft:random_chance"
+    }
+  ],
+  "enchantChance": 1.0,
+  "enchantments": [
+    "rpgworldmod:necromancy"
+  ],
+  "item": "rpgworldmod:empty_scroll",
+  "maxCount": 1,
+  "minCount": 1
+}

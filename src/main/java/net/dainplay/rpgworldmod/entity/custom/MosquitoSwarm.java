@@ -129,6 +129,9 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 			this.addEffect(new MobEffectInstance(ModEffects.MOSSIOSIS.get(), 2400, 0));
 		}
 		if (pLevel.getDifficulty() == Difficulty.HARD && randomsource.nextFloat() < 0.1F * pDifficulty.getSpecialMultiplier()) {
+			this.addEffect(new MobEffectInstance(ModEffects.PARANOIA.get(), 2400, 0));
+		}
+		if (pLevel.getDifficulty() == Difficulty.HARD && randomsource.nextFloat() < 0.1F * pDifficulty.getSpecialMultiplier()) {
 			this.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 1200, 0));
 		}
 		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
@@ -474,7 +477,11 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 			// Проверяем расстояние для слияния
 			if (this.distanceToSqr(other) < 1.0) {
 				int totalSize = this.getSize() + other.getSize();
-				if (totalSize > 3) totalSize = 3;
+				int extraPowder = 0;
+				if (totalSize > 3) {
+					extraPowder = totalSize-3;
+					totalSize = 3;
+				}
 
 				// Создаем новую стаю
 				MosquitoSwarm newSwarm = new MosquitoSwarm(ModEntities.MOSQUITO_SWARM.get(), this.level());
@@ -485,6 +492,11 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 				// Добавляем в мир
 				this.level().addFreshEntity(newSwarm);
+				if(extraPowder > 0) {
+					for (int i = 0; i < extraPowder; i++) {
+						newSwarm.spawnAtLocation(ModItems.CHITIN_POWDER.get());
+					}
+				}
 
 				// Удаляем старых мобов
 				this.proceedKill();
@@ -507,9 +519,13 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 			amp += target.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier() + 1; //1+0+1
 			amp -= 1; //2-1
 			if (amp > 2) amp = 2;
-			target.addEffect(new MobEffectInstance(ModEffects.MOSQUITOING.get(), 2401, amp));
+			MobEffectInstance effect = new MobEffectInstance(ModEffects.MOSQUITOING.get(), 2401, amp);
+			effect.setCurativeItems(new ArrayList<>());
+			target.addEffect(effect);
 		} else {
-			target.addEffect(new MobEffectInstance(ModEffects.MOSQUITOING.get(), 2401, this.getSize() - 1));
+			MobEffectInstance effect = new MobEffectInstance(ModEffects.MOSQUITOING.get(), 2401, this.getSize() - 1);
+			effect.setCurativeItems(new ArrayList<>());
+			target.addEffect(effect);
 		}
 
 		for (MobEffectInstance effect : this.getActiveEffects()) {

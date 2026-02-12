@@ -3,25 +3,25 @@ package net.dainplay.rpgworldmod;
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.block.entity.ModBlockEntities;
 import net.dainplay.rpgworldmod.block.entity.ModWoodTypes;
-import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.entity.client.model.SkirtModel;
 import net.dainplay.rpgworldmod.entity.client.render.CurioLayers;
 import net.dainplay.rpgworldmod.entity.client.render.CurioRenderers;
 import net.dainplay.rpgworldmod.entity.client.render.SkirtArmorLayer;
 import net.dainplay.rpgworldmod.fluid.ModFluids;
-import net.dainplay.rpgworldmod.gui.ManaOverlayEventHandler;
 import net.dainplay.rpgworldmod.gui.HealthOverlayEventHandler;
+import net.dainplay.rpgworldmod.gui.ManaOverlayEventHandler;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.FireproofSkirtItem;
+import net.dainplay.rpgworldmod.item.custom.LivingWoodStaffItem;
 import net.dainplay.rpgworldmod.item.custom.MintalTriangleItem;
 import net.dainplay.rpgworldmod.render.BakedModelShadeLayerFullbright;
+import net.dainplay.rpgworldmod.render.BoundCampfireBlockRenderer;
 import net.dainplay.rpgworldmod.render.BreakingEntFaceRenderer;
 import net.dainplay.rpgworldmod.render.EnchantedBlockRenderer;
 import net.dainplay.rpgworldmod.render.PottedStareblossomBlockEntityRenderer;
 import net.dainplay.rpgworldmod.render.ScrollGlintItemModel;
 import net.dainplay.rpgworldmod.render.ScrollGlintItemModelSupport;
 import net.dainplay.rpgworldmod.render.StareblossomBlockEntityRenderer;
-import net.dainplay.rpgworldmod.render.BoundCampfireBlockRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -37,8 +37,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -73,6 +71,7 @@ public class RPGworldClient {
     }
 
     private void bakeModels(final ModelEvent.ModifyBakingResult e) {
+
         Map<ResourceLocation, BakedModel> map = e.getModels();
         BakedModel alterationScrollModel = null;
         BakedModel destructionScrollModel = null;
@@ -350,6 +349,17 @@ public class RPGworldClient {
             ItemProperties.register(ModItems.DRIED_WIDOWEED.get().asItem(), new ResourceLocation("smoking"), (p_234978_, p_234979_, p_234980_, p_234981_) -> {
                 return p_234980_ != null && p_234980_.isUsingItem() && p_234980_.getUseItem() == p_234978_ ? 1.0F : 0.0F;
             });
+            ItemProperties.register(ModItems.LIVING_WOOD_STAFF.get(), new ResourceLocation("gem_type"),
+                    (stack, level, entity, seed) -> {
+                        LivingWoodStaffItem.GemType gemType = LivingWoodStaffItem.getGemType(stack);
+                        return switch (gemType) {
+                            case EMBER_GEM -> 1.0F;
+                            case HEART_OF_THE_SEA -> 2.0F;
+                            case ENDER_EYE -> 3.0F;
+                            case NETHER_STAR -> 4.0F;
+                            default -> 0.0F;
+                        };
+                    });
         });
     }
 }

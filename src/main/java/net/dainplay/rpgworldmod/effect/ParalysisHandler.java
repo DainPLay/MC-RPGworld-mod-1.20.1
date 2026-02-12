@@ -3,6 +3,7 @@ package net.dainplay.rpgworldmod.effect;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
+import net.dainplay.rpgworldmod.item.custom.LivingWoodStaffItem;
 import net.dainplay.rpgworldmod.network.ClientAdditionalHealthCostData;
 import net.dainplay.rpgworldmod.network.IgniteSelfPacket;
 import net.dainplay.rpgworldmod.network.UseOnAnimateTargetPacket;
@@ -192,6 +193,13 @@ public class ParalysisHandler {
 					}
 					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), useItem) > 0 && !player.isShiftKeyDown() && Mth.ceil(player.getHealth()) >= (ClientAdditionalHealthCostData.get() + scroll.getManaCost(useItem, player))) {
 						ModMessages.sendToServer(new IgniteSelfPacket(player.getId(), ClientAdditionalHealthCostData.get() + scroll.getManaCost(useItem, player)));
+						player.swing(player.getUsedItemHand());
+					}
+				}
+
+				if (useItem.getItem() instanceof LivingWoodStaffItem staff && staff.isOffCooldown(useItem, player)) {
+					if (ClientAnimateTargetData.get() != null) {
+						ModMessages.sendToServer(new UseOnAnimateTargetPacket(player.getId(), ClientAnimateTargetData.get().getId()));
 						player.swing(player.getUsedItemHand());
 					}
 				}

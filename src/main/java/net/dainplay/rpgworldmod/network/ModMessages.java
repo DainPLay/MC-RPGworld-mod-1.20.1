@@ -107,10 +107,10 @@ public class ModMessages {
 				.consumerMainThread(MoveParticlesPacket::handle)
 				.add();
 
-		net.messageBuilder(EmberScrollLoopSoundPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
-				.decoder(EmberScrollLoopSoundPacket::decode)
-				.encoder(EmberScrollLoopSoundPacket::encode)
-				.consumerMainThread(EmberScrollLoopSoundPacket::handle)
+		net.messageBuilder(LoopSoundPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(LoopSoundPacket::decode)
+				.encoder(LoopSoundPacket::encode)
+				.consumerMainThread(LoopSoundPacket::handle)
 				.add();
 
 		net.messageBuilder(UseOnAnimateTargetPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
@@ -141,6 +141,12 @@ public class ModMessages {
 				.decoder(IgniteSelfPacket::new)
 				.encoder(IgniteSelfPacket::toBytes)
 				.consumerMainThread(IgniteSelfPacket::handle)
+				.add();
+
+		net.messageBuilder(ParanoiaSoundPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(ParanoiaSoundPacket::new)
+				.encoder(ParanoiaSoundPacket::toBytes)
+				.consumerMainThread(ParanoiaSoundPacket::handle)
 				.add();
 	}
 

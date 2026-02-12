@@ -1,0 +1,34 @@
+{
+  "parent": "rpgworldmod:obtain_staff",
+  "criteria": {
+    "chest_staffs": {
+      "conditions": {},
+      "trigger": "rpgworldmod:chest_staffs"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.chest_staffs.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:rpgirolle_item",
+      "nbt": "{Token:9}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.chest_staffs.title"
+    }
+  },
+  "requirements": [
+    [
+      "chest_staffs"
+    ]
+  ],
+  "rewards": {
+    "experience": 200
+  },
+  "sends_telemetry_event": true
+}

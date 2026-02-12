@@ -1,11 +1,13 @@
 package net.dainplay.rpgworldmod.util;
 
 import net.dainplay.rpgworldmod.RPGworldMod;
+import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.FireproofSkirtItem;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -44,6 +46,7 @@ public class FireproofSkirtHandler {
 						}
 					}
 					player.heal(event.getAmount());
+					if(player instanceof ServerPlayer serverPlayer) ModAdvancements.SPELL_RESTORATION_EMBER_TRIGGER.trigger(serverPlayer);
 				}
 				else if(player.tickCount % 10 == 0) {
 					if (player.getHealth() < player.getMaxHealth()) {
@@ -56,6 +59,7 @@ public class FireproofSkirtHandler {
 						}
 					}
 					player.heal(event.getAmount());
+					if(player instanceof ServerPlayer serverPlayer) ModAdvancements.SPELL_RESTORATION_EMBER_TRIGGER.trigger(serverPlayer);
 				}
 				event.setCanceled(true);
 				return;

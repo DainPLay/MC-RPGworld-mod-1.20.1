@@ -8,11 +8,15 @@ import net.dainplay.rpgworldmod.block.custom.RieLeavesBlock;
 import net.dainplay.rpgworldmod.block.entity.custom.EntFaceBlockEntity;
 import net.dainplay.rpgworldmod.data.tags.DepressionDeathCheck;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
+import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.item.ModItems;
+import net.dainplay.rpgworldmod.item.custom.ChooseAnimateTargetItem;
 import net.dainplay.rpgworldmod.item.custom.EmptyScrollItem;
 import net.dainplay.rpgworldmod.item.custom.LongFoodItem;
 import net.dainplay.rpgworldmod.item.custom.ScrollItem;
 import net.dainplay.rpgworldmod.network.BoundEntitySyncPacket;
+import net.dainplay.rpgworldmod.network.C2SRequestTargetValidationPacket;
+import net.dainplay.rpgworldmod.network.ClientAnimateTargetData;
 import net.dainplay.rpgworldmod.network.IllusionForceDataSyncS2CPacket;
 import net.dainplay.rpgworldmod.network.IsManaRegenBlockedDataSyncS2CPacket;
 import net.dainplay.rpgworldmod.network.ManaDataSyncS2CPacket;
@@ -27,6 +31,7 @@ import net.dainplay.rpgworldmod.util.BoundEntityHelper;
 import net.dainplay.rpgworldmod.util.ModTags;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.core.BlockPos;
@@ -35,7 +40,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.npc.VillagerProfession;
@@ -47,6 +54,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CakeBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -58,6 +66,7 @@ import net.minecraftforge.event.GrindstoneEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
+import net.minecraftforge.event.entity.living.LivingBreatheEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -140,6 +149,33 @@ public class ModEvents {
 
 	@SubscribeEvent
 	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+		if (event.player instanceof LocalPlayer player) {
+			if (player.isUsingItem() &&
+					player.getUseItemRemainingTicks() > 0 &&
+					player.getUseItem().getItem() instanceof ChooseAnimateTargetItem) {
+
+				ChooseAnimateTargetItem catItem = (ChooseAnimateTargetItem) player.getUseItem().getItem();
+				if (catItem.highlightTarget(player.getUseItem(), player)) {
+
+					LivingEntity target = null;
+					if (player.isShiftKeyDown())
+						target = player;
+
+					if (target != null && target.getItemBySlot(EquipmentSlot.HEAD).isEnderMask(player, null))
+						target = null;
+
+					if (target != null) {
+						ModMessages.sendToServer(new C2SRequestTargetValidationPacket(target.getId()));
+
+						if (!ClientAnimateTargetData.isValidTarget(target)) {
+							target = null;
+						}
+					}
+
+					ClientAnimateTargetData.set(target);
+				}
+			}
+		}
 		if (event.player instanceof ServerPlayer serverPlayer) {
 			serverPlayer.getCapability(PlayerIllusionForceProvider.PLAYER_ILLUSION_FORCE).ifPresent(illusionForce -> {
 				if (illusionForce.getIllusionForce() >= 0) {
@@ -509,6 +545,8 @@ public class ModEvents {
 			serverPlayer.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
 				if (mana.getMana() > 0) {
 					mana.addMana(serverPlayer, itemStack.getItem().getFoodProperties(itemStack, serverPlayer).getNutrition() * 2);
+					if(serverPlayer.hasEffect(ModEffects.PARANOIA.get()))
+						ModAdvancements.EAT_SWEETS_PARANOID_TRIGGER.trigger(serverPlayer);
 				}
 			});
 		}
@@ -520,13 +558,35 @@ public class ModEvents {
 
 		BlockState blockState = event.getLevel().getBlockState(event.getPos());
 
-		if (blockState.getBlock() instanceof CakeBlock) {
+		if (blockState.is(ModTags.Blocks.SWEET_FOOD)) {
 			if (player.canEat(false) && player instanceof ServerPlayer serverPlayer) {
 				serverPlayer.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
 					if (mana.getMana() > 0) {
 						mana.addMana(serverPlayer, 4);
+						if(serverPlayer.hasEffect(ModEffects.PARANOIA.get()))
+							ModAdvancements.EAT_SWEETS_PARANOID_TRIGGER.trigger(serverPlayer);
 					}
 				});
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onLivingBreathe(LivingBreatheEvent event) {
+		LivingEntity entity = event.getEntity();
+
+		if (entity.hasEffect(ModEffects.AMPHIBIOSIS.get())) {
+			if (entity.isEyeInFluid(FluidTags.WATER)) {
+				event.setCanBreathe(true);
+				event.setCanRefillAir(true);
+				event.setConsumeAirAmount(0);
+				event.setRefillAirAmount(4);
+			}
+			else {
+				event.setCanBreathe(false);
+				event.setCanRefillAir(false);
+				event.setConsumeAirAmount(1);
+				event.setRefillAirAmount(0);
 			}
 		}
 	}

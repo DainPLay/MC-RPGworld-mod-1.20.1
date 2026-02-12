@@ -1,0 +1,31 @@
+{
+  "parent": "rpgworldmod:get_depressed",
+  "criteria": {
+    "eat_sweets_paranoid": {
+      "conditions": {},
+      "trigger": "rpgworldmod:eat_sweets_paranoid"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.eat_sweets_paranoid.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:rpgirolle_item",
+      "nbt": "{Token:7}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.eat_sweets_paranoid.title"
+    }
+  },
+  "requirements": [
+    [
+      "eat_sweets_paranoid"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

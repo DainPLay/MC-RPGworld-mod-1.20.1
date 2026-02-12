@@ -28,6 +28,7 @@ import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.Vanishable;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -37,7 +38,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class LivingWoodBowItem extends BowItem implements RPGtooltip {
@@ -163,7 +163,7 @@ public class LivingWoodBowItem extends BowItem implements RPGtooltip {
 			Player player = (Player) arrow.getOwner();
 			BoundEntityHelper.bindArrowToPlayer(arrow, player);
 			if (arrow instanceof ProjectruffleArrowEntity && player instanceof ServerPlayer serverplayer)
-				ModAdvancements.SHOOT_PROJECTRUFFLE.trigger(serverplayer);
+				ModAdvancements.SHOOT_PROJECTRUFFLE_TRIGGER.trigger(serverplayer);
 		}
 		return arrow;
 	}

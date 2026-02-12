@@ -52,6 +52,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.CeilingHangingSignBlock;
 import net.minecraft.world.level.block.DoorBlock;
@@ -191,7 +192,7 @@ public class ModBlocks {
 	public static final RegistryObject<Block> POTTED_SHIVERALIS = registerBlockWithoutBlockItem("potted_shiveralis",
 			() -> new FlowerPotBlock(ModBlocks.SHIVERALIS.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION).noOcclusion()));
 	public static final RegistryObject<Block> RPGIROLLE = registerBlockWithoutBlockItem("rpgirolle",
-			() -> new FlowerBlock(MobEffects.SATURATION, 1, BlockBehaviour.Properties.copy(Blocks.DANDELION).mapColor(MapColor.GOLD).noCollission().instabreak().sound(SoundType.FUNGUS)) {
+			() -> new BushBlock(BlockBehaviour.Properties.copy(Blocks.DANDELION).mapColor(MapColor.GOLD).noCollission().instabreak().sound(SoundType.FUNGUS)) {
 
 				protected static final VoxelShape SHAPE = Block.box(3.0D, 0.0D, 3.0D, 13.0D, 8.0D, 13.0D);
 
@@ -225,7 +226,7 @@ public class ModBlocks {
 	public static final RegistryObject<Block> STAREBLOSSOM = registerBlock("stareblossom",
 			() -> new StareblossomBlock(ModEffects.PARANOIA, 16, BlockBehaviour.Properties.copy(Blocks.DANDELION).noOcclusion().offsetType(BlockBehaviour.OffsetType.NONE)));
 	public static final RegistryObject<Block> TYPHON = registerBlock("typhon",
-			() -> new TyphonBlock(MobEffects.NIGHT_VISION, 3, BlockBehaviour.Properties.copy(Blocks.DANDELION).noOcclusion()) {
+			() -> new TyphonBlock(MobEffects.DARKNESS, 5, BlockBehaviour.Properties.copy(Blocks.DANDELION).noOcclusion()) {
 
 				protected static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 14.0D, 12.0D);
 
@@ -237,7 +238,7 @@ public class ModBlocks {
 			});
 
 	public static final RegistryObject<Block> PARALILY = registerBlockWithoutBlockItem("paralily",
-			() -> new ParalilyBlock(BlockBehaviour.Properties.copy(Blocks.LILY_PAD).instabreak().sound(SoundType.LILY_PAD).mapColor(MapColor.COLOR_ORANGE).noOcclusion()));
+			() -> new ParalilyBlock(ModEffects.PARALYSIS, 12, BlockBehaviour.Properties.copy(Blocks.LILY_PAD).instabreak().sound(SoundType.LILY_PAD).mapColor(MapColor.COLOR_ORANGE).noOcclusion()));
 	public static final RegistryObject<Block> POTTED_MIMOSSA = registerBlockWithoutBlockItem("potted_mimossa",
 			() -> new FlowerPotBlock(ModBlocks.MIMOSSA.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION).noOcclusion()));
 	public static final RegistryObject<Block> POTTED_STAREBLOSSOM = registerBlockWithoutBlockItem("potted_stareblossom",
@@ -245,7 +246,7 @@ public class ModBlocks {
 	public static final RegistryObject<Block> POTTED_TYPHON = registerBlockWithoutBlockItem("potted_typhon",
 			() -> new FlowerPotBlock(ModBlocks.TYPHON.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION).noOcclusion()));
 	public static final RegistryObject<Block> MOSSHROOM = registerBlock("mosshroom",
-			() -> new FlowerBlock(ModEffects.MOSSIOSIS, 16, BlockBehaviour.Properties.copy(Blocks.DANDELION).mapColor(MapColor.COLOR_GREEN).noCollission().instabreak().sound(SoundType.MOSS)) {
+			() -> new BushBlock(BlockBehaviour.Properties.copy(Blocks.DANDELION).mapColor(MapColor.COLOR_GREEN).noCollission().instabreak().sound(SoundType.MOSS)) {
 				protected static final VoxelShape SHAPE = Block.box(3.0D, 0.0D, 3.0D, 13.0D, 11.0D, 13.0D);
 
 				@Override
@@ -257,7 +258,7 @@ public class ModBlocks {
 	public static final RegistryObject<Block> POTTED_MOSSHROOM = registerBlockWithoutBlockItem("potted_mosshroom",
 			() -> new FlowerPotBlock(ModBlocks.MOSSHROOM.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION).noOcclusion()));
 	public static final RegistryObject<Block> CHEESE_CAP = registerBlockWithoutBlockItem("cheese_cap",
-			() -> new FlowerBlock(MobEffects.SATURATION, 3, BlockBehaviour.Properties.copy(Blocks.DANDELION).mapColor(MapColor.COLOR_ORANGE).noCollission().instabreak().sound(SoundType.FUNGUS)) {
+			() -> new BushBlock(BlockBehaviour.Properties.copy(Blocks.DANDELION).mapColor(MapColor.COLOR_ORANGE).noCollission().instabreak().sound(SoundType.FUNGUS)) {
 
 				protected static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 13.0D, 12.0D);
 
@@ -278,7 +279,7 @@ public class ModBlocks {
 	public static final RegistryObject<Block> POTTED_WILD_FAIRAPIER = registerBlockWithoutBlockItem("potted_wild_fairapier",
 			() -> new FlowerPotBlock(ModBlocks.WILD_FAIRAPIER.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION).noOcclusion()));
 	public static final RegistryObject<Block> PROJECTRUFFLE = registerBlock("projectruffle",
-			() -> new FlowerBlock(MobEffects.HARM, 0, BlockBehaviour.Properties.copy(Blocks.DANDELION).mapColor(MapColor.COLOR_BLACK).noOcclusion()) {
+			() -> new BushBlock(BlockBehaviour.Properties.copy(Blocks.DANDELION).mapColor(MapColor.COLOR_BLACK).noOcclusion()) {
 
 				protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
 
@@ -305,7 +306,7 @@ public class ModBlocks {
 			() -> new YoungRazorleafBlock(BlockBehaviour.Properties.copy(Blocks.MOSS_BLOCK).mapColor(MapColor.CRIMSON_NYLIUM).noOcclusion()));
 	public static final RegistryObject<Block> TRIPLOVER = registerBlock("triplover", () -> new PinkPetalsBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().sound(SoundType.GRASS).pushReaction(PushReaction.DESTROY)));
 	public static final RegistryObject<Block> HOLTS_REFLECTION = registerBlock("holts_reflection",
-			() -> new HoltsReflectionBlock(BlockBehaviour.Properties.copy(Blocks.DANDELION).noOcclusion()));
+			() -> new HoltsReflectionBlock(ModEffects.HAPPINESS, 12, BlockBehaviour.Properties.copy(Blocks.DANDELION).noOcclusion()));
 
 	private static ToIntFunction<BlockState> glowingBlockEmission(int pLightValue) {
 		return (p_50763_) -> p_50763_.getValue(GLOWING) ? pLightValue : 0;

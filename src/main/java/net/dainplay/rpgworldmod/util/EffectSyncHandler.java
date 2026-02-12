@@ -3,10 +3,15 @@ package net.dainplay.rpgworldmod.util;
 import net.dainplay.rpgworldmod.damage.ModDamageTypes;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.network.ModMessages;
+import net.dainplay.rpgworldmod.network.ParanoiaSoundPacket;
 import net.dainplay.rpgworldmod.network.SyncEffectPacket;
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -18,25 +23,26 @@ public class EffectSyncHandler {
     
     @SubscribeEvent
     public static void onEffectAdded(MobEffectEvent.Added event) {
-        if (!event.getEntity().level().isClientSide() && 
-            event.getEffectInstance().getEffect() == ModEffects.HAPPINESS.get()) {
-            LivingEntity entity = event.getEntity();
-            MobEffectInstance effect = event.getEffectInstance();
-            
-            ModMessages.sendToClients(new SyncEffectPacket(
-                entity.getId(),
-                true,
-                effect.getAmplifier(),
-                effect.getDuration()
-            ));
+        if (!event.getEntity().level().isClientSide()) {
+            if(event.getEffectInstance().getEffect() == ModEffects.HAPPINESS.get()) {
+                LivingEntity entity = event.getEntity();
+                MobEffectInstance effect = event.getEffectInstance();
+
+                ModMessages.sendToClients(new SyncEffectPacket(
+                        entity.getId(),
+                        true,
+                        effect.getAmplifier(),
+                        effect.getDuration()
+                ));
+            }
+            if(event.getEffectInstance().getEffect() == ModEffects.PARANOIA.get()
+                    && event.getEntity() instanceof Player player) {
+                ModMessages.sendToPlayer(
+                        new ParanoiaSoundPacket(player.getId()),
+                        (ServerPlayer) player
+                );
+            }
         }
-//        if(!event.getEntity().level().isClientSide() &&
-//                event.getEffectInstance().getEffect() == ModEffects.NECROSIS.get()) {
-//
-//            if(event.getEntity().getMaxHealth() - (event.getEffectInstance().getAmplifier()+1) <= 0) {
-//                event.getEntity().hurt(ModDamageTypes.getDamageSource(event.getEntity().level(), ModDamageTypes.NECROSIS), Float.MAX_VALUE);
-//            }
-//        }
     }
     
     @SubscribeEvent

@@ -1,7 +1,9 @@
 package net.dainplay.rpgworldmod.network;
 
+import net.dainplay.rpgworldmod.util.ModTags;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeHooks;
@@ -54,6 +56,8 @@ public class C2SRequestTargetValidationPacket {
                 }
                 if (isDepressed.get()) isValid = false;
             }
+
+            if (target.getType().is(ModTags.Entity.SOULLESS)) isValid = false;
 
             // Отправляем ответ обратно клиенту
             ModMessages.sendToPlayer(new S2CTargetValidationResultPacket(

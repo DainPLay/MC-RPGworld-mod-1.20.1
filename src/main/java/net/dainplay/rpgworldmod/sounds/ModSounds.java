@@ -184,6 +184,13 @@ public class ModSounds
         SPELL_NECROMANCY_LOOP = registerSound("rpgworldmod.spell.necromancy_loop");
         SPELL_NECROMANCY_STOP = registerSound("rpgworldmod.spell.necromancy_stop");
         SPELL_NECROMANCY_CAST = registerSound("rpgworldmod.spell.necromancy_cast");
+        LIVING_WOOD_STAFF_START = registerSound("rpgworldmod.living_wood_staff.start");
+        LIVING_WOOD_STAFF_LOOP = registerSound("rpgworldmod.living_wood_staff.loop");
+        LIVING_WOOD_STAFF_STOP = registerSound("rpgworldmod.living_wood_staff.stop");
+        STAFF_EMBER_GEM_CAST = registerSound("rpgworldmod.staff_ember_gem.cast");
+        STAFF_ENDER_EYE_CAST = registerSound("rpgworldmod.staff_ender_eye.cast");
+        STAFF_HEART_OF_THE_SEA_CAST = registerSound("rpgworldmod.staff_heart_of_the_sea.cast");
+        STAFF_NETHER_STAR_CAST = registerSound("rpgworldmod.staff_nether_star.cast");
     }
 
     private static RegistryObject<SoundEvent> registerSound(String name)

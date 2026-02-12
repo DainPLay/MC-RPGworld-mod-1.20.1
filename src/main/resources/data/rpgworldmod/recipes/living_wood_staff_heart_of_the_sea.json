@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " LG",
+    " LL",
+    "L  "
+  ],
+  "key": {
+    "L": {
+      "tag": "rpgworldmod:living_wood_logs"
+    },
+    "G": {
+      "item": "minecraft:heart_of_the_sea"
+    }
+  },
+  "result": {
+    "item": "rpgworldmod:living_wood_staff",
+    "nbt": "{Gem:\"heart_of_the_sea\"}"
+  }
+}

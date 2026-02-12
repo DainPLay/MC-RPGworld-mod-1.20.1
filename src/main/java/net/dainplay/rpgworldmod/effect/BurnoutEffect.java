@@ -10,11 +10,9 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import java.util.UUID;
 
 public class BurnoutEffect extends MobEffect {
-    public static final UUID MODIFIER_UUID = UUID.fromString("63597591-b08d-473a-a4fd-0a3ab6a1e714");
 
     public BurnoutEffect(MobEffectCategory mobEffectCategory, int color) {
         super(mobEffectCategory, color);
-        addAttributeModifier(Attributes.MAX_HEALTH, BurnoutEffect.MODIFIER_UUID.toString(), 0D, AttributeModifier.Operation.MULTIPLY_TOTAL);
     }
 
     @Override

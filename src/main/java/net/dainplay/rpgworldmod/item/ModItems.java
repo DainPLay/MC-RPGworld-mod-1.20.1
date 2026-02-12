@@ -68,6 +68,8 @@ public class ModItems {
             () -> new FireproofSkirtItem(new Item.Properties().durability(432).rarity(Rarity.UNCOMMON).fireResistant()));
     public static final RegistryObject<Item> LIVING_WOOD_BOW = ITEMS.register("living_wood_bow",
             () -> new LivingWoodBowItem(new Item.Properties().durability(384).rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> LIVING_WOOD_STAFF = ITEMS.register("living_wood_staff",
+            () -> new LivingWoodStaffItem(new Item.Properties().durability(128).rarity(Rarity.UNCOMMON)));
 
     public static final RegistryObject<Item> DRIED_WIDOWEED = ITEMS.register("dried_widoweed",
             () -> new DriedWidoweedItem(new Item.Properties()));

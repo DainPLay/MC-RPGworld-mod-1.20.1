@@ -29,6 +29,11 @@ public interface RPGtooltip {
             costText.append(item.getManaCostAdditionalLine(pStack));
             pTooltip.add(costText);
         }
+        if(pStack.getItem() instanceof StaffItem item && item.hasCooldown(pStack)) {
+            MutableComponent cooldownText = Component.translatable("tooltip.rpgworldmod.cooldown_text").withStyle(ChatFormatting.WHITE);
+            cooldownText.append(item.getDisplayCooldown(pStack).withStyle(ChatFormatting.DARK_PURPLE));
+            pTooltip.add(cooldownText);
+        }
         if (InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), Minecraft.getInstance().options.keyShift.getKey().getValue())) {
             // При зажатом Shift: заголовок белый, текст особенностей серый с переносами
             List<Component> featureLines = this.getDisplayFeaturesWithLineBreaks(pStack);

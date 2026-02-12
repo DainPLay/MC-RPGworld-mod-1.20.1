@@ -2,6 +2,7 @@ package net.dainplay.rpgworldmod.network;
 
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
+import net.dainplay.rpgworldmod.item.custom.LivingWoodStaffItem;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -56,7 +57,7 @@ public class UseOnAnimateTargetPacket {
                         
                         // Отправляем пакет для остановки звука
                         ModMessages.sendToNearbyPlayers(
-                            new EmberScrollLoopSoundPacket(player.getId(), false, itemInHand),
+                            new LoopSoundPacket(player.getId(), false, itemInHand),
                             player.serverLevel(),
                             player.blockPosition(),
                             64.0
@@ -70,6 +71,36 @@ public class UseOnAnimateTargetPacket {
 
                         scroll.cast(player, target, itemInHand);
                     }
+                }
+                if (itemInHand.getItem() instanceof LivingWoodStaffItem staff) {
+                        // Останавливаем использование
+                        player.stopUsingItem();
+
+                        // Удаляем данные об использовании
+                        var levelUseData = EmberScrollItem.getPlayerUseData(player.level());
+                        levelUseData.remove(player.getUUID());
+
+                        player.level().playSound(null,
+                                player.getX(), player.getY(), player.getZ(),
+                                RPGSounds.LIVING_WOOD_STAFF_STOP.get(),
+                                SoundSource.PLAYERS, 1.0F, 1.0F
+                        );
+
+                        // Отправляем пакет для остановки звука
+                        ModMessages.sendToNearbyPlayers(
+                                new LoopSoundPacket(player.getId(), false, itemInHand),
+                                player.serverLevel(),
+                                player.blockPosition(),
+                                64.0
+                        );
+
+                        LivingEntity target = null;
+                        Entity entity = player.level().getEntity(msg.targetId);
+                        if (entity instanceof LivingEntity livingEntity) {
+                            target = livingEntity;
+                        }
+
+                        staff.cast(player, target, itemInHand);
                 }
             }
         });

@@ -39,6 +39,24 @@
         "token": 6.0
       },
       "model": "block/campfire_off"
+    },
+    {
+      "predicate": {
+        "token": 7.0
+      },
+      "model": "rpgworldmod:item/paranoia"
+    },
+    {
+      "predicate": {
+        "token": 8.0
+      },
+      "model": "rpgworldmod:item/spell_all"
+    },
+    {
+      "predicate": {
+        "token": 9.0
+      },
+      "model": "rpgworldmod:item/all_staffs"
     }
   ]
 }

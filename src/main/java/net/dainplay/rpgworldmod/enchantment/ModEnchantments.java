@@ -1,14 +1,13 @@
 package net.dainplay.rpgworldmod.enchantment;
 
 import net.dainplay.rpgworldmod.RPGworldMod;
-import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.DrillSpearItem;
-import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
 import net.dainplay.rpgworldmod.item.custom.EmptyScrollItem;
 import net.dainplay.rpgworldmod.item.custom.GuitarAxItem;
 import net.dainplay.rpgworldmod.item.custom.LivingWoodBowItem;
 import net.dainplay.rpgworldmod.item.custom.MintalTriangleItem;
 import net.dainplay.rpgworldmod.item.custom.ScrollItem;
+import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.dainplay.rpgworldmod.item.custom.WealdBladeItem;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -28,6 +27,7 @@ public class ModEnchantments {
     public static final EnchantmentCategory TRIANGLE = EnchantmentCategory.create("triangle", (item) -> (item instanceof MintalTriangleItem));
     public static final EnchantmentCategory GUITAR_AX = EnchantmentCategory.create("guitar_ax", (item) -> (item instanceof MintalTriangleItem || item instanceof GuitarAxItem));
     public static final EnchantmentCategory MAGIC_SCROLLS = EnchantmentCategory.create("magic_scrolls", (item) -> (item instanceof EmptyScrollItem || item instanceof ScrollItem));
+    public static final EnchantmentCategory STAFFS = EnchantmentCategory.create("staffs", (item) -> (item instanceof StaffItem));
     public static RegistryObject<Enchantment> PITCH =
             ENCHANTMENTS.register("pitch",
                     () -> new PitchEnchantment(Enchantment.Rarity.COMMON,
@@ -84,6 +84,14 @@ public class ModEnchantments {
             ENCHANTMENTS.register("necromancy",
                     () -> new NecromancyEnchantment(Enchantment.Rarity.RARE,
                             MAGIC_SCROLLS, EquipmentSlot.MAINHAND));
+    public static RegistryObject<Enchantment> ACTIVE_RECHARGE =
+            ENCHANTMENTS.register("active_recharge",
+                    () -> new ActiveRechargeEnchantment(Enchantment.Rarity.COMMON,
+                            STAFFS, EquipmentSlot.MAINHAND));
+    public static RegistryObject<Enchantment> DOUBLE_EXPOSURE =
+            ENCHANTMENTS.register("double_exposure",
+                    () -> new DoubleExposureEnchantment(Enchantment.Rarity.RARE,
+                            STAFFS, EquipmentSlot.MAINHAND));
 
 
     public static void register(IEventBus eventBus) {

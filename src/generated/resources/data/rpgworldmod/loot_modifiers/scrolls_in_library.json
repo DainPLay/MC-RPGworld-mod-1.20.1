@@ -1,0 +1,20 @@
+{
+  "type": "rpgworldmod:add_enchanted_scroll",
+  "conditions": [
+    {
+      "condition": "forge:loot_table_id",
+      "loot_table_id": "minecraft:chests/stronghold_library"
+    }
+  ],
+  "enchantChance": 0.5,
+  "enchantments": [
+    "rpgworldmod:destruction",
+    "rpgworldmod:restoration",
+    "rpgworldmod:alteration",
+    "rpgworldmod:illusion",
+    "rpgworldmod:conjuration"
+  ],
+  "item": "rpgworldmod:empty_scroll",
+  "maxCount": 2,
+  "minCount": 0
+}

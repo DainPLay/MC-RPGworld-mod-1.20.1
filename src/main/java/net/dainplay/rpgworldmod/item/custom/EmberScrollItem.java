@@ -5,11 +5,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.block.entity.custom.BoundCampfireBlockEntity;
+import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.network.ClientManaData;
-import net.dainplay.rpgworldmod.network.EmberScrollLoopSoundPacket;
+import net.dainplay.rpgworldmod.network.LoopSoundPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.PlayerManaProvider;
 import net.dainplay.rpgworldmod.network.UpdateItemTagMessage;
@@ -388,7 +389,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 				return InteractionResultHolder.pass(itemstack);
 			}
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), itemstack) > 0 && player.isShiftKeyDown()) {
-				if(player.hasEffect(ModEffects.BURNOUT.get())) {
+				if (player.hasEffect(ModEffects.BURNOUT.get())) {
 					player.removeEffect(ModEffects.BURNOUT.get());
 					player.extinguishFire();
 					player.level().playSound(null, player.blockPosition(), SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.PLAYERS, 0.7F, 1.6F + (player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.4F);
@@ -424,7 +425,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 				getPlayerUseData(level).remove(playerId);
 				// Отправляем пакет для остановки звуков на клиентах
 				ModMessages.sendToNearbyPlayers(
-						new EmberScrollLoopSoundPacket(player.getId(), false, itemstack),
+						new LoopSoundPacket(player.getId(), false, itemstack),
 						(ServerLevel) level,
 						player.blockPosition(),
 						64.0
@@ -444,7 +445,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 
 				// Отправляем пакет для запуска зацикленного звука на клиентах
 				ModMessages.sendToNearbyPlayers(
-						new EmberScrollLoopSoundPacket(player.getId(), true, itemstack),
+						new LoopSoundPacket(player.getId(), true, itemstack),
 						(ServerLevel) level,
 						player.blockPosition(),
 						64.0
@@ -461,7 +462,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 
 				// Отправляем пакет для запуска зацикленного звука на клиентах
 				ModMessages.sendToNearbyPlayers(
-						new EmberScrollLoopSoundPacket(player.getId(), true, itemstack),
+						new LoopSoundPacket(player.getId(), true, itemstack),
 						(ServerLevel) level,
 						player.blockPosition(),
 						64.0
@@ -478,7 +479,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 
 				// Отправляем пакет для запуска зацикленного звука на клиентах
 				ModMessages.sendToNearbyPlayers(
-						new EmberScrollLoopSoundPacket(player.getId(), true, itemstack),
+						new LoopSoundPacket(player.getId(), true, itemstack),
 						(ServerLevel) level,
 						player.blockPosition(),
 						64.0
@@ -495,7 +496,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 
 				// Отправляем пакет для запуска зацикленного звука на клиентах
 				ModMessages.sendToNearbyPlayers(
-						new EmberScrollLoopSoundPacket(player.getId(), true, itemstack),
+						new LoopSoundPacket(player.getId(), true, itemstack),
 						(ServerLevel) level,
 						player.blockPosition(),
 						64.0
@@ -512,7 +513,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 
 				// Отправляем пакет для запуска зацикленного звука на клиентах
 				ModMessages.sendToNearbyPlayers(
-						new EmberScrollLoopSoundPacket(player.getId(), true, itemstack),
+						new LoopSoundPacket(player.getId(), true, itemstack),
 						(ServerLevel) level,
 						player.blockPosition(),
 						64.0
@@ -533,8 +534,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 			if (usesHealthInsteadOfMana(itemstack)) {
 				if (!player.getAbilities().instabuild && Mth.ceil(player.getHealth()) < getManaCost(itemstack, player))
 					return InteractionResultHolder.fail(itemstack);
-			}
-			else {
+			} else {
 				if (!player.getAbilities().instabuild && ClientManaData.get() < getManaCost(itemstack, player))
 					return InteractionResultHolder.fail(itemstack);
 			}
@@ -613,6 +613,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 							// Устанавливаем владельца костра
 							if (player != null) {
 								boundCampfire.setOwner(player);
+								if(player instanceof ServerPlayer serverPlayer) ModAdvancements.SPELL_CONJURATION_EMBER_TRIGGER.trigger(serverPlayer);
 							}
 						}
 					}
@@ -689,6 +690,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 		MobEffectInstance burnout = new MobEffectInstance(ModEffects.BURNOUT.get(), -1, healthToIgnite - 1);
 		burnout.setCurativeItems(new ArrayList<>());
 		player.addEffect(burnout);
+		if(player instanceof ServerPlayer serverPlayer) ModAdvancements.SPELL_NECROMANCY_EMBER_TRIGGER.trigger(serverPlayer);
 		player.level().playSound(null,
 				player.getX(), player.getY(), player.getZ(),
 				RPGSounds.EMBER_GEM_IGNITE_ENTITY.get(),
@@ -714,6 +716,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 			MobEffectInstance illusion = new MobEffectInstance(ModEffects.BURN_ILLUSION.get(), 1200, 0);
 			illusion.setCurativeItems(new ArrayList<>());
 			target.addEffect(illusion);
+			if(player instanceof ServerPlayer serverPlayer) ModAdvancements.SPELL_ILLUSION_EMBER_TRIGGER.trigger(serverPlayer);
 			player.level().playSound(null,
 					player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_ILLUSION_CAST.get(),
@@ -741,7 +744,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 
 					// Отправляем пакет для остановки зацикленного звука
 					ModMessages.sendToNearbyPlayers(
-							new EmberScrollLoopSoundPacket(player.getId(), false, stack),
+							new LoopSoundPacket(player.getId(), false, stack),
 							(ServerLevel) level,
 							player.blockPosition(),
 							64.0
@@ -758,7 +761,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 
 					// Отправляем пакет для остановки зацикленного звука
 					ModMessages.sendToNearbyPlayers(
-							new EmberScrollLoopSoundPacket(player.getId(), false, stack),
+							new LoopSoundPacket(player.getId(), false, stack),
 							(ServerLevel) level,
 							player.blockPosition(),
 							64.0
@@ -775,7 +778,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 
 					// Отправляем пакет для остановки зацикленного звука
 					ModMessages.sendToNearbyPlayers(
-							new EmberScrollLoopSoundPacket(player.getId(), false, stack),
+							new LoopSoundPacket(player.getId(), false, stack),
 							(ServerLevel) level,
 							player.blockPosition(),
 							64.0
@@ -794,7 +797,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 
 					// Отправляем пакет для остановки зацикленного звука
 					ModMessages.sendToNearbyPlayers(
-							new EmberScrollLoopSoundPacket(player.getId(), false, stack),
+							new LoopSoundPacket(player.getId(), false, stack),
 							(ServerLevel) level,
 							player.blockPosition(),
 							64.0
@@ -811,7 +814,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 
 					// Отправляем пакет для остановки зацикленного звука
 					ModMessages.sendToNearbyPlayers(
-							new EmberScrollLoopSoundPacket(player.getId(), false, stack),
+							new LoopSoundPacket(player.getId(), false, stack),
 							(ServerLevel) level,
 							player.blockPosition(),
 							64.0
@@ -981,25 +984,26 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 
 			useData.tick();
 
-			if (useData.shouldConsumeMana(usingItem)) {
-				if (!player.getAbilities().instabuild) {
-					player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-						if (mana.getMana() < getManaCost(usingItem, player)) {
-							continueUsing.set(false);
-						} else {
-							mana.reduceMana((ServerPlayer) player, getManaCost(usingItem, player));
-						}
-					});
-				}
-			}
-
 			if (!continueUsing.get()) {
+
+				if (useData.shouldConsumeMana(usingItem)) {
+					if (!player.getAbilities().instabuild) {
+						player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+							if (mana.getMana() < getManaCost(usingItem, player)) {
+								continueUsing.set(false);
+							} else {
+								mana.reduceMana((ServerPlayer) player, getManaCost(usingItem, player));
+							}
+						});
+					}
+				}
+
 				levelPlayerUseData.remove(playerId);
 				player.stopUsingItem();
 
 				// Отправляем пакет остановки звука
 				ModMessages.sendToNearbyPlayers(
-						new EmberScrollLoopSoundPacket(player.getId(), false, usingItem),
+						new LoopSoundPacket(player.getId(), false, usingItem),
 						level,
 						player.blockPosition(),
 						64.0
@@ -1015,7 +1019,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 
 					// Отправляем пакет для остановки зацикленного звука
 					ModMessages.sendToNearbyPlayers(
-							new EmberScrollLoopSoundPacket(player.getId(), false, usingItem),
+							new LoopSoundPacket(player.getId(), false, usingItem),
 							(ServerLevel) level,
 							player.blockPosition(),
 							64.0
@@ -1032,7 +1036,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 
 					// Отправляем пакет для остановки зацикленного звука
 					ModMessages.sendToNearbyPlayers(
-							new EmberScrollLoopSoundPacket(player.getId(), false, usingItem),
+							new LoopSoundPacket(player.getId(), false, usingItem),
 							(ServerLevel) level,
 							player.blockPosition(),
 							64.0
@@ -1049,7 +1053,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 
 					// Отправляем пакет для остановки зацикленного звука
 					ModMessages.sendToNearbyPlayers(
-							new EmberScrollLoopSoundPacket(player.getId(), false, usingItem),
+							new LoopSoundPacket(player.getId(), false, usingItem),
 							(ServerLevel) level,
 							player.blockPosition(),
 							64.0
@@ -1068,7 +1072,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 
 					// Отправляем пакет для остановки зацикленного звука
 					ModMessages.sendToNearbyPlayers(
-							new EmberScrollLoopSoundPacket(player.getId(), false, usingItem),
+							new LoopSoundPacket(player.getId(), false, usingItem),
 							(ServerLevel) level,
 							player.blockPosition(),
 							64.0
@@ -1085,7 +1089,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 
 					// Отправляем пакет для остановки зацикленного звука
 					ModMessages.sendToNearbyPlayers(
-							new EmberScrollLoopSoundPacket(player.getId(), false, usingItem),
+							new LoopSoundPacket(player.getId(), false, usingItem),
 							(ServerLevel) level,
 							player.blockPosition(),
 							64.0
@@ -1102,8 +1106,10 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 				removeNearestLava(level, player);
 			}
 
-			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), usingItem) > 0)
+			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), usingItem) > 0) {
+				if(player instanceof ServerPlayer serverPlayer) ModAdvancements.SPELL_DESTRUCTION_EMBER_TRIGGER.trigger(serverPlayer);
 				spawnProjectile(level, player);
+			}
 		}
 	}
 
@@ -1144,6 +1150,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 		if (nearestLavaPos != null) {
 			// Удаляем блок лавы
 			level.setBlockAndUpdate(nearestLavaPos, Blocks.AIR.defaultBlockState());
+			if(player instanceof ServerPlayer serverPlayer) ModAdvancements.SPELL_ALTERATION_EMBER_TRIGGER.trigger(serverPlayer);
 
 			// Спавним частицы дыма для визуального эффекта
 			level.sendParticles(ParticleTypes.SMOKE,
@@ -1208,6 +1215,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 			if (fluidState.is(FluidTags.LAVA) && !fluidState.isSource()) {
 				// Превращаем в источник лавы
 				level.setBlockAndUpdate(nearestLavaPos, Fluids.LAVA.getSource().defaultFluidState().createLegacyBlock());
+				if(player instanceof ServerPlayer serverPlayer) ModAdvancements.SPELL_ALTERATION_EMBER_TRIGGER.trigger(serverPlayer);
 
 				// Спавним частицы для визуального эффекта
 				level.sendParticles(ParticleTypes.LAVA,
@@ -1218,6 +1226,7 @@ public class EmberScrollItem extends ScrollItem implements IClientItemExtensions
 			else if (state.is(Blocks.LAVA) && fluidState.isSource()) {
 				// Распространяем лаву на один соседний блок
 				spreadLavaInstantly(level, nearestLavaPos);
+				if(player instanceof ServerPlayer serverPlayer) ModAdvancements.SPELL_ALTERATION_EMBER_TRIGGER.trigger(serverPlayer);
 			}
 		}
 	}

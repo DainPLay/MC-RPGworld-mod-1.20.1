@@ -25,11 +25,9 @@ import net.minecraft.world.phys.Vec3;
 import java.util.UUID;
 
 public class MosquitoingEffect extends MobEffect {
-    public static final UUID MODIFIER_UUID = UUID.fromString("9ff0666f-ceb3-4da5-b81f-0d83e1b24510");
     protected final RandomSource random = RandomSource.create();
     public MosquitoingEffect(MobEffectCategory mobEffectCategory, int color) {
         super(mobEffectCategory, color);
-        addAttributeModifier(Attributes.SPAWN_REINFORCEMENTS_CHANCE, MosquitoingEffect.MODIFIER_UUID.toString(), 0D, AttributeModifier.Operation.MULTIPLY_TOTAL);
     }
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {

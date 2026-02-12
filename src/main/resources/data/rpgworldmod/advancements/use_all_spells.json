@@ -1,0 +1,69 @@
+{
+  "parent": "rpgworldmod:get_depressed",
+  "criteria": {
+    "spell_destruction_ember": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_destruction_ember"
+    },
+    "spell_restoration_ember": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_restoration_ember"
+    },
+    "spell_alteration_ember": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_alteration_ember"
+    },
+    "spell_illusion_ember": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_illusion_ember"
+    },
+    "spell_conjuration_ember": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_conjuration_ember"
+    },
+    "spell_necromancy_ember": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_necromancy_ember"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.use_all_spells.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:rpgirolle_item",
+      "nbt": "{Token:8, Enchantments:[{id:\"minecraft:unbreaking\",lvl:1s}]}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.use_all_spells.title"
+    }
+  },
+  "requirements": [
+    [
+      "spell_destruction_ember"
+    ],
+    [
+      "spell_restoration_ember"
+    ],
+    [
+      "spell_alteration_ember"
+    ],
+    [
+      "spell_illusion_ember"
+    ],
+    [
+      "spell_conjuration_ember"
+    ],
+    [
+      "spell_necromancy_ember"
+    ]
+  ],
+  "rewards": {
+    "experience": 120
+  },
+  "sends_telemetry_event": true
+}

@@ -5,6 +5,8 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.item.enchantment.MendingEnchantment;
@@ -27,6 +29,11 @@ public class MagicScrollEnchantment extends Enchantment {
     }
     public boolean isAllowedOnBooks() {
         return false;
+    }
+
+    public boolean canEnchant(ItemStack pStack) {
+        if(pStack.getItem() == Items.BOOK || pStack.getItem() == Items.ENCHANTED_BOOK) return false;
+        return super.canEnchant(pStack);
     }
 
     public boolean isTradeable() {

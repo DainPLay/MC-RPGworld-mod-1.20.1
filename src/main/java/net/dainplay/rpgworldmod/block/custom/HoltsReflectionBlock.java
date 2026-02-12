@@ -2,9 +2,11 @@ package net.dainplay.rpgworldmod.block.custom;
 
 import net.dainplay.rpgworldmod.block.entity.ModBlockEntities;
 import net.dainplay.rpgworldmod.block.entity.custom.HoltsReflectionBlockEntity;
+import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -24,14 +26,19 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 
-public class HoltsReflectionBlock extends BaseEntityBlock implements net.minecraftforge.common.IPlantable {
+public class HoltsReflectionBlock extends BaseEntityBlock implements net.minecraftforge.common.IPlantable, SuspiciousEffectHolder {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final IntegerProperty TIMESTATE = IntegerProperty.create("timestate", 0, 5);
     protected static final VoxelShape SHAPE = Block.box(5.0D, 0.0D, 5.0D, 11.0D, 13.0D, 11.0D);
     protected static final float AABB_OFFSET = 3.0F;
-    public HoltsReflectionBlock(Properties properties) {
+    private final MobEffect suspiciousStewEffect;
+    private final int effectDuration;
+    private final java.util.function.Supplier<MobEffect> suspiciousStewEffectSupplier;
+    public HoltsReflectionBlock(java.util.function.Supplier<MobEffect> effectSupplier, int pEffectDuration, Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(TIMESTATE, Integer.valueOf(1)));
+        this.suspiciousStewEffect = null;
+        this.suspiciousStewEffectSupplier = effectSupplier;
+        this.effectDuration = pEffectDuration;
 
     }
 @Override
@@ -123,5 +130,15 @@ Level level = pContext.getLevel();
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
         pBuilder.add(TIMESTATE, FACING);
+    }
+
+    public MobEffect getSuspiciousEffect() {
+        if (true) return this.suspiciousStewEffectSupplier.get();
+        return this.suspiciousStewEffect;
+    }
+
+    public int getEffectDuration() {
+        if (this.suspiciousStewEffect == null && !this.suspiciousStewEffectSupplier.get().isInstantenous()) return this.effectDuration * 20;
+        return this.effectDuration;
     }
 }

@@ -44,18 +44,6 @@ public class StareblossomBlock extends BaseEntityBlock implements net.minecraftf
 
 	}
 
-	public StareblossomBlock(MobEffect pSuspiciousStewEffect, int pEffectDuration, Properties pProperties) {
-		super(pProperties);
-		this.suspiciousStewEffect = pSuspiciousStewEffect;
-		if (pSuspiciousStewEffect.isInstantenous()) {
-			this.effectDuration = pEffectDuration;
-		} else {
-			this.effectDuration = pEffectDuration * 20;
-		}
-		this.suspiciousStewEffectSupplier = net.minecraftforge.registries.ForgeRegistries.MOB_EFFECTS.getDelegateOrThrow(pSuspiciousStewEffect);
-
-	}
-
 	@Override
 	protected void createBlockStateDefinition(net.minecraft.world.level.block.state.StateDefinition.Builder<Block, BlockState> builder) {
 		super.createBlockStateDefinition(builder);

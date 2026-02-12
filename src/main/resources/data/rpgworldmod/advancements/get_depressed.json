@@ -1,5 +1,5 @@
 {
-  "parent": "rpgworldmod:root",
+  "parent": "rpgworldmod:obtain_spell",
   "criteria": {
     "get_depressed": {
       "conditions": {},

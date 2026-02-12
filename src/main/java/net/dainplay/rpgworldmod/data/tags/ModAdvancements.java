@@ -38,8 +38,17 @@ public class ModAdvancements {
     public static final MossiosisFishTransformTrigger MOSSIOSIS_FISH_TRANSFORM_TRIGGER = CriteriaTriggers.register(new MossiosisFishTransformTrigger());
     public static final KillEntTrigger KILL_ENT_TRIGGER = CriteriaTriggers.register(new KillEntTrigger());
     public static final RideTireSwingTrigger RIDE_TIRE_SWING_TRIGGER = CriteriaTriggers.register(new RideTireSwingTrigger());
-    public static final FeedTireToRazorleafTrigger FEED_TIRE_TO_RAZORLEAF = CriteriaTriggers.register(new FeedTireToRazorleafTrigger());
-    public static final ShootProjectruffleTrigger SHOOT_PROJECTRUFFLE = CriteriaTriggers.register(new ShootProjectruffleTrigger());
+    public static final FeedTireToRazorleafTrigger FEED_TIRE_TO_RAZORLEAF_TRIGGER = CriteriaTriggers.register(new FeedTireToRazorleafTrigger());
+    public static final ShootProjectruffleTrigger SHOOT_PROJECTRUFFLE_TRIGGER = CriteriaTriggers.register(new ShootProjectruffleTrigger());
+    public static final ObtainSpellTrigger OBTAIN_SPELL_TRIGGER = CriteriaTriggers.register(new ObtainSpellTrigger());
+    public static final EatSweetsParanoidTrigger EAT_SWEETS_PARANOID_TRIGGER = CriteriaTriggers.register(new EatSweetsParanoidTrigger());
+    public static final SpellDestructionEmberTrigger SPELL_DESTRUCTION_EMBER_TRIGGER = CriteriaTriggers.register(new SpellDestructionEmberTrigger());
+    public static final SpellRestorationEmberTrigger SPELL_RESTORATION_EMBER_TRIGGER = CriteriaTriggers.register(new SpellRestorationEmberTrigger());
+    public static final SpellAlterationEmberTrigger SPELL_ALTERATION_EMBER_TRIGGER = CriteriaTriggers.register(new SpellAlterationEmberTrigger());
+    public static final SpellIllusionEmberTrigger SPELL_ILLUSION_EMBER_TRIGGER = CriteriaTriggers.register(new SpellIllusionEmberTrigger());
+    public static final SpellConjurationEmberTrigger SPELL_CONJURATION_EMBER_TRIGGER = CriteriaTriggers.register(new SpellConjurationEmberTrigger());
+    public static final SpellNecromancyEmberTrigger SPELL_NECROMANCY_EMBER_TRIGGER = CriteriaTriggers.register(new SpellNecromancyEmberTrigger());
+    public static final ChestStaffsTrigger CHEST_STAFFS_TRIGGER = CriteriaTriggers.register(new ChestStaffsTrigger());
 
     public static void init() {}
 }

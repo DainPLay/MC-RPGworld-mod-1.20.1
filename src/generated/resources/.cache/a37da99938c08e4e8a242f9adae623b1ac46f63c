@@ -1,10 +1,10 @@
-// 1.20.1	2026-02-08T01:51:38.3893952	Tags for minecraft:damage_type mod id rpgworldmod
+// 1.20.1	2026-02-12T19:55:36.1011915	Tags for minecraft:damage_type mod id rpgworldmod
 bb8f93d38cca259718cc81f69c4bce078c8b6be7 data/minecraft/tags/damage_type/avoids_guardian_thorns.json
 e277ee1cd9a2df3dcf81dd96f4df83490f360913 data/minecraft/tags/damage_type/bypasses_armor.json
 49b31e9e4fc23f83ba92b5e3ecc2eaa8437699ef data/minecraft/tags/damage_type/bypasses_cooldown.json
 c342e9d28e3068cd03c6a06a9729dd91f337b104 data/minecraft/tags/damage_type/bypasses_effects.json
 8788b3e36143323867bec3fa3c1537f0baed5cd9 data/minecraft/tags/damage_type/bypasses_enchantments.json
-5ca7958aae909dd9a679a64ae46e89e494e3d05c data/minecraft/tags/damage_type/bypasses_invulnerability.json
+422fd9ff6514466ff129ceaf4c17567d299718fc data/minecraft/tags/damage_type/bypasses_invulnerability.json
 c342e9d28e3068cd03c6a06a9729dd91f337b104 data/minecraft/tags/damage_type/bypasses_resistance.json
 4bf249d92b491f0b6ac97f40ed5d7469dec5581c data/minecraft/tags/damage_type/bypasses_shield.json
 e858d4e8b24dabf8f29c179fbbae38abedc82bc2 data/minecraft/tags/damage_type/damages_helmet.json

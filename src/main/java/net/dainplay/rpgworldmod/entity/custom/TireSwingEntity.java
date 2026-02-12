@@ -43,6 +43,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -1039,13 +1040,13 @@ public class TireSwingEntity extends Entity {
 		Entity passenger = this.getPassengers().get(0);
 		if (passenger instanceof LivingEntity livingPassenger) {
 			// Проверяем, есть ли уже эффект регенерации
-			MobEffectInstance currentRegen = livingPassenger.getEffect(ModEffects.HAPPINESS.get());
+			MobEffectInstance currentHappiness = livingPassenger.getEffect(ModEffects.HAPPINESS.get());
 
 			int newDuration = HAPPINESS_DURATION;
 
 			// Если эффект уже есть, добавляем время, но не превышаем максимум
-			if (currentRegen != null) {
-				newDuration = currentRegen.getDuration() + HAPPINESS_DURATION;
+			if (currentHappiness != null) {
+				newDuration = currentHappiness.getDuration() + HAPPINESS_DURATION;
 
 				// Ограничиваем максимальной продолжительностью
 				if (newDuration > MAX_HAPPINESS_DURATION) {
@@ -1053,7 +1054,7 @@ public class TireSwingEntity extends Entity {
 				}
 
 				// Сохраняем уровень эффекта (усиление)
-				int amplifier = currentRegen.getAmplifier();
+				int amplifier = currentHappiness.getAmplifier();
 
 				// Создаём новый эффект с увеличенной длительностью
 				MobEffectInstance newEffect = new MobEffectInstance(
@@ -1064,6 +1065,7 @@ public class TireSwingEntity extends Entity {
 						true,  // показывать частицы
 						true   // показывать иконку
 				);
+				newEffect.setCurativeItems(new ArrayList<>());
 
 				livingPassenger.removeEffect(ModEffects.HAPPINESS.get());
 				livingPassenger.addEffect(newEffect);
@@ -1077,6 +1079,7 @@ public class TireSwingEntity extends Entity {
 						true,
 						true
 				);
+				newEffect.setCurativeItems(new ArrayList<>());
 
 				livingPassenger.addEffect(newEffect);
 			}

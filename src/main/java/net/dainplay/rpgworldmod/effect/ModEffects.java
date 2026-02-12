@@ -39,6 +39,9 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> BURNOUT = MOB_EFFECTS.register("burnout",
             () -> new BurnoutEffect(MobEffectCategory.NEUTRAL, 0x00000000));
 
+    public static final RegistryObject<MobEffect> AMPHIBIOSIS = MOB_EFFECTS.register("amphibiosis",
+            () -> new AmphibiosisEffect(MobEffectCategory.NEUTRAL, 0x1F96B1));
+
     public static void register(IEventBus eventBus) {
         MOB_EFFECTS.register(eventBus);
     }

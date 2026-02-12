@@ -5,8 +5,10 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BannerPatternTags;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerPattern;
@@ -20,10 +22,10 @@ public class ModTags {
         }
     }
     public static class Entity {
-        /*public static final TagKey<EntityType<?>> IGNORE_TYPHON = forgeTag("ignore_typhon");
+        public static final TagKey<EntityType<?>> SOULLESS = forgeTag("soulless");
         private static TagKey<EntityType<?>> forgeTag (String name) {
-            return EntityTypeTags.create(new ResourceLocation("forge", name));
-        }*/
+            return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("forge", name));
+        }
     }
     public static class BannerPatterns {
         public static final TagKey<BannerPattern> PATTERN_ITEM_RIE_WEALD = forgeTag("pattern_item/rie_weald");

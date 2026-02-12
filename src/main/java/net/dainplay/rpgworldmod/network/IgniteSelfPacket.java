@@ -6,8 +6,6 @@ import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -52,7 +50,7 @@ public class IgniteSelfPacket {
                         
                         // Отправляем пакет для остановки звука
                         ModMessages.sendToNearbyPlayers(
-                            new EmberScrollLoopSoundPacket(player.getId(), false, itemInHand),
+                            new LoopSoundPacket(player.getId(), false, itemInHand),
                             player.serverLevel(),
                             player.blockPosition(),
                             64.0

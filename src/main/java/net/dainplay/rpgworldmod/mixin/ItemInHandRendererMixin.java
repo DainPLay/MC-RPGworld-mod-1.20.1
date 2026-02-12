@@ -5,8 +5,11 @@ import com.mojang.math.Axis;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
+import net.dainplay.rpgworldmod.item.custom.LivingWoodBowItem;
+import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.util.Mth;
@@ -20,10 +23,31 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ItemInHandRenderer.class)
 public abstract class ItemInHandRendererMixin {
     ItemInHandRenderer handRenderer = (ItemInHandRenderer) (Object) this;
+
+
+    @Inject(
+            method = "selectionUsingItemWhileHoldingBowLike",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    private static void handleLivingWoodBow(LocalPlayer player,
+                                            CallbackInfoReturnable<ItemInHandRenderer.HandRenderSelection> cir) {
+        ItemStack useItem = player.getUseItem();
+        if (useItem.getItem() instanceof LivingWoodBowItem || useItem.getItem() instanceof StaffItem) {
+            InteractionHand hand = player.getUsedItemHand();
+            // Возвращаем тот же результат, что и vanilla метод onlyForHand(hand)
+            cir.setReturnValue(
+                    hand == InteractionHand.MAIN_HAND
+                            ? ItemInHandRenderer.HandRenderSelection.RENDER_MAIN_HAND_ONLY
+                            : ItemInHandRenderer.HandRenderSelection.RENDER_OFF_HAND_ONLY
+            );
+        }
+    }
 
 
     @Inject(method = "renderOneHandedMap", at = @At(value = "HEAD"), cancellable = true)

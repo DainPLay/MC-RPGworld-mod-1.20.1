@@ -13,12 +13,10 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import java.util.UUID;
 
 public class ParanoiaEffect extends MobEffect {
-	public static final UUID MODIFIER_UUID = UUID.fromString("3affb255-7fb3-4086-8baa-35d7f21f5a49");
 	protected final RandomSource random = RandomSource.create();
 
 	public ParanoiaEffect(MobEffectCategory mobEffectCategory, int color) {
 		super(mobEffectCategory, color);
-		addAttributeModifier(Attributes.LUCK, ParanoiaEffect.MODIFIER_UUID.toString(), 0D, AttributeModifier.Operation.MULTIPLY_TOTAL);
 	}
 
 	@Override

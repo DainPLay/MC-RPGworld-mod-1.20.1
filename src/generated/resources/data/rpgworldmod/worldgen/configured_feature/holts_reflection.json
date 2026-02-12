@@ -13,7 +13,7 @@
                   "Name": "rpgworldmod:holts_reflection",
                   "Properties": {
                     "facing": "north",
-                    "timestate": "1"
+                    "timestate": "0"
                   }
                 },
                 "weight": 1
@@ -23,7 +23,7 @@
                   "Name": "rpgworldmod:holts_reflection",
                   "Properties": {
                     "facing": "south",
-                    "timestate": "1"
+                    "timestate": "0"
                   }
                 },
                 "weight": 1
@@ -33,7 +33,7 @@
                   "Name": "rpgworldmod:holts_reflection",
                   "Properties": {
                     "facing": "east",
-                    "timestate": "1"
+                    "timestate": "0"
                   }
                 },
                 "weight": 1
@@ -43,7 +43,7 @@
                   "Name": "rpgworldmod:holts_reflection",
                   "Properties": {
                     "facing": "west",
-                    "timestate": "1"
+                    "timestate": "0"
                   }
                 },
                 "weight": 1

@@ -1098,5 +1098,54 @@
       "rpgworldmod:spell/necromancy_cast_3"
     ],
     "subtitle": "subtitles.rpgworldmod.spell.necromancy_cast"
+  },
+  "rpgworldmod.living_wood_staff.start": {
+    "sounds": [
+      "rpgworldmod:staff/living_wood_staff_start"
+    ],
+    "subtitle": "subtitles.rpgworldmod.living_wood_staff.start"
+  },
+  "rpgworldmod.living_wood_staff.loop": {
+    "sounds": [
+      "rpgworldmod:staff/living_wood_staff_loop"
+    ]
+  },
+  "rpgworldmod.living_wood_staff.stop": {
+    "sounds": [
+      "rpgworldmod:staff/living_wood_staff_stop"
+    ],
+    "subtitle": "subtitles.rpgworldmod.living_wood_staff.stop"
+  },
+  "rpgworldmod.staff_nether_star.cast": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.wither.ambient"
+      }
+    ]
+  },
+  "rpgworldmod.staff_ember_gem.cast": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.firecharge.use"
+      }
+    ]
+  },
+  "rpgworldmod.staff_heart_of_the_sea.cast": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.conduit.deactivate"
+      }
+    ]
+  },
+  "rpgworldmod.staff_ender_eye.cast": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.ender_eye.death"
+      }
+    ]
   }
 }

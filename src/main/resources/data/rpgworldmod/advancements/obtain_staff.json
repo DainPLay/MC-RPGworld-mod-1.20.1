@@ -1,0 +1,39 @@
+{
+  "parent": "rpgworldmod:obtain_spell",
+  "criteria": {
+    "living_wood_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:living_wood_staff"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.obtain_staff.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:rpgirolle_item",
+      "nbt": "{Token:9}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.obtain_staff.title"
+    }
+  },
+  "requirements": [
+    [
+      "living_wood_staff"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -32,11 +32,9 @@ import net.minecraft.world.phys.Vec3;
 import java.util.UUID;
 
 public class FuelingEffect extends MobEffect {
-    public static final UUID MODIFIER_UUID = UUID.fromString("267495bd-9e39-4ee5-807e-4bea7e558883");
     protected final RandomSource random = RandomSource.create();
     public FuelingEffect(MobEffectCategory mobEffectCategory, int color) {
         super(mobEffectCategory, color);
-        addAttributeModifier(Attributes.FLYING_SPEED, FuelingEffect.MODIFIER_UUID.toString(), 0D, AttributeModifier.Operation.MULTIPLY_TOTAL);
     }
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
