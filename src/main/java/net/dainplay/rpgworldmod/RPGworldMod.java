@@ -24,7 +24,6 @@ import net.dainplay.rpgworldmod.item.ModCreativeModeTab;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
 import net.dainplay.rpgworldmod.item.custom.EmptyScrollItem;
-import net.dainplay.rpgworldmod.item.custom.LivingWoodStaffItem;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.dainplay.rpgworldmod.item.custom.WealdBladeItem;
 import net.dainplay.rpgworldmod.loot.ModLootModifiers;
@@ -345,6 +344,10 @@ public class RPGworldMod
             event.accept(StaffItem.createForGemType(ModItems.LIVING_WOOD_STAFF.get().getDefaultInstance(),StaffItem.GemType.ENDER_EYE));
             event.accept(StaffItem.createForGemType(ModItems.LIVING_WOOD_STAFF.get().getDefaultInstance(),StaffItem.GemType.HEART_OF_THE_SEA));
             event.accept(StaffItem.createForGemType(ModItems.LIVING_WOOD_STAFF.get().getDefaultInstance(),StaffItem.GemType.NETHER_STAR));
+            event.accept(StaffItem.createForGemType(ModItems.BLAZE_STAFF.get().getDefaultInstance(),StaffItem.GemType.EMBER_GEM));
+            event.accept(StaffItem.createForGemType(ModItems.BLAZE_STAFF.get().getDefaultInstance(),StaffItem.GemType.ENDER_EYE));
+            event.accept(StaffItem.createForGemType(ModItems.BLAZE_STAFF.get().getDefaultInstance(),StaffItem.GemType.HEART_OF_THE_SEA));
+            event.accept(StaffItem.createForGemType(ModItems.BLAZE_STAFF.get().getDefaultInstance(),StaffItem.GemType.NETHER_STAR));
             event.accept(ModItems.MOSQUITO_BOTTLE);
             event.accept(ModItems.CHITIN_THIMBLE);
             event.accept(ModItems.CHITIN_POWDER);

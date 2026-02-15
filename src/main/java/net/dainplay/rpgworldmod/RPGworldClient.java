@@ -12,8 +12,8 @@ import net.dainplay.rpgworldmod.gui.HealthOverlayEventHandler;
 import net.dainplay.rpgworldmod.gui.ManaOverlayEventHandler;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.FireproofSkirtItem;
-import net.dainplay.rpgworldmod.item.custom.LivingWoodStaffItem;
 import net.dainplay.rpgworldmod.item.custom.MintalTriangleItem;
+import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.dainplay.rpgworldmod.render.BakedModelShadeLayerFullbright;
 import net.dainplay.rpgworldmod.render.BoundCampfireBlockRenderer;
 import net.dainplay.rpgworldmod.render.BreakingEntFaceRenderer;
@@ -351,7 +351,7 @@ public class RPGworldClient {
             });
             ItemProperties.register(ModItems.LIVING_WOOD_STAFF.get(), new ResourceLocation("gem_type"),
                     (stack, level, entity, seed) -> {
-                        LivingWoodStaffItem.GemType gemType = LivingWoodStaffItem.getGemType(stack);
+                        StaffItem.GemType gemType = StaffItem.getGemType(stack);
                         return switch (gemType) {
                             case EMBER_GEM -> 1.0F;
                             case HEART_OF_THE_SEA -> 2.0F;
@@ -360,6 +360,18 @@ public class RPGworldClient {
                             default -> 0.0F;
                         };
                     });
+            ItemProperties.register(ModItems.BLAZE_STAFF.get(), new ResourceLocation("gem_type"),
+                    (stack, level, entity, seed) -> {
+                        StaffItem.GemType gemType = StaffItem.getGemType(stack);
+                        return switch (gemType) {
+                            case EMBER_GEM -> 1.0F;
+                            case HEART_OF_THE_SEA -> 2.0F;
+                            case ENDER_EYE -> 3.0F;
+                            case NETHER_STAR -> 4.0F;
+                            default -> 0.0F;
+                        };
+                    });
+            ItemProperties.register(ModItems.BLAZE_STAFF.get().asItem(), new ResourceLocation( "using"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
         });
     }
 }

@@ -1,6 +1,7 @@
 package net.dainplay.rpgworldmod.mixin;
 
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
+import net.dainplay.rpgworldmod.item.custom.BlazeStaffItem;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -32,7 +33,19 @@ public abstract class GuiGraphicsMixin {
 			int pY,
 			@Nullable String pText
 	) {
-		if (pStack.getItem() instanceof StaffItem staff
+
+		if(pStack.getItem() instanceof BlazeStaffItem staff
+				&& Minecraft.getInstance().player != null) {
+			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = Minecraft.getInstance().player.getCooldowns().cooldowns;
+			int currentTick = Minecraft.getInstance().player.getCooldowns().tickCount;
+			ItemCooldowns.CooldownInstance instance = cooldownsMap.get(pStack.getItem());
+			if (instance == null) return current;
+			int endTick = instance.endTime;
+			int cooldown = staff.getCooldown(pStack);
+			if (pStack.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get()) > 0) cooldown *= 2;
+			return Math.min(1F,(float) (endTick - currentTick) / cooldown);
+		}
+		else if (pStack.getItem() instanceof StaffItem staff
 				&& pStack.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get()) > 0
 				&& Minecraft.getInstance().player != null) {
 			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = Minecraft.getInstance().player.getCooldowns().cooldowns;
@@ -40,10 +53,7 @@ public abstract class GuiGraphicsMixin {
 			ItemCooldowns.CooldownInstance instance = cooldownsMap.get(pStack.getItem());
 			if (instance == null) return current;
 			int endTick = instance.endTime;
-			if(endTick - currentTick <= staff.getCooldown(pStack))
-				return 0F;
-			else
-				return (float) (endTick - currentTick - staff.getCooldown(pStack)) / staff.getCooldown(pStack);
+			return Math.min(1F,(float) (endTick - currentTick) / staff.getCooldown(pStack));
 		}
 		return current;
 	}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " LG",
+    " LL",
+    "L  "
+  ],
+  "key": {
+    "L": {
+      "tag": "forge:rods/blaze"
+    },
+    "G": {
+      "item": "minecraft:ender_eye"
+    }
+  },
+  "result": {
+    "item": "rpgworldmod:blaze_staff",
+    "nbt": "{Gem:\"ender_eye\"}"
+  }
+}

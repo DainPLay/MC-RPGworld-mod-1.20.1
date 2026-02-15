@@ -31,7 +31,7 @@ public abstract class ItemInHandRendererMixin {
 
 
     @Inject(
-            method = "selectionUsingItemWhileHoldingBowLike",
+            method = "evaluateWhichHandsToRender",
             at = @At("HEAD"),
             cancellable = true
     )

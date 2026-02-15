@@ -2,10 +2,12 @@ package net.dainplay.rpgworldmod.effect;
 
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
+import net.dainplay.rpgworldmod.item.custom.BlazeStaffItem;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
 import net.dainplay.rpgworldmod.item.custom.LivingWoodStaffItem;
 import net.dainplay.rpgworldmod.network.ClientAdditionalHealthCostData;
 import net.dainplay.rpgworldmod.network.IgniteSelfPacket;
+import net.dainplay.rpgworldmod.network.LeftClickWhileRightClickUsePacket;
 import net.dainplay.rpgworldmod.network.UseOnAnimateTargetPacket;
 import net.dainplay.rpgworldmod.network.ClientAnimateTargetData;
 import net.dainplay.rpgworldmod.network.ModMessages;
@@ -202,6 +204,11 @@ public class ParalysisHandler {
 						ModMessages.sendToServer(new UseOnAnimateTargetPacket(player.getId(), ClientAnimateTargetData.get().getId()));
 						player.swing(player.getUsedItemHand());
 					}
+				}
+
+				if (useItem.getItem() instanceof BlazeStaffItem staff && staff.isOffCooldown(useItem, player)) {
+					ModMessages.sendToServer(new LeftClickWhileRightClickUsePacket(player.getId()));
+					player.swing(player.getUsedItemHand());
 				}
 			}
 		}

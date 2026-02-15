@@ -1,0 +1,7 @@
+{
+	"parent": "rpgworldmod:item/blaze_staff_ember_gem_3d",
+	"textures": {
+		"base": "rpgworldmod:item/blaze_staff_using_3d",
+		"gem": "rpgworldmod:item/ender_eye_3d"
+	}
+}

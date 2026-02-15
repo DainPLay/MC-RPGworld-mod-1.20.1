@@ -147,11 +147,10 @@ public class OrbitingItemRenderer {
 
 			ms.pushPose();
 			ms.translate(
-					flip * (f2 + 0.64000005F),
+					flip * (f2 * 2F + 0.64000005F),
 					f3 + -0.6F + equipProgress * -0.6F,
 					f4 + -0.71999997F
 			);
-
 			ms.translate(flip * item.get1XOffset(event.getItemStack(), player), item.get1YOffset(event.getItemStack(), player), item.get1ZOffset(event.getItemStack(), player));
 			if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUsedItemHand() == event.getHand()) {
 				ms = item1.getEffectUsingPose(event.getItemStack(), player, ms, flip);
@@ -249,12 +248,12 @@ public class OrbitingItemRenderer {
 			int animationLength = item1.getAnimationLength(event.getItemStack(), player);
 
 			ms.pushPose();
+			float swingFactor = 0F;
 			ms.translate(
-					flip * (f2 + 0.64000005F),
-					f3 + -0.6F + equipProgress * -0.6F,
-					f4 + -0.71999997F
+					flip * (0.64000005F),
+					-0.6F + equipProgress * -0.6F,
+					-0.71999997F
 			);
-
 			ms.translate(flip * item1.get1XOffset(event.getItemStack(), player), item1.get1YOffset(event.getItemStack(), player), item1.get1ZOffset(event.getItemStack(), player));
 			if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUsedItemHand() == event.getHand()) {
 				ms = item1.getEffectUsingPose(event.getItemStack(), player, ms, flip);

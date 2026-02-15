@@ -218,4 +218,27 @@ public class StaffItem extends Item implements RPGtooltip, Vanishable {
 		}
 		else return !(player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F);
 	}
+
+
+
+	@Override
+	public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+		super.inventoryTick(stack, level, entity, slotId, isSelected);
+
+		if (!level.isClientSide && entity instanceof Player player) {
+			if (isSelected || player.getOffhandItem() == stack) {
+				CompoundTag tag = stack.getOrCreateTag();
+
+				if (!isOffCooldown(stack, player)) {
+					tag.putBoolean("onCooldown", true);
+				} else {
+					tag.remove("onCooldown");
+					if (tag.isEmpty()) {
+						stack.setTag(null);
+					}
+				}
+			}
+		}
+	}
+
 }

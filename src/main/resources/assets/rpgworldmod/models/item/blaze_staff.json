@@ -1,0 +1,76 @@
+{
+  "parent": "minecraft:item/handheld",
+  "loader": "forge:separate_transforms",
+  "base": {
+    "parent": "rpgworldmod:item/blaze_staff_ember_gem_3d"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "rpgworldmod:item/blaze_staff_ember_gem_2d"
+    },
+    "ground": {
+      "parent": "rpgworldmod:item/blaze_staff_ember_gem_2d"
+    },
+    "fixed": {
+      "parent": "rpgworldmod:item/blaze_staff_ember_gem_2d"
+    }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "gem_type": 1.0,
+        "using": 0.0
+      },
+      "model": "rpgworldmod:item/blaze_staff_ember_gem"
+    },
+    {
+      "predicate": {
+        "gem_type": 2.0,
+        "using": 0.0
+      },
+      "model": "rpgworldmod:item/blaze_staff_heart_of_the_sea"
+    },
+    {
+      "predicate": {
+        "gem_type": 3.0,
+        "using": 0.0
+      },
+      "model": "rpgworldmod:item/blaze_staff_ender_eye"
+    },
+    {
+      "predicate": {
+        "gem_type": 4.0,
+        "using": 0.0
+      },
+      "model": "rpgworldmod:item/blaze_staff_nether_star"
+    },
+    {
+      "predicate": {
+        "gem_type": 1.0,
+        "using": 1.0
+      },
+      "model": "rpgworldmod:item/blaze_staff_ember_gem_using"
+    },
+    {
+      "predicate": {
+        "gem_type": 2.0,
+        "using": 1.0
+      },
+      "model": "rpgworldmod:item/blaze_staff_heart_of_the_sea_using"
+    },
+    {
+      "predicate": {
+        "gem_type": 3.0,
+        "using": 1.0
+      },
+      "model": "rpgworldmod:item/blaze_staff_ender_eye_using"
+    },
+    {
+      "predicate": {
+        "gem_type": 4.0,
+        "using": 1.0
+      },
+      "model": "rpgworldmod:item/blaze_staff_nether_star_using"
+    }
+  ]
+}

@@ -28,7 +28,8 @@
     "PotionUtilsMixin",
     "SonicBoomMixin",
     "ThrownPotionMixin",
-    "WitchMixin"
+    "WitchMixin",
+    "WitherSkullMixin"
   ],
   "client": [
     "AbstractContainerScreenMixin",

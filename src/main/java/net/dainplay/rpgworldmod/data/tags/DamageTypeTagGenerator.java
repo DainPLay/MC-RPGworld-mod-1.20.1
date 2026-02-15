@@ -31,8 +31,8 @@ public class DamageTypeTagGenerator extends TagsProvider<DamageType> {
 		this.tag(DamageTypeTags.BYPASSES_RESISTANCE).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS);
 		this.tag(DamageTypeTags.BYPASSES_SHIELD).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS, ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS, ModDamageTypes.SWALLOW,ModDamageTypes.ENT_ROOTS);
 		this.tag(DamageTypeTags.DAMAGES_HELMET).add(ModDamageTypes.SCREAM, ModDamageTypes.DING);
-		this.tag(DamageTypeTags.IS_PROJECTILE).add(ModDamageTypes.FAIRAPIER_SEED,ModDamageTypes.BURR_SPIKE,ModDamageTypes.ENT_RIE_FRUIT,ModDamageTypes.ENT_ROOTS);
-		this.tag(DamageTypeTags.AVOIDS_GUARDIAN_THORNS).add(ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS,ModDamageTypes.FAIRAPIER_SEED,ModDamageTypes.BURR_SPIKE,ModDamageTypes.ENT_RIE_FRUIT);
+		this.tag(DamageTypeTags.IS_PROJECTILE).add(ModDamageTypes.FAIRAPIER_SEED,ModDamageTypes.BURR_SPIKE,ModDamageTypes.PRISMARINE_SHARD,ModDamageTypes.ENT_RIE_FRUIT,ModDamageTypes.ENT_ROOTS);
+		this.tag(DamageTypeTags.AVOIDS_GUARDIAN_THORNS).add(ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS,ModDamageTypes.FAIRAPIER_SEED,ModDamageTypes.BURR_SPIKE,ModDamageTypes.PRISMARINE_SHARD,ModDamageTypes.ENT_RIE_FRUIT);
 		this.tag(IS_SOUND).add(ModDamageTypes.SCREAM, ModDamageTypes.DING, DamageTypes.SONIC_BOOM);
 	}
 

@@ -58,6 +58,8 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> TREE_HOLLOW_GET;
     public static RegistryObject<SoundEvent> BURR_SPIKE_HIT;
     public static RegistryObject<SoundEvent> BURR_SPIKE_MISS;
+    public static RegistryObject<SoundEvent> PRISMARINE_SHARD_HIT;
+    public static RegistryObject<SoundEvent> PRISMARINE_SHARD_MISS;
     public static RegistryObject<SoundEvent> FAIRAPIER_SEED_THROW;
     public static RegistryObject<SoundEvent> FAIRAPIER_SEED_HIT;
     public static RegistryObject<SoundEvent> FAIRAPIER_SEED_MISS;
@@ -140,11 +142,15 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> SPELL_NECROMANCY_LOOP;
     public static RegistryObject<SoundEvent> SPELL_NECROMANCY_STOP;
     public static RegistryObject<SoundEvent> SPELL_NECROMANCY_CAST;
-    public static RegistryObject<SoundEvent> LIVING_WOOD_STAFF_START;
-    public static RegistryObject<SoundEvent> LIVING_WOOD_STAFF_LOOP;
-    public static RegistryObject<SoundEvent> LIVING_WOOD_STAFF_STOP;
+    public static RegistryObject<SoundEvent> STAFF_START;
+    public static RegistryObject<SoundEvent> STAFF_LOOP;
+    public static RegistryObject<SoundEvent> STAFF_STOP;
     public static RegistryObject<SoundEvent> STAFF_EMBER_GEM_CAST;
     public static RegistryObject<SoundEvent> STAFF_ENDER_EYE_CAST;
     public static RegistryObject<SoundEvent> STAFF_HEART_OF_THE_SEA_CAST;
     public static RegistryObject<SoundEvent> STAFF_NETHER_STAR_CAST;
+    public static RegistryObject<SoundEvent> STAFF_EMBER_GEM_FIRE;
+    public static RegistryObject<SoundEvent> STAFF_ENDER_EYE_FIRE;
+    public static RegistryObject<SoundEvent> STAFF_HEART_OF_THE_SEA_FIRE;
+    public static RegistryObject<SoundEvent> STAFF_NETHER_STAR_FIRE;
 }

@@ -86,6 +86,8 @@ public class ModSounds
 
         BURR_SPIKE_HIT = registerSound("rpgworldmod.burr_spike_hit");
         BURR_SPIKE_MISS = registerSound("rpgworldmod.burr_spike_miss");
+        PRISMARINE_SHARD_HIT = registerSound("rpgworldmod.prismarine_shard_hit");
+        PRISMARINE_SHARD_MISS = registerSound("rpgworldmod.prismarine_shard_miss");
         FAIRAPIER_SEED_THROW = registerSound("rpgworldmod.fairapier_seed_throw");
         FAIRAPIER_SEED_HIT = registerSound("rpgworldmod.fairapier_seed_hit");
         FAIRAPIER_SEED_MISS = registerSound("rpgworldmod.fairapier_seed_miss");
@@ -184,13 +186,17 @@ public class ModSounds
         SPELL_NECROMANCY_LOOP = registerSound("rpgworldmod.spell.necromancy_loop");
         SPELL_NECROMANCY_STOP = registerSound("rpgworldmod.spell.necromancy_stop");
         SPELL_NECROMANCY_CAST = registerSound("rpgworldmod.spell.necromancy_cast");
-        LIVING_WOOD_STAFF_START = registerSound("rpgworldmod.living_wood_staff.start");
-        LIVING_WOOD_STAFF_LOOP = registerSound("rpgworldmod.living_wood_staff.loop");
-        LIVING_WOOD_STAFF_STOP = registerSound("rpgworldmod.living_wood_staff.stop");
+        STAFF_START = registerSound("rpgworldmod.staff.start");
+        STAFF_LOOP = registerSound("rpgworldmod.staff.loop");
+        STAFF_STOP = registerSound("rpgworldmod.staff.stop");
         STAFF_EMBER_GEM_CAST = registerSound("rpgworldmod.staff_ember_gem.cast");
         STAFF_ENDER_EYE_CAST = registerSound("rpgworldmod.staff_ender_eye.cast");
         STAFF_HEART_OF_THE_SEA_CAST = registerSound("rpgworldmod.staff_heart_of_the_sea.cast");
         STAFF_NETHER_STAR_CAST = registerSound("rpgworldmod.staff_nether_star.cast");
+        STAFF_EMBER_GEM_FIRE = registerSound("rpgworldmod.staff_ember_gem.fire");
+        STAFF_ENDER_EYE_FIRE = registerSound("rpgworldmod.staff_ender_eye.fire");
+        STAFF_HEART_OF_THE_SEA_FIRE = registerSound("rpgworldmod.staff_heart_of_the_sea.fire");
+        STAFF_NETHER_STAR_FIRE = registerSound("rpgworldmod.staff_nether_star.fire");
     }
 
     private static RegistryObject<SoundEvent> registerSound(String name)

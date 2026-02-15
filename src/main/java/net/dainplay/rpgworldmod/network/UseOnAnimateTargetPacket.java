@@ -82,7 +82,7 @@ public class UseOnAnimateTargetPacket {
 
                         player.level().playSound(null,
                                 player.getX(), player.getY(), player.getZ(),
-                                RPGSounds.LIVING_WOOD_STAFF_STOP.get(),
+                                RPGSounds.STAFF_STOP.get(),
                                 SoundSource.PLAYERS, 1.0F, 1.0F
                         );
 

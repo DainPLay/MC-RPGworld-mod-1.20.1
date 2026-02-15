@@ -1,14 +1,33 @@
 package net.dainplay.rpgworldmod.entity;
 
 import net.dainplay.rpgworldmod.RPGworldMod;
-import net.dainplay.rpgworldmod.entity.custom.*;
+import net.dainplay.rpgworldmod.entity.custom.Bhlee;
+import net.dainplay.rpgworldmod.entity.custom.Bibbit;
+import net.dainplay.rpgworldmod.entity.custom.Bramblefox;
+import net.dainplay.rpgworldmod.entity.custom.Burr_purr;
+import net.dainplay.rpgworldmod.entity.custom.Drillhog;
+import net.dainplay.rpgworldmod.entity.custom.Fireflantern;
+import net.dainplay.rpgworldmod.entity.custom.Gasbass;
+import net.dainplay.rpgworldmod.entity.custom.Mintobat;
+import net.dainplay.rpgworldmod.entity.custom.ModBoat;
+import net.dainplay.rpgworldmod.entity.custom.ModChestBoat;
+import net.dainplay.rpgworldmod.entity.custom.MosquitoSwarm;
+import net.dainplay.rpgworldmod.entity.custom.Mossfront;
+import net.dainplay.rpgworldmod.entity.custom.Platinumfish;
+import net.dainplay.rpgworldmod.entity.custom.Razorleaf;
+import net.dainplay.rpgworldmod.entity.custom.Sheentrout;
+import net.dainplay.rpgworldmod.entity.custom.TireSwingEntity;
 import net.dainplay.rpgworldmod.entity.projectile.BurrSpikeEntity;
 import net.dainplay.rpgworldmod.entity.projectile.EntRieFruitProjectile;
 import net.dainplay.rpgworldmod.entity.projectile.EntRootsEntity;
 import net.dainplay.rpgworldmod.entity.projectile.FairapierSeedEntity;
+import net.dainplay.rpgworldmod.entity.projectile.PrismarineShardEntity;
 import net.dainplay.rpgworldmod.entity.projectile.ProjectruffleArrowEntity;
 import net.dainplay.rpgworldmod.entity.projectile.ThrownDrillSpear;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
@@ -34,6 +53,9 @@ public class ModEntities {
     public static final RegistryObject<EntityType<BurrSpikeEntity>> BURR_SPIKE_PROJECTILE = ENTITY_TYPES.register("burr_spike_projectile",
             () -> EntityType.Builder.of((EntityType.EntityFactory<BurrSpikeEntity>) BurrSpikeEntity::new, MobCategory.MISC)
                     .sized(0.5F, 0.5F).build("burr_spike_projectile"));
+    public static final RegistryObject<EntityType<PrismarineShardEntity>> PRISMARINE_SHARD_PROJECTILE = ENTITY_TYPES.register("prismarine_shard_projectile",
+            () -> EntityType.Builder.of((EntityType.EntityFactory<PrismarineShardEntity>) PrismarineShardEntity::new, MobCategory.MISC)
+                    .sized(0.4F, 0.4F).build("prismarine_shard_projectile"));
     public static final RegistryObject<EntityType<ThrownDrillSpear>> DRILL_SPEAR_PROJECTILE = ENTITY_TYPES.register("drill_spear_projectile",
             () -> EntityType.Builder.of((EntityType.EntityFactory<ThrownDrillSpear>) ThrownDrillSpear::new, MobCategory.MISC)
                     .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20).build("drill_spear_projectile"));
@@ -53,9 +75,6 @@ public class ModEntities {
                             .clientTrackingRange(6)
                             .updateInterval(2)
                             .build("ent_roots"));
-    public static final RegistryObject<EntityType<BurrSpikeEntity>> FLAMES_PROJECTILE = ENTITY_TYPES.register("flames_projectile",
-            () -> EntityType.Builder.of((EntityType.EntityFactory<BurrSpikeEntity>) BurrSpikeEntity::new, MobCategory.MISC)
-                    .sized(0.5F, 0.5F).build("flames_projectile"));
 
     public static final RegistryObject<EntityType<ModBoat>> MODBOAT = ENTITY_TYPES.register("modboat",
             () -> EntityType.Builder.of((EntityType.EntityFactory<ModBoat>) ModBoat::new, MobCategory.MISC).sized(1.375F, 0.5625F).clientTrackingRange(10).build("modboat"));

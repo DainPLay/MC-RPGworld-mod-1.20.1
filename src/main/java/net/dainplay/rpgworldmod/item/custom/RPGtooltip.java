@@ -23,19 +23,17 @@ public interface RPGtooltip {
         if(pStack.getItem() instanceof ManaCostItem item) {
             MutableComponent costText = Component.translatable("tooltip.rpgworldmod.cost_text").withStyle(ChatFormatting.WHITE);
             if (item.usesHealthInsteadOfMana(pStack))
-                    costText.append(Component.translatable("tooltip.rpgworldmod.hp_cost_number", item.getDisplayManaCost(pStack, Minecraft.getInstance().player)).withStyle(ChatFormatting.RED));
+                costText.append(Component.translatable("tooltip.rpgworldmod.hp_cost_number", item.getDisplayManaCost(pStack, Minecraft.getInstance().player)).withStyle(ChatFormatting.RED));
             else
                 costText.append(Component.translatable("tooltip.rpgworldmod.cost_number", item.getDisplayManaCost(pStack, Minecraft.getInstance().player)).withStyle(ChatFormatting.BLUE));
             costText.append(item.getManaCostAdditionalLine(pStack));
             pTooltip.add(costText);
         }
+        // Изменено: теперь кулдаун разбивается на строки
         if(pStack.getItem() instanceof StaffItem item && item.hasCooldown(pStack)) {
-            MutableComponent cooldownText = Component.translatable("tooltip.rpgworldmod.cooldown_text").withStyle(ChatFormatting.WHITE);
-            cooldownText.append(item.getDisplayCooldown(pStack).withStyle(ChatFormatting.DARK_PURPLE));
-            pTooltip.add(cooldownText);
+            pTooltip.addAll(getDisplayCooldownWithLineBreaks(pStack)); // Добавлен вызов нового метода
         }
         if (InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), Minecraft.getInstance().options.keyShift.getKey().getValue())) {
-            // При зажатом Shift: заголовок белый, текст особенностей серый с переносами
             List<Component> featureLines = this.getDisplayFeaturesWithLineBreaks(pStack);
             pTooltip.addAll(featureLines);
             if(hasControls(pStack)) {
@@ -43,7 +41,6 @@ public interface RPGtooltip {
                 pTooltip.addAll(controlsLines);
             }
         } else {
-            // При отжатом Shift: объединяем с переносами при необходимости
             List<Component> combinedLines = this.getHoldShiftTooltipWithLineBreaks();
             pTooltip.addAll(combinedLines);
         }
@@ -78,27 +75,53 @@ public interface RPGtooltip {
         return false;
     }
 
-    /**
-     * Метод для получения списка компонентов с переносами строк,
-     * где заголовок белый, а текст особенностей серый
-     */
+    // Добавлен метод для разбиения кулдауна
+    private List<Component> getDisplayCooldownWithLineBreaks(ItemStack item) {
+        List<Component> result = new ArrayList<>();
+
+        String header = Component.translatable("tooltip.rpgworldmod.cooldown_text").getString();
+        String cooldownText = ((StaffItem) item.getItem()).getDisplayCooldown(item).getString(); // получаем строку кулдауна
+        String fullText = header + " " + cooldownText;
+
+        List<String> wrappedLines = wrapText(fullText, 25);
+
+        if (!wrappedLines.isEmpty()) {
+            String firstLine = wrappedLines.get(0);
+            int headerEndIndex = firstLine.indexOf(header) + header.length();
+            if (headerEndIndex <= firstLine.length()) {
+                String whitePart = firstLine.substring(0, Math.min(headerEndIndex, firstLine.length()));
+                String purplePart = firstLine.substring(Math.min(headerEndIndex, firstLine.length()));
+
+                MutableComponent firstLineComponent = Component.literal(whitePart).withStyle(ChatFormatting.WHITE);
+                if (!purplePart.isEmpty()) {
+                    firstLineComponent.append(Component.literal(purplePart).withStyle(ChatFormatting.DARK_PURPLE));
+                }
+                result.add(firstLineComponent);
+            } else {
+                result.add(Component.literal(firstLine).withStyle(ChatFormatting.WHITE));
+            }
+
+            for (int i = 1; i < wrappedLines.size(); i++) {
+                result.add(Component.literal(wrappedLines.get(i)).withStyle(ChatFormatting.DARK_PURPLE));
+            }
+        }
+
+        return result;
+    }
+
     private List<Component> getDisplayFeaturesWithLineBreaks(ItemStack item) {
         List<Component> result = new ArrayList<>();
 
-        // Получаем текст заголовка и особенностей
         String header = Component.translatable("tooltip.rpgworldmod.features").getString();
         String featuresText = this.getDisplayFeatures(item).getString();
         String fullText = header + " " + featuresText;
 
-        // Разбиваем текст на строки не более 25 символов
         List<String> wrappedLines = wrapText(fullText, 25);
 
-        // Первая строка - заголовок белый
         if (!wrappedLines.isEmpty()) {
             String firstLine = wrappedLines.get(0);
             int featuresEndIndex = firstLine.indexOf(header) + header.length();
             if (featuresEndIndex <= firstLine.length()) {
-                // Разделяем первую строку на две части по цветам
                 String whitePart = firstLine.substring(0, Math.min(featuresEndIndex, firstLine.length()));
                 String grayPart = firstLine.substring(Math.min(featuresEndIndex, firstLine.length()));
 
@@ -122,20 +145,16 @@ public interface RPGtooltip {
     private List<Component> getDisplayControlsWithLineBreaks(ItemStack item) {
         List<Component> result = new ArrayList<>();
 
-        // Получаем текст заголовка и особенностей
         String header = Component.translatable("tooltip.rpgworldmod.controls").getString();
         String controlsText = this.getDisplayControls(item).getString();
         String fullText = header + " " + controlsText;
 
-        // Разбиваем текст на строки не более 25 символов
         List<String> wrappedLines = wrapText(fullText, 25);
 
-        // Первая строка - заголовок белый
         if (!wrappedLines.isEmpty()) {
             String firstLine = wrappedLines.get(0);
             int controlsEndIndex = firstLine.indexOf(header) + header.length();
             if (controlsEndIndex <= firstLine.length()) {
-                // Разделяем первую строку на две части по цветам
                 String whitePart = firstLine.substring(0, Math.min(controlsEndIndex, firstLine.length()));
                 String grayPart = firstLine.substring(Math.min(controlsEndIndex, firstLine.length()));
 
@@ -156,29 +175,22 @@ public interface RPGtooltip {
         return result;
     }
 
-    /**
-     * Метод для получения тултипа "hold shift" с переносами строк
-     */
     private List<Component> getHoldShiftTooltipWithLineBreaks() {
         List<Component> result = new ArrayList<>();
 
-        // Получаем текст для обеих частей
         String featuresText = Component.translatable("tooltip.rpgworldmod.features").getString();
         String holdShiftText = Component.translatable("tooltip.rpgworldmod.hold_shift_for_features",
                 Minecraft.getInstance().options.keyShift.getKey().getDisplayName()).getString();
 
         String fullText = featuresText + " " + holdShiftText;
 
-        // Разбиваем текст на строки не более 25 символов
         List<String> wrappedLines = wrapText(fullText, 25);
 
         if (!wrappedLines.isEmpty()) {
             String firstLine = wrappedLines.get(0);
 
-            // Первая строка может содержать обе части или только первую
             int featuresEndIndex = firstLine.indexOf(featuresText) + featuresText.length();
             if (featuresEndIndex <= firstLine.length()) {
-                // Разделяем первую строку на две части по цветам
                 String whitePart = firstLine.substring(0, Math.min(featuresEndIndex, firstLine.length()));
                 String grayPart = firstLine.substring(Math.min(featuresEndIndex, firstLine.length()));
 
@@ -191,7 +203,6 @@ public interface RPGtooltip {
                 result.add(Component.literal(firstLine).withStyle(ChatFormatting.WHITE));
             }
 
-            // Остальные строки - серые
             for (int i = 1; i < wrappedLines.size(); i++) {
                 result.add(Component.literal(wrappedLines.get(i)).withStyle(ChatFormatting.GRAY));
             }
@@ -200,9 +211,6 @@ public interface RPGtooltip {
         return result;
     }
 
-    /**
-     * Универсальный метод для переноса текста на строки заданной длины
-     */
     private List<String> wrapText(String text, int maxLineLength) {
         List<String> result = new ArrayList<>();
 
@@ -211,27 +219,22 @@ public interface RPGtooltip {
             return result;
         }
 
-        // Разбиваем текст на строки не более maxLineLength символов, не разрывая слова
         int startIndex = 0;
         while (startIndex < text.length()) {
             int endIndex = Math.min(startIndex + maxLineLength, text.length());
 
-            // Если это не конец текста и мы не на границе слова, ищем место для переноса
             if (endIndex < text.length() && !Character.isWhitespace(text.charAt(endIndex))) {
-                // Ищем последний пробел в пределах maxLineLength символов
                 int lastSpace = text.lastIndexOf(' ', endIndex);
                 if (lastSpace > startIndex) {
                     endIndex = lastSpace;
                 }
             }
 
-            // Извлекаем подстроку и обрезаем пробелы в начале/конце
             String line = text.substring(startIndex, endIndex).trim();
             if (!line.isEmpty()) {
                 result.add(line);
             }
 
-            // Пропускаем пробелы в начале следующей строки
             startIndex = endIndex;
             while (startIndex < text.length() && Character.isWhitespace(text.charAt(startIndex))) {
                 startIndex++;

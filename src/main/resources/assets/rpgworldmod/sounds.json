@@ -1099,22 +1099,22 @@
     ],
     "subtitle": "subtitles.rpgworldmod.spell.necromancy_cast"
   },
-  "rpgworldmod.living_wood_staff.start": {
+  "rpgworldmod.staff.start": {
     "sounds": [
-      "rpgworldmod:staff/living_wood_staff_start"
+      "rpgworldmod:staff/staff_start"
     ],
-    "subtitle": "subtitles.rpgworldmod.living_wood_staff.start"
+    "subtitle": "subtitles.rpgworldmod.staff.start"
   },
-  "rpgworldmod.living_wood_staff.loop": {
+  "rpgworldmod.staff.loop": {
     "sounds": [
-      "rpgworldmod:staff/living_wood_staff_loop"
+      "rpgworldmod:staff/staff_loop"
     ]
   },
-  "rpgworldmod.living_wood_staff.stop": {
+  "rpgworldmod.staff.stop": {
     "sounds": [
-      "rpgworldmod:staff/living_wood_staff_stop"
+      "rpgworldmod:staff/staff_stop"
     ],
-    "subtitle": "subtitles.rpgworldmod.living_wood_staff.stop"
+    "subtitle": "subtitles.rpgworldmod.staff.stop"
   },
   "rpgworldmod.staff_nether_star.cast": {
     "sounds": [
@@ -1147,5 +1147,55 @@
         "name": "entity.ender_eye.death"
       }
     ]
+  },
+  "rpgworldmod.staff_nether_star.fire": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.wither.shoot"
+      }
+    ]
+  },
+  "rpgworldmod.staff_ember_gem.fire": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.blaze.shoot"
+      }
+    ]
+  },
+  "rpgworldmod.staff_heart_of_the_sea.fire": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.trident.throw"
+      }
+    ]
+  },
+  "rpgworldmod.staff_ender_eye.fire": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.ender_dragon.shoot"
+      }
+    ]
+  },
+  "rpgworldmod.prismarine_shard_hit": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.trident.hit"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.prismarine_shard_hit"
+  },
+  "rpgworldmod.prismarine_shard_miss": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.trident.hit"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.prismarine_shard_miss"
   }
 }

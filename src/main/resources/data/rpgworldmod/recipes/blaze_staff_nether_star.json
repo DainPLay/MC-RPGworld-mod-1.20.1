@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " LG",
+    " LL",
+    "L  "
+  ],
+  "key": {
+    "L": {
+      "tag": "forge:rods/blaze"
+    },
+    "G": {
+      "item": "minecraft:nether_star"
+    }
+  },
+  "result": {
+    "item": "rpgworldmod:blaze_staff",
+    "nbt": "{Gem:\"nether_star\"}"
+  }
+}

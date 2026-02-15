@@ -137,7 +137,8 @@ public class ItemInHandLayerMixin {
 			poseStack.popPose();
 			ci.cancel();
 		}
-		if (itemStack.getItem() instanceof StaffItem staffItem && entity instanceof Player player && staffItem.isOffCooldown(itemStack, player)) {
+		if (itemStack.getItem() instanceof StaffItem staffItem && entity instanceof Player player) {
+			if (itemStack.hasTag() && itemStack.getTag().contains("onCooldown")) return;
 			poseStack.pushPose();
 
 			((ArmedModel) iihl.getParentModel()).translateToHand(arm, poseStack);

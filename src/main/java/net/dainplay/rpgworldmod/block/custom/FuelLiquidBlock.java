@@ -37,5 +37,8 @@ public class FuelLiquidBlock extends LiquidBlock {
                 livingEntity.addEffect(new MobEffectInstance(ModEffects.FUELING.get(), 280, 0));
             }
         }
+        if(entity.isOnFire()) {
+            level.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
+        }
     }
 }

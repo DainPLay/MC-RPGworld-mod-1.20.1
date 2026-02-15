@@ -8,7 +8,6 @@ import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -113,7 +112,7 @@ public class LivingWoodStaffItem extends StaffItem implements ChooseAnimateTarge
 			// Воспроизводим звук начала использования для всех рядом
 			level.playSound(null,
 					player.getX(), player.getY(), player.getZ(),
-					RPGSounds.LIVING_WOOD_STAFF_START.get(),
+					RPGSounds.STAFF_START.get(),
 					SoundSource.PLAYERS, 1.0F, 1.0F
 			);
 
@@ -143,7 +142,7 @@ public class LivingWoodStaffItem extends StaffItem implements ChooseAnimateTarge
 
 				level.playSound(null,
 						player.getX(), player.getY(), player.getZ(),
-						RPGSounds.LIVING_WOOD_STAFF_STOP.get(),
+						RPGSounds.STAFF_STOP.get(),
 						SoundSource.PLAYERS, 1.0F, 1.0F
 				);
 			}

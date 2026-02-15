@@ -1,0 +1,6 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "rpgworldmod:item/blaze_staff_ender_eye"
+  }
+}

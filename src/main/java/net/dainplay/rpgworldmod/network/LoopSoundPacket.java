@@ -2,7 +2,7 @@ package net.dainplay.rpgworldmod.network;
 
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
-import net.dainplay.rpgworldmod.item.custom.LivingWoodStaffItem;
+import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.dainplay.rpgworldmod.sounds.EmberScrollSound;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.client.Minecraft;
@@ -57,8 +57,8 @@ public class LoopSoundPacket {
                             if (this.itemStack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0)
                                 soundEvent = RPGSounds.SPELL_NECROMANCY_LOOP.get();
                         }
-                        if(this.itemStack.getItem() instanceof LivingWoodStaffItem) {
-                            soundEvent = RPGSounds.LIVING_WOOD_STAFF_LOOP.get();
+                        if(this.itemStack.getItem() instanceof StaffItem) {
+                            soundEvent = RPGSounds.STAFF_LOOP.get();
                         }
                         EmberScrollSound sound = new EmberScrollSound(player, this.itemStack, soundEvent);
                         Minecraft.getInstance().getSoundManager().play(sound);

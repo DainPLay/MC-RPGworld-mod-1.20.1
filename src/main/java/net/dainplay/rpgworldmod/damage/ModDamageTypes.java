@@ -16,6 +16,7 @@ public class ModDamageTypes {
     public static final ResourceKey<DamageType> WIDOWEED = create("widoweed");
     public static final ResourceKey<DamageType> FAIRAPIER_SEED = create("fairapier_seed");
     public static final ResourceKey<DamageType> BURR_SPIKE = create("burr_spike");
+    public static final ResourceKey<DamageType> PRISMARINE_SHARD = create("prismarine_shard");
     public static final ResourceKey<DamageType> SPIKY_IVY = create("spiky_ivy");
     public static final ResourceKey<DamageType> MOSSIOSIS = create("mossiosis");
     public static final ResourceKey<DamageType> MOSQUITOS = create("mosquitos");
@@ -47,6 +48,7 @@ public class ModDamageTypes {
         context.register(WIDOWEED, new DamageType("widoweed", 0.0F));
         context.register(FAIRAPIER_SEED, new DamageType("fairapier_seed", 0.0F));
         context.register(BURR_SPIKE, new DamageType("burr_spike", 0.0F));
+        context.register(PRISMARINE_SHARD, new DamageType("prismarine_shard", 0.0F));
         context.register(SPIKY_IVY, new DamageType("spiky_ivy", 0.0F));
         context.register(MOSSIOSIS, new DamageType("mossiosis", 0.0F));
         context.register(MOSQUITOS, new DamageType("mosquitos", 0.0F));
