@@ -23,6 +23,8 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -77,6 +79,8 @@ public class FlintAxeItem extends AxeItem implements RPGtooltip {
 
 	@Override
 	public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-		RPGappendHoverText(pStack,pLevel,pTooltip,pFlag);
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+        ClientRPGtooltipHandler.appendHoverText(pStack, pLevel, pTooltip, pFlag, this)
+    );
 	}
 }

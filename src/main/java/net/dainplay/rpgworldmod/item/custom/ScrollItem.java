@@ -14,6 +14,8 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -44,7 +46,9 @@ public class ScrollItem extends Item implements RPGtooltip, ManaCostItem, Orbiti
 				|| pStack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0
 				|| pStack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0
 				|| pStack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0)
-			RPGappendHoverText(pStack, pLevel, pTooltip, pFlag);
+			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+					ClientRPGtooltipHandler.appendHoverText(pStack, pLevel, pTooltip, pFlag, this)
+			);
 		else {
 			pTooltip.add(this.getDisplayName(pStack).withStyle(ChatFormatting.WHITE));
 		}

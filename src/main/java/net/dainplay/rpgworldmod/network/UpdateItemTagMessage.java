@@ -36,23 +36,13 @@ public class UpdateItemTagMessage {
     // Метод для обработки пакета
     public void handle(Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() -> {
-            Player player = null;
-
-            // Получаем игрока в зависимости от стороны
-            if (context.get().getDirection().getReceptionSide() == LogicalSide.CLIENT) {
-                player = net.minecraft.client.Minecraft.getInstance().player;
-            } else {
-                player = context.get().getSender();
-            }
-
+            Player player = context.get().getSender(); // только на сервере
             if (player != null && player.level() != null) {
                 Entity holder = player.level().getEntity(this.entityId);
                 if (holder instanceof LivingEntity living) {
-                    // Проверяем, какой предмет в руках соответствует отправленному
                     for (InteractionHand hand : InteractionHand.values()) {
                         ItemStack heldStack = living.getItemInHand(hand);
-                        if (heldStack.equals(this.itemStackFrom)) {
-                            // Обновляем теги предмета
+                        if (ItemStack.isSameItemSameTags(heldStack, this.itemStackFrom)) {
                             heldStack.setTag(this.itemStackFrom.getTag() != null ?
                                     this.itemStackFrom.getTag().copy() : null);
                             break;

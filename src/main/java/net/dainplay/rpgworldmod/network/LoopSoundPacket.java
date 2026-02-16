@@ -1,20 +1,11 @@
 package net.dainplay.rpgworldmod.network;
 
-import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
-import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
-import net.dainplay.rpgworldmod.item.custom.StaffItem;
-import net.dainplay.rpgworldmod.sounds.EmberScrollSound;
-import net.dainplay.rpgworldmod.sounds.RPGSounds;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import java.util.function.Supplier;
 
 public class LoopSoundPacket {
@@ -39,57 +30,10 @@ public class LoopSoundPacket {
     }
 
     public void handle(Supplier<NetworkEvent.Context> context) {
-        context.get().enqueueWork(() -> {
-            // Только на клиенте
-            if (Minecraft.getInstance().level != null) {
-                Player player = (Player) Minecraft.getInstance().level.getEntity(this.playerId);
-                if (player != null) {
-                    if (this.start) {
-                        // Запускаем зацикленный звук на клиенте
-                        SoundEvent soundEvent = RPGSounds.SPELL_DESTRUCTION_EMBER_LOOP.get();
-                        if(this.itemStack.getItem() instanceof EmberScrollItem) {
-                            if (this.itemStack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0)
-                                soundEvent = RPGSounds.SPELL_RESTORATION_LOOP.get();
-                            if (this.itemStack.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0)
-                                soundEvent = RPGSounds.SPELL_ALTERATION_LOOP.get();
-                            if (this.itemStack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0)
-                                soundEvent = RPGSounds.SPELL_ILLUSION_LOOP.get();
-                            if (this.itemStack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0)
-                                soundEvent = RPGSounds.SPELL_NECROMANCY_LOOP.get();
-                        }
-                        if(this.itemStack.getItem() instanceof StaffItem) {
-                            soundEvent = RPGSounds.STAFF_LOOP.get();
-                        }
-                        EmberScrollSound sound = new EmberScrollSound(player, this.itemStack, soundEvent);
-                        Minecraft.getInstance().getSoundManager().play(sound);
-                        // Сохраняем звук для возможности остановки
-                        EmberScrollSoundManager.addSound(player.getUUID(), sound);
-                    } else {
-                        // Останавливаем зацикленный звук на клиенте
-                        EmberScrollSoundManager.stopSound(player.getUUID());
-                    }
-                }
-            }
-        });
+        context.get().enqueueWork(() ->
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+                        ClientPacketHandlers.handleLoopSound(playerId, start, itemStack))
+        );
         context.get().setPacketHandled(true);
-    }
-
-    // Менеджер для управления звуками на клиенте
-    public static class EmberScrollSoundManager {
-        private static final Map<UUID, EmberScrollSound> activeSounds = new HashMap<>();
-
-        public static void addSound(UUID playerId, EmberScrollSound sound) {
-            // Останавливаем предыдущий звук, если он есть
-            stopSound(playerId);
-            activeSounds.put(playerId, sound);
-        }
-
-        public static void stopSound(UUID playerId) {
-            EmberScrollSound sound = activeSounds.get(playerId);
-            if (sound != null) {
-                sound.stop();
-                activeSounds.remove(playerId);
-            }
-        }
     }
 }

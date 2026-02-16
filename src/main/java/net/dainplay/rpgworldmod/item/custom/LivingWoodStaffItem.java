@@ -5,13 +5,16 @@ import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.network.LoopSoundPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
+import net.dainplay.rpgworldmod.util.ModTags;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -66,7 +69,7 @@ public class LivingWoodStaffItem extends StaffItem implements ChooseAnimateTarge
 			if (instance == null) return;
 			int startTick = instance.startTime;
 			int endTick = instance.endTime;
-			int currentTick = Minecraft.getInstance().player.getCooldowns().tickCount;
+			int currentTick = player.getCooldowns().tickCount;
 			if (endTick - currentTick <= activeRechargeLevel) return;
 			cooldownsMap.remove(pStack.getItem());
 			cooldownsMap.put(pStack.getItem(), new ItemCooldowns.CooldownInstance(startTick, endTick - activeRechargeLevel));
@@ -85,8 +88,8 @@ public class LivingWoodStaffItem extends StaffItem implements ChooseAnimateTarge
 
 
 		if (player.getCooldowns().getCooldownPercent(itemstack.getItem(), 0.0F) > 0.0F) {
-			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = Minecraft.getInstance().player.getCooldowns().cooldowns;
-			int currentTick = Minecraft.getInstance().player.getCooldowns().tickCount;
+			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = player.getCooldowns().cooldowns;
+			int currentTick = player.getCooldowns().tickCount;
 			ItemCooldowns.CooldownInstance instance = cooldownsMap.get(itemstack.getItem());
 			if (instance != null) {
 				int startTick = instance.startTime;
@@ -97,12 +100,12 @@ public class LivingWoodStaffItem extends StaffItem implements ChooseAnimateTarge
 
 		if (doubleExposureLevel > 0) {
 			if (player.getCooldowns().getCooldownPercent(itemstack.getItem(), 0.0F) > 0.0F) {
-				Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = Minecraft.getInstance().player.getCooldowns().cooldowns;
-				int currentTick = Minecraft.getInstance().player.getCooldowns().tickCount;
+				Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = player.getCooldowns().cooldowns;
+				int currentTick = player.getCooldowns().tickCount;
 				ItemCooldowns.CooldownInstance instance = cooldownsMap.get(itemstack.getItem());
 				if (instance != null) {
 					int endTick = instance.endTime;
-					if (endTick - currentTick > getCooldown(itemstack) && activeRechargeLevel <= 0)
+					if (endTick - currentTick > getMaxCooldown(itemstack) && activeRechargeLevel <= 0)
 						return InteractionResultHolder.pass(itemstack);
 				}
 			}
@@ -152,14 +155,14 @@ public class LivingWoodStaffItem extends StaffItem implements ChooseAnimateTarge
 
 	public void cast(Player player, @Nullable LivingEntity target, ItemStack item) {
 		if (item.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get()) > 0 && player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F) {
-			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = Minecraft.getInstance().player.getCooldowns().cooldowns;
+			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = player.getCooldowns().cooldowns;
 			ItemCooldowns.CooldownInstance instance = cooldownsMap.get(item.getItem());
 			if (instance != null) {
 				int endTick = instance.endTime;
-				int currentTick = Minecraft.getInstance().player.getCooldowns().tickCount;
-				player.getCooldowns().addCooldown(this, endTick - currentTick + getCooldown(item));
+				int currentTick = player.getCooldowns().tickCount;
+				player.getCooldowns().addCooldown(this, endTick - currentTick + getUseCooldown(item)*2);
 			}
-		} else player.getCooldowns().addCooldown(this, getCooldown(item));
+		} else player.getCooldowns().addCooldown(this, getUseCooldown(item));
 		player.swing(player.getUsedItemHand());
 
 		switch (getGemType(item)) {
@@ -236,17 +239,22 @@ public class LivingWoodStaffItem extends StaffItem implements ChooseAnimateTarge
 	}
 
 	@Override
-	public Boolean hasControls(ItemStack item) {
+	public boolean hasControls(ItemStack item) {
 		return true;
 	}
 
 	@Override
-	public int getCooldown(ItemStack item) {
+	public int getMaxCooldown(ItemStack item) {
 		return 300;
+	}
+
+	public boolean isValidRepairItem(ItemStack pToRepair, ItemStack pRepair) {
+		return pRepair.is(ModTags.Items.LIVING_WOOD_LOGS) || super.isValidRepairItem(pToRepair, pRepair);
 	}
 
 	@Override
 	public boolean highlightTarget(ItemStack stack, Player player) {
 		return isOffCooldown(stack, player) && player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUseItem() == stack;
 	}
+
 }

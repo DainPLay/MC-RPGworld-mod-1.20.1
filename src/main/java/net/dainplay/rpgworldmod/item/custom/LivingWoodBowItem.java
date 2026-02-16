@@ -34,6 +34,8 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -327,7 +329,9 @@ public class LivingWoodBowItem extends BowItem implements RPGtooltip {
 
 	@Override
 	public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-		RPGappendHoverText(pStack, pLevel, pTooltip, pFlag);
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+				ClientRPGtooltipHandler.appendHoverText(pStack, pLevel, pTooltip, pFlag, this)
+		);
 	}
 
 	@Override

@@ -105,7 +105,6 @@ public class RPGworldMod
     public static final DeferredRegister<SoundEvent> SOUND_EVENT_REGISTER = DeferredRegister.create(Registries.SOUND_EVENT, MOD_ID);
     public static final Logger LOGGER = LogManager.getLogger();
     public RPGworldMod() {
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> RPGworldClient::new);
 
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModMessages.register();

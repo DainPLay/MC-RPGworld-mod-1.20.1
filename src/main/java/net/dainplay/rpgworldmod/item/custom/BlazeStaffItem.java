@@ -1,7 +1,6 @@
 package net.dainplay.rpgworldmod.item.custom;
 
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
-import net.dainplay.rpgworldmod.entity.client.render.PrismarineShardRenderer;
 import net.dainplay.rpgworldmod.entity.projectile.PrismarineShardEntity;
 import net.dainplay.rpgworldmod.network.LoopSoundPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
@@ -25,6 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.Tags;
 
 import java.util.Map;
 
@@ -40,7 +40,7 @@ public class BlazeStaffItem extends StaffItem implements ChooseAnimateTargetItem
 	}
 
 	@Override
-	public Boolean hasControls(ItemStack item) {
+	public boolean hasControls(ItemStack item) {
 		return true;
 	}
 
@@ -65,7 +65,7 @@ public class BlazeStaffItem extends StaffItem implements ChooseAnimateTargetItem
 			if (instance == null) return;
 			int startTick = instance.startTime;
 			int endTick = instance.endTime;
-			int currentTick = Minecraft.getInstance().player.getCooldowns().tickCount;
+			int currentTick = player.getCooldowns().tickCount;
 			if (endTick - currentTick <= activeRechargeLevel) return;
 			cooldownsMap.remove(pStack.getItem());
 			cooldownsMap.put(pStack.getItem(), new ItemCooldowns.CooldownInstance(startTick, endTick - activeRechargeLevel));
@@ -84,8 +84,8 @@ public class BlazeStaffItem extends StaffItem implements ChooseAnimateTargetItem
 
 
 		if (player.getCooldowns().getCooldownPercent(itemstack.getItem(), 0.0F) > 0.0F) {
-			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = Minecraft.getInstance().player.getCooldowns().cooldowns;
-			int currentTick = Minecraft.getInstance().player.getCooldowns().tickCount;
+			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = player.getCooldowns().cooldowns;
+			int currentTick = player.getCooldowns().tickCount;
 			ItemCooldowns.CooldownInstance instance = cooldownsMap.get(itemstack.getItem());
 			if (instance != null) {
 				int startTick = instance.startTime;
@@ -96,12 +96,12 @@ public class BlazeStaffItem extends StaffItem implements ChooseAnimateTargetItem
 
 		if (doubleExposureLevel > 0) {
 			if (player.getCooldowns().getCooldownPercent(itemstack.getItem(), 0.0F) > 0.0F) {
-				Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = Minecraft.getInstance().player.getCooldowns().cooldowns;
-				int currentTick = Minecraft.getInstance().player.getCooldowns().tickCount;
+				Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = player.getCooldowns().cooldowns;
+				int currentTick = player.getCooldowns().tickCount;
 				ItemCooldowns.CooldownInstance instance = cooldownsMap.get(itemstack.getItem());
 				if (instance != null) {
 					int endTick = instance.endTime;
-					if (endTick - currentTick > getCooldown(itemstack)*2 - getProjectileCooldown(itemstack) && activeRechargeLevel <= 0)
+					if (endTick - currentTick > getMaxCooldown(itemstack)*3 - getUseCooldown(itemstack)*2 && activeRechargeLevel <= 0)
 						return InteractionResultHolder.pass(itemstack);
 				}
 			}
@@ -153,15 +153,18 @@ public class BlazeStaffItem extends StaffItem implements ChooseAnimateTargetItem
 		if (player.level().isClientSide) return;
 
 		if (player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F) {
-			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = Minecraft.getInstance().player.getCooldowns().cooldowns;
+			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = player.getCooldowns().cooldowns;
 			ItemCooldowns.CooldownInstance instance = cooldownsMap.get(item.getItem());
 			if (instance != null) {
 				int endTick = instance.endTime;
-				int currentTick = Minecraft.getInstance().player.getCooldowns().tickCount;
-				player.getCooldowns().addCooldown(this, endTick - currentTick + getProjectileCooldown(item));
+				int currentTick = player.getCooldowns().tickCount;
+				int amount = endTick - currentTick;
+				int addition = getUseCooldown(item);
+				if(amount+getUseCooldown(item) >= getMaxCooldown(item) && item.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get()) > 0) addition *= 2;
+				player.getCooldowns().addCooldown(this, amount + addition);
 			}
 		} else  {
-			player.getCooldowns().addCooldown(this, getProjectileCooldown(item));
+			player.getCooldowns().addCooldown(this, getUseCooldown(item));
 		}
 		player.swing(player.getUsedItemHand());
 
@@ -249,11 +252,12 @@ public class BlazeStaffItem extends StaffItem implements ChooseAnimateTargetItem
 	}
 
 	@Override
-	public int getCooldown(ItemStack item) {
+	public int getMaxCooldown(ItemStack item) {
 		return 300;
 	}
 
-	public int getProjectileCooldown(ItemStack stack) {
+	@Override
+	public int getUseCooldown(ItemStack stack) {
 		if (getGemType(stack) == GemType.EMBER_GEM)
 			return 60;
 		else if (getGemType(stack) == GemType.HEART_OF_THE_SEA)
@@ -263,7 +267,7 @@ public class BlazeStaffItem extends StaffItem implements ChooseAnimateTargetItem
 		else if (getGemType(stack) == GemType.ENDER_EYE)
 			return 200;
 		else
-			return getCooldown(stack);
+			return getMaxCooldown(stack);
 	}
 
 	@Override
@@ -292,21 +296,25 @@ public class BlazeStaffItem extends StaffItem implements ChooseAnimateTargetItem
 	@Override
 	public boolean isOffCooldown(ItemStack item, Player player) {
 		if(item.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get())>0 && player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F) {
-			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = Minecraft.getInstance().player.getCooldowns().cooldowns;
+			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = player.getCooldowns().cooldowns;
 			ItemCooldowns.CooldownInstance instance = cooldownsMap.get(item.getItem());
 			if (instance == null) return true;
 			int endTick = instance.endTime;
-			int currentTick = Minecraft.getInstance().player.getCooldowns().tickCount;
-			return endTick - currentTick <= getCooldown(item)*2 - getProjectileCooldown(item);
+			int currentTick = player.getCooldowns().tickCount;
+			return endTick - currentTick <= getMaxCooldown(item)*3 - getUseCooldown(item)*2;
 		}
 		else if(player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F){
-			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = Minecraft.getInstance().player.getCooldowns().cooldowns;
+			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = player.getCooldowns().cooldowns;
 			ItemCooldowns.CooldownInstance instance = cooldownsMap.get(item.getItem());
 			if (instance == null) return true;
 			int endTick = instance.endTime;
-			int currentTick = Minecraft.getInstance().player.getCooldowns().tickCount;
-			return endTick - currentTick <= getCooldown(item) - getProjectileCooldown(item);
+			int currentTick = player.getCooldowns().tickCount;
+			return endTick - currentTick <= getMaxCooldown(item) - getUseCooldown(item);
 		}
 		return !(player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F);
+	}
+
+	public boolean isValidRepairItem(ItemStack pToRepair, ItemStack pRepair) {
+		return pRepair.is(Tags.Items.RODS_BLAZE) || super.isValidRepairItem(pToRepair, pRepair);
 	}
 }

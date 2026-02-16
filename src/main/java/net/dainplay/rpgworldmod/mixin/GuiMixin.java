@@ -1,5 +1,6 @@
 package net.dainplay.rpgworldmod.mixin;
 
+import net.dainplay.rpgworldmod.gui.ChargesOverlayEventHandler;
 import net.dainplay.rpgworldmod.gui.ManaOverlayEventHandler;
 import net.dainplay.rpgworldmod.gui.HealthOverlayEventHandler;
 import net.dainplay.rpgworldmod.network.ClientMaxManaData;
@@ -21,8 +22,6 @@ public abstract class GuiMixin {
 		HealthOverlayEventHandler.setRenderHeartY(pY);
 		HealthOverlayEventHandler.setRegen(pOffsetHeartIndex);
 	}
-
-
 
 	@Inject(
 			method = "renderHearts",

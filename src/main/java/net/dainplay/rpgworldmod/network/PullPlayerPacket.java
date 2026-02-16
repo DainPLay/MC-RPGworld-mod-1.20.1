@@ -1,8 +1,9 @@
 package net.dainplay.rpgworldmod.network;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -30,23 +31,10 @@ public class PullPlayerPacket {
 
     public void handle(Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
-        context.enqueueWork(() -> {
-            // Выполняем на клиенте
-            if (context.getDirection().getReceptionSide().isClient()) {
-                Minecraft minecraft = Minecraft.getInstance();
-                if (minecraft.level != null) {
-                    // Если это текущий игрок
-                    if (minecraft.player != null && minecraft.player.getId() == playerId) {
-                        // Применяем движение к локальному игроку
-                        minecraft.player.setDeltaMovement(
-                            minecraft.player.getDeltaMovement().add(motion)
-                        );
-                        // Сбрасываем высоту падения
-                        minecraft.player.fallDistance = 0;
-                    }
-                }
-            }
-        });
+        context.enqueueWork(() ->
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+                        ClientPacketHandlers.handlePullPlayer(motion, playerId))
+        );
         context.setPacketHandled(true);
     }
 }

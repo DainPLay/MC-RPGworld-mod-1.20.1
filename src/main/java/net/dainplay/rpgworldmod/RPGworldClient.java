@@ -8,6 +8,7 @@ import net.dainplay.rpgworldmod.entity.client.render.CurioLayers;
 import net.dainplay.rpgworldmod.entity.client.render.CurioRenderers;
 import net.dainplay.rpgworldmod.entity.client.render.SkirtArmorLayer;
 import net.dainplay.rpgworldmod.fluid.ModFluids;
+import net.dainplay.rpgworldmod.gui.ChargesOverlayEventHandler;
 import net.dainplay.rpgworldmod.gui.HealthOverlayEventHandler;
 import net.dainplay.rpgworldmod.gui.ManaOverlayEventHandler;
 import net.dainplay.rpgworldmod.item.ModItems;
@@ -54,23 +55,21 @@ import java.util.Map;
 @Mod.EventBusSubscriber(modid = RPGworldMod.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class RPGworldClient {
 
-    public RPGworldClient() {
-        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
-        modBus.addListener(this::onRegisterLayerDefinitions);
-        modBus.addListener(this::guiSetup);
-        modBus.addListener(this::bakeModels);
-    }
-
-    public void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+    @SubscribeEvent
+    public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         CurioLayers.register(event);
     }
-    public void guiSetup(final RegisterGuiOverlaysEvent event) {
+
+    @SubscribeEvent
+    public static void guiSetup(final RegisterGuiOverlaysEvent event) {
         //Register Armor Renderer for events
         event.registerAbove(VanillaGuiOverlay.PLAYER_HEALTH.id(),RPGworldMod.MOD_ID+"_hearts_overlay", new HealthOverlayEventHandler());
         event.registerAbove(VanillaGuiOverlay.FOOD_LEVEL.id(),RPGworldMod.MOD_ID+"_mana_overlay", new ManaOverlayEventHandler());
+        event.registerAbove(VanillaGuiOverlay.CROSSHAIR.id(),RPGworldMod.MOD_ID+"_crosshair_overlay", new ChargesOverlayEventHandler());
     }
 
-    private void bakeModels(final ModelEvent.ModifyBakingResult e) {
+    @SubscribeEvent
+    public static void bakeModels(final ModelEvent.ModifyBakingResult e) {
 
         Map<ResourceLocation, BakedModel> map = e.getModels();
         BakedModel alterationScrollModel = null;

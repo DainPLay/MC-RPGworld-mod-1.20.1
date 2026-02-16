@@ -7,7 +7,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.ArrayList;
@@ -15,7 +17,7 @@ import java.util.ArrayList;
 public class BurnoutHandler {
 
 	@SubscribeEvent
-	public static void onLivingDamage(LivingDamageEvent event) {
+	public static void onLivingAttack(LivingAttackEvent event) {
 		if (!event.getEntity().isSpectator() && (event.getEntity()).hasEffect(ModEffects.BURNOUT.get())) {
 			if (event.getSource().getEntity() instanceof LivingEntity damageDealer) {
 				int amp = event.getEntity().getEffect(ModEffects.BURNOUT.get()).getAmplifier();
@@ -26,6 +28,7 @@ public class BurnoutHandler {
 				if (event.getEntity().getMaxHealth() <= amp + 1) {
 					event.getEntity().hurt(ModDamageTypes.getDamageSource(event.getEntity().level(), ModDamageTypes.NECROSIS), Float.MAX_VALUE);
 				} else {
+					event.getEntity().hurt(ModDamageTypes.getDamageSource(event.getEntity().level(), ModDamageTypes.NECROSIS), amp + 1);
 					if (event.getEntity().hasEffect(ModEffects.NECROSIS.get()))
 						amp += 1 + event.getEntity().getEffect(ModEffects.NECROSIS.get()).getAmplifier();
 					MobEffectInstance necrosis = new MobEffectInstance(ModEffects.NECROSIS.get(), 1200, amp);
@@ -37,7 +40,15 @@ public class BurnoutHandler {
 							SoundSource.PLAYERS, 1.0F, 1.0F
 					);
 				}
-			} else {
+				event.setCanceled(true);
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onLivingDamage(LivingDamageEvent event) {
+		if (!event.getEntity().isSpectator() && (event.getEntity()).hasEffect(ModEffects.BURNOUT.get())) {
+			if (!(event.getSource().getEntity() instanceof LivingEntity)) {
 				int healthDifference = Mth.ceil(event.getEntity().getHealth()) - Mth.ceil(event.getEntity().getHealth() - event.getAmount());
 				if (healthDifference > 0) {
 					MobEffectInstance burnoutEffect = event.getEntity().getEffect(ModEffects.BURNOUT.get());

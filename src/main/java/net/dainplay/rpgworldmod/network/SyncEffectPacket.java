@@ -1,12 +1,8 @@
 package net.dainplay.rpgworldmod.network;
 
-import net.dainplay.rpgworldmod.RPGworldMod;
-import net.dainplay.rpgworldmod.effect.ModEffects;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -40,25 +36,10 @@ public class SyncEffectPacket {
 
     public void handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context context = supplier.get();
-        context.enqueueWork(() -> {
-            if (Minecraft.getInstance().level != null) {
-                Entity entity = Minecraft.getInstance().level.getEntity(entityId);
-                if (entity instanceof LivingEntity livingEntity) {
-                    if (hasEffect) {
-                        livingEntity.addEffect(new MobEffectInstance(
-                            ModEffects.HAPPINESS.get(),
-                            duration,
-                            amplifier,
-                            false, // ambient
-                            false, // visible
-                            true   // showIcon - важно для клиента
-                        ));
-                    } else {
-                        livingEntity.removeEffect(ModEffects.HAPPINESS.get());
-                    }
-                }
-            }
-        });
+        context.enqueueWork(() ->
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+                        ClientPacketHandlers.handleSyncEffect(entityId, hasEffect, amplifier, duration))
+        );
         context.setPacketHandled(true);
     }
 }

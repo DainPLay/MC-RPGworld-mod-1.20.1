@@ -89,7 +89,7 @@
   "item.rpgworldmod.blaze_staff.heart_of_the_sea": "Prismarine Shard Staff",
   "item.rpgworldmod.blaze_staff.heart_of_the_sea.desc": "___",
   "item.rpgworldmod.blaze_staff.heart_of_the_sea.features": "Launches several sharp prismarine shards.",
-  "item.rpgworldmod.blaze_staff.heart_of_the_sea.controls": "Press [%1$s] while using to launch a projectile in the direction you are looking.",
+  "item.rpgworldmod.blaze_staff.heart_of_the_sea.controls": "Press [%1$s] while using to launch projectiles in the direction you are looking.",
   "item.rpgworldmod.blaze_staff.heart_of_the_sea.cooldown": "+5 seconds up to 15 seconds",
   "item.rpgworldmod.blaze_staff.nether_star": "Wither Skull Staff",
   "item.rpgworldmod.blaze_staff.nether_star.desc": "☠",

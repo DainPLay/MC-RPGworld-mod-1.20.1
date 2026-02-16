@@ -15,7 +15,9 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -30,7 +32,9 @@ public class LivingWoodArmorItem extends ArmorItem implements RPGtooltip {
 
 	@Override
 	public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-		RPGappendHoverText(pStack, pLevel, pTooltip, pFlag);
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+				ClientRPGtooltipHandler.appendHoverText(pStack, pLevel, pTooltip, pFlag, this)
+		);
 	}
 
 	@Override

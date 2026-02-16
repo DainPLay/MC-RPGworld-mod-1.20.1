@@ -15,6 +15,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.Vanishable;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -70,7 +72,9 @@ public class StaffItem extends Item implements RPGtooltip, Vanishable {
 
 	@Override
 	public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-		RPGappendHoverText(pStack, pLevel, pTooltip, pFlag);
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+				ClientRPGtooltipHandler.appendHoverText(pStack, pLevel, pTooltip, pFlag, this)
+		);
 	}
 
 	public static ItemStack createForGemType(ItemStack itemStack, GemType gemType) {
@@ -106,8 +110,12 @@ public class StaffItem extends Item implements RPGtooltip, Vanishable {
 		return true;
 	}
 
-	public int getCooldown(ItemStack item) {
+	public int getMaxCooldown(ItemStack item) {
 		return 15;
+	}
+
+	public int getUseCooldown(ItemStack item) {
+		return getMaxCooldown(item);
 	}
 
 	public PoseStack getUsingPose(ItemStack stack, Player player, PoseStack poseStack, float flip) {
@@ -187,7 +195,7 @@ public class StaffItem extends Item implements RPGtooltip, Vanishable {
 	}
 
 	public float getY(ItemStack stack, Entity entity) {
-		return 0.5F;
+		return 0.6F;
 	}
 
 	public float getZ(ItemStack stack, Entity entity) {
@@ -208,17 +216,15 @@ public class StaffItem extends Item implements RPGtooltip, Vanishable {
 	}
 
 	public boolean isOffCooldown(ItemStack item, Player player) {
-		if(item.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get())>0 && player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F) {
-				Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = Minecraft.getInstance().player.getCooldowns().cooldowns;
-				ItemCooldowns.CooldownInstance instance = cooldownsMap.get(item.getItem());
-				if (instance == null) return true;
-				int endTick = instance.endTime;
-				int currentTick = Minecraft.getInstance().player.getCooldowns().tickCount;
-				return endTick - currentTick <= getCooldown(item);
-		}
-		else return !(player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F);
+		if (item.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get()) > 0 && player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F) {
+			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = player.getCooldowns().cooldowns;
+			ItemCooldowns.CooldownInstance instance = cooldownsMap.get(item.getItem());
+			if (instance == null) return true;
+			int endTick = instance.endTime;
+			int currentTick = player.getCooldowns().tickCount;
+			return endTick - currentTick <= getMaxCooldown(item);
+		} else return !(player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F);
 	}
-
 
 
 	@Override

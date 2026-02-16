@@ -89,7 +89,7 @@
   "item.rpgworldmod.blaze_staff.heart_of_the_sea": "Посох призмариновой дроби",
   "item.rpgworldmod.blaze_staff.heart_of_the_sea.desc": "___",
   "item.rpgworldmod.blaze_staff.heart_of_the_sea.features": "Запускает несколько острых призмариновых осколков.",
-  "item.rpgworldmod.blaze_staff.heart_of_the_sea.controls": "Нажмите [%1$s] во время использования, чтобы запустить снаряд в направлении взгляда.",
+  "item.rpgworldmod.blaze_staff.heart_of_the_sea.controls": "Нажмите [%1$s] во время использования, чтобы запустить снаряды в направлении взгляда.",
   "item.rpgworldmod.blaze_staff.heart_of_the_sea.cooldown": "+5 секунд вплоть до 15 секунд",
   "item.rpgworldmod.blaze_staff.nether_star": "Посох визера",
   "item.rpgworldmod.blaze_staff.nether_star.desc": "☠",

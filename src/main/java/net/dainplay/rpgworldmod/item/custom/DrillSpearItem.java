@@ -34,6 +34,8 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -137,6 +139,8 @@ public class DrillSpearItem extends Item implements Vanishable, RPGtooltip {
 
     @Override
     public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-        RPGappendHoverText(pStack,pLevel,pTooltip,pFlag);
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+        ClientRPGtooltipHandler.appendHoverText(pStack, pLevel, pTooltip, pFlag, this)
+    );
     }
 }

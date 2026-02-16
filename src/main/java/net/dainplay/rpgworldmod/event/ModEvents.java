@@ -10,13 +10,9 @@ import net.dainplay.rpgworldmod.data.tags.DepressionDeathCheck;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.item.ModItems;
-import net.dainplay.rpgworldmod.item.custom.ChooseAnimateTargetItem;
 import net.dainplay.rpgworldmod.item.custom.EmptyScrollItem;
-import net.dainplay.rpgworldmod.item.custom.LongFoodItem;
 import net.dainplay.rpgworldmod.item.custom.ScrollItem;
 import net.dainplay.rpgworldmod.network.BoundEntitySyncPacket;
-import net.dainplay.rpgworldmod.network.C2SRequestTargetValidationPacket;
-import net.dainplay.rpgworldmod.network.ClientAnimateTargetData;
 import net.dainplay.rpgworldmod.network.IllusionForceDataSyncS2CPacket;
 import net.dainplay.rpgworldmod.network.IsManaRegenBlockedDataSyncS2CPacket;
 import net.dainplay.rpgworldmod.network.ManaDataSyncS2CPacket;
@@ -31,9 +27,6 @@ import net.dainplay.rpgworldmod.util.BoundEntityHelper;
 import net.dainplay.rpgworldmod.util.ModTags;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -42,9 +35,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.player.Player;
@@ -54,18 +45,13 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CakeBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraftforge.client.event.RegisterNamedRenderTypesEvent;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.GrindstoneEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingBreatheEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
@@ -80,9 +66,7 @@ import net.minecraftforge.event.village.WandererTradesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = RPGworldMod.MOD_ID)
 public class ModEvents {
@@ -149,33 +133,6 @@ public class ModEvents {
 
 	@SubscribeEvent
 	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-		if (event.player instanceof LocalPlayer player) {
-			if (player.isUsingItem() &&
-					player.getUseItemRemainingTicks() > 0 &&
-					player.getUseItem().getItem() instanceof ChooseAnimateTargetItem) {
-
-				ChooseAnimateTargetItem catItem = (ChooseAnimateTargetItem) player.getUseItem().getItem();
-				if (catItem.highlightTarget(player.getUseItem(), player)) {
-
-					LivingEntity target = null;
-					if (player.isShiftKeyDown())
-						target = player;
-
-					if (target != null && target.getItemBySlot(EquipmentSlot.HEAD).isEnderMask(player, null))
-						target = null;
-
-					if (target != null) {
-						ModMessages.sendToServer(new C2SRequestTargetValidationPacket(target.getId()));
-
-						if (!ClientAnimateTargetData.isValidTarget(target)) {
-							target = null;
-						}
-					}
-
-					ClientAnimateTargetData.set(target);
-				}
-			}
-		}
 		if (event.player instanceof ServerPlayer serverPlayer) {
 			serverPlayer.getCapability(PlayerIllusionForceProvider.PLAYER_ILLUSION_FORCE).ifPresent(illusionForce -> {
 				if (illusionForce.getIllusionForce() >= 0) {

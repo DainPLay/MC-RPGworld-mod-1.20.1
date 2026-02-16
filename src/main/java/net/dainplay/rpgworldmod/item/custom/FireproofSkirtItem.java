@@ -19,6 +19,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -45,7 +47,9 @@ public class FireproofSkirtItem extends Item implements Equipable, RPGtooltip {
 
 	@Override
 	public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-		RPGappendHoverText(pStack,pLevel,pTooltip,pFlag);
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+        ClientRPGtooltipHandler.appendHoverText(pStack, pLevel, pTooltip, pFlag, this)
+    );
 	}
 
 	@Override

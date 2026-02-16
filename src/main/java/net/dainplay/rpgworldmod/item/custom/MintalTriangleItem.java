@@ -36,10 +36,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.vibrations.VibrationSystem;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 import net.minecraftforge.common.extensions.IForgeBlockState;
 import net.minecraftforge.common.extensions.IForgeTagAppender;
+import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -163,7 +165,9 @@ public class MintalTriangleItem extends Item implements Vanishable, RPGtooltip {
 
     @Override
     public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-        RPGappendHoverText(pStack,pLevel,pTooltip,pFlag);
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+        ClientRPGtooltipHandler.appendHoverText(pStack, pLevel, pTooltip, pFlag, this)
+    );
     }
 
     @Override

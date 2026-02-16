@@ -25,15 +25,6 @@ public class ClientBoundEntityData {
         boundEntities.remove(entityId);
     }
 
-    // Метод для обработки старого пакета (для обратной совместимости)
-    public static void handlePacket(BoundEntitySyncPacket packet) {
-        if (packet.isRemoval()) {
-            removeEntity(packet.getEntityId());
-        } else {
-            updateEntity(packet.getData());
-        }
-    }
-
     public static Map<Integer, BoundEntityClientData> getBoundEntities() {
         // Удаляем просроченные данные (больше 5 секунд)
         long currentTime = System.currentTimeMillis();

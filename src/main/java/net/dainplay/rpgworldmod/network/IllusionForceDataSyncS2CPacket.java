@@ -1,10 +1,9 @@
 package net.dainplay.rpgworldmod.network;
 
-import net.dainplay.rpgworldmod.RPGworldMod;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -37,10 +36,10 @@ public class IllusionForceDataSyncS2CPacket {
     }
 
     public void handle(Supplier<NetworkEvent.Context> context) {
-        context.get().enqueueWork(() -> {
-            ClientIllusionForceData.set(illusionForce);
-            ClientEntPositionData.set(entPosition);
-        });
+        context.get().enqueueWork(() ->
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+                        ClientPacketHandlers.handleIllusionForceSync(illusionForce, entPosition))
+        );
         context.get().setPacketHandled(true);
     }
 }

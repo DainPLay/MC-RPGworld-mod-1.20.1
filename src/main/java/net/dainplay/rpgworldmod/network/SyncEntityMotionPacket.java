@@ -1,8 +1,8 @@
 package net.dainplay.rpgworldmod.network;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.Entity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -36,14 +36,11 @@ public class SyncEntityMotionPacket {
 
 	public boolean handle(Supplier<NetworkEvent.Context> supplier) {
 		NetworkEvent.Context context = supplier.get();
-		context.enqueueWork(() -> {
-			if (Minecraft.getInstance().level != null) {
-				Entity entity = Minecraft.getInstance().level.getEntity(entityId);
-				if (entity != null) {
-					entity.setDeltaMovement(motionX, motionY, motionZ);
-				}
-			}
-		});
+		context.enqueueWork(() ->
+				DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+						ClientPacketHandlers.handleSyncEntityMotion(entityId, motionX, motionY, motionZ))
+		);
+		context.setPacketHandled(true);
 		return true;
 	}
 }

@@ -1,6 +1,8 @@
 package net.dainplay.rpgworldmod.network;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -22,10 +24,10 @@ public class IsManaRegenBlockedDataSyncS2CPacket {
 
 	public boolean handle(Supplier<NetworkEvent.Context> supplier) {
 		NetworkEvent.Context context = supplier.get();
-		context.enqueueWork(() -> {
-			// HERE WE ARE ON CLIENT
-			ClientIsManaRegenBlockedData.set(isManaRegenBlocked);
-		});
+		context.enqueueWork(() ->
+				DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientPacketHandlers.handleIsManaRegenBlockedSync(isManaRegenBlocked))
+		);
+		context.setPacketHandled(true);
 		return true;
 	}
 }

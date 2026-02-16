@@ -1,9 +1,9 @@
 package net.dainplay.rpgworldmod.network;
 
-import net.dainplay.rpgworldmod.entity.custom.Razorleaf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -58,24 +58,12 @@ public class SyncRazorleafDataPacket {
 
     public boolean handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context context = supplier.get();
-        context.enqueueWork(() -> {
-            if (Minecraft.getInstance().level != null) {
-                var entity = Minecraft.getInstance().level.getEntity(entityId);
-                if (entity instanceof Razorleaf razorleaf) {
-                    razorleaf.getEntityData().set(Razorleaf.DATA_STATE, state);
-                    razorleaf.getEntityData().set(Razorleaf.DATA_ATTACK_TYPE, attackType);
-                    razorleaf.getEntityData().set(Razorleaf.DATA_ATTACK_TIMER, attackTimer);
-                    razorleaf.getEntityData().set(Razorleaf.DATA_TONGUE_ANIMATION_TIME, tongueAnimationTime);
-                    razorleaf.getEntityData().set(Razorleaf.DATA_SPIT_DIRECTION_X, (float) spitDirection.x);
-                    razorleaf.getEntityData().set(Razorleaf.DATA_SPIT_DIRECTION_Y, (float) spitDirection.y);
-                    razorleaf.getEntityData().set(Razorleaf.DATA_SPIT_DIRECTION_Z, (float) spitDirection.z);
-                    razorleaf.getEntityData().set(Razorleaf.DATA_PULL_DIRECTION_X, (float) pullDirection.x);
-                    razorleaf.getEntityData().set(Razorleaf.DATA_PULL_DIRECTION_Y, (float) pullDirection.y);
-                    razorleaf.getEntityData().set(Razorleaf.DATA_PULL_DIRECTION_Z, (float) pullDirection.z);
-                    razorleaf.getEntityData().set(Razorleaf.DATA_HAS_ITEM_IN_MOUTH, hasItemInMouth);
-                }
-            }
-        });
+        context.enqueueWork(() ->
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+                        ClientPacketHandlers.handleSyncRazorleafData(entityId, state, attackType, attackTimer,
+                                tongueAnimationTime, spitDirection, pullDirection, hasItemInMouth))
+        );
+        context.setPacketHandled(true);
         return true;
     }
 }

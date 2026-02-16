@@ -7,11 +7,11 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
-public class EmberScrollSound extends AbstractTickableSoundInstance {
+public class LoopSound extends AbstractTickableSoundInstance {
     private final LivingEntity living;
     private final ItemStack stack;
 
-    public EmberScrollSound(LivingEntity living, ItemStack stack, SoundEvent sound) {
+    public LoopSound(LivingEntity living, ItemStack stack, SoundEvent sound) {
         super(sound, SoundSource.PLAYERS, living.getRandom());
         this.living = living;
         this.stack = stack;
@@ -28,7 +28,7 @@ public class EmberScrollSound extends AbstractTickableSoundInstance {
 
     @Override
     public void tick() {
-        if (this.living == null || !this.living.isAlive() ||
+        if (this.living == null || !this.living.isAlive() || !this.living.isUsingItem() ||
                 (this.living == Minecraft.getInstance().player &&
                         (!this.living.isUsingItem() || this.living.getUseItem().getItem() != this.stack.getItem()))) {
             this.stop();

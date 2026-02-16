@@ -1,7 +1,8 @@
 package net.dainplay.rpgworldmod.network;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -27,12 +28,10 @@ public class S2CTargetValidationResultPacket {
 
     public void handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context context = supplier.get();
-        context.enqueueWork(() -> {
-            // Выполняем на клиенте
-            // Здесь можно обновить клиентские данные
-            // Например, сохранить результат валидации
-            ClientAnimateTargetData.setValidationResult(targetId, isValid);
-        });
+        context.enqueueWork(() ->
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+                        ClientPacketHandlers.handleTargetValidationResult(targetId, isValid))
+        );
         context.setPacketHandled(true);
     }
 }

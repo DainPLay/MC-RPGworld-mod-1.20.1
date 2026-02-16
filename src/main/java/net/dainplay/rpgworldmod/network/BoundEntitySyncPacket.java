@@ -1,9 +1,11 @@
 package net.dainplay.rpgworldmod.network;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.*;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class BoundEntitySyncPacket {
@@ -11,14 +13,12 @@ public class BoundEntitySyncPacket {
     private final boolean isRemoval;
     private final BoundEntityData data;
 
-    // Конструктор для обновления/добавления данных
     public BoundEntitySyncPacket(int entityId, BoundEntityData data) {
         this.entityId = entityId;
         this.isRemoval = false;
         this.data = data;
     }
 
-    // Конструктор для удаления
     public BoundEntitySyncPacket(int entityId) {
         this.entityId = entityId;
         this.isRemoval = true;
@@ -28,7 +28,6 @@ public class BoundEntitySyncPacket {
     public BoundEntitySyncPacket(FriendlyByteBuf buf) {
         this.entityId = buf.readInt();
         this.isRemoval = buf.readBoolean();
-
         if (!isRemoval) {
             UUID boundPlayerId = buf.readUUID();
             double playerX = buf.readDouble();
@@ -44,7 +43,6 @@ public class BoundEntitySyncPacket {
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeInt(entityId);
         buf.writeBoolean(isRemoval);
-
         if (!isRemoval && data != null) {
             buf.writeUUID(data.boundPlayerId);
             buf.writeDouble(data.playerX);
@@ -56,26 +54,12 @@ public class BoundEntitySyncPacket {
 
     public boolean handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context context = supplier.get();
-        context.enqueueWork(() -> {
-            if (isRemoval) {
-                ClientBoundEntityData.removeEntity(entityId);
-            } else {
-                ClientBoundEntityData.updateEntity(data);
-            }
-        });
+        context.enqueueWork(() ->
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+                        ClientPacketHandlers.handleBoundEntitySync(entityId, isRemoval, data))
+        );
+        context.setPacketHandled(true);
         return true;
-    }
-
-    public int getEntityId() {
-        return entityId;
-    }
-
-    public boolean isRemoval() {
-        return isRemoval;
-    }
-
-    public BoundEntityData getData() {
-        return data;
     }
 
     public static class BoundEntityData {

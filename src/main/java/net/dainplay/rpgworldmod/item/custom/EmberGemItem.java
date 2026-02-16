@@ -35,11 +35,13 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -65,7 +67,6 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 		this.texture = texture;
 		this.animationSpeed = animationSpeed;
 		this.animationLength = animationLength;
-		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	@Override
@@ -110,7 +111,9 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 
 	@Override
 	public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-		RPGappendHoverText(pStack, pLevel, pTooltip, pFlag);
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+				ClientRPGtooltipHandler.appendHoverText(pStack, pLevel, pTooltip, pFlag, this)
+		);
 	}
 
 	@Override
@@ -154,8 +157,10 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 					RPGSounds.EMBER_GEM_SNAP.get(), SoundSource.PLAYERS,
 					0.5F, 0.8F + level.random.nextFloat() * 0.4F);
 		} else {
-			if (!player.getAbilities().instabuild && ClientManaData.get() < manacost)
-				return InteractionResultHolder.fail(itemstack);
+			if (!player.getAbilities().instabuild) {
+				boolean hasEnoughMana = DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> ClientManaData.get() >= manacost);
+				if (!hasEnoughMana) return InteractionResultHolder.fail(itemstack);
+			}
 		}
 
 		return InteractionResultHolder.sidedSuccess(itemstack, level.isClientSide());
@@ -181,16 +186,7 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 		}
 	}
 
-	// Обработчик тиков для движения снарядов
-	@SubscribeEvent
-	public void onServerTick(TickEvent.ServerTickEvent event) {
-		if (event.phase == TickEvent.Phase.END) {
-			// Обрабатываем все уровни сервера
-			event.getServer().getAllLevels().forEach(this::processProjectiles);
-		}
-	}
-
-	private void processProjectiles(ServerLevel level) {
+	public static void processProjectilesStatic(ServerLevel level) {
 		// Получаем снаряды для этого уровня
 		Map<UUID, EmberProjectileData> levelActiveProjectiles = getActiveProjectiles(level);
 
@@ -252,7 +248,7 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 	}
 
 	// Проверка контакта с водой
-	private boolean checkWaterContact(Level level, Vec3 position) {
+	private static boolean checkWaterContact(Level level, Vec3 position) {
 		BlockPos pos = new BlockPos(
 				(int) Math.floor(position.x),
 				(int) Math.floor(position.y),
@@ -287,7 +283,7 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 	}
 
 	// Проверка столкновений
-	private boolean checkCollisions(Level level, EmberProjectileData projectile, UUID projectileId) {
+	private static boolean checkCollisions(Level level, EmberProjectileData projectile, UUID projectileId) {
 		// Проверка столкновения с блоками
 		Vec3 startPos = projectile.position.subtract(projectile.velocity);
 		Vec3 endPos = projectile.position.add(projectile.velocity);

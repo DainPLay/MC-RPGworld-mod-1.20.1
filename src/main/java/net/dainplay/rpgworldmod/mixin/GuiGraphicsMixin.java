@@ -6,7 +6,6 @@ import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
@@ -41,8 +40,8 @@ public abstract class GuiGraphicsMixin {
 			ItemCooldowns.CooldownInstance instance = cooldownsMap.get(pStack.getItem());
 			if (instance == null) return current;
 			int endTick = instance.endTime;
-			int cooldown = staff.getCooldown(pStack);
-			if (pStack.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get()) > 0) cooldown *= 2;
+			int cooldown = staff.getMaxCooldown(pStack);
+			if (pStack.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get()) > 0) cooldown *= 3;
 			return Math.min(1F,(float) (endTick - currentTick) / cooldown);
 		}
 		else if (pStack.getItem() instanceof StaffItem staff
@@ -53,7 +52,7 @@ public abstract class GuiGraphicsMixin {
 			ItemCooldowns.CooldownInstance instance = cooldownsMap.get(pStack.getItem());
 			if (instance == null) return current;
 			int endTick = instance.endTime;
-			return Math.min(1F,(float) (endTick - currentTick) / staff.getCooldown(pStack));
+			return Math.min(1F,(float) (endTick - currentTick) / (staff.getMaxCooldown(pStack)*3));
 		}
 		return current;
 	}
