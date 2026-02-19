@@ -154,6 +154,18 @@ public class ModMessages {
 				.encoder(ParanoiaSoundPacket::toBytes)
 				.consumerMainThread(ParanoiaSoundPacket::handle)
 				.add();
+
+		net.messageBuilder(S2CGuardianAttackData.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(S2CGuardianAttackData::new)
+				.encoder(S2CGuardianAttackData::toBytes)
+				.consumerMainThread(S2CGuardianAttackData::handle)
+				.add();
+
+		net.messageBuilder(RainyChunkSyncPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(RainyChunkSyncPacket::new)
+				.encoder(RainyChunkSyncPacket::toBytes)
+				.consumerMainThread(RainyChunkSyncPacket::handle)
+				.add();
 	}
 
 	public static <MSG> void sendToServer(MSG message) {

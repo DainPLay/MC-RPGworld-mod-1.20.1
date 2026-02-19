@@ -156,7 +156,7 @@ public class OrbitingItemRenderer {
 				ms = item1.getEffectUsingPose(event.getItemStack(), player, ms, flip);
 			}
 			VertexConsumer vertexconsumer;
-			float size = 0.5F;
+			float size = item.get1Size(event.getItemStack(), player);
 			Matrix4f matrix4f = ms.last().pose();
 			if (hasEnough || player.getAbilities().instabuild) {
 				if (textureString != null && !textureString.isEmpty()) {

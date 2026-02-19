@@ -97,6 +97,8 @@ public class ModSounds
 
         MUSIC_DISC_HOWLING = registerSound("rpgworldmod.music_disc_howling");
         MUSIC_DISC_TIRE = registerSound("rpgworldmod.music_disc_tire");
+        MUSIC_DISC_RAIN_A_SIDE = registerSound("rpgworldmod.music_disc_rain_a_side");
+        MUSIC_DISC_RAIN_B_SIDE = registerSound("rpgworldmod.music_disc_rain_b_side");
 
         PLATINUMFISH_AMBIENT = registerSound("rpgworldmod.platinumfish.ambient");
         PLATINUMFISH_DEATH = registerSound("rpgworldmod.platinumfish.death");
@@ -173,6 +175,7 @@ public class ModSounds
         SPELL_RESTORATION_START = registerSound("rpgworldmod.spell.restoration_start");
         SPELL_RESTORATION_LOOP = registerSound("rpgworldmod.spell.restoration_loop");
         SPELL_RESTORATION_STOP = registerSound("rpgworldmod.spell.restoration_stop");
+        SPELL_RESTORATION_CAST = registerSound("rpgworldmod.spell.restoration_cast");
         SPELL_CONJURATION_START = registerSound("rpgworldmod.spell.conjuration_start");
         SPELL_CONJURATION_STOP = registerSound("rpgworldmod.spell.conjuration_stop");
         SPELL_ALTERATION_START = registerSound("rpgworldmod.spell.alteration_start");
@@ -197,6 +200,10 @@ public class ModSounds
         STAFF_ENDER_EYE_FIRE = registerSound("rpgworldmod.staff_ender_eye.fire");
         STAFF_HEART_OF_THE_SEA_FIRE = registerSound("rpgworldmod.staff_heart_of_the_sea.fire");
         STAFF_NETHER_STAR_FIRE = registerSound("rpgworldmod.staff_nether_star.fire");
+        SPELL_DESTRUCTION_HEART_OF_THE_SEA_START = registerSound("rpgworldmod.spell.destruction_heart_of_the_sea_start");
+        SPELL_DESTRUCTION_HEART_OF_THE_SEA_LOOP = registerSound("rpgworldmod.spell.destruction_heart_of_the_sea_loop");
+        SPELL_DESTRUCTION_HEART_OF_THE_SEA_STOP = registerSound("rpgworldmod.spell.destruction_heart_of_the_sea_stop");
+        SPELL_DESTRUCTION_HEART_OF_THE_SEA_CAST = registerSound("rpgworldmod.spell.destruction_heart_of_the_sea_cast");
     }
 
     private static RegistryObject<SoundEvent> registerSound(String name)

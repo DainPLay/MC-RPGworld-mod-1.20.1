@@ -1,0 +1,50 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "rpgworldmod:item/music_disc_rain_a_side"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "flip": 1.0
+      },
+      "model": "rpgworldmod:item/music_disc_rain_a_side_flip_1"
+    },
+    {
+      "predicate": {
+        "flip": 2.0
+      },
+      "model": "rpgworldmod:item/music_disc_rain_a_side_flip_2"
+    },
+    {
+      "predicate": {
+        "flip": 3.0
+      },
+      "model": "rpgworldmod:item/music_disc_rain_a_side_flip_3"
+    },
+    {
+      "predicate": {
+        "flip": 4.0
+      },
+      "model": "rpgworldmod:item/music_disc_rain_a_side_flip_4"
+    },
+    {
+      "predicate": {
+        "flip": 5.0
+      },
+      "model": "rpgworldmod:item/music_disc_rain_a_side_flip_5"
+    },
+    {
+      "predicate": {
+        "flip": 6.0
+      },
+      "model": "rpgworldmod:item/music_disc_rain_a_side_flip_6"
+    },
+    {
+      "predicate": {
+        "flip": 7.0
+      },
+      "model": "rpgworldmod:item/music_disc_rain_a_side_flip_7"
+    }
+  ]
+}

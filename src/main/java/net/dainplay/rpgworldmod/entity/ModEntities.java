@@ -5,6 +5,7 @@ import net.dainplay.rpgworldmod.entity.custom.Bhlee;
 import net.dainplay.rpgworldmod.entity.custom.Bibbit;
 import net.dainplay.rpgworldmod.entity.custom.Bramblefox;
 import net.dainplay.rpgworldmod.entity.custom.Burr_purr;
+import net.dainplay.rpgworldmod.entity.custom.ConjuredDolphin;
 import net.dainplay.rpgworldmod.entity.custom.Drillhog;
 import net.dainplay.rpgworldmod.entity.custom.Fireflantern;
 import net.dainplay.rpgworldmod.entity.custom.Gasbass;
@@ -94,6 +95,8 @@ public class ModEntities {
             () -> EntityType.Builder.of(Burr_purr::new, RIE_MONSTER).sized(0.6F, 0.6F).clientTrackingRange(8).build("burr_purr"));
     public static final RegistryObject<EntityType<Drillhog>> DRILLHOG = ENTITY_TYPES.register("drillhog",
             () -> EntityType.Builder.of(Drillhog::new, RIE_MONSTER).sized(0.9F, 0.9F).clientTrackingRange(8).build("drillhog"));
+    public static final RegistryObject<EntityType<ConjuredDolphin>> CONJURED_DOLPHIN = ENTITY_TYPES.register("conjured_dolphin",
+            () -> EntityType.Builder.of(ConjuredDolphin::new, MobCategory.WATER_CREATURE).sized(0.9F, 0.6F).build("conjured_dolphin"));
     public static final RegistryObject<EntityType<MosquitoSwarm>> MOSQUITO_SWARM = ENTITY_TYPES.register("mosquito_swarm",
             () -> EntityType.Builder.of(MosquitoSwarm::new, RIE_MONSTER).sized(0.95F, 0.95F).clientTrackingRange(8).build("mosquito_swarm"));
     public static final RegistryObject<EntityType<Razorleaf>> RAZORLEAF = ENTITY_TYPES.register("razorleaf",
@@ -128,6 +131,7 @@ public class ModEntities {
         event.register(BHLEE.get(), SpawnPlacements.Type.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(SHEENTROUT.get(), SpawnPlacements.Type.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(GASBASS.get(), SpawnPlacements.Type.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Gasbass::checkGasbassSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
+        event.register(CONJURED_DOLPHIN.get(), SpawnPlacements.Type.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
 }
 
 }

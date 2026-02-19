@@ -4,6 +4,7 @@ import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.entity.custom.Razorleaf;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
+import net.dainplay.rpgworldmod.item.custom.HeartOfTheSeaScrollItem;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.dainplay.rpgworldmod.sounds.LoopSound;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
@@ -11,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -174,14 +176,29 @@ public class ClientPacketHandlers {
 
 	// --- Loop Sound ---
 	public static void handleLoopSound(int playerId, boolean start, ItemStack itemStack) {
+		//Minecraft.getInstance().player.sendSystemMessage(Component.literal("Пакет получен"));
 		Level level = Minecraft.getInstance().level;
 		if (level == null) return;
 		Player player = (Player) level.getEntity(playerId);
 		if (player == null) return;
 
 		if (start) {
-			SoundEvent soundEvent = RPGSounds.SPELL_DESTRUCTION_EMBER_LOOP.get();
+			SoundEvent soundEvent = RPGSounds.STAFF_LOOP.get();
 			if (itemStack.getItem() instanceof EmberScrollItem) {
+				if (itemStack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0)
+					soundEvent = RPGSounds.SPELL_DESTRUCTION_EMBER_LOOP.get();
+				if (itemStack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0)
+					soundEvent = RPGSounds.SPELL_RESTORATION_LOOP.get();
+				if (itemStack.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0)
+					soundEvent = RPGSounds.SPELL_ALTERATION_LOOP.get();
+				if (itemStack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0)
+					soundEvent = RPGSounds.SPELL_ILLUSION_LOOP.get();
+				if (itemStack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0)
+					soundEvent = RPGSounds.SPELL_NECROMANCY_LOOP.get();
+			}
+			if (itemStack.getItem() instanceof HeartOfTheSeaScrollItem) {
+				if (itemStack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0)
+					soundEvent = RPGSounds.SPELL_DESTRUCTION_HEART_OF_THE_SEA_LOOP.get();
 				if (itemStack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0)
 					soundEvent = RPGSounds.SPELL_RESTORATION_LOOP.get();
 				if (itemStack.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0)
@@ -197,8 +214,10 @@ public class ClientPacketHandlers {
 			LoopSound sound = new LoopSound(player, itemStack, soundEvent);
 				Minecraft.getInstance().getSoundManager().play(sound);
 				EmberScrollSoundManager.addSound(player.getUUID(), sound);
+			//Minecraft.getInstance().player.sendSystemMessage(Component.literal("Запуск звука "+soundEvent));
 		} else {
 			EmberScrollSoundManager.stopSound(player.getUUID());
+			//Minecraft.getInstance().player.sendSystemMessage(Component.literal("Звук остановлен"));
 		}
 	}
 

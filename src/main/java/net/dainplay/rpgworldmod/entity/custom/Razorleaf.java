@@ -63,6 +63,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.TntBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -1092,7 +1093,10 @@ public class Razorleaf extends Monster {
 			if (hitState.is(ModBlocks.ARBOR_FUEL_BLOCK.get())) {
 
 				// Заменяем блок земли на огонь
-				level.setBlockAndUpdate(hitPos, BaseFireBlock.getState(level, hitPos));
+				BlockState fireState = BaseFireBlock.getState(level, hitPos);
+				if (BaseFireBlock.canBePlacedAt(level, hitPos, Direction.UP)) {
+					level.setBlockAndUpdate(hitPos, fireState);
+				} else level.setBlockAndUpdate(hitPos, Blocks.AIR.defaultBlockState());
 				return true;
 			}
 

@@ -3,7 +3,7 @@ package net.dainplay.rpgworldmod.data;
 
 import com.google.gson.JsonObject;
 import net.dainplay.rpgworldmod.RPGworldMod;
-import net.dainplay.rpgworldmod.data.craft.EmberScrollRecipe;
+import net.dainplay.rpgworldmod.data.craft.SpellRecipe;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -16,17 +16,17 @@ public class ModRecipeSerializers {
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =
             DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, RPGworldMod.MOD_ID);
 
-    public static final RegistryObject<RecipeSerializer<EmberScrollRecipe>> EMBER_SCROLL_RECIPE =
-            RECIPE_SERIALIZERS.register("ember_scroll", EmberScrollRecipe.Serializer::new);
+    public static final RegistryObject<RecipeSerializer<SpellRecipe>> SPELL_RECIPE =
+            RECIPE_SERIALIZERS.register("spell", SpellRecipe.Serializer::new);
 
     // Вложенный статический класс для сериализатора
-    public static class Serializer implements RecipeSerializer<EmberScrollRecipe> {
+    public static class Serializer implements RecipeSerializer<SpellRecipe> {
         private final ShapelessRecipe.Serializer baseSerializer = new ShapelessRecipe.Serializer();
 
         @Override
-        public EmberScrollRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
+        public SpellRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
             ShapelessRecipe baseRecipe = baseSerializer.fromJson(recipeId, json);
-            return new EmberScrollRecipe(
+            return new SpellRecipe(
                     recipeId,
                     baseRecipe.getGroup(),
                     baseRecipe.category(),
@@ -36,9 +36,9 @@ public class ModRecipeSerializers {
         }
 
         @Override
-        public EmberScrollRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
+        public SpellRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
             ShapelessRecipe baseRecipe = baseSerializer.fromNetwork(recipeId, buffer);
-            return new EmberScrollRecipe(
+            return new SpellRecipe(
                     recipeId,
                     baseRecipe.getGroup(),
                     baseRecipe.category(),
@@ -48,7 +48,7 @@ public class ModRecipeSerializers {
         }
 
         @Override
-        public void toNetwork(FriendlyByteBuf buffer, EmberScrollRecipe recipe) {
+        public void toNetwork(FriendlyByteBuf buffer, SpellRecipe recipe) {
             baseSerializer.toNetwork(buffer, recipe);
         }
     }

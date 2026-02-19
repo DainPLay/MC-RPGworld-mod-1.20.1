@@ -1,0 +1,16 @@
+{
+  "type": "rpgworldmod:spell",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "rpgworldmod:empty_scroll"
+    },
+    {
+      "item": "minecraft:heart_of_the_sea"
+    }
+  ],
+  "result": {
+    "item": "rpgworldmod:heart_of_the_sea_scroll",
+    "count": 1
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "item": "minecraft:paper"
+    },
+    "G": {
+      "item": "minecraft:heart_of_the_sea"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "PGP",
+    "PPP"
+  ],
+  "result": {
+    "item": "rpgworldmod:heart_of_the_sea_scroll"
+  },
+  "show_notification": true
+}

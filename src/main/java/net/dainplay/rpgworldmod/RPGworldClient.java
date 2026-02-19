@@ -12,6 +12,7 @@ import net.dainplay.rpgworldmod.gui.ChargesOverlayEventHandler;
 import net.dainplay.rpgworldmod.gui.HealthOverlayEventHandler;
 import net.dainplay.rpgworldmod.gui.ManaOverlayEventHandler;
 import net.dainplay.rpgworldmod.item.ModItems;
+import net.dainplay.rpgworldmod.item.custom.DoubleSidedRecordItem;
 import net.dainplay.rpgworldmod.item.custom.FireproofSkirtItem;
 import net.dainplay.rpgworldmod.item.custom.MintalTriangleItem;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
@@ -84,6 +85,12 @@ public class RPGworldClient {
         BakedModel illusionEmberScrollModel = null;
         BakedModel conjurationEmberScrollModel = null;
         BakedModel necromancyEmberScrollModel = null;
+        BakedModel alterationHeartOfTheSeaScrollModel = null;
+        BakedModel destructionHeartOfTheSeaScrollModel = null;
+        BakedModel restorationHeartOfTheSeaScrollModel = null;
+        BakedModel illusionHeartOfTheSeaScrollModel = null;
+        BakedModel conjurationHeartOfTheSeaScrollModel = null;
+        BakedModel necromancyHeartOfTheSeaScrollModel = null;
 
         BakedModel boundCampfireModel = null;
 
@@ -144,6 +151,30 @@ public class RPGworldClient {
                 necromancyEmberScrollModel = new ScrollGlintItemModelSupport(originalModel);
             }
 
+            if (idString.contains("rpgworldmod:item/heart_of_the_sea_scroll_alteration")) {
+                alterationHeartOfTheSeaScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/heart_of_the_sea_scroll_destruction")) {
+                destructionHeartOfTheSeaScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/heart_of_the_sea_scroll_restoration")) {
+                restorationHeartOfTheSeaScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/heart_of_the_sea_scroll_illusion")) {
+                illusionHeartOfTheSeaScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/heart_of_the_sea_scroll_conjuration")) {
+                conjurationHeartOfTheSeaScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/heart_of_the_sea_scroll_necromancy")) {
+                necromancyHeartOfTheSeaScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
             if (idString.contains("rpgworldmod:item/bound_campfire")) {
                 boundCampfireModel = new ScrollGlintItemModelSupport(originalModel);
             }
@@ -177,6 +208,18 @@ public class RPGworldClient {
                         boundCampfireModel == null ? originalModel : boundCampfireModel
                 ));
             }
+            if (idString.contains("rpgworldmod:heart_of_the_sea_scroll")) {
+                map.put(id, new ScrollGlintItemModel(
+                        originalModel,
+                        alterationHeartOfTheSeaScrollModel == null ? originalModel : alterationHeartOfTheSeaScrollModel,
+                        restorationHeartOfTheSeaScrollModel == null ? originalModel : restorationHeartOfTheSeaScrollModel,
+                        destructionHeartOfTheSeaScrollModel == null ? originalModel : destructionHeartOfTheSeaScrollModel,
+                        illusionHeartOfTheSeaScrollModel == null ? originalModel : illusionHeartOfTheSeaScrollModel,
+                        conjurationHeartOfTheSeaScrollModel == null ? originalModel : conjurationHeartOfTheSeaScrollModel,
+                        necromancyHeartOfTheSeaScrollModel == null ? originalModel : necromancyHeartOfTheSeaScrollModel,
+                        originalModel
+                ));
+            }
         }
     }
 
@@ -196,6 +239,12 @@ public class RPGworldClient {
         event.register(new ResourceLocation("rpgworldmod:item/ember_scroll_conjuration"));
         event.register(new ResourceLocation("rpgworldmod:item/ember_scroll_necromancy"));
         event.register(new ResourceLocation("rpgworldmod:item/bound_campfire"));
+        event.register(new ResourceLocation("rpgworldmod:item/heart_of_the_sea_scroll_restoration"));
+        event.register(new ResourceLocation("rpgworldmod:item/heart_of_the_sea_scroll_destruction"));
+        event.register(new ResourceLocation("rpgworldmod:item/heart_of_the_sea_scroll_illusion"));
+        event.register(new ResourceLocation("rpgworldmod:item/heart_of_the_sea_scroll_alteration"));
+        event.register(new ResourceLocation("rpgworldmod:item/heart_of_the_sea_scroll_conjuration"));
+        event.register(new ResourceLocation("rpgworldmod:item/heart_of_the_sea_scroll_necromancy"));
     }
 
     @SubscribeEvent
@@ -321,6 +370,8 @@ public class RPGworldClient {
             ItemProperties.register(ModItems.DRILL_SPEAR.get().asItem(), new ResourceLocation( "throwing"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
             ItemProperties.register(ModItems.FIREPROOF_SKIRT.get().asItem(), new ResourceLocation( "broken"), (stack, world, entity, seed) -> FireproofSkirtItem.isFireproof(stack) ? 0.0F : 1.0F);
             ItemProperties.register(ModItems.MINTAL_TRIANGLE.get(), new ResourceLocation("vibration"), (itemstack, level, livingEntity, p_174608_) -> livingEntity != null && MintalTriangleItem.getVibes(itemstack)>0 ? (23F-(float)MintalTriangleItem.getVibes(itemstack))/100 : 1.0F);
+            ItemProperties.register(ModItems.MUSIC_DISC_RAIN_A_SIDE.get(), new ResourceLocation("flip"), (itemstack, level, livingEntity, p_174608_) -> DoubleSidedRecordItem.getFlipStage(itemstack));
+            ItemProperties.register(ModItems.MUSIC_DISC_RAIN_B_SIDE.get(), new ResourceLocation("flip"), (itemstack, level, livingEntity, p_174608_) -> DoubleSidedRecordItem.getFlipStage(itemstack));
             ItemProperties.register(Items.CROSSBOW, new ResourceLocation("projectruffle"), (p_174605_, p_174606_, p_174607_, p_174608_) -> p_174607_ != null && CrossbowItem.isCharged(p_174605_) && CrossbowItem.containsChargedProjectile(p_174605_, ModItems.PROJECTRUFFLE_ITEM.get()) ? 1.0F : 0.0F);
             ItemProperties.register(Items.BOW, new ResourceLocation("projectruffle"), (stack, level, living, id) -> {
                 if (stack.hasTag() && stack.getTag().contains("UsingProjectruffle")) {

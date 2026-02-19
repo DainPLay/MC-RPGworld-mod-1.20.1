@@ -34,22 +34,34 @@ public class ClientRPGtooltipHandler {
             pTooltip.add(costText);
         }
 
+        if (pStack.getItem() instanceof DoubleSidedRecordItem item) {
+            pTooltip.add(Component.translatable(pStack.getDescriptionId() + ".side").withStyle(ChatFormatting.WHITE));
+            pTooltip.add(Component.translatable(pStack.getDescriptionId() + ".desc").withStyle(ChatFormatting.GRAY));
+            pTooltip.add(Component.literal(item.getDisplayControls(pStack).getString()).withStyle(ChatFormatting.DARK_GRAY));
+        }
+
         if (pStack.getItem() instanceof StaffItem item && item.hasCooldown(pStack)) {
             pTooltip.addAll(getDisplayCooldownWithLineBreaks(pStack, item));
         }
 
         if (InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), Minecraft.getInstance().options.keyShift.getKey().getValue())) {
+            if (tooltipItem.hasFeatures(pStack)) {
             List<Component> featureLines = getDisplayFeaturesWithLineBreaks(pStack, tooltipItem);
             pTooltip.addAll(featureLines);
+            }
             if (tooltipItem.hasControls(pStack)) {
                 List<Component> controlsLines = getDisplayControlsWithLineBreaks(pStack, tooltipItem);
                 pTooltip.addAll(controlsLines);
             }
         } else {
-            List<Component> combinedLines = getHoldShiftTooltipWithLineBreaks();
-            pTooltip.addAll(combinedLines);
+            if (tooltipItem.hasFeatures(pStack)) {
+                List<Component> combinedLines = getHoldShiftTooltipWithLineBreaks();
+                pTooltip.addAll(combinedLines);
+            }
         }
-        pTooltip.add(tooltipItem.getDisplayName(pStack).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED));
+        if (tooltipItem.hasComment(pStack)) {
+            pTooltip.add(tooltipItem.getDisplayName(pStack).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED));
+        }
     }
 
     private static List<Component> getDisplayCooldownWithLineBreaks(ItemStack item, StaffItem staffItem) {

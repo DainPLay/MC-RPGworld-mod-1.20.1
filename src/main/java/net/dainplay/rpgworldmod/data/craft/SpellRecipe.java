@@ -15,10 +15,10 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 
-public class EmberScrollRecipe extends ShapelessRecipe {
+public class SpellRecipe extends ShapelessRecipe {
 
-    public EmberScrollRecipe(ResourceLocation id, String group, CraftingBookCategory category,
-                             ItemStack result, NonNullList<Ingredient> ingredients) {
+    public SpellRecipe(ResourceLocation id, String group, CraftingBookCategory category,
+                       ItemStack result, NonNullList<Ingredient> ingredients) {
         super(id, group, category, result, ingredients);
     }
 
@@ -41,17 +41,17 @@ public class EmberScrollRecipe extends ShapelessRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return ModRecipeSerializers.EMBER_SCROLL_RECIPE.get();
+        return ModRecipeSerializers.SPELL_RECIPE.get();
     }
 
     // Вложенный класс сериализатора
-    public static class Serializer implements RecipeSerializer<EmberScrollRecipe> {
+    public static class Serializer implements RecipeSerializer<SpellRecipe> {
         private final ShapelessRecipe.Serializer baseSerializer = new ShapelessRecipe.Serializer();
 
         @Override
-        public EmberScrollRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
+        public SpellRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
             ShapelessRecipe baseRecipe = this.baseSerializer.fromJson(recipeId, json);
-            return new EmberScrollRecipe(
+            return new SpellRecipe(
                     recipeId,
                     baseRecipe.getGroup(),
                     baseRecipe.category(),
@@ -61,9 +61,9 @@ public class EmberScrollRecipe extends ShapelessRecipe {
         }
 
         @Override
-        public EmberScrollRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
+        public SpellRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
             ShapelessRecipe baseRecipe = this.baseSerializer.fromNetwork(recipeId, buffer);
-            return new EmberScrollRecipe(
+            return new SpellRecipe(
                     recipeId,
                     baseRecipe.getGroup(),
                     baseRecipe.category(),
@@ -73,7 +73,7 @@ public class EmberScrollRecipe extends ShapelessRecipe {
         }
 
         @Override
-        public void toNetwork(FriendlyByteBuf buffer, EmberScrollRecipe recipe) {
+        public void toNetwork(FriendlyByteBuf buffer, SpellRecipe recipe) {
             this.baseSerializer.toNetwork(buffer, recipe);
         }
     }

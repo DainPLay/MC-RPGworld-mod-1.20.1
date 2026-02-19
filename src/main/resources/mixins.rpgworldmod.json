@@ -18,6 +18,7 @@
     "LeadItemMixin",
     "LeashFenceKnotEntityMixin",
     "LevelAccessorMixin",
+    "LevelMixin",
     "LivingEntityMixin",
     "LookControlMixin",
     "MinecraftMixin",
@@ -42,6 +43,7 @@
     "LevelRendererMixin",
     "LivingEntityRendererMixin",
     "MinecraftMixin",
+    "MobAppearanceParticleMixin",
     "MouseHandlerMixin",
     "MovementInputFromOptionsMixin",
     "PlayerRendererMixin"

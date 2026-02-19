@@ -24,7 +24,7 @@ public class ClientModEvents {
                     player.getUseItem().getItem() instanceof ChooseAnimateTargetItem) {
 
                 ChooseAnimateTargetItem catItem = (ChooseAnimateTargetItem) player.getUseItem().getItem();
-                if (catItem.highlightTarget(player.getUseItem(), player)) {
+                if (catItem.highlightTarget(player.getUseItem(), player) && catItem.canHighlightYourself(player.getUseItem(), player)) {
 
                     LivingEntity target = null;
                     if (player.isShiftKeyDown())

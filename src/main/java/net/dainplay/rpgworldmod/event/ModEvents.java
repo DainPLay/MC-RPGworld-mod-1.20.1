@@ -34,8 +34,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.player.Player;
@@ -54,6 +57,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingBreatheEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -484,7 +488,7 @@ public class ModEvents {
 
 		if (topItem.getItem() instanceof EmptyScrollItem
 				|| bottomItem.getItem() instanceof EmptyScrollItem
-				|| bottomItem.getItem() instanceof ScrollItem
+				|| topItem.getItem() instanceof ScrollItem
 				|| bottomItem.getItem() instanceof ScrollItem) {
 			event.setCanceled(true);
 		}
@@ -546,5 +550,29 @@ public class ModEvents {
 				event.setRefillAirAmount(0);
 			}
 		}
+	}
+
+	@SubscribeEvent
+	public void onEnderManDrown(LivingDropsEvent event) {
+		// 1. Проверяем, что умерший - эндермен
+		if (!(event.getEntity() instanceof EnderMan enderMan)) return;
+
+		// 2. Проверяем измерение (Энд)
+		if (enderMan.level().dimension() != Level.END) return;
+
+		// 3. Проверяем, идёт ли дождь на позиции эндермена
+		if (!enderMan.level().isRainingAt(enderMan.blockPosition())) return;
+
+		// 4. Проверяем тип урона (утопление)
+		if (!event.getSource().is(DamageTypes.DROWN)) return;
+
+		// Все условия выполнены – добавляем особый предмет
+		ItemStack specialItem = new ItemStack(ModItems.MUSIC_DISC_RAIN_A_SIDE.get(), 1); // ваш предмет
+		ItemEntity drop = new ItemEntity(
+				enderMan.level(),
+				enderMan.getX(), enderMan.getY(), enderMan.getZ(),
+				specialItem
+		);
+		event.getDrops().add(drop);
 	}
 }

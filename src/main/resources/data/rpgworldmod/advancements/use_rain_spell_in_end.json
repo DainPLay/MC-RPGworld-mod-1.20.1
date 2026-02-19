@@ -1,0 +1,35 @@
+{
+  "parent": "rpgworldmod:obtain_spell",
+  "criteria": {
+    "use_rain_spell_in_end": {
+      "conditions": {},
+      "trigger": "rpgworldmod:use_rain_spell_in_end"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.use_rain_spell_in_end.description"
+    },
+    "frame": "challenge",
+    "hidden": true,
+    "icon": {
+      "item": "rpgworldmod:heart_of_the_sea_scroll",
+      "nbt": "{Enchantments:[{id:\"rpgworldmod:necromancy\",lvl:1s}]}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.use_rain_spell_in_end.title"
+    }
+  },
+  "requirements": [
+    [
+      "use_rain_spell_in_end"
+    ]
+  ],
+  "rewards": {
+    "experience": 65,
+    "loot": ["rpgworldmod:music_disc_rain"]
+  },
+  "sends_telemetry_event": true
+}

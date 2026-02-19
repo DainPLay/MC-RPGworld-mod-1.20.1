@@ -67,6 +67,8 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> MOSSIOSIS_CONVERTED;
     public static RegistryObject<SoundEvent> MUSIC_DISC_HOWLING;
     public static RegistryObject<SoundEvent> MUSIC_DISC_TIRE;
+    public static RegistryObject<SoundEvent> MUSIC_DISC_RAIN_A_SIDE;
+    public static RegistryObject<SoundEvent> MUSIC_DISC_RAIN_B_SIDE;
     public static RegistryObject<SoundEvent> PLATINUMFISH_AMBIENT;
     public static RegistryObject<SoundEvent> PLATINUMFISH_DEATH;
     public static RegistryObject<SoundEvent> PLATINUMFISH_HURT;
@@ -129,6 +131,7 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> SPELL_RESTORATION_START;
     public static RegistryObject<SoundEvent> SPELL_RESTORATION_LOOP;
     public static RegistryObject<SoundEvent> SPELL_RESTORATION_STOP;
+    public static RegistryObject<SoundEvent> SPELL_RESTORATION_CAST;
     public static RegistryObject<SoundEvent> SPELL_CONJURATION_START;
     public static RegistryObject<SoundEvent> SPELL_CONJURATION_STOP;
     public static RegistryObject<SoundEvent> SPELL_ALTERATION_START;
@@ -153,4 +156,8 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> STAFF_ENDER_EYE_FIRE;
     public static RegistryObject<SoundEvent> STAFF_HEART_OF_THE_SEA_FIRE;
     public static RegistryObject<SoundEvent> STAFF_NETHER_STAR_FIRE;
+    public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_HEART_OF_THE_SEA_START;
+    public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_HEART_OF_THE_SEA_LOOP;
+    public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_HEART_OF_THE_SEA_STOP;
+    public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_HEART_OF_THE_SEA_CAST;
 }

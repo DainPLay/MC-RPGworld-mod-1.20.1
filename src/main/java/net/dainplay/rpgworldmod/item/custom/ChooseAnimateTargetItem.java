@@ -10,4 +10,8 @@ public interface ChooseAnimateTargetItem {
 	default boolean highlightTarget(ItemStack stack, Player player) {
 		return false;
 	}
+
+	default boolean canHighlightYourself(ItemStack stack, Player player) {
+		return true;
+	}
 }

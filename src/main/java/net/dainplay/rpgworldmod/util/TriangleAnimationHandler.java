@@ -1,6 +1,7 @@
 package net.dainplay.rpgworldmod.util;
 
 import net.dainplay.rpgworldmod.item.ModItems;
+import net.dainplay.rpgworldmod.item.custom.DoubleSidedRecordItem;
 import net.dainplay.rpgworldmod.item.custom.MintalTriangleItem;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -35,6 +36,10 @@ public class TriangleAnimationHandler {
             // Check if the spawned item is damageable
             if (itemStack.getItem() == ModItems.MINTAL_TRIANGLE.get()) {
                 MintalTriangleItem.setVibes(itemStack, 0); // Reduce durability by 1
+            }
+
+            if (itemStack.getItem() instanceof DoubleSidedRecordItem) {
+                DoubleSidedRecordItem.removeFlip(itemStack);
             }
         }
     }

@@ -46,7 +46,7 @@ public class BowNBTManager {
 				bowStack.getTag().remove("UsingProjectruffle");
 			}
 		}
-		if (event.getEntity() instanceof Player player) {
+		if (event.getEntity() instanceof Player player && !player.level().isClientSide()) {
 			if (event.getItem().getItem() instanceof LivingWoodStaffItem || event.getItem().getItem() instanceof BlazeStaffItem) {
 				ModMessages.sendToNearbyPlayers(
 						new LoopSoundPacket(player.getId(), false, event.getItem()),

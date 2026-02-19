@@ -1,0 +1,18 @@
+{
+  "loader": "forge:item_layers",
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "rpgworldmod:item/music_disc_rain_b_side_flip_3",
+    "layer1": "rpgworldmod:item/music_disc_rain_b_side_flip_3_e"
+  },
+  "forge_data": {
+    "layers": {
+      "1": {
+        "color": "FFFFFFFF",
+        "block_light": 15,
+        "sky_light": 15,
+        "ambient_occlusion": false
+      }
+    }
+  }
+}

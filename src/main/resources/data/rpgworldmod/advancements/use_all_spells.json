@@ -24,6 +24,30 @@
     "spell_necromancy_ember": {
       "conditions": {},
       "trigger": "rpgworldmod:spell_necromancy_ember"
+    },
+    "spell_destruction_heart_of_the_sea": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_destruction_heart_of_the_sea"
+    },
+    "spell_restoration_heart_of_the_sea": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_restoration_heart_of_the_sea"
+    },
+    "spell_alteration_heart_of_the_sea": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_alteration_heart_of_the_sea"
+    },
+    "spell_illusion_heart_of_the_sea": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_illusion_heart_of_the_sea"
+    },
+    "spell_conjuration_heart_of_the_sea": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_conjuration_heart_of_the_sea"
+    },
+    "spell_necromancy_heart_of_the_sea": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_necromancy_heart_of_the_sea"
     }
   },
   "display": {
@@ -60,6 +84,24 @@
     ],
     [
       "spell_necromancy_ember"
+    ],
+    [
+      "spell_destruction_heart_of_the_sea"
+    ],
+    [
+      "spell_restoration_heart_of_the_sea"
+    ],
+    [
+      "spell_alteration_heart_of_the_sea"
+    ],
+    [
+      "spell_illusion_heart_of_the_sea"
+    ],
+    [
+      "spell_conjuration_heart_of_the_sea"
+    ],
+    [
+      "spell_necromancy_heart_of_the_sea"
     ]
   ],
   "rewards": {

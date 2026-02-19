@@ -1,11 +1,14 @@
 package net.dainplay.rpgworldmod.render;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import org.joml.Matrix4f;
 
 import java.util.function.Function;
 
@@ -118,6 +121,30 @@ public class ModRenderTypes extends RenderType {
 					.setDepthTestState(EQUAL_DEPTH_TEST)
 					.setTransparencyState(GLINT_TRANSPARENCY)
 					.setTexturingState(GLINT_TEXTURING)
+					.createCompositeState(false)
+	);
+
+	public static final RenderStateShard.TexturingStateShard SUMMONED_ENTITY_GLINT_TEXTURING = new RenderStateShard.TexturingStateShard("summoned_entity_glint_texturing", () -> {
+		setupGlintTexturing(1F);
+	}, () -> {
+		RenderSystem.resetTextureMatrix();
+	});
+
+	public static final RenderType SUMMONED_GLINT_ENTITY = create(
+			"summoned_glint_entity",
+			DefaultVertexFormat.POSITION_TEX,
+			VertexFormat.Mode.QUADS,
+			256,
+			false,
+			false,
+			CompositeState.builder()
+					.setShaderState(RENDERTYPE_GLINT_SHADER)
+					.setTextureState(new TextureStateShard(SUMMONED_GLINT_TEXTURE, true, false))
+					.setWriteMaskState(COLOR_WRITE)
+					.setCullState(NO_CULL)
+					.setDepthTestState(EQUAL_DEPTH_TEST)
+					.setTransparencyState(GLINT_TRANSPARENCY)
+					.setTexturingState(SUMMONED_ENTITY_GLINT_TEXTURING)
 					.createCompositeState(false)
 	);
 

@@ -36,10 +36,7 @@ public class MosquitoingEffect extends MobEffect {
         BlockPos pos = entity.blockPosition();
         BlockPos newpos = new BlockPos(pos.getX(), (int) entity.getEyeY(), pos.getZ());
 
-        Biome biome = level.getBiome(newpos).value();
-        boolean canRain = biome.getPrecipitationAt(newpos) == Biome.Precipitation.RAIN;
-
-        if ((level.isRaining() && canRain && level.canSeeSky(newpos)) || (level.getBiome(entity.getOnPos()).is(BiomeRegistry.RIE_WEALD) && level.isRaining())
+        if ((level.isRainingAt(newpos)) || (level.getBiome(entity.getOnPos()).is(BiomeRegistry.RIE_WEALD) && level.isRaining())
                 || !entity.getEyeInFluidType().isAir()
                 || entity.isOnFire()
                 || hasStickyBlockNearby(entity)

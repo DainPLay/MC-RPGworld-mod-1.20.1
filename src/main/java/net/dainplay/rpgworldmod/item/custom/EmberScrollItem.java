@@ -137,6 +137,9 @@ public class EmberScrollItem extends ScrollItem {
 			if (stack.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0) {
 				return 0F;
 			}
+			if (stack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0) {
+				return 0F;
+			}
 		}
 		return -0.15F;
 	}
@@ -1374,7 +1377,10 @@ public class EmberScrollItem extends ScrollItem {
 			// Проверяем, является ли блок горючим
 			if (hitState.is(ModBlocks.ARBOR_FUEL_BLOCK.get())) {
 				// Заменяем блок земли на огонь
-				level.setBlockAndUpdate(hitPos, BaseFireBlock.getState(level, hitPos));
+				BlockState fireState = BaseFireBlock.getState(level, hitPos);
+				if (BaseFireBlock.canBePlacedAt(level, hitPos, Direction.UP)) {
+					level.setBlockAndUpdate(hitPos, fireState);
+				} else level.setBlockAndUpdate(hitPos, Blocks.AIR.defaultBlockState());
 				return true;
 			}
 

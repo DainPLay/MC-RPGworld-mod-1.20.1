@@ -1,0 +1,13 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "rpgworldmod:music_disc_rain_a_side"
+        }
+      ]
+    }
+  ]
+}

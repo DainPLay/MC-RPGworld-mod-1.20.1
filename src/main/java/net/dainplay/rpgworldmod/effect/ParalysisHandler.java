@@ -4,6 +4,7 @@ import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.custom.BlazeStaffItem;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
+import net.dainplay.rpgworldmod.item.custom.HeartOfTheSeaScrollItem;
 import net.dainplay.rpgworldmod.item.custom.LivingWoodStaffItem;
 import net.dainplay.rpgworldmod.network.ClientAdditionalHealthCostData;
 import net.dainplay.rpgworldmod.network.IgniteSelfPacket;
@@ -196,6 +197,17 @@ public class ParalysisHandler {
 					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), useItem) > 0 && !player.isShiftKeyDown() && Mth.ceil(player.getHealth()) >= (ClientAdditionalHealthCostData.get() + scroll.getManaCost(useItem, player))) {
 						ModMessages.sendToServer(new IgniteSelfPacket(player.getId(), ClientAdditionalHealthCostData.get() + scroll.getManaCost(useItem, player)));
 						player.swing(player.getUsedItemHand());
+					}
+				}
+
+				if (useItem.getItem() instanceof HeartOfTheSeaScrollItem scroll) {
+					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), useItem) > 0 && ClientAnimateTargetData.get() != null) {
+						ModMessages.sendToServer(new UseOnAnimateTargetPacket(player.getId(), ClientAnimateTargetData.get().getId()));
+						player.swing(player.getUsedItemHand());
+					}
+					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), useItem) > 0
+							&& ClientAnimateTargetData.get() != null) {
+						ModMessages.sendToServer(new UseOnAnimateTargetPacket(player.getId(), ClientAnimateTargetData.get().getId()));
 					}
 				}
 

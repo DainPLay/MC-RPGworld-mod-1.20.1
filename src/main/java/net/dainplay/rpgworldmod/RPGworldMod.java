@@ -24,6 +24,7 @@ import net.dainplay.rpgworldmod.item.ModCreativeModeTab;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
 import net.dainplay.rpgworldmod.item.custom.EmptyScrollItem;
+import net.dainplay.rpgworldmod.item.custom.HeartOfTheSeaScrollItem;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.dainplay.rpgworldmod.item.custom.WealdBladeItem;
 import net.dainplay.rpgworldmod.loot.ModLootModifiers;
@@ -332,6 +333,12 @@ public class RPGworldMod
             event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
             event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
             event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
+            event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.RESTORATION.get(), ModEnchantments.RESTORATION.get().getMaxLevel())));
+            event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
+            event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ILLUSION.get(), ModEnchantments.ILLUSION.get().getMaxLevel())));
+            event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
+            event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
+            event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
             event.accept(ModItems.FIREPROOF_SKIRT);
             event.accept(ModItems.LIVING_WOOD_HELMET);
             event.accept(ModItems.LIVING_WOOD_CHESTPLATE);
@@ -366,6 +373,7 @@ public class RPGworldMod
             event.accept(ModItems.FIG_LEAF);
             event.accept(ModItems.MUSIC_DISC_HOWLING);
             event.accept(ModItems.MUSIC_DISC_TIRE);
+            event.accept(ModItems.MUSIC_DISC_RAIN_A_SIDE);
             event.accept(ModItems.RIE_WEALD_BANNER_PATTERN);
             event.accept(ModItems.PORTABLE_TURRET);
         }
@@ -484,6 +492,7 @@ public class RPGworldMod
             event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
             event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
             event.accept(ModItems.EMBER_SCROLL);
+            event.accept(ModItems.HEART_OF_THE_SEA_SCROLL);
         }
 
         if(event.getTab() == ModCreativeModeTab.RPGWORLD_SPAWN_EGGS_TAB.get()) {

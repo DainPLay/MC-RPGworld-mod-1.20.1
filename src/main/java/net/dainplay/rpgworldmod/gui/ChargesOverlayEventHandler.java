@@ -33,6 +33,10 @@ public class ChargesOverlayEventHandler implements IGuiOverlay {
 			active = false;
 			return;
 		}
+		if (!mc.options.getCameraType().isFirstPerson()) {
+			active = false;
+			return;
+		}
 
 		// Определяем стек с посохом (сначала правая рука, потом левая)
 		ItemStack stack = mc.player.getMainHandItem();

@@ -258,6 +258,24 @@
       }
     ]
   },
+  "rpgworldmod.music_disc_rain_a_side": {
+    "sounds": [
+      {
+        "name": "rpgworldmod:music/records/rain_a_side",
+        "stream": true,
+        "weight": 1
+      }
+    ]
+  },
+  "rpgworldmod.music_disc_rain_b_side": {
+    "sounds": [
+      {
+        "name": "rpgworldmod:music/records/rain_b_side",
+        "stream": true,
+        "weight": 1
+      }
+    ]
+  },
 
 
   "rpgworldmod.bibbit.hit": {
@@ -1022,6 +1040,13 @@
     ],
     "subtitle": "subtitles.rpgworldmod.spell.restoration_stop"
   },
+  "rpgworldmod.spell.restoration_cast": {
+    "sounds": [
+      "rpgworldmod:spell/restoration_cast1",
+      "rpgworldmod:spell/restoration_cast2"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.restoration_cast"
+  },
   "rpgworldmod.spell.conjuration_start": {
     "sounds": [
       "rpgworldmod:spell/conjuration_start"
@@ -1197,5 +1222,33 @@
       }
     ],
     "subtitle": "subtitles.rpgworldmod.prismarine_shard_miss"
+  },
+  "rpgworldmod.spell.destruction_heart_of_the_sea_start": {
+    "sounds": [
+      "rpgworldmod:spell/destruction_heart_of_the_sea_start1",
+      "rpgworldmod:spell/destruction_heart_of_the_sea_start2"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.destruction_heart_of_the_sea_start"
+  },
+  "rpgworldmod.spell.destruction_heart_of_the_sea_loop": {
+    "sounds": [
+      "rpgworldmod:spell/destruction_heart_of_the_sea_loop"
+    ]
+  },
+  "rpgworldmod.spell.destruction_heart_of_the_sea_stop": {
+    "sounds": [
+      "rpgworldmod:spell/destruction_heart_of_the_sea_stop1",
+      "rpgworldmod:spell/destruction_heart_of_the_sea_stop2"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.destruction_heart_of_the_sea_stop"
+  },
+  "rpgworldmod.spell.destruction_heart_of_the_sea_cast": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.guardian.death"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.destruction_heart_of_the_sea_cast"
   }
 }

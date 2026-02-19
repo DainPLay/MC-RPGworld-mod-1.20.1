@@ -29,6 +29,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.TntBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -317,7 +318,10 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 			if (hitState.is(ModBlocks.ARBOR_FUEL_BLOCK.get())) {
 
 				// Заменяем блок земли на огонь
-				level.setBlockAndUpdate(hitPos, BaseFireBlock.getState(level, hitPos));
+				BlockState fireState = BaseFireBlock.getState(level, hitPos);
+				if (BaseFireBlock.canBePlacedAt(level, hitPos, Direction.UP)) {
+					level.setBlockAndUpdate(hitPos, fireState);
+				} else level.setBlockAndUpdate(hitPos, Blocks.AIR.defaultBlockState());
 
 				// Звук и частицы для земли
 				level.playSound(null, hitPos, RPGSounds.EMBER_GEM_IGNITE_BLOCK.get(),

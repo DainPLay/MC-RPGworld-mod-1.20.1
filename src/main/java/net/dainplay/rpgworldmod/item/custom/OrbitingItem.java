@@ -35,6 +35,14 @@ public interface OrbitingItem {
 		return -0.5F;
 	}
 
+	default float get1Size(ItemStack stack, Entity entity) {
+		return 0.5F;
+	}
+
+	default float getSize(ItemStack stack, Entity entity) {
+		return 0.25F;
+	}
+
 	default float getX(ItemStack stack, Entity entity) {
 		return -0.05F;
 	}

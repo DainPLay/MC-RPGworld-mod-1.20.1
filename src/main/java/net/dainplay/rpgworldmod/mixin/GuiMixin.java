@@ -1,8 +1,7 @@
 package net.dainplay.rpgworldmod.mixin;
 
-import net.dainplay.rpgworldmod.gui.ChargesOverlayEventHandler;
-import net.dainplay.rpgworldmod.gui.ManaOverlayEventHandler;
 import net.dainplay.rpgworldmod.gui.HealthOverlayEventHandler;
+import net.dainplay.rpgworldmod.gui.ManaOverlayEventHandler;
 import net.dainplay.rpgworldmod.network.ClientMaxManaData;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;

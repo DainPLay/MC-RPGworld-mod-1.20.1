@@ -4,6 +4,7 @@ import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.block.custom.EntFaceBlock;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.item.custom.LivingWoodBowItem;
+import net.dainplay.rpgworldmod.network.ClientRainyChunkData;
 import net.dainplay.rpgworldmod.network.EntFaceDestroyProgressPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.SyncEffectPacket;
@@ -38,6 +39,9 @@ public class ClientHandler {
 
 	@SubscribeEvent
 	public static void onClientTick(TickEvent.ClientTickEvent event) {
+		if (event.phase == TickEvent.Phase.END) {
+			ClientRainyChunkData.tick();
+		}
 		if (event.phase == TickEvent.Phase.END) {
 			Minecraft minecraft = Minecraft.getInstance();
 			if (minecraft.player == null || minecraft.level == null) return;

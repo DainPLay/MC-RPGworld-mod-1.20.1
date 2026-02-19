@@ -27,6 +27,7 @@ import net.dainplay.rpgworldmod.entity.client.render.BoundEntityRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.BramblefoxRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.BurrSpikeRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.Burr_purrRenderer;
+import net.dainplay.rpgworldmod.entity.client.render.ConjuredDolphinRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.DrillhogRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.EntRieFruitProjectileRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.EntRootsRenderer;
@@ -112,6 +113,7 @@ public class EntityRendererHandler {
         event.registerEntityRenderer(ModEntities.FIREFLANTERN.get(), FireflanternRenderer::new);
         event.registerEntityRenderer(ModEntities.BURR_PURR.get(), Burr_purrRenderer::new);
         event.registerEntityRenderer(ModEntities.DRILLHOG.get(), DrillhogRenderer::new);
+        event.registerEntityRenderer(ModEntities.CONJURED_DOLPHIN.get(), ConjuredDolphinRenderer::new);
         event.registerEntityRenderer(ModEntities.MOSQUITO_SWARM.get(), MosquitoSwarmRenderer::new);
         event.registerEntityRenderer(ModEntities.RAZORLEAF.get(), RazorleafRenderer::new);
         event.registerEntityRenderer(ModEntities.TIRE_SWING.get(), TireSwingRenderer::new);

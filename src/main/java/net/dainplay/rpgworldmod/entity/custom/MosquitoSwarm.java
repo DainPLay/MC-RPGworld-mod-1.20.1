@@ -1230,10 +1230,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		BlockPos pos = this.blockPosition();
 		BlockPos newpos = new BlockPos(pos.getX(), (int) this.getEyeY(), pos.getZ());
 
-		Biome biome = level.getBiome(newpos).value();
-		boolean canRain = biome.getPrecipitationAt(newpos) == Biome.Precipitation.RAIN;
-
-		if ((level.isRaining() && canRain && level.canSeeSky(newpos)) || (level.getBiome(this.getOnPos()).is(BiomeRegistry.RIE_WEALD) && level.isRaining())) {
+		if ((level.isRainingAt(newpos)) || (level.getBiome(this.getOnPos()).is(BiomeRegistry.RIE_WEALD) && level.isRaining())) {
 			shouldTransform = true;
 		}
 

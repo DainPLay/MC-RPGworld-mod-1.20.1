@@ -58,7 +58,7 @@ public class ItemInHandLayerMixin {
 
 			String textureString = orbitingItem.getTexture(itemStack, entity);
 			int color = orbitingItem.getColor(itemStack, entity);
-			float size = 0.25F;
+			float size = orbitingItem.getSize(itemStack, entity);
 
 			VertexConsumer vertexConsumer;
 			Matrix4f matrix = poseStack.last().pose();

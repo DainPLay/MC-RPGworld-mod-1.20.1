@@ -28,6 +28,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
+import java.util.UUID;
 
 public class BoundCampfireBlock extends CampfireBlock {
 	public BoundCampfireBlock(boolean pSpawnParticles, int pFireDamage, Properties pProperties) {
@@ -50,6 +51,26 @@ public class BoundCampfireBlock extends CampfireBlock {
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
 		return createTickerHelper(type, ModBlockEntities.BOUND_CAMPFIRE_BLOCK_ENTITY.get(), BoundCampfireBlockEntity::tick);
+	}
+
+	@Override
+	public void attack(BlockState state, Level level, BlockPos pos, Player player) {
+		if (!level.isClientSide) {
+			BlockEntity blockEntity = level.getBlockEntity(pos);
+			if (blockEntity instanceof BoundCampfireBlockEntity boundCampfire) {
+				// Проверяем, что игрок — владелец
+				UUID ownerUUID = boundCampfire.getOwnerUUID();
+				if (ownerUUID != null && ownerUUID.equals(player.getUUID())) {
+					// Проверяем, что в главной руке каменный меч
+					ItemStack mainHand = player.getMainHandItem();
+					if (mainHand.getItem() == ModItems.EMBER_SCROLL.get() && mainHand.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0) {
+						// Разрушаем блок без дропа
+						level.destroyBlock(pos, false);
+					}
+				}
+			}
+		}
+		super.attack(state, level, pos, player);
 	}
 
 	@Override

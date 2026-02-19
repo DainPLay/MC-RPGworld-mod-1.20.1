@@ -63,7 +63,7 @@ public abstract class MinecraftMixin {
 			if (catItem.highlightTarget(this.player.getUseItem(), this.player)) {
 
 				LivingEntity target = null;
-				if (player.isShiftKeyDown())
+				if (player.isShiftKeyDown() && catItem.canHighlightYourself(this.player.getUseItem(), this.player))
 					target = player;
 				else
 					target = findVisibleTargetInSight(this.player, 64.0, 15.0);

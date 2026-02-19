@@ -2,6 +2,8 @@
   "replace": false,
   "values": [
     "rpgworldmod:music_disc_howling",
-    "rpgworldmod:music_disc_tire"
+    "rpgworldmod:music_disc_tire",
+    "rpgworldmod:music_disc_rain_a_side",
+    "rpgworldmod:music_disc_rain_b_side"
   ]
 }

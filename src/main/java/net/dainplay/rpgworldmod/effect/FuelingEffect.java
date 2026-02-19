@@ -41,19 +41,15 @@ public class FuelingEffect extends MobEffect {
         Level level = entity.level();
         BlockPos pos = entity.blockPosition();
         BlockPos newpos = new BlockPos(pos.getX(), (int) entity.getEyeY(), pos.getZ());
-        FluidState fluid = level.getFluidState(pos);
 
-        Biome biome = level.getBiome(newpos).value();
-        boolean canRain = biome.getPrecipitationAt(newpos) == Biome.Precipitation.RAIN;
-
-        if ((level.isRaining() && canRain && level.canSeeSky(newpos)) || level.getFluidState(pos).getType() == Fluids.WATER  || level.getFluidState(newpos).getType() == Fluids.WATER) {
+        if ((level.isRainingAt(newpos)) || level.getFluidState(pos).getType() == Fluids.WATER  || level.getFluidState(newpos).getType() == Fluids.WATER) {
             if(!EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity) && !entity.isPushedByFluid()) return;
 
             float liftAmount; // Adjust the lifting speed
             if (entity.onGround()) liftAmount = 0.16f; else liftAmount = 0.08f;
             Vec3 motion = entity.getDeltaMovement();
             entity.setDeltaMovement(motion.x, motion.y + liftAmount, motion.z);
-            if((level.isRaining() && canRain && level.canSeeSky(newpos)) && !level.isClientSide && entity instanceof ServerPlayer serverPlayer) ModAdvancements.FLY_IN_OIL.trigger(serverPlayer);
+            if((level.isRainingAt(newpos)) && !level.isClientSide && entity instanceof ServerPlayer serverPlayer) ModAdvancements.FLY_IN_OIL.trigger(serverPlayer);
             entity.hasImpulse = true;
             entity.resetFallDistance();
         }

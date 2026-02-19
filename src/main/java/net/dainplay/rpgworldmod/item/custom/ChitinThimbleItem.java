@@ -46,7 +46,7 @@ public class ChitinThimbleItem extends CurioItem {
 		BlockState playerState = level.getBlockState(player.blockPosition());
 
 		if (!player.getCooldowns().isOnCooldown(stack.getItem())
-				&& !((level.isRaining() && level.getBiome(new BlockPos(player.blockPosition().getX(), (int) player.getEyeY(), player.blockPosition().getZ())).value().getPrecipitationAt(new BlockPos(player.blockPosition().getX(), (int) player.getEyeY(), player.blockPosition().getZ())) == Biome.Precipitation.RAIN && level.canSeeSky(new BlockPos(player.blockPosition().getX(), (int) player.getEyeY(), player.blockPosition().getZ()))) || (level.getBiome(player.getOnPos()).is(BiomeRegistry.RIE_WEALD) && level.isRaining()))
+				&& !(level.isRainingAt(new BlockPos(player.blockPosition().getX(), (int) player.getEyeY(), player.blockPosition().getZ())) || (level.getBiome(player.getOnPos()).is(BiomeRegistry.RIE_WEALD) && level.isRaining()))
 				&& (!powder.isEmpty() || player.getAbilities().instabuild)
 				&& !swarmIsNear
 				&& playerState.getFluidState().isEmpty()

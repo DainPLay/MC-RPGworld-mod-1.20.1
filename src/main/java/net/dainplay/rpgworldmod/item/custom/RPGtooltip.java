@@ -34,4 +34,12 @@ public interface RPGtooltip {
     default boolean hasControls(ItemStack item) {
         return false;
     }
+
+    default boolean hasFeatures(ItemStack item) {
+        return true;
+    }
+
+    default boolean hasComment(ItemStack item) {
+        return true;
+    }
 }
