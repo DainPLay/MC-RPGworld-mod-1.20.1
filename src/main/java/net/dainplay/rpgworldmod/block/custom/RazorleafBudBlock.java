@@ -29,13 +29,19 @@ public class RazorleafBudBlock extends FlowerBlock {
 	}
 	@Override
 	public void randomTick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
-				float f = 0.25F;
-				if (pLevel.isDay() && (pLevel.getBlockState(pPos.above()).getBlock().getExplosionResistance(pState, pLevel, pPos.above(), null) < 20F || pLevel.getBlockState(pPos.above()).isAir()) && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(pLevel, pPos, pState, pRandom.nextInt((int)(25.0F / f) + 1) == 0)) {
-					pLevel.destroyBlock(pPos.above(), true);
-					pLevel.setBlock(pPos, ModBlocks.SPIKY_IVY.get().defaultBlockState(), 2);
-					pLevel.setBlock(pPos.above(), ModBlocks.YOUNG_RAZORLEAF.get().defaultBlockState(), 2);
-					net.minecraftforge.common.ForgeHooks.onCropsGrowPost(pLevel, pPos, pState);
-				}
+		float f = 0.25F;
+		BlockPos abovePos = pPos.above();
+		BlockState aboveState = pLevel.getBlockState(abovePos);
+
+		if (pLevel.isDay() &&
+				(aboveState.getExplosionResistance(pLevel, abovePos, null) < 20F || aboveState.isAir()) &&
+				net.minecraftforge.common.ForgeHooks.onCropsGrowPre(pLevel, pPos, pState, pRandom.nextInt((int) (25.0F / f) + 1) == 0)) {
+
+			pLevel.destroyBlock(abovePos, true);
+			pLevel.setBlock(pPos, ModBlocks.SPIKY_IVY.get().defaultBlockState(), 2);
+			pLevel.setBlock(abovePos, ModBlocks.YOUNG_RAZORLEAF.get().defaultBlockState(), 2);
+			net.minecraftforge.common.ForgeHooks.onCropsGrowPost(pLevel, pPos, pState);
+		}
 	}
 
 	@Override

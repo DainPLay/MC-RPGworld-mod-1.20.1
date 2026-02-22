@@ -416,9 +416,8 @@ public class TireSwingEntity extends Entity {
 				// На клиенте просто возвращаем успех
 				return InteractionResult.SUCCESS;
 			}
-		}
-		else {
-			dropLeash(true,true);
+		} else if (getLeashType() == LEASH_TYPE_PLAYER) {
+			dropLeash(true, true);
 			return InteractionResult.CONSUME;
 		}
 		return InteractionResult.PASS;
@@ -1646,7 +1645,7 @@ public class TireSwingEntity extends Entity {
 
 		@Override
 		public InteractionResult interact(Player player, InteractionHand hand) {
-			if (this.level().isClientSide) {
+			if (this.level().isClientSide && this.getParent().getPassengers().isEmpty()) {
 				ModMessages.sendToServer(new PacketTireSwingInteraction(this.getParent().getId()));
 				return InteractionResult.SUCCESS;
 			}

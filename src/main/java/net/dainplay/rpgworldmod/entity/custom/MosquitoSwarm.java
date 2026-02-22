@@ -7,13 +7,16 @@ import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.entity.ModEntities;
 import net.dainplay.rpgworldmod.item.ModItems;
+import net.dainplay.rpgworldmod.item.custom.ChitinThimbleItem;
 import net.dainplay.rpgworldmod.particle.ModParticles;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.dainplay.rpgworldmod.util.ModTags;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -26,12 +29,14 @@ import net.minecraft.server.players.OldUsersConverter;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -66,6 +71,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
@@ -83,6 +89,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.DistExecutor;
+import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.SlotResult;
+import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -93,6 +105,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
 public class MosquitoSwarm extends Monster implements OwnableEntity {
 	private static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(MosquitoSwarm.class, EntityDataSerializers.BYTE);
@@ -111,12 +125,14 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 	private static final int TELEPORT_DISTANCE_THRESHOLD = 20; // 20 блоков
 	private static final int FAR_DISTANCE_THRESHOLD = 45; // 100 блоков
 	private int pathCheckTimer = 0;
+	private int ownerCheckTimer = 0;
 	private static final int PATH_CHECK_INTERVAL = 5;
 	private static final float SPECIAL_EFFECT_CHANCE = 0.1F;
 
 	public MosquitoSwarm(EntityType<? extends MosquitoSwarm> p_32219_, Level p_32220_) {
 		super(p_32219_, p_32220_);
 		this.moveControl = new FlyingMoveControl(this, 10, true);
+		this.blocksBuilding = false;
 		this.applyInvulnerability();
 	}
 
@@ -138,10 +154,139 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 	}
 
 	@Override
+	public boolean isPreventingPlayerRest(Player pPlayer) {
+		return this.getOwner() == null;
+	}
+
+	private void checkOwnerHasThimble() {
+		LivingEntity owner = this.getOwner();
+
+		// Если владелец отсутствует (вышел, умер) – трансформируем
+		if (owner == null) {
+			if (this.getOwnerUUID() != null) { // был владелец, но сейчас недоступен
+				transformIntoBlock(this.getSize());
+			}
+			return;
+		}
+
+		// Владелец должен быть игроком
+		if (!(owner instanceof Player player)) {
+			transformIntoBlock(this.getSize());
+			return;
+		}
+
+		// Проверяем, надет ли ChitinThimble в слоты Curios
+		Optional<SlotResult> slotResult = CuriosApi.getCuriosHelper().findFirstCurio(
+				player,
+				stack -> stack.getItem() instanceof ChitinThimbleItem
+		);
+
+		if (slotResult.isEmpty()) {
+			// Напёрсток не надет – трансформируем стаю
+			transformIntoBlock(this.getSize());
+		}
+	}
+
+	static boolean checkVisibility(LivingEntity entity, Item item) {
+		AtomicBoolean cosmetic = new AtomicBoolean(false);
+		CuriosApi.getCuriosInventory(entity)
+				.ifPresent(handler -> handler.getCurios().forEach((id, stacksHandler) -> {
+					IDynamicStackHandler stackHandler = stacksHandler.getStacks();
+					IDynamicStackHandler cosmeticStacksHandler = stacksHandler.getCosmeticStacks();
+
+					for (int i = 0; i < stackHandler.getSlots(); i++) {
+						ItemStack stack = cosmeticStacksHandler.getStackInSlot(i);
+						NonNullList<Boolean> renderStates = stacksHandler.getRenders();
+						boolean renderable = renderStates.size() > i && renderStates.get(i);
+
+						if (stack.isEmpty() && renderable) {
+							if (stackHandler.getStackInSlot(i).getItem() == item)
+								cosmetic.set(true);
+						}
+					}
+				}));
+		return cosmetic.get();
+	}
+
+	private boolean canMakeSound() {
+		LivingEntity owner = this.getOwner();
+		if (owner == null) return true;
+		if (!(owner instanceof Player player)) return true;
+		return checkVisibility(owner, ModItems.CHITIN_THIMBLE.get());
+	}
+
+	private boolean teleportNearby() {
+		Level level = this.level();
+		if (level.isClientSide) return false;
+
+		BlockPos currentPos = this.blockPosition();
+		RandomSource random = this.getRandom();
+
+		// Пытаемся найти подходящее место (до 20 попыток)
+		for (int attempt = 0; attempt < 20; attempt++) {
+			int dx = random.nextInt(11) - 5; // -5..5
+			int dy = random.nextInt(7) - 3;  // -3..3
+			int dz = random.nextInt(11) - 5;
+
+			BlockPos targetPos = currentPos.offset(dx, dy, dz);
+			BlockState targetState = level.getBlockState(targetPos);
+			BlockState aboveState = level.getBlockState(targetPos.above());
+
+			// Проверяем, что блок и блок над ним — воздух (или заменяемые), не жидкость, и нет коллизий с сущностью
+			if (targetState.isAir() && aboveState.isAir() &&
+					!targetState.liquid() && !aboveState.liquid() &&
+					level.noCollision(this, new AABB(targetPos).inflate(0.1))) {
+
+				// Проверяем прямую видимость (нет ли блоков на пути)
+				Vec3 from = new Vec3(currentPos.getX() + 0.5, currentPos.getY() + 0.5, currentPos.getZ() + 0.5);
+				Vec3 to = new Vec3(targetPos.getX() + 0.5, targetPos.getY() + 0.5, targetPos.getZ() + 0.5);
+				ClipContext ctx = new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this);
+				BlockHitResult result = level.clip(ctx);
+
+				if (result.getType() == HitResult.Type.MISS) {
+					// Путь свободен — телепортируемся
+					this.teleportTo(targetPos.getX() + 0.5, targetPos.getY(), targetPos.getZ() + 0.5);
+
+					if (level instanceof ServerLevel serverLevel) {
+						serverLevel.sendParticles(ModParticles.MOSQUITOS.get(),
+								this.getX(), this.getY() + 0.5, this.getZ(),
+								15, 0.3, 0.3, 0.3, 0.05);
+					}
+					if (canMakeSound()) this.playSound(RPGSounds.MOSQUITO_SWARM_ATTACK.get(), 0.5F, 1.0F);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private void checkCollisionWithBurningEntity() {
+		// Получаем всех живых существ, пересекающихся с текущим хитбоксом
+		List<Entity> collidingEntities = this.level().getEntitiesOfClass(
+				Entity.class,
+				this.getBoundingBox(),
+				entity -> entity != this && entity.isOnFire()
+		);
+
+		if (!collidingEntities.isEmpty()) {
+			// При пересечении с любым горящим существом трансформируем стаю
+			this.setSecondsOnFire(1);
+		}
+	}
+
+	@Override
 	public void tick() {
 		super.tick();
 
 		if (!this.level().isClientSide) {
+
+			checkCollisionWithBurningEntity();
+
+			if (++ownerCheckTimer >= 20) {
+				ownerCheckTimer = 0;
+				checkOwnerHasThimble();
+			}
+
 			// Проверка пути к цели каждые PATH_CHECK_INTERVAL тиков
 			if (++pathCheckTimer >= PATH_CHECK_INTERVAL) {
 				pathCheckTimer = 0;
@@ -436,7 +581,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 										this.getX(), this.getY() + 0.5, this.getZ(),
 										20, 0.5, 0.5, 0.5, 0.1);
 							}
-							this.playSound(RPGSounds.MOSQUITO_SWARM_ATTACK.get(), 0.5F, 1.0F);
+							if (canMakeSound()) this.playSound(RPGSounds.MOSQUITO_SWARM_ATTACK.get(), 0.5F, 1.0F);
 							return;
 						}
 					}
@@ -492,10 +637,8 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 				// Добавляем в мир
 				this.level().addFreshEntity(newSwarm);
-				if(extraPowder > 0) {
-					for (int i = 0; i < extraPowder; i++) {
-						newSwarm.spawnAtLocation(ModItems.CHITIN_POWDER.get());
-					}
+				if (extraPowder > 0) {
+					newSwarm.giveOrDropChitinPowderToOwner(extraPowder);
 				}
 
 				// Удаляем старых мобов
@@ -508,7 +651,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 							this.getX(), this.getY() + 0.5, this.getZ(),
 							30, 0.5, 0.5, 0.5, 0.1);
 				}
-				this.playSound(RPGSounds.MOSQUITO_SWARM_ATTACK.get(), 1.0F, 1.0F);
+				if (canMakeSound()) this.playSound(RPGSounds.MOSQUITO_SWARM_ATTACK.get(), 1.0F, 1.0F);
 			}
 		}
 	}
@@ -767,6 +910,8 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		private final MosquitoSwarm mosquito;
 		private LivingEntity ownerLastHurt;
 		private int timestamp;
+		private int setTime;
+		private static final int MAX_AGGRO_TIME = 300;
 
 		public OwnerHurtTargetGoal(MosquitoSwarm mosquito) {
 			super(mosquito, false);
@@ -813,12 +958,12 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 		@Override
 		public void start() {
-			// Используем специальный метод для установки цели
 			this.mosquito.setTargetIgnoringOwnerCheck(this.ownerLastHurt);
 			LivingEntity owner = this.mosquito.getOwner();
 			if (owner != null) {
 				this.timestamp = owner.getLastHurtMobTimestamp();
 			}
+			this.setTime = this.mosquito.tickCount;
 			super.start();
 		}
 
@@ -838,6 +983,11 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				return false;
 			}
 
+			// Если прошло больше MAX_AGGRO_TIME тиков, прекращаем преследование
+			if (mosquito.tickCount - this.setTime > MAX_AGGRO_TIME) {
+				return false;
+			}
+
 			return mosquito.canAttack(this.ownerLastHurt) &&
 					!mosquito.isAlliedTo(this.ownerLastHurt) &&
 					!this.ownerLastHurt.equals(owner);
@@ -848,6 +998,8 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		private final MosquitoSwarm mosquito;
 		private LivingEntity ownerLastHurtBy;
 		private int timestamp;
+		private int setTime;
+		private static final int MAX_AGGRO_TIME = 300; // 15 секунд (20 тиков/сек)
 
 		public OwnerHurtByTargetGoal(MosquitoSwarm mosquito) {
 			super(mosquito, false);
@@ -893,13 +1045,12 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 		@Override
 		public void start() {
-			// Используем специальный метод для установки цели, который игнорирует проверку на игрока
-			// для того, кто атаковал владельца
 			this.mosquito.setTargetIgnoringOwnerCheck(this.ownerLastHurtBy);
 			LivingEntity owner = this.mosquito.getOwner();
 			if (owner != null) {
 				this.timestamp = owner.getLastHurtByMobTimestamp();
 			}
+			this.setTime = this.mosquito.tickCount; // запоминаем время начала агрессии
 			super.start();
 		}
 
@@ -916,6 +1067,11 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 			// Проверяем, не заблокирован ли путь к цели
 			if (mosquito.isPathBlocked(this.ownerLastHurtBy.position())) {
+				return false;
+			}
+
+			// Если прошло больше MAX_AGGRO_TIME тиков, прекращаем преследование
+			if (mosquito.tickCount - this.setTime > MAX_AGGRO_TIME) {
 				return false;
 			}
 
@@ -1267,6 +1423,15 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 			Level level = entity.level();
 			BlockPos pos = entity.blockPosition();
 
+			// Если это москит с владельцем
+			if (entity instanceof MosquitoSwarm swarm && swarm.getOwner() != null) {
+				int powderCount = amp; // предполагаем, что amp – количество порошка (аналог размера)
+				swarm.giveOrDropChitinPowderToOwner(powderCount);
+				swarm.proceedKill();
+				return;
+			}
+
+			// Старая логика
 			boolean placed = placeMosquitoBlockAtPosition(entity, pos);
 
 			if (placed) {
@@ -1281,10 +1446,8 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 						entity.spawnAtLocation(ModItems.CHITIN_POWDER.get());
 						entity.spawnAtLocation(ModItems.CHITIN_POWDER.get());
 					}
-					default -> {
-					}
+					default -> {}
 				}
-				;
 			} else {
 				switch (amp) {
 					case 1 -> {
@@ -1298,63 +1461,70 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 					}
 					default -> entity.spawnAtLocation(ModItems.CHITIN_POWDER.get());
 				}
-				;
 			}
-			entity.playSound(RPGSounds.MOSQUITO_SWARM_DEATH.get(), 1.0F, 1.0F);
+			if (entity instanceof MosquitoSwarm swarm && swarm.canMakeSound())
+				entity.playSound(RPGSounds.MOSQUITO_SWARM_DEATH.get(), 1.0F, 1.0F);
+			// Примечание: удаление сущности, вероятно, происходит в вызывающем коде, поэтому здесь не добавляем discard
 		}
 	}
 
 	public void transformIntoBlock(int size) {
-		if (!this.level().isClientSide) {
-			Level level = this.level();
-			BlockPos pos = this.blockPosition();
+		if (this.level().isClientSide) return;
 
-			boolean placed = placeMosquitoBlockAtPosition(pos);
+		// Всегда проигрываем звук и частицы (proceedKill тоже отправит частицы, но это допустимо)
+		if (canMakeSound()) this.playSound(RPGSounds.MOSQUITO_SWARM_DEATH.get(), 1.0F, 1.0F);
 
-			if (placed) {
-				if (level instanceof ServerLevel serverLevel) {
-					serverLevel.sendParticles(ModParticles.MOSQUITOS.get(),
-							this.getX(), this.getY() + 0.5, this.getZ(),
-							20, 0.35f + 0.05f * this.getSize(), 0.35f + 0.05f * this.getSize(), 0.35f + 0.05f * this.getSize(), 0.05);
-				}
-				switch (size) {
-					case 2 -> this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
-					case 3 -> {
-						this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
-						this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
-					}
-					default -> {
-					}
-				}
-				;
-			} else {
-				switch (size) {
-					case 2 -> {
-						this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
-						this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
-					}
-					case 3 -> {
-						this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
-						this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
-						this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
-					}
-					default -> this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
-				}
-				;
-
-			}
-
-			if (this.getOwner() == null) {
-				for (ServerPlayer serverplayer : this.level().getEntitiesOfClass(ServerPlayer.class, new AABB(this.getOnPos()).inflate(10.0D, 15.0D, 10.0D))) {
-					if (!this.entityData.get(DATA_DEALT_DAMAGE) && serverplayer.getLastDamageSource() == null) {
-						ModAdvancements.GOLDEN_KILL_MOSQUITO_SWARM.trigger(serverplayer);
-					}
-					ModAdvancements.KILL_MOSQUITO_SWARM.trigger(serverplayer);
-				}
-			}
-			this.playSound(RPGSounds.MOSQUITO_SWARM_DEATH.get(), 1.0F, 1.0F);
+		LivingEntity owner = this.getOwner();
+		if (owner != null) {
+			// Есть владелец – даём порошок ему (полное количество, как при неудачной установке блока)
+			giveOrDropChitinPowderToOwner(size); // size от 1 до 3
 			this.proceedKill();
+			return;
 		}
+
+		// Старая логика для диких москитов
+		boolean placed = placeMosquitoBlockAtPosition(this.blockPosition());
+
+		if (placed) {
+			if (this.level() instanceof ServerLevel serverLevel) {
+				serverLevel.sendParticles(ModParticles.MOSQUITOS.get(),
+						this.getX(), this.getY() + 0.5, this.getZ(),
+						20, 0.35f + 0.05f * this.getSize(), 0.35f + 0.05f * this.getSize(), 0.35f + 0.05f * this.getSize(), 0.05);
+			}
+			switch (size) {
+				case 2 -> this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
+				case 3 -> {
+					this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
+					this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
+				}
+				default -> {}
+			}
+		} else {
+			switch (size) {
+				case 2 -> {
+					this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
+					this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
+				}
+				case 3 -> {
+					this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
+					this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
+					this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
+				}
+				default -> this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
+			}
+		}
+
+		// Ачивки для диких москитов
+		if (this.getOwner() == null) {
+			for (ServerPlayer serverplayer : this.level().getEntitiesOfClass(ServerPlayer.class, new AABB(this.getOnPos()).inflate(10.0D, 15.0D, 10.0D))) {
+				if (!this.entityData.get(DATA_DEALT_DAMAGE) && serverplayer.getLastDamageSource() == null) {
+					ModAdvancements.GOLDEN_KILL_MOSQUITO_SWARM.trigger(serverplayer);
+				}
+				ModAdvancements.KILL_MOSQUITO_SWARM.trigger(serverplayer);
+			}
+		}
+
+		this.proceedKill();
 	}
 
 	public final void proceedKill() {
@@ -1745,11 +1915,68 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 	}
 
 	public boolean hurt(DamageSource pSource, float pAmount) {
-		if (pSource == this.damageSources().genericKill() || pSource.isCreativePlayer()) {
+		if (pSource == this.damageSources().genericKill()
+				|| pSource.isCreativePlayer()
+				|| pSource.is(DamageTypes.ON_FIRE)
+				|| pSource.is(DamageTypes.IN_FIRE)
+				|| pSource.is(DamageTypes.LAVA)
+				|| pSource.is(DamageTypes.FIREBALL)
+				|| pSource.is(DamageTypes.HOT_FLOOR)
+				|| pSource.is(DamageTypes.IN_WALL)
+				|| pSource.is(DamageTypeTags.IS_FIRE)) {
 			transformIntoBlock(this.getSize());
 			return super.hurt(pSource, pAmount);
 		}
 		return false;
+	}
+
+	@Override
+	public boolean isPickable() {
+		// На сервере всегда возвращаем true (или то, что нужно по умолчанию)
+		// Используем DistExecutor для безопасного выполнения клиентского кода
+		return DistExecutor.unsafeRunForDist(
+				(Supplier<Supplier<Boolean>>) () -> () -> clientIsPickable(),
+				(Supplier<Supplier<Boolean>>) () -> () -> true
+		);
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	private boolean clientIsPickable() {
+		Player player = Minecraft.getInstance().player;
+		if (player == null) return false; // защита от null на случай, если игрок ещё не загружен
+		return player.isShiftKeyDown() ||
+				player.getMainHandItem().is(Items.GLASS_BOTTLE) ||
+				player.getOffhandItem().is(Items.GLASS_BOTTLE);
+	}
+
+	@Override
+	public boolean canBeHitByProjectile() {
+		return false;
+	}
+
+	private void giveOrDropChitinPowderToOwner(int count) {
+		if (count <= 0) return;
+		LivingEntity owner = this.getOwner();
+		if (owner == null) {
+			// Нет владельца – спавним на месте этой сущности
+			for (int i = 0; i < count; i++) {
+				this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
+			}
+			return;
+		}
+		// Если владелец – игрок, пытаемся добавить в инвентарь
+		if (owner instanceof Player player) {
+			ItemStack stack = new ItemStack(ModItems.CHITIN_POWDER.get(), count);
+			if (!player.addItem(stack)) {
+				// Если не влезло, выбрасываем рядом с игроком
+				player.drop(stack, false);
+			}
+		} else {
+			// Владелец не игрок (маловероятно) – спавним на месте
+			for (int i = 0; i < count; i++) {
+				this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
+			}
+		}
 	}
 
 	@Override
@@ -1808,16 +2035,19 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		this.calculateEntityAnimation(false);
 	}
 
+	@Override
 	protected SoundEvent getAmbientSound() {
-		return RPGSounds.MOSQUITO_SWARM_AMBIENT.get();
+		return canMakeSound() ? RPGSounds.MOSQUITO_SWARM_AMBIENT.get() : null;
 	}
 
+	@Override
 	protected SoundEvent getHurtSound(DamageSource pDamageSource) {
-		return RPGSounds.MOSQUITO_SWARM_DEATH.get();
+		return canMakeSound() ? RPGSounds.MOSQUITO_SWARM_DEATH.get() : null;
 	}
 
+	@Override
 	protected SoundEvent getDeathSound() {
-		return RPGSounds.MOSQUITO_SWARM_DEATH.get();
+		return canMakeSound() ? RPGSounds.MOSQUITO_SWARM_DEATH.get() : null;
 	}
 
 	public boolean causeFallDamage(float pFallDistance, float pMultiplier, DamageSource pSource) {
@@ -1869,6 +2099,13 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 			}
 			return InteractionResult.sidedSuccess(this.level().isClientSide);
 		} else {
+			if (this.isOwnedBy(pPlayer)) {
+				if (teleportNearby()) {
+					return InteractionResult.sidedSuccess(this.level().isClientSide);
+				}
+				// Если не удалось найти место (например, всё заблокировано), просто съедаем клик
+				return InteractionResult.CONSUME;
+			}
 			return super.mobInteract(pPlayer, pHand);
 		}
 	}
