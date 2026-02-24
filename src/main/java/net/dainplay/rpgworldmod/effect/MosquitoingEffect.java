@@ -42,8 +42,13 @@ public class MosquitoingEffect extends MobEffect {
                 || hasStickyBlockNearby(entity)
                 || level.dimension() == Level.NETHER
         ) {
+            UUID ownerUUID = null;
+            if (entity.getPersistentData().hasUUID("MosquitoSwarmOwner")) {
+                ownerUUID = entity.getPersistentData().getUUID("MosquitoSwarmOwner");
+                entity.getPersistentData().remove("MosquitoSwarmOwner");
+            }
+            MosquitoSwarm.spawnBlock(entity,amplifier,ownerUUID);
             entity.removeEffect(this);
-            MosquitoSwarm.spawnBlock(entity,amplifier);
         }
 
         var effectInstance = entity.getEffect(this);
@@ -59,10 +64,10 @@ public class MosquitoingEffect extends MobEffect {
             }
             if (duration % HIT_TICK == 1) {
                 applyDamage(entity, level, amplifier);
-                if(entity.isDeadOrDying()) {
-                    spawnSwarmOnEffectEnd(entity, entity.level(), amplifier);
-                    entity.removeEffect(this);
-                }
+            }
+            if(entity.isDeadOrDying()) {
+                spawnSwarmOnEffectEnd(entity, entity.level(), amplifier);
+                entity.removeEffect(this);
             }
             if (duration == 1) {
                 spawnSwarmOnEffectEnd(entity, entity.level(), amplifier);

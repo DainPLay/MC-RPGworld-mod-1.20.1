@@ -421,6 +421,61 @@ public class RPGworldClient {
                             default -> 0.0F;
                         };
                     });
+            ItemProperties.register(ModItems.FIRE_CORAL_STAFF.get(), new ResourceLocation("gem_type"),
+                    (stack, level, entity, seed) -> {
+                        StaffItem.GemType gemType = StaffItem.getGemType(stack);
+                        return switch (gemType) {
+                            case EMBER_GEM -> 1.0F;
+                            case HEART_OF_THE_SEA -> 2.0F;
+                            case ENDER_EYE -> 3.0F;
+                            case NETHER_STAR -> 4.0F;
+                            default -> 0.0F;
+                        };
+                    });
+            ItemProperties.register(ModItems.BRAIN_CORAL_STAFF.get(), new ResourceLocation("gem_type"),
+                    (stack, level, entity, seed) -> {
+                        StaffItem.GemType gemType = StaffItem.getGemType(stack);
+                        return switch (gemType) {
+                            case EMBER_GEM -> 1.0F;
+                            case HEART_OF_THE_SEA -> 2.0F;
+                            case ENDER_EYE -> 3.0F;
+                            case NETHER_STAR -> 4.0F;
+                            default -> 0.0F;
+                        };
+                    });
+            ItemProperties.register(ModItems.HORN_CORAL_STAFF.get(), new ResourceLocation("gem_type"),
+                    (stack, level, entity, seed) -> {
+                        StaffItem.GemType gemType = StaffItem.getGemType(stack);
+                        return switch (gemType) {
+                            case EMBER_GEM -> 1.0F;
+                            case HEART_OF_THE_SEA -> 2.0F;
+                            case ENDER_EYE -> 3.0F;
+                            case NETHER_STAR -> 4.0F;
+                            default -> 0.0F;
+                        };
+                    });
+            ItemProperties.register(ModItems.TUBE_CORAL_STAFF.get(), new ResourceLocation("gem_type"),
+                    (stack, level, entity, seed) -> {
+                        StaffItem.GemType gemType = StaffItem.getGemType(stack);
+                        return switch (gemType) {
+                            case EMBER_GEM -> 1.0F;
+                            case HEART_OF_THE_SEA -> 2.0F;
+                            case ENDER_EYE -> 3.0F;
+                            case NETHER_STAR -> 4.0F;
+                            default -> 0.0F;
+                        };
+                    });
+            ItemProperties.register(ModItems.BUBBLE_CORAL_STAFF.get(), new ResourceLocation("gem_type"),
+                    (stack, level, entity, seed) -> {
+                        StaffItem.GemType gemType = StaffItem.getGemType(stack);
+                        return switch (gemType) {
+                            case EMBER_GEM -> 1.0F;
+                            case HEART_OF_THE_SEA -> 2.0F;
+                            case ENDER_EYE -> 3.0F;
+                            case NETHER_STAR -> 4.0F;
+                            default -> 0.0F;
+                        };
+                    });
             ItemProperties.register(ModItems.BLAZE_STAFF.get().asItem(), new ResourceLocation( "using"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
         });
     }

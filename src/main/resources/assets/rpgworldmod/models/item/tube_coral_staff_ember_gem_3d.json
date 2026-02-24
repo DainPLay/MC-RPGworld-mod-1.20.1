@@ -9,129 +9,129 @@
 	},
 	"elements": [
 		{
-			"from": [-2.45711, 10.25, -0.75],
-			"to": [0.04289, 12.75, 1.75],
+			"from": [-2.40328, 10.25, -1.0206],
+			"to": [0.09672, 12.75, 1.4794],
 			"shade": false,
-			"rotation": {"angle": -22.5, "axis": "y", "origin": [-0.5, 1.75, 0.5]},
+			"rotation": {"angle": -22.5, "axis": "y", "origin": [-1.15328, 11.5, 0.2294]},
 			"faces": {
-				"north": {"uv": [1.5, 1.5, 3, 3], "texture": "#gem"},
-				"east": {"uv": [0, 1.5, 1.5, 3], "texture": "#gem"},
-				"south": {"uv": [4.5, 1.5, 6, 3], "texture": "#gem"},
-				"west": {"uv": [3, 1.5, 4.5, 3], "texture": "#gem"},
-				"up": {"uv": [3, 1.5, 1.5, 0], "texture": "#gem"},
-				"down": {"uv": [4.5, 0, 3, 1.5], "texture": "#gem"}
+				"north": {"uv": [3, 1.5, 4.5, 3], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [1.5, 1.5, 3, 3], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [0, 1.5, 1.5, 3], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [4.5, 1.5, 6, 3], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [3, 1.5, 1.5, 0], "rotation": 90, "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [4.5, 0, 3, 1.5], "rotation": 270, "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
 			}
 		},
 		{
-			"from": [-1.70711, 10, -1],
-			"to": [-0.70711, 13, 2],
+			"from": [-2.65328, 10, -0.2706],
+			"to": [0.34672, 13, 0.7294],
 			"shade": false,
-			"rotation": {"angle": -22.5, "axis": "y", "origin": [-0.5, 1.75, 0.5]},
+			"rotation": {"angle": -22.5, "axis": "y", "origin": [-1.15328, 11.5, 0.2294]},
 			"faces": {
-				"north": {"uv": [1.5, 4.5, 2, 6], "texture": "#gem"},
-				"east": {"uv": [0, 4.5, 1.5, 6], "texture": "#gem"},
-				"south": {"uv": [3.5, 4.5, 4, 6], "texture": "#gem"},
-				"west": {"uv": [2, 4.5, 3.5, 6], "texture": "#gem"},
-				"up": {"uv": [2, 4.5, 1.5, 3], "texture": "#gem"},
-				"down": {"uv": [2.5, 3, 2, 4.5], "texture": "#gem"}
+				"north": {"uv": [2, 4.5, 3.5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [1.5, 4.5, 2, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [0, 4.5, 1.5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [3.5, 4.5, 4, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [2, 4.5, 1.5, 3], "rotation": 90, "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [2.5, 3, 2, 4.5], "rotation": 270, "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
 			}
 		},
 		{
-			"from": [-2.70711, 10, 0],
-			"to": [0.29289, 13, 1],
+			"from": [-1.65328, 10, -1.2706],
+			"to": [-0.65328, 13, 1.7294],
 			"shade": false,
-			"rotation": {"angle": -22.5, "axis": "y", "origin": [-0.5, 1.75, 0.5]},
+			"rotation": {"angle": -22.5, "axis": "y", "origin": [-1.15328, 11.5, 0.2294]},
 			"faces": {
-				"north": {"uv": [4.5, 3.5, 6, 5], "texture": "#gem"},
-				"east": {"uv": [4, 3.5, 4.5, 5], "texture": "#gem"},
-				"south": {"uv": [6.5, 3.5, 8, 5], "texture": "#gem"},
-				"west": {"uv": [6, 3.5, 6.5, 5], "texture": "#gem"},
-				"up": {"uv": [6, 3.5, 4.5, 3], "texture": "#gem"},
-				"down": {"uv": [7.5, 3, 6, 3.5], "texture": "#gem"}
+				"north": {"uv": [6, 3.5, 6.5, 5], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [4.5, 3.5, 6, 5], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [4, 3.5, 4.5, 5], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [6.5, 3.5, 8, 5], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [6, 3.5, 4.5, 3], "rotation": 90, "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [7.5, 3, 6, 3.5], "rotation": 270, "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
 			}
 		},
 		{
-			"from": [-1.70711, 11, -2],
-			"to": [-0.70711, 12, -1],
+			"from": [0.34672, 11, -0.2706],
+			"to": [1.34672, 12, 0.7294],
 			"shade": false,
-			"rotation": {"angle": -22.5, "axis": "y", "origin": [-0.5, 1.75, 0.5]},
+			"rotation": {"angle": -22.5, "axis": "y", "origin": [-1.15328, 11.5, 0.2294]},
 			"faces": {
-				"north": {"uv": [4.5, 5.5, 5, 6], "texture": "#gem"},
-				"east": {"uv": [4, 5.5, 4.5, 6], "texture": "#gem"},
-				"south": {"uv": [5.5, 5.5, 6, 6], "texture": "#gem"},
-				"west": {"uv": [5, 5.5, 5.5, 6], "texture": "#gem"},
-				"up": {"uv": [5, 5.5, 4.5, 5], "texture": "#gem"},
-				"down": {"uv": [5.5, 5, 5, 5.5], "texture": "#gem"}
+				"north": {"uv": [5, 5.5, 5.5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [4.5, 5.5, 5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [4, 5.5, 4.5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [5.5, 5.5, 6, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [5, 5.5, 4.5, 5], "rotation": 90, "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [5.5, 5, 5, 5.5], "rotation": 270, "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
 			}
 		},
 		{
-			"from": [-1.70711, 11, 2],
-			"to": [-0.70711, 12, 3],
+			"from": [-3.65328, 11, -0.2706],
+			"to": [-2.65328, 12, 0.7294],
 			"shade": false,
-			"rotation": {"angle": -22.5, "axis": "y", "origin": [-0.5, 1.75, 0.5]},
+			"rotation": {"angle": -22.5, "axis": "y", "origin": [-1.15328, 11.5, 0.2294]},
 			"faces": {
-				"north": {"uv": [4.5, 5.5, 5, 6], "texture": "#gem"},
-				"east": {"uv": [4, 5.5, 4.5, 6], "texture": "#gem"},
-				"south": {"uv": [5.5, 5.5, 6, 6], "texture": "#gem"},
-				"west": {"uv": [5, 5.5, 5.5, 6], "texture": "#gem"},
-				"up": {"uv": [5, 5.5, 4.5, 5], "texture": "#gem"},
-				"down": {"uv": [5.5, 5, 5, 5.5], "texture": "#gem"}
+				"north": {"uv": [5, 5.5, 5.5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [4.5, 5.5, 5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [4, 5.5, 4.5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [5.5, 5.5, 6, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [5, 5.5, 4.5, 5], "rotation": 90, "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [5.5, 5, 5, 5.5], "rotation": 270, "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
 			}
 		},
 		{
-			"from": [-1.70711, 13, 0],
-			"to": [-0.70711, 14, 1],
+			"from": [-1.65328, 13, -0.2706],
+			"to": [-0.65328, 14, 0.7294],
 			"shade": false,
-			"rotation": {"angle": -22.5, "axis": "y", "origin": [-0.5, 1.75, 0.5]},
+			"rotation": {"angle": -22.5, "axis": "y", "origin": [-1.15328, 11.5, 0.2294]},
 			"faces": {
-				"north": {"uv": [4.5, 5.5, 5, 6], "texture": "#gem"},
-				"east": {"uv": [4, 5.5, 4.5, 6], "texture": "#gem"},
-				"south": {"uv": [5.5, 5.5, 6, 6], "texture": "#gem"},
-				"west": {"uv": [5, 5.5, 5.5, 6], "texture": "#gem"},
-				"up": {"uv": [5, 5.5, 4.5, 5], "texture": "#gem"},
-				"down": {"uv": [5.5, 5, 5, 5.5], "texture": "#gem"}
+				"north": {"uv": [5, 5.5, 5.5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [4.5, 5.5, 5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [4, 5.5, 4.5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [5.5, 5.5, 6, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [5, 5.5, 4.5, 5], "rotation": 90, "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [5.5, 5, 5, 5.5], "rotation": 270, "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
 			}
 		},
 		{
-			"from": [-1.70711, 9, 0],
-			"to": [-0.70711, 10, 1],
+			"from": [-1.65328, 9, -0.2706],
+			"to": [-0.65328, 10, 0.7294],
 			"shade": false,
-			"rotation": {"angle": -22.5, "axis": "y", "origin": [-0.5, 1.75, 0.5]},
+			"rotation": {"angle": -22.5, "axis": "y", "origin": [-1.15328, 11.5, 0.2294]},
 			"faces": {
-				"north": {"uv": [4.5, 5.5, 5, 6], "texture": "#gem"},
-				"east": {"uv": [4, 5.5, 4.5, 6], "texture": "#gem"},
-				"south": {"uv": [5.5, 5.5, 6, 6], "texture": "#gem"},
-				"west": {"uv": [5, 5.5, 5.5, 6], "texture": "#gem"},
-				"up": {"uv": [5, 5.5, 4.5, 5], "texture": "#gem"},
-				"down": {"uv": [5.5, 5, 5, 5.5], "texture": "#gem"}
+				"north": {"uv": [5, 5.5, 5.5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [4.5, 5.5, 5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [4, 5.5, 4.5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [5.5, 5.5, 6, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [5, 5.5, 4.5, 5], "rotation": 90, "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [5.5, 5, 5, 5.5], "rotation": 270, "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
 			}
 		},
 		{
-			"from": [-3.70711, 11, 0],
-			"to": [-2.70711, 12, 1],
+			"from": [-1.65328, 11, -2.2706],
+			"to": [-0.65328, 12, -1.2706],
 			"shade": false,
-			"rotation": {"angle": -22.5, "axis": "y", "origin": [-0.5, 1.75, 0.5]},
+			"rotation": {"angle": -22.5, "axis": "y", "origin": [-1.15328, 11.5, 0.2294]},
 			"faces": {
-				"north": {"uv": [4.5, 5.5, 5, 6], "texture": "#gem"},
-				"east": {"uv": [4, 5.5, 4.5, 6], "texture": "#gem"},
-				"south": {"uv": [5.5, 5.5, 6, 6], "texture": "#gem"},
-				"west": {"uv": [5, 5.5, 5.5, 6], "texture": "#gem"},
-				"up": {"uv": [5, 5.5, 4.5, 5], "texture": "#gem"},
-				"down": {"uv": [5.5, 5, 5, 5.5], "texture": "#gem"}
+				"north": {"uv": [5, 5.5, 5.5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [4.5, 5.5, 5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [4, 5.5, 4.5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [5.5, 5.5, 6, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [5, 5.5, 4.5, 5], "rotation": 90, "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [5.5, 5, 5, 5.5], "rotation": 270, "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
 			}
 		},
 		{
-			"from": [0.29289, 11, 0],
-			"to": [1.29289, 12, 1],
+			"from": [-1.65328, 11, 1.7294],
+			"to": [-0.65328, 12, 2.7294],
 			"shade": false,
-			"rotation": {"angle": -22.5, "axis": "y", "origin": [-0.5, 1.75, 0.5]},
+			"rotation": {"angle": -22.5, "axis": "y", "origin": [-1.15328, 11.5, 0.2294]},
 			"faces": {
-				"north": {"uv": [4.5, 5.5, 5, 6], "texture": "#gem"},
-				"east": {"uv": [4, 5.5, 4.5, 6], "texture": "#gem"},
-				"south": {"uv": [5.5, 5.5, 6, 6], "texture": "#gem"},
-				"west": {"uv": [5, 5.5, 5.5, 6], "texture": "#gem"},
-				"up": {"uv": [5, 5.5, 4.5, 5], "texture": "#gem"},
-				"down": {"uv": [5.5, 5, 5, 5.5], "texture": "#gem"}
+				"north": {"uv": [5, 5.5, 5.5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [4.5, 5.5, 5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [4, 5.5, 4.5, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [5.5, 5.5, 6, 6], "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [5, 5.5, 4.5, 5], "rotation": 90, "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [5.5, 5, 5, 5.5], "rotation": 270, "texture": "#gem", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
 			}
 		},
 		{

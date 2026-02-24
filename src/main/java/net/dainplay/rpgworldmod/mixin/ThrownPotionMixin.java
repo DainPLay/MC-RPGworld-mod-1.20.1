@@ -11,6 +11,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.UUID;
+
 @Mixin(ThrownPotion.class)
 public abstract class ThrownPotionMixin {
 
@@ -23,7 +25,12 @@ public abstract class ThrownPotionMixin {
                 (entity) -> entity.hasEffect(ModEffects.MOSQUITOING.get()))) {
             double d0 = potion.distanceToSqr(livingentity);
             if (d0 < 16.0D) {
-                MosquitoSwarm.spawnBlock(livingentity,livingentity.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier());
+                UUID ownerUUID = null;
+                if (livingentity.getPersistentData().hasUUID("MosquitoSwarmOwner")) {
+                    ownerUUID = livingentity.getPersistentData().getUUID("MosquitoSwarmOwner");
+                    livingentity.getPersistentData().remove("MosquitoSwarmOwner");
+                }
+                MosquitoSwarm.spawnBlock(livingentity,livingentity.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier(),ownerUUID);
                 livingentity.removeEffect(ModEffects.MOSQUITOING.get());
             }
         }

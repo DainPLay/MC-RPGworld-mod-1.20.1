@@ -642,7 +642,7 @@ public class Razorleaf extends Monster {
 				// Если потеряли видимость цели, прерываем атаку
 				setPullDirection(Vec3.ZERO);
 				clearTongueTarget();
-				setState(State.IDLE);
+				if(getState() != State.EXTINGUISHED) setState(State.IDLE);
 			}
 		} else if (attackTimer == 31) {
 			// Сбрасываем направление притягивания
@@ -710,7 +710,7 @@ public class Razorleaf extends Monster {
 			spawnExtinguishSmokeCircleAnimated();
 			this.playSound(RPGSounds.RAZORLEAF_EXTINGUISH.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
 			this.spawnAtLocation(ModItems.MUSIC_DISC_TIRE.get());
-			for(ServerPlayer serverplayer : level().getEntitiesOfClass(ServerPlayer.class, new AABB(this.blockPosition()).inflate(10.0D, 25.0D, 10.0D))) {
+			for(ServerPlayer serverplayer : level().getEntitiesOfClass(ServerPlayer.class, new AABB(this.blockPosition()).inflate(32.0D, 25.0D, 32.0D))) {
 				ModAdvancements.FEED_TIRE_TO_RAZORLEAF_TRIGGER.trigger(serverplayer);
 			}
 			this.discard();

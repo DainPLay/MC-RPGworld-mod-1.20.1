@@ -1,0 +1,21 @@
+{
+	"parent": "minecraft:item/handheld",
+	"loader": "forge:separate_transforms",
+	"base": {
+		"parent": "rpgworldmod:item/horn_coral_staff_ember_gem_3d"
+	},
+	"textures": {
+		"particle": "minecraft:block/horn_coral_block"
+	},
+	"perspectives": {
+		"gui": {
+			"parent": "rpgworldmod:item/horn_coral_staff_ember_gem_2d"
+		},
+		"ground": {
+			"parent": "rpgworldmod:item/horn_coral_staff_ember_gem_2d"
+		},
+		"fixed": {
+			"parent": "rpgworldmod:item/horn_coral_staff_ember_gem_2d"
+		}
+	}
+}

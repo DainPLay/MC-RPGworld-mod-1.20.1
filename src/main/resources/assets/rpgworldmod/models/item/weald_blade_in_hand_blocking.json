@@ -3,7 +3,10 @@
 	"textures": {
 		"1": "rpgworldmod:item/samaraguard_powered",
 		"2": "rpgworldmod:item/weald_blade_in_hand",
-		"particle": "rpgworldmod:item/samaraguard_powered"
+		"particle": "rpgworldmod:item/weald_blade"
+	},
+	"particle": {
+		"texture": "rpgworldmod:item/weald_blade"
 	},
 	"elements": [
 		{

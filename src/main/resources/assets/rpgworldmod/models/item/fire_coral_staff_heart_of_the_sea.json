@@ -1,0 +1,24 @@
+{
+  "parent": "minecraft:item/handheld",
+  "loader": "forge:separate_transforms",
+  "base": {
+    "parent": "rpgworldmod:item/fire_coral_staff_heart_of_the_sea_3d"
+  },
+  "textures": {
+    "particle": "minecraft:block/fire_coral_block"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "rpgworldmod:item/fire_coral_staff_heart_of_the_sea_2d"
+    },
+    "ground": {
+      "parent": "rpgworldmod:item/fire_coral_staff_heart_of_the_sea_2d"
+    },
+    "fixed": {
+      "parent": "rpgworldmod:item/fire_coral_staff_heart_of_the_sea_2d"
+    },
+    "firstperson_righthand": {
+      "parent": "rpgworldmod:item/fire_coral_staff_heart_of_the_sea_3d_fpr"
+    }
+  }
+}

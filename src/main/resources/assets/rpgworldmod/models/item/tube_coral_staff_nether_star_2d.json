@@ -1,0 +1,6 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "rpgworldmod:item/tube_coral_staff_nether_star"
+  }
+}

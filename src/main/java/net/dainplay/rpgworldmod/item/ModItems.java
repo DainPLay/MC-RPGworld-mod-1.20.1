@@ -72,6 +72,16 @@ public class ModItems {
             () -> new LivingWoodStaffItem(new Item.Properties().durability(128).rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> BLAZE_STAFF = ITEMS.register("blaze_staff",
             () -> new BlazeStaffItem(new Item.Properties().durability(384).rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> FIRE_CORAL_STAFF = ITEMS.register("fire_coral_staff",
+            () -> new BrainCoralStaffItem(new Item.Properties().durability(512).rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> BRAIN_CORAL_STAFF = ITEMS.register("brain_coral_staff",
+            () -> new BrainCoralStaffItem(new Item.Properties().durability(512).rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> HORN_CORAL_STAFF = ITEMS.register("horn_coral_staff",
+            () -> new BrainCoralStaffItem(new Item.Properties().durability(512).rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> TUBE_CORAL_STAFF = ITEMS.register("tube_coral_staff",
+            () -> new BrainCoralStaffItem(new Item.Properties().durability(512).rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> BUBBLE_CORAL_STAFF = ITEMS.register("bubble_coral_staff",
+            () -> new BrainCoralStaffItem(new Item.Properties().durability(512).rarity(Rarity.UNCOMMON)));
 
     public static final RegistryObject<Item> DRIED_WIDOWEED = ITEMS.register("dried_widoweed",
             () -> new DriedWidoweedItem(new Item.Properties()));

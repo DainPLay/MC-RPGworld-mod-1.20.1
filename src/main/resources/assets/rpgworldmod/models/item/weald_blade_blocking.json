@@ -4,6 +4,9 @@
 	"base": {
 		"parent": "rpgworldmod:item/weald_blade_in_hand_blocking"
 	},
+	"textures": {
+		"particle": "rpgworldmod:item/weald_blade"
+	},
 	"perspectives": {
 		"gui": {
 			"parent": "rpgworldmod:item/weald_blade_2d"

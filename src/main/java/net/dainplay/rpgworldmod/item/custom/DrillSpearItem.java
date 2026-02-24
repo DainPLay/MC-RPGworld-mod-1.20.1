@@ -122,6 +122,7 @@ public class DrillSpearItem extends Item implements Vanishable, RPGtooltip {
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         return (enchantment == Enchantments.LOYALTY || enchantment == Enchantments.BLOCK_EFFICIENCY || enchantment == ModEnchantments.COLLECTION.get() || enchantment == Enchantments.BLOCK_FORTUNE || enchantment == Enchantments.SILK_TOUCH || enchantment == Enchantments.UNBREAKING);
     }
+
     @Override
     public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
         return (EnchantmentHelper.getEnchantments(book).containsKey(Enchantments.LOYALTY) ||

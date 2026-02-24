@@ -1,0 +1,6 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "rpgworldmod:item/fire_coral_staff_heart_of_the_sea"
+  }
+}

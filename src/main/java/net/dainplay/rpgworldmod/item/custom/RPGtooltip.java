@@ -42,4 +42,8 @@ public interface RPGtooltip {
     default boolean hasComment(ItemStack item) {
         return true;
     }
+
+    default boolean hasTarget(ItemStack item) {
+        return false;
+    }
 }

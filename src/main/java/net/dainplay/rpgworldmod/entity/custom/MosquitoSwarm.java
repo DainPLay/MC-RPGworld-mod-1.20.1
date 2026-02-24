@@ -1418,16 +1418,21 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		return false;
 	}
 
-	public static void spawnBlock(LivingEntity entity, int amp) {
+	public static void spawnBlock(LivingEntity entity, int amp, UUID ownerId) {
 		if (!entity.level().isClientSide) {
 			Level level = entity.level();
 			BlockPos pos = entity.blockPosition();
 
 			// Если это москит с владельцем
 			if (entity instanceof MosquitoSwarm swarm && swarm.getOwner() != null) {
-				int powderCount = amp; // предполагаем, что amp – количество порошка (аналог размера)
-				swarm.giveOrDropChitinPowderToOwner(powderCount);
+				// предполагаем, что amp – количество порошка (аналог размера)
+				swarm.giveOrDropChitinPowderToOwner(amp);
 				swarm.proceedKill();
+				return;
+			}
+
+			if(ownerId != null) {
+				giveOrDropChitinPowderToOwner(entity.level(), ownerId, amp);
 				return;
 			}
 
@@ -1964,17 +1969,53 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 			}
 			return;
 		}
-		// Если владелец – игрок, пытаемся добавить в инвентарь
+		int penalty = 0;
+		for (int i = 0; i < count; i++) {
+			if (owner.getRandom().nextFloat() <= 0.2f) {
+				penalty++;
+			}
+		}
+		count -= penalty;
+		if(count <= 0) return;
 		if (owner instanceof Player player) {
 			ItemStack stack = new ItemStack(ModItems.CHITIN_POWDER.get(), count);
 			if (!player.addItem(stack)) {
-				// Если не влезло, выбрасываем рядом с игроком
 				player.drop(stack, false);
 			}
 		} else {
 			// Владелец не игрок (маловероятно) – спавним на месте
 			for (int i = 0; i < count; i++) {
 				this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
+			}
+		}
+	}
+
+	private static void giveOrDropChitinPowderToOwner(Level level, UUID ownerId, int count) {
+		if (count <= 0) return;
+		LivingEntity owner = null;
+		if (level instanceof ServerLevel serverLevel) {
+			Entity entity = serverLevel.getEntity(ownerId);
+			if (entity instanceof LivingEntity livingEntity) {
+				owner = livingEntity;
+			}
+		}
+		if (owner == null) {
+			return;
+		}
+		int penalty = 0;
+		for (int i = 0; i < count; i++) {
+			if (owner.getRandom().nextFloat() <= 0.2f) {
+				penalty++;
+			}
+		}
+		count -= penalty;
+		if(count <= 0) return;
+		// Если владелец – игрок, пытаемся добавить в инвентарь
+		if (owner instanceof Player player) {
+			ItemStack stack = new ItemStack(ModItems.CHITIN_POWDER.get(), count);
+			if (!player.addItem(stack)) {
+				// Если не влезло, выбрасываем рядом с игроком
+				player.drop(stack, false);
 			}
 		}
 	}

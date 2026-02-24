@@ -1,0 +1,24 @@
+{
+	"parent": "minecraft:item/handheld",
+	"loader": "forge:separate_transforms",
+	"base": {
+		"parent": "rpgworldmod:item/fire_coral_staff_ember_gem_3d"
+	},
+	"textures": {
+		"particle": "minecraft:block/fire_coral_block"
+	},
+	"perspectives": {
+		"gui": {
+			"parent": "rpgworldmod:item/fire_coral_staff_ember_gem_2d"
+		},
+		"ground": {
+			"parent": "rpgworldmod:item/fire_coral_staff_ember_gem_2d"
+		},
+		"fixed": {
+			"parent": "rpgworldmod:item/fire_coral_staff_ember_gem_2d"
+		},
+		"firstperson_righthand": {
+			"parent": "rpgworldmod:item/fire_coral_staff_ember_gem_3d_fpr"
+		}
+	}
+}

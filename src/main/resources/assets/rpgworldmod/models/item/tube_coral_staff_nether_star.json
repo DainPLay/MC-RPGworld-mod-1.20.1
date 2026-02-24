@@ -1,0 +1,24 @@
+{
+	"parent": "minecraft:item/handheld",
+	"loader": "forge:separate_transforms",
+	"base": {
+		"parent": "rpgworldmod:item/tube_coral_staff_nether_star_3d"
+	},
+	"textures": {
+		"particle": "minecraft:block/tube_coral_block"
+	},
+	"perspectives": {
+		"gui": {
+			"parent": "rpgworldmod:item/tube_coral_staff_nether_star_2d"
+		},
+		"ground": {
+			"parent": "rpgworldmod:item/tube_coral_staff_nether_star_2d"
+		},
+		"fixed": {
+			"parent": "rpgworldmod:item/tube_coral_staff_nether_star_2d"
+		},
+		"firstperson_lefthand": {
+			"parent": "rpgworldmod:item/tube_coral_staff_nether_star_3d_fpl"
+		}
+	}
+}

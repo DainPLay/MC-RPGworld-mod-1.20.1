@@ -36,6 +36,7 @@ import net.minecraftforge.fml.DistExecutor;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -80,7 +81,12 @@ public class WealdBladeItem extends SwordItem implements RPGtooltip {
         super.onUseTick(pLevel, pLivingEntity, pStack, pRemainingUseDuration);
 
         if (pLivingEntity.hasEffect(ModEffects.MOSQUITOING.get()) && getEnchantmentLevel(pStack, ModEnchantments.BLOWING.get()) > 0) {
-            MosquitoSwarm.spawnBlock(pLivingEntity,pLivingEntity.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier());
+            UUID ownerUUID = null;
+            if (pLivingEntity.getPersistentData().hasUUID("MosquitoSwarmOwner")) {
+                ownerUUID = pLivingEntity.getPersistentData().getUUID("MosquitoSwarmOwner");
+                pLivingEntity.getPersistentData().remove("MosquitoSwarmOwner");
+            }
+            MosquitoSwarm.spawnBlock(pLivingEntity,pLivingEntity.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier(),ownerUUID);
             pLivingEntity.removeEffect(ModEffects.MOSQUITOING.get());
         }
         if (pLivingEntity instanceof Player player && getEnchantmentLevel(pStack, ModEnchantments.BLOWING.get()) > 0) {
@@ -224,7 +230,12 @@ public class WealdBladeItem extends SwordItem implements RPGtooltip {
                 mosquitoSwarm.transformIntoBlock(mosquitoSwarm.getSize());
         }
         if (entity instanceof LivingEntity livingEntity && livingEntity.hasEffect(ModEffects.MOSQUITOING.get())) {
-            MosquitoSwarm.spawnBlock(livingEntity,livingEntity.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier());
+            UUID ownerUUID = null;
+            if (entity.getPersistentData().hasUUID("MosquitoSwarmOwner")) {
+                ownerUUID = entity.getPersistentData().getUUID("MosquitoSwarmOwner");
+                entity.getPersistentData().remove("MosquitoSwarmOwner");
+            }
+            MosquitoSwarm.spawnBlock(livingEntity,livingEntity.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier(),ownerUUID);
             livingEntity.removeEffect(ModEffects.MOSQUITOING.get());
         }
 

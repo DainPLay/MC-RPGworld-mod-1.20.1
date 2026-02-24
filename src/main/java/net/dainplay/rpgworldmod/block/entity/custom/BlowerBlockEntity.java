@@ -21,6 +21,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static net.dainplay.rpgworldmod.block.custom.BlowerBlock.RANGE;
@@ -117,7 +118,12 @@ public class BlowerBlockEntity extends BlockEntity {
                 mosquitoSwarm.transformIntoBlock(mosquitoSwarm.getSize());
         }
         if (entity instanceof LivingEntity livingEntity && livingEntity.hasEffect(ModEffects.MOSQUITOING.get())) {
-            MosquitoSwarm.spawnBlock(livingEntity, livingEntity.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier());
+            UUID ownerUUID = null;
+            if (entity.getPersistentData().hasUUID("MosquitoSwarmOwner")) {
+                ownerUUID = entity.getPersistentData().getUUID("MosquitoSwarmOwner");
+                entity.getPersistentData().remove("MosquitoSwarmOwner");
+            }
+            MosquitoSwarm.spawnBlock(livingEntity, livingEntity.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier(), ownerUUID);
             livingEntity.removeEffect(ModEffects.MOSQUITOING.get());
         }
         Vec3 motion = entity.getDeltaMovement();

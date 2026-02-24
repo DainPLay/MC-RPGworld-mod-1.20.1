@@ -4,6 +4,9 @@
 	"base": {
 		"parent": "rpgworldmod:item/drill_spear_in_hand"
 	},
+	"textures": {
+		"particle": "rpgworldmod:item/drill_spear"
+	},
 	"perspectives": {
 		"gui": {
 			"parent": "rpgworldmod:item/drill_spear_2d"

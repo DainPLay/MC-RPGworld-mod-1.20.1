@@ -1,6 +1,9 @@
 {
 	"parent": "minecraft:item/handheld",
 	"loader": "forge:separate_transforms",
+	"textures": {
+		"particle": "rpgworldmod:item/weald_blade"
+	},
 	"base": {
 		"parent": "rpgworldmod:item/weald_blade_in_hand"
 	},

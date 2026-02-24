@@ -4,6 +4,9 @@
 	"base": {
 		"parent": "rpgworldmod:item/blaze_staff_ender_eye_3d"
 	},
+	"textures": {
+		"particle": "minecraft:item/blaze_rod"
+	},
 	"perspectives": {
 		"gui": {
 			"parent": "rpgworldmod:item/blaze_staff_ender_eye_2d"

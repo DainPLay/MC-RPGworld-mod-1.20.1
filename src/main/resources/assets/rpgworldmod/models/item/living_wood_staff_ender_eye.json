@@ -4,6 +4,9 @@
   "base": {
     "parent": "rpgworldmod:item/living_wood_staff_ender_eye_3d"
   },
+  "textures": {
+    "particle": "rpgworldmod:block/rie_log"
+  },
   "perspectives": {
     "gui": {
       "parent": "rpgworldmod:item/living_wood_staff_ender_eye_2d"

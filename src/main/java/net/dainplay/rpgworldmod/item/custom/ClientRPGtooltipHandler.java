@@ -1,6 +1,7 @@
 package net.dainplay.rpgworldmod.item.custom;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.ManaCostItem;
 import net.dainplay.rpgworldmod.item.custom.RPGtooltip;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
@@ -23,6 +24,10 @@ public class ClientRPGtooltipHandler {
 
     public static void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag, RPGtooltip tooltipItem) {
         if (Minecraft.getInstance().player == null) return;
+
+        if (tooltipItem.hasTarget(pStack)) {
+            pTooltip.addAll(getDisplayTargetWithLineBreaks(pStack));
+        }
 
         if (pStack.getItem() instanceof ManaCostItem item) {
             MutableComponent costText = Component.translatable("tooltip.rpgworldmod.cost_text").withStyle(ChatFormatting.WHITE);
@@ -62,6 +67,53 @@ public class ClientRPGtooltipHandler {
         if (tooltipItem.hasComment(pStack)) {
             pTooltip.add(tooltipItem.getDisplayName(pStack).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED));
         }
+    }
+
+    private static List<Component> getDisplayTargetWithLineBreaks(ItemStack item) {
+        List<Component> result = new ArrayList<>();
+
+        String header = Component.translatable("tooltip.rpgworldmod.target").getString();
+        String targetText = Component.translatable(item.getDescriptionId() + ".target").getString();
+        String fullText = header + " " + targetText;
+        int color;
+        if (item.getItem() == ModItems.BRAIN_CORAL_STAFF.get()) {
+            color = 0xE47EB9;
+        } else if (item.getItem() == ModItems.TUBE_CORAL_STAFF.get()) {
+            color = 0x405CE2;
+        } else if (item.getItem() == ModItems.BUBBLE_CORAL_STAFF.get()) {
+            color = 0xC819BA;
+        } else if (item.getItem() == ModItems.HORN_CORAL_STAFF.get()) {
+            color = 0xEDEC4C;
+        } else {
+            color = 0xC62A37;
+        }
+
+        List<String> wrappedLines = wrapText(fullText, 25);
+
+        if (!wrappedLines.isEmpty()) {
+            String firstLine = wrappedLines.get(0);
+            int headerEndIndex = firstLine.indexOf(header) + header.length();
+            if (headerEndIndex <= firstLine.length()) {
+                String whitePart = firstLine.substring(0, Math.min(headerEndIndex, firstLine.length()));
+                String coloredPart = firstLine.substring(Math.min(headerEndIndex, firstLine.length()));
+
+                MutableComponent firstLineComponent = Component.literal(whitePart).withStyle(ChatFormatting.WHITE);
+                if (!coloredPart.isEmpty()) {
+                    firstLineComponent.append(Component.literal(coloredPart)
+                            .withStyle(style -> style.withColor(color)));
+                }
+                result.add(firstLineComponent);
+            } else {
+                result.add(Component.literal(firstLine).withStyle(ChatFormatting.WHITE));
+            }
+
+            for (int i = 1; i < wrappedLines.size(); i++) {
+                result.add(Component.literal(wrappedLines.get(i))
+                        .withStyle(style -> style.withColor(color)));
+            }
+        }
+
+        return result;
     }
 
     private static List<Component> getDisplayCooldownWithLineBreaks(ItemStack item, StaffItem staffItem) {

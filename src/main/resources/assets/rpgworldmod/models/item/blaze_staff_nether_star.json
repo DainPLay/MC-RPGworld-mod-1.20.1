@@ -4,6 +4,9 @@
 	"base": {
 		"parent": "rpgworldmod:item/blaze_staff_nether_star_3d"
 	},
+	"textures": {
+		"particle": "minecraft:item/blaze_rod"
+	},
 	"perspectives": {
 		"gui": {
 			"parent": "rpgworldmod:item/blaze_staff_nether_star_2d"

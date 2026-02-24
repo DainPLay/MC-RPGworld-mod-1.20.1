@@ -1,0 +1,6 @@
+{
+	"parent": "rpgworldmod:item/tube_coral_staff_ember_gem_3d_fpl",
+	"textures": {
+		"gem": "rpgworldmod:item/heart_of_the_sea_3d"
+	}
+}

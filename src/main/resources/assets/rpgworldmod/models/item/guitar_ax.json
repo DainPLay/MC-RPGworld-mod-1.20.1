@@ -4,6 +4,9 @@
 	"base": {
 		"parent": "rpgworldmod:item/guitar_ax_3d"
 	},
+	"textures": {
+		"particle": "rpgworldmod:item/guitar_ax_item"
+	},
 	"perspectives": {
 		"gui": {
 			"parent": "rpgworldmod:item/guitar_ax_2d"
