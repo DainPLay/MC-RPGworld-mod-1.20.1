@@ -2,45 +2,39 @@ package net.dainplay.rpgworldmod.entity.custom;
 
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.effect.ModEffects;
-import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.PacketTireSwingInteraction;
+import net.dainplay.rpgworldmod.network.PullPlayerPacket;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.network.NetworkHooks;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FenceBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -66,6 +60,8 @@ public class TireSwingEntity extends Entity {
 	private static final float SWING_GRAVITY = 0.3F;
 	private static final float PLAYER_PUSH_STRENGTH = 0.015F;
 	private static final float STOP_THRESHOLD = 0.01F;
+	private static final float COLLISION_LOOKAHEAD_FACTOR = 1.2F; // Множитель для проверки столкновений вперед
+	private static final float MIN_VELOCITY_FOR_SOUND = 0.1F;
 
 	// Константы для типа привязки
 	public static final byte LEASH_TYPE_NONE = 0;
@@ -139,6 +135,7 @@ public class TireSwingEntity extends Entity {
 	private int pushDirection = 0;
 	private int swingUpdateTimer = 0;
 	private int rotationInput = 0;
+	private int ticksSeatInsideBlock = 0;
 
 	// Рандомизатор
 	private final Random random = new Random();
@@ -158,7 +155,7 @@ public class TireSwingEntity extends Entity {
 		super(type, level);
 		this.noPhysics = false;
 		this.setMaxUpStep(0.0F);
-		this.blocksBuilding = true;
+		this.blocksBuilding = false;
 		this.seatPart = new TireSwingSeatPart(this);
 	}
 
@@ -446,6 +443,18 @@ public class TireSwingEntity extends Entity {
 		}
 		// Обновляем позицию хитбокса сиденья
 		updateSeatPartPosition();
+		if (seatPart != null) {
+			boolean seatCollision = checkAABBCollisionWithSolidBlocks(seatPart.getBoundingBox());
+			if (seatCollision) {
+				ticksSeatInsideBlock++;
+				if (ticksSeatInsideBlock >= 60) {
+					this.destroyAndDropTire();
+					ticksSeatInsideBlock = 0;
+				}
+			} else {
+				ticksSeatInsideBlock = 0;
+			}
+		}
 
 		// Обновляем интерполированные значения для рендеринга
 		if (this.level().isClientSide) {
@@ -841,6 +850,74 @@ public class TireSwingEntity extends Entity {
 		setTargetSwingYaw(this.targetSwingYaw);
 	}
 
+	private boolean checkSeatCollisionWithVelocity(float swingAngle, float velocity) {
+		if (seatPart == null) return false;
+
+		// Если скорость очень мала, не проверяем столкновение (чтобы избежать ложных срабатываний)
+		if (Math.abs(velocity) < STOP_THRESHOLD) {
+			return false;
+		}
+
+		// Проверяем столкновение в направлении движения
+		// Используем небольшое смещение вперед по направлению движения
+		float lookAheadAngle = swingAngle + velocity * COLLISION_LOOKAHEAD_FACTOR;
+
+		// Получаем позицию сиденья для будущего угла
+		float swingAngleRad = (float) Math.toRadians(lookAheadAngle);
+		float swingYawRad = (float) Math.toRadians(getSwingYaw());
+
+		double forwardOffset = getRopeLength() * Math.sin(swingAngleRad);
+		double verticalOffset = getRopeLength() * (1.0 - Math.cos(swingAngleRad));
+		double yOffset = this.getPassengersRidingOffset();
+
+		// Поворачиваем смещение согласно swingYaw
+		double rotatedX = -forwardOffset * Math.sin(swingYawRad);
+		double rotatedZ = forwardOffset * Math.cos(swingYawRad);
+
+		Vec3 futureSeatPos = this.position()
+				.add(rotatedX, yOffset + verticalOffset, rotatedZ);
+
+		// Создаём AABB для будущей позиции сиденья
+		float collisionWidth = 0.7f;
+		float collisionHeight = 0.7f;
+		AABB futureSeatCollisionBox = new AABB(
+				futureSeatPos.x - collisionWidth / 2,
+				futureSeatPos.y - 0.05,
+				futureSeatPos.z - collisionWidth / 2,
+				futureSeatPos.x + collisionWidth / 2,
+				futureSeatPos.y + collisionHeight,
+				futureSeatPos.z + collisionWidth / 2
+		);
+
+		// Также проверяем текущую позицию на всякий случай
+		float currentSwingAngleRad = (float) Math.toRadians(swingAngle);
+		double currentForwardOffset = getRopeLength() * Math.sin(currentSwingAngleRad);
+		double currentVerticalOffset = getRopeLength() * (1.0 - Math.cos(currentSwingAngleRad));
+
+		double currentRotatedX = -currentForwardOffset * Math.sin(swingYawRad);
+		double currentRotatedZ = currentForwardOffset * Math.cos(swingYawRad);
+
+		Vec3 currentSeatPos = this.position()
+				.add(currentRotatedX, yOffset + currentVerticalOffset, currentRotatedZ);
+
+		AABB currentSeatCollisionBox = new AABB(
+				currentSeatPos.x - collisionWidth / 2,
+				currentSeatPos.y - 0.05,
+				currentSeatPos.z - collisionWidth / 2,
+				currentSeatPos.x + collisionWidth / 2,
+				currentSeatPos.y + collisionHeight,
+				currentSeatPos.z + collisionWidth / 2
+		);
+
+		// Проверяем столкновение с твёрдыми блоками для будущей позиции
+		boolean futureCollision = checkAABBCollisionWithSolidBlocks(futureSeatCollisionBox);
+
+		// Если будущая позиция свободна, но текущая занята - тоже считаем столкновением
+		boolean currentCollision = checkAABBCollisionWithSolidBlocks(currentSeatCollisionBox);
+
+		return futureCollision || currentCollision;
+	}
+
 	private void updateSwingPhysics(boolean hasPassenger) {
 		float currentAngle = getSwingAngle();
 		float currentVelocity = getSwingVelocity();
@@ -848,8 +925,11 @@ public class TireSwingEntity extends Entity {
 		// Сохраняем предыдущий угол для проверки пересечения
 		float previousAngle = getSwingAngle();
 
-		// 1. Проверяем столкновение ДО обновления физики
-		boolean collisionDetected = checkSeatCollision(currentAngle);
+		// 1. Проверяем столкновение С УЧЕТОМ НАПРАВЛЕНИЯ ДВИЖЕНИЯ
+		boolean collisionDetected = checkSeatCollisionWithVelocity(currentAngle, currentVelocity);
+
+		// Сохраняем скорость до столкновения для звука
+		float preCollisionVelocity = currentVelocity;
 
 		// 2. Гравитационная сила с нелинейным усилением
 		float angleRad = (float) Math.toRadians(currentAngle);
@@ -862,7 +942,7 @@ public class TireSwingEntity extends Entity {
 
 		// 3. Сила от игрока (только если есть пассажир и активен ввод)
 		float playerForce = 0.0f;
-		if (hasPassenger && this.pushDirection != 0 && !collisionDetected) {
+		if (hasPassenger && this.pushDirection != 0) {
 			// Игрок толкает эффективнее всего в нижней точке (cos максимален при angle=0°)
 			float efficiency = (float) Math.cos(angleRad);
 			efficiency = Math.max(0.2F, Math.abs(efficiency)); // Минимум 20% эффективности
@@ -875,12 +955,9 @@ public class TireSwingEntity extends Entity {
 
 		// 4. Если обнаружено столкновение - применяем отскок
 		if (collisionDetected) {
-			// Вычисляем вектор отскока на основе текущей скорости и угла
-			float collisionVelocity = currentVelocity;
-
 			// Эластичный отскок: сохраняем 70% энергии, меняем направление
-			float bounceFactor = 1F; // 70% энергии сохраняется
-			float newVelocity = -collisionVelocity * bounceFactor;
+			float bounceFactor = 0.7F; // 70% энергии сохраняется
+			float newVelocity = -currentVelocity * bounceFactor;
 
 			// Ограничиваем максимальную скорость после отскока
 			float maxBounceVelocity = 2.0F;
@@ -892,14 +969,18 @@ public class TireSwingEntity extends Entity {
 			currentVelocity = newVelocity;
 
 			// Немного уменьшаем угол, чтобы качели не застревали в блоке
-			float angleReduction = 0.8F; // Уменьшаем угол на 20%
+			float angleReduction = 0.9F; // Уменьшаем угол на 10%
 			currentAngle *= angleReduction;
 
 			// Сбрасываем силу игрока при столкновении
 			playerForce = 0.0f;
 			this.pushDirection = 0;
 
-			level().playSound(null, this.seatPart.blockPosition(), RPGSounds.TIRE_BOUNCE.get(), SoundSource.BLOCKS, 1.0F, (level().random.nextFloat() - level().random.nextFloat()) * 0.2F + 1.0F);
+			// Воспроизводим звук ТОЛЬКО если скорость до столкновения была достаточной
+			if (Math.abs(preCollisionVelocity) >= MIN_VELOCITY_FOR_SOUND) {
+				level().playSound(null, this.seatPart.blockPosition(), RPGSounds.TIRE_BOUNCE.get(),
+						SoundSource.BLOCKS, 1.0F, (level().random.nextFloat() - level().random.nextFloat()) * 0.2F + 1.0F);
+			}
 		}
 
 		// 5. Суммарное ускорение (гравитация доминирует)
@@ -917,6 +998,12 @@ public class TireSwingEntity extends Entity {
 		if (Math.abs(currentAngle) > MAX_SWING_ANGLE) {
 			currentAngle = MAX_SWING_ANGLE * Math.signum(currentAngle);
 			currentVelocity *= -0.6F; // Потеря 40% энергии при отскоке
+
+			// Звук при ударе о предельный угол
+			if (Math.abs(preCollisionVelocity) >= MIN_VELOCITY_FOR_SOUND) {
+				level().playSound(null, this.seatPart.blockPosition(), RPGSounds.TIRE_BOUNCE.get(),
+						SoundSource.BLOCKS, 0.8F, (level().random.nextFloat() - level().random.nextFloat()) * 0.2F + 0.9F);
+			}
 		}
 
 		// 9. Гарантированный возврат в нейтраль при малых колебаниях
@@ -1087,37 +1174,7 @@ public class TireSwingEntity extends Entity {
 
 
 	private boolean checkSeatCollision(float swingAngle) {
-		if (seatPart == null) return false;
-
-		// Получаем текущую позицию сиденья (копируем логику из updateSeatPartPosition)
-		float swingAngleRad = (float) Math.toRadians(swingAngle);
-		float swingYawRad = (float) Math.toRadians(getSwingYaw());
-
-		double forwardOffset = getRopeLength() * Math.sin(swingAngleRad);
-		double verticalOffset = getRopeLength() * (1.0 - Math.cos(swingAngleRad));
-		double yOffset = this.getPassengersRidingOffset();
-
-		// Поворачиваем смещение согласно swingYaw
-		double rotatedX = -forwardOffset * Math.sin(swingYawRad);
-		double rotatedZ = forwardOffset * Math.cos(swingYawRad);
-
-		Vec3 seatPos = this.position()
-				.add(rotatedX, yOffset + verticalOffset, rotatedZ);
-
-		// Создаём AABB для сиденья (немного меньше для предотвращения ложных срабатываний)
-		float collisionWidth = 0.7f;
-		float collisionHeight = 0.7f;
-		AABB seatCollisionBox = new AABB(
-				seatPos.x - collisionWidth / 2,
-				seatPos.y - 0.05,
-				seatPos.z - collisionWidth / 2,
-				seatPos.x + collisionWidth / 2,
-				seatPos.y + collisionHeight,
-				seatPos.z + collisionWidth / 2
-		);
-
-		// Проверяем столкновение с твёрдыми блоками
-		return checkAABBCollisionWithSolidBlocks(seatCollisionBox);
+		return checkSeatCollisionWithVelocity(swingAngle, getSwingVelocity());
 	}
 
 	private boolean checkAABBCollisionWithSolidBlocks(AABB aabb) {
@@ -1213,32 +1270,6 @@ public class TireSwingEntity extends Entity {
 	}
 
 	@Override
-	public void dismountTo(double x, double y, double z) {
-		// Вызываем стандартную логику
-		super.dismountTo(x, y, z);
-
-		// Применяем сохранённую скорость
-		if (!this.level().isClientSide) {
-			CompoundTag data = this.getPersistentData();
-			if (data.contains("TireSwingVelocityX")) {
-				Vec3 seatVelocity = new Vec3(
-						data.getDouble("TireSwingVelocityX"),
-						data.getDouble("TireSwingVelocityY"),
-						data.getDouble("TireSwingVelocityZ")
-				);
-
-				this.setDeltaMovement(this.getDeltaMovement().add(seatVelocity));
-				this.hasImpulse = true;
-
-				// Очищаем сохранённые данные
-				data.remove("TireSwingVelocityX");
-				data.remove("TireSwingVelocityY");
-				data.remove("TireSwingVelocityZ");
-			}
-		}
-	}
-
-	@Override
 	protected boolean canAddPassenger(Entity passenger) {
 		return this.getPassengers().isEmpty();
 	}
@@ -1273,20 +1304,23 @@ public class TireSwingEntity extends Entity {
 
 	@Override
 	protected void removePassenger(Entity passenger) {
-		// Сохраняем позицию и скорость для применения после спешивания
+		// Вычисляем скорость сиденья до удаления (на сервере)
+		Vec3 seatVelocity = Vec3.ZERO;
 		if (!this.level().isClientSide && passenger != null) {
-			// Вычисляем скорость сиденья
-			Vec3 seatVelocity = calculateSeatVelocity();
-
-			// Сохраняем скорость в данных пассажира для использования в dismountTo
-			passenger.getPersistentData().putDouble("TireSwingVelocityX", seatVelocity.x);
-			passenger.getPersistentData().putDouble("TireSwingVelocityY", seatVelocity.y);
-			passenger.getPersistentData().putDouble("TireSwingVelocityZ", seatVelocity.z);
+			seatVelocity = calculateSeatVelocity().scale(2); // множитель, например 3.0
 		}
 
+		// Сначала выполняем стандартное удаление пассажира (он спешивается)
 		super.removePassenger(passenger);
 
-		// Сбрасываем состояние качелей
+		// Теперь применяем скорость к уже спешенному игроку
+		if (!this.level().isClientSide && passenger != null && seatVelocity.lengthSqr() > 0) {
+			if (passenger instanceof ServerPlayer serverPlayer) {
+				ModMessages.sendToPlayer(new PullPlayerPacket(seatVelocity, serverPlayer.getId()), serverPlayer);
+			}
+		}
+
+		// Сброс состояния качелей
 		if (this.getPassengers().isEmpty()) {
 			setOccupied(false);
 			this.pushDirection = 0;
@@ -1294,8 +1328,6 @@ public class TireSwingEntity extends Entity {
 			this.currentRotationSpeed = 0.0F;
 			this.randomRotationOffset = 0.0F;
 			this.randomRotationTimer = 0;
-
-			// Сбрасываем флаги звуков
 			this.hasCrossedZeroRecently = false;
 			this.wasAboveSwooshAngle = false;
 			this.zeroCrossCooldown = 0;
@@ -1598,6 +1630,11 @@ public class TireSwingEntity extends Entity {
 	public class TireSwingSeatPart extends PartEntity<TireSwingEntity> {
 		public TireSwingSeatPart(TireSwingEntity parent) {
 			super(parent);
+			this.blocksBuilding = true;
+		}
+
+		public ItemStack getPickResult() {
+			return new ItemStack(ModBlocks.TIRE.get());
 		}
 
 		@Override

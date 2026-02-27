@@ -3,15 +3,21 @@ package net.dainplay.rpgworldmod.effect;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.custom.BlazeStaffItem;
+import net.dainplay.rpgworldmod.item.custom.BrainCoralStaffItem;
+import net.dainplay.rpgworldmod.item.custom.BubbleCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
+import net.dainplay.rpgworldmod.item.custom.FireCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.HeartOfTheSeaScrollItem;
 import net.dainplay.rpgworldmod.item.custom.LivingWoodStaffItem;
+import net.dainplay.rpgworldmod.item.custom.TubeCoralStaffItem;
 import net.dainplay.rpgworldmod.network.ClientAdditionalHealthCostData;
+import net.dainplay.rpgworldmod.network.ClientItemTargetData;
 import net.dainplay.rpgworldmod.network.IgniteSelfPacket;
 import net.dainplay.rpgworldmod.network.LeftClickWhileRightClickUsePacket;
 import net.dainplay.rpgworldmod.network.UseOnAnimateTargetPacket;
 import net.dainplay.rpgworldmod.network.ClientAnimateTargetData;
 import net.dainplay.rpgworldmod.network.ModMessages;
+import net.dainplay.rpgworldmod.network.UseOnItemTargetPacket;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -21,7 +27,9 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -30,6 +38,10 @@ import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = RPGworldMod.MOD_ID, value = Dist.CLIENT)
 public class ParalysisHandler {
@@ -221,6 +233,22 @@ public class ParalysisHandler {
 				if (useItem.getItem() instanceof BlazeStaffItem staff && staff.isOffCooldown(useItem, player)) {
 					ModMessages.sendToServer(new LeftClickWhileRightClickUsePacket(player.getId()));
 					player.swing(player.getUsedItemHand());
+				}
+
+				if ((useItem.getItem() instanceof BrainCoralStaffItem brainCoralStaff && brainCoralStaff.isOffCooldown(useItem, player))
+						|| (useItem.getItem() instanceof TubeCoralStaffItem tubeCoralStaff && tubeCoralStaff.isOffCooldown(useItem, player))
+						|| (useItem.getItem() instanceof FireCoralStaffItem fireCoralStaff && fireCoralStaff.isOffCooldown(useItem, player))
+						|| (useItem.getItem() instanceof BubbleCoralStaffItem bubbleCoralStaff && bubbleCoralStaff.isOffCooldown(useItem, player))) {
+					List<ItemEntity> targets = ClientItemTargetData.getTargets();
+					if (targets != null && !targets.isEmpty()) {
+						List<Integer> targetIds = targets.stream()
+								.filter(Objects::nonNull)
+								.map(Entity::getId)
+								.collect(Collectors.toList());
+						ModMessages.sendToServer(new UseOnItemTargetPacket(player.getId(), targetIds));
+						ClientItemTargetData.clear();
+						player.swing(player.getUsedItemHand());
+					}
 				}
 			}
 		}

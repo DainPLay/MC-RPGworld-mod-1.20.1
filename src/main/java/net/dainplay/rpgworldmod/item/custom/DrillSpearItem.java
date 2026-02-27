@@ -120,7 +120,7 @@ public class DrillSpearItem extends Item implements Vanishable, RPGtooltip {
 
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        return (enchantment == Enchantments.LOYALTY || enchantment == Enchantments.BLOCK_EFFICIENCY || enchantment == ModEnchantments.COLLECTION.get() || enchantment == Enchantments.BLOCK_FORTUNE || enchantment == Enchantments.SILK_TOUCH || enchantment == Enchantments.UNBREAKING);
+        return (enchantment == Enchantments.LOYALTY || enchantment == Enchantments.BLOCK_EFFICIENCY || enchantment == ModEnchantments.COLLECTION.get() || enchantment == Enchantments.BLOCK_FORTUNE || enchantment == Enchantments.SILK_TOUCH || enchantment == Enchantments.UNBREAKING || super.canApplyAtEnchantingTable(stack, enchantment));
     }
 
     @Override
@@ -131,7 +131,7 @@ public class DrillSpearItem extends Item implements Vanishable, RPGtooltip {
                 EnchantmentHelper.getEnchantments(book).containsKey(Enchantments.SILK_TOUCH) ||
                 EnchantmentHelper.getEnchantments(book).containsKey(ModEnchantments.COLLECTION.get()) ||
                 EnchantmentHelper.getEnchantments(book).containsKey(Enchantments.UNBREAKING) ||
-                EnchantmentHelper.getEnchantments(book).containsKey(Enchantments.MENDING));
+                EnchantmentHelper.getEnchantments(book).containsKey(Enchantments.MENDING) || super.isBookEnchantable(stack,book));
     }
 
     public int getEnchantmentValue() {

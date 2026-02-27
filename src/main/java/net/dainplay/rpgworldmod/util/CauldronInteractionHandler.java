@@ -1,4 +1,5 @@
 package net.dainplay.rpgworldmod.util;
+
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.fluid.ModFluids;
 import net.dainplay.rpgworldmod.item.ModItems;
@@ -34,106 +35,112 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 public class CauldronInteractionHandler {
-    @SubscribeEvent
-    public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        Level level = event.getLevel();
-        BlockPos pos = event.getPos();
-        Player player = event.getEntity();
-        InteractionHand hand = event.getHand();
-        ItemStack itemStack = player.getItemInHand(hand);
-        BlockState state = level.getBlockState(pos);
+	@SubscribeEvent
+	public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+		Level level = event.getLevel();
+		BlockPos pos = event.getPos();
+		Player player = event.getEntity();
+		InteractionHand hand = event.getHand();
+		ItemStack itemStack = player.getItemInHand(hand);
+		BlockState state = level.getBlockState(pos);
 
-        if (state.getBlock() instanceof AbstractCauldronBlock) {
-            // Handle Arbor Fuel Bucket Interaction
-            if (itemStack.is(ModItems.ARBOR_FUEL_BUCKET.get())) {
-                if (!player.isCreative() && !level.isClientSide) {
-                    player.setItemInHand(hand, new ItemStack(Items.BUCKET));
-                }
-                level.setBlock(pos, ModBlocks.ARBOR_FUEL_CAULDRON.get().defaultBlockState().setValue(BlockStateProperties.LEVEL_CAULDRON, 3), 3);
-                level.playSound((Player) null, pos, SoundEvents.BUCKET_EMPTY_LAVA, SoundSource.BLOCKS, 1.0F, 1.0F);
-                player.awardStat(Stats.FILL_CAULDRON);
-                event.setCanceled(true); // cancel the original behavior of the cauldron.
-                event.setCancellationResult(InteractionResult.SUCCESS); // cancel the original behavior of the cauldron and indicate the interaction was successful.
-            }
-        }
-        if(state.is(ModBlocks.ARBOR_FUEL_CAULDRON.get()) )
-        {
-            if (itemStack.is(Items.BUCKET)) {
-                if (state.getValue(BlockStateProperties.LEVEL_CAULDRON) == 3) {
-                    if (!player.isCreative() && !level.isClientSide) {
-                            itemStack.shrink(1);
-                            if (itemStack.isEmpty())
-                                player.setItemInHand(hand, new ItemStack(ModItems.ARBOR_FUEL_BUCKET.get()));
-                            else if(player.getInventory().getFreeSlot() == -1) player.drop(new ItemStack(ModItems.ARBOR_FUEL_BUCKET.get()), false);
-                            else player.getInventory().add(new ItemStack(ModItems.ARBOR_FUEL_BUCKET.get()));
-                    }
-                    level.setBlock(pos, Blocks.CAULDRON.defaultBlockState(), 3);
-                    level.playSound((Player) null, pos, SoundEvents.BUCKET_FILL_LAVA, SoundSource.BLOCKS, 1.0F, 1.0F);
-                    player.awardStat(Stats.USE_CAULDRON);
-                    player.awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
-                    event.setCanceled(true);
-                    event.setCancellationResult(InteractionResult.SUCCESS);
-                }
-            }
+		if (state.getBlock() instanceof AbstractCauldronBlock) {
+			// Handle Arbor Fuel Bucket Interaction
+			if (itemStack.is(ModItems.ARBOR_FUEL_BUCKET.get())) {
+				if (!player.isCreative() && !level.isClientSide) {
+					player.setItemInHand(hand, new ItemStack(Items.BUCKET));
+				}
+				level.setBlock(pos, ModBlocks.ARBOR_FUEL_CAULDRON.get().defaultBlockState().setValue(BlockStateProperties.LEVEL_CAULDRON, 3), 3);
+				level.playSound((Player) null, pos, SoundEvents.BUCKET_EMPTY_LAVA, SoundSource.BLOCKS, 1.0F, 1.0F);
+				player.awardStat(Stats.FILL_CAULDRON);
+				event.setCanceled(true); // cancel the original behavior of the cauldron.
+				event.setCancellationResult(InteractionResult.SUCCESS); // cancel the original behavior of the cauldron and indicate the interaction was successful.
+			}
+		}
+		if (state.is(ModBlocks.ARBOR_FUEL_CAULDRON.get())) {
+			if (itemStack.is(Items.BUCKET)) {
+				if (state.getValue(BlockStateProperties.LEVEL_CAULDRON) == 3) {
+					if (!player.isCreative() && !level.isClientSide) {
+						itemStack.shrink(1);
+						ItemStack bucket = new ItemStack(ModItems.ARBOR_FUEL_BUCKET.get());
+						if (itemStack.isEmpty()) {
+							player.setItemInHand(hand, bucket);
+						} else {
+							if (!player.getInventory().add(bucket)) {
+								player.drop(bucket, false);
+							}
+						}
+					}
+					level.setBlock(pos, Blocks.CAULDRON.defaultBlockState(), 3);
+					level.playSound((Player) null, pos, SoundEvents.BUCKET_FILL_LAVA, SoundSource.BLOCKS, 1.0F, 1.0F);
+					player.awardStat(Stats.USE_CAULDRON);
+					player.awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
+					event.setCanceled(true);
+					event.setCancellationResult(InteractionResult.SUCCESS);
+				}
+			} else if (itemStack.is(Items.GLASS_BOTTLE)) {
+				if (state.getValue(BlockStateProperties.LEVEL_CAULDRON) == 1) {
+					if (!player.isCreative() && !level.isClientSide) {
+						itemStack.shrink(1);
 
-            else if (itemStack.is(Items.GLASS_BOTTLE)) {
-                if (state.getValue(BlockStateProperties.LEVEL_CAULDRON) == 1) {
-                    if (!player.isCreative() && !level.isClientSide) {
-                            itemStack.shrink(1);
-                            if (itemStack.isEmpty())
-                                player.setItemInHand(hand, ItemUtils.createFilledResult(itemStack, player, PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.ARBOR_FUEL_BOTTLE.get())));
-                            else if(player.getInventory().getFreeSlot() == -1) player.drop(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.ARBOR_FUEL_BOTTLE.get()), false);
-                            else player.getInventory().add(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.ARBOR_FUEL_BOTTLE.get()));
+						ItemStack potion = ItemUtils.createFilledResult(itemStack, player, PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.ARBOR_FUEL_BOTTLE.get()));
+						if (itemStack.isEmpty()) {
+							player.setItemInHand(hand, potion);
+						} else {
+							if (!player.getInventory().add(potion)) {
+								player.drop(potion, false);
+							}
+						}
+					}
+					level.setBlock(pos, Blocks.CAULDRON.defaultBlockState(), 3);
+					level.playSound((Player) null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+					player.awardStat(Stats.USE_CAULDRON);
+					player.awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
+					event.setCanceled(true);
+					event.setCancellationResult(InteractionResult.SUCCESS);
+				} else {
+					if (!player.isCreative() && !level.isClientSide) {
+						itemStack.shrink(1);
 
-                    }
-                    level.setBlock(pos, Blocks.CAULDRON.defaultBlockState(), 3);
-                    level.playSound((Player) null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
-                    player.awardStat(Stats.USE_CAULDRON);
-                    player.awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
-                    event.setCanceled(true);
-                    event.setCancellationResult(InteractionResult.SUCCESS);
-                }
-                else {
-                    if (!player.isCreative() && !level.isClientSide) {
-                            itemStack.shrink(1);
-                            if (itemStack.isEmpty())
-                                player.setItemInHand(hand, PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.ARBOR_FUEL_BOTTLE.get()));
-                            else if(player.getInventory().getFreeSlot() == -1) player.drop(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.ARBOR_FUEL_BOTTLE.get()), false);
-                            else player.getInventory().add(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.ARBOR_FUEL_BOTTLE.get()));
+						ItemStack potion = PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.ARBOR_FUEL_BOTTLE.get());
+						if (itemStack.isEmpty()) {
+							player.setItemInHand(hand, potion);
+						} else {
+							if (!player.getInventory().add(potion)) {
+								player.drop(potion, false);
+							}
+						}
+					}
+					level.setBlock(pos, ModBlocks.ARBOR_FUEL_CAULDRON.get().defaultBlockState().setValue(BlockStateProperties.LEVEL_CAULDRON, state.getValue(BlockStateProperties.LEVEL_CAULDRON) - 1), 3);
+					level.playSound((Player) null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+					player.awardStat(Stats.USE_CAULDRON);
+					player.awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
+					event.setCanceled(true);
+					event.setCancellationResult(InteractionResult.SUCCESS);
+				}
+			}
+		}
+		if (itemStack.is(Items.POTION) && PotionUtils.getPotion(itemStack) == ModPotions.ARBOR_FUEL_BOTTLE.get()) {
+			if (state.is(Blocks.CAULDRON)) {
+				if (!player.isCreative() && !level.isClientSide) {
+					player.setItemInHand(hand, new ItemStack(Items.GLASS_BOTTLE));
+				}
+				level.setBlock(pos, ModBlocks.ARBOR_FUEL_CAULDRON.get().defaultBlockState(), 3);
+				level.playSound((Player) null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+				player.awardStat(Stats.FILL_CAULDRON);
+				event.setCanceled(true);
+				event.setCancellationResult(InteractionResult.SUCCESS);
+			} else if (state.is(ModBlocks.ARBOR_FUEL_CAULDRON.get()) && state.getValue(BlockStateProperties.LEVEL_CAULDRON) != 3) {
+				if (!player.isCreative() && !level.isClientSide) {
+					player.setItemInHand(hand, new ItemStack(Items.GLASS_BOTTLE));
+				}
+				level.setBlock(pos, ModBlocks.ARBOR_FUEL_CAULDRON.get().defaultBlockState().setValue(BlockStateProperties.LEVEL_CAULDRON, state.getValue(BlockStateProperties.LEVEL_CAULDRON) + 1), 3);
+				level.playSound((Player) null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+				player.awardStat(Stats.FILL_CAULDRON);
+				event.setCanceled(true);
+				event.setCancellationResult(InteractionResult.SUCCESS);
 
-                    }
-                    level.setBlock(pos, ModBlocks.ARBOR_FUEL_CAULDRON.get().defaultBlockState().setValue(BlockStateProperties.LEVEL_CAULDRON, state.getValue(BlockStateProperties.LEVEL_CAULDRON) - 1), 3);
-                    level.playSound((Player) null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
-                    player.awardStat(Stats.USE_CAULDRON);
-                    player.awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
-                    event.setCanceled(true);
-                    event.setCancellationResult(InteractionResult.SUCCESS);
-                }
-            }
-        }
-        if (itemStack.is(Items.POTION) && PotionUtils.getPotion(itemStack) == ModPotions.ARBOR_FUEL_BOTTLE.get()) {
-            if (state.is(Blocks.CAULDRON)) {
-                if (!player.isCreative() && !level.isClientSide) {
-                    player.setItemInHand(hand, new ItemStack(Items.GLASS_BOTTLE));
-                }
-                level.setBlock(pos, ModBlocks.ARBOR_FUEL_CAULDRON.get().defaultBlockState(), 3);
-                level.playSound((Player) null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
-                player.awardStat(Stats.FILL_CAULDRON);
-                event.setCanceled(true);
-                event.setCancellationResult(InteractionResult.SUCCESS);
-            }
-            else if(state.is(ModBlocks.ARBOR_FUEL_CAULDRON.get()) && state.getValue(BlockStateProperties.LEVEL_CAULDRON) != 3)
-            {
-                if (!player.isCreative() && !level.isClientSide) {
-                    player.setItemInHand(hand, new ItemStack(Items.GLASS_BOTTLE));
-                }
-                level.setBlock(pos, ModBlocks.ARBOR_FUEL_CAULDRON.get().defaultBlockState().setValue(BlockStateProperties.LEVEL_CAULDRON, state.getValue(BlockStateProperties.LEVEL_CAULDRON) + 1), 3);
-                level.playSound((Player) null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
-                player.awardStat(Stats.FILL_CAULDRON);
-                event.setCanceled(true);
-                event.setCancellationResult(InteractionResult.SUCCESS);
-
-            }
-        }
-    }
+			}
+		}
+	}
 }

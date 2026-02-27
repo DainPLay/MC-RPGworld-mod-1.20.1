@@ -5,32 +5,31 @@ import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.network.LoopSoundPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
-import net.dainplay.rpgworldmod.util.ModTags;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Map;
 
-public class BrainCoralStaffItem extends StaffItem implements ChooseAnimateTargetItem {
+public class BrainCoralStaffItem extends StaffItem implements ChooseTargetItem {
 
 	public BrainCoralStaffItem(Properties properties) {
 		super(properties);
@@ -38,21 +37,6 @@ public class BrainCoralStaffItem extends StaffItem implements ChooseAnimateTarge
 
 	public String getFirstPredicate(ItemStack item) {
 		return Minecraft.getInstance().options.keyAttack.getKey().getDisplayName().getString();
-	}
-
-	@Override
-	public int getUseDuration(ItemStack pStack) {
-		return 72000;
-	}
-
-	@Override
-	public UseAnim getUseAnimation(ItemStack pStack) {
-		return UseAnim.BOW;
-	}
-
-	@Override
-	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-		return enchantment == Enchantments.MENDING || super.canApplyAtEnchantingTable(stack, enchantment);
 	}
 
 	@Override
@@ -155,87 +139,100 @@ public class BrainCoralStaffItem extends StaffItem implements ChooseAnimateTarge
 		super.releaseUsing(stack, level, livingEntity, timeCharged);
 	}
 
-	public void cast(Player player, @Nullable LivingEntity target, ItemStack item) {
+	public void cast(Player player, List<ItemEntity> targets, ItemStack item) {
 		if (item.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get()) > 0 && player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F) {
 			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = player.getCooldowns().cooldowns;
 			ItemCooldowns.CooldownInstance instance = cooldownsMap.get(item.getItem());
 			if (instance != null) {
 				int endTick = instance.endTime;
 				int currentTick = player.getCooldowns().tickCount;
-				player.getCooldowns().addCooldown(this, endTick - currentTick + getUseCooldown(item)*2);
+				player.getCooldowns().addCooldown(this, endTick - currentTick + getUseCooldown(item) * 2);
 			}
 		} else player.getCooldowns().addCooldown(this, getUseCooldown(item));
 		player.swing(player.getUsedItemHand());
 
-		switch (getGemType(item)) {
-			case EMBER_GEM: {
-				player.level().playSound(null,
-						player.getX(), player.getY(), player.getZ(),
-						RPGSounds.STAFF_EMBER_GEM_CAST.get(),
-						SoundSource.PLAYERS, 1.0F, 1.0F
-				);
-
-				if (target != null) {
-					target.level().playSound(null,
-							target.getX(), target.getY(), target.getZ(),
+		for (ItemEntity target : targets) {
+			switch (getGemType(item)) {
+				case EMBER_GEM: {
+					player.level().playSound(null,
+							player.getX(), player.getY(), player.getZ(),
 							RPGSounds.STAFF_EMBER_GEM_CAST.get(),
 							SoundSource.PLAYERS, 1.0F, 1.0F
 					);
-					target.setSecondsOnFire(10);
-				}
-			}
-			break;
-			case ENDER_EYE: {
-				player.level().playSound(null,
-						player.getX(), player.getY(), player.getZ(),
-						RPGSounds.STAFF_ENDER_EYE_CAST.get(),
-						SoundSource.PLAYERS, 1.0F, 1.0F
-				);
 
-				if (target != null) {
-					target.level().playSound(null,
-							target.getX(), target.getY(), target.getZ(),
+					if (target != null) {
+						target.level().playSound(null,
+								target.getX(), target.getY(), target.getZ(),
+								RPGSounds.STAFF_EMBER_GEM_CAST.get(),
+								SoundSource.PLAYERS, 1.0F, 1.0F
+						);
+						if (!target.fireImmune()) {
+							target.setSecondsOnFire(5);
+						}
+						target.hurt(player.level().damageSources().inFire(), 1F);
+					}
+				}
+				break;
+				case ENDER_EYE: {
+					player.level().playSound(null,
+							player.getX(), player.getY(), player.getZ(),
 							RPGSounds.STAFF_ENDER_EYE_CAST.get(),
 							SoundSource.PLAYERS, 1.0F, 1.0F
 					);
-					target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 1200));
-				}
-			}
-			break;
-			case HEART_OF_THE_SEA: {
-				player.level().playSound(null,
-						player.getX(), player.getY(), player.getZ(),
-						RPGSounds.STAFF_HEART_OF_THE_SEA_CAST.get(),
-						SoundSource.PLAYERS, 1.0F, 1.0F
-				);
 
-				if (target != null) {
-					target.level().playSound(null,
-							target.getX(), target.getY(), target.getZ(),
-							RPGSounds.STAFF_HEART_OF_THE_SEA_CAST.get(),
+					if (target != null) {
+						target.level().playSound(null,
+								target.getX(), target.getY(), target.getZ(),
+								RPGSounds.STAFF_ENDER_EYE_CAST.get(),
+								SoundSource.PLAYERS, 1.0F, 1.0F
+						);
+						target.setGlowingTag(true);
+					}
+				}
+				break;
+				case HEART_OF_THE_SEA: {
+					player.level().playSound(null,
+							player.getX(), player.getY(), player.getZ(),
+							RPGSounds.STAFF_HEART_OF_THE_SEA_ITEM.get(),
 							SoundSource.PLAYERS, 1.0F, 1.0F
 					);
-					target.addEffect(new MobEffectInstance(ModEffects.AMPHIBIOSIS.get(), 400));
-				}
-			}
-			break;
-			case NETHER_STAR: {
-				player.level().playSound(null,
-						player.getX(), player.getY(), player.getZ(),
-						RPGSounds.STAFF_NETHER_STAR_CAST.get(),
-						SoundSource.PLAYERS, 0.5F, 1.0F
-				);
 
-				if (target != null) {
-					target.level().playSound(null,
-							target.getX(), target.getY(), target.getZ(),
-							RPGSounds.STAFF_NETHER_STAR_CAST.get(),
+					if (target != null) {
+						target.level().playSound(null,
+								target.getX(), target.getY(), target.getZ(),
+								RPGSounds.STAFF_HEART_OF_THE_SEA_ITEM.get(),
+								SoundSource.PLAYERS, 1.0F, 1.0F
+						);
+						ItemStack itemStack = target.getItem();
+						player.getInventory().add(itemStack);
+						if (!itemStack.isEmpty()) {
+							player.drop(itemStack, false);
+						}
+						target.discard();
+					}
+				}
+				break;
+				case NETHER_STAR: {
+					player.level().playSound(null,
+							player.getX(), player.getY(), player.getZ(),
+							RPGSounds.STAFF_NETHER_STAR_ITEM.get(),
 							SoundSource.PLAYERS, 0.5F, 1.0F
 					);
-					target.addEffect(new MobEffectInstance(MobEffects.WITHER, 200, 1));
+
+					if (target != null) {
+						target.level().playSound(null,
+								target.getX(), target.getY(), target.getZ(),
+								RPGSounds.STAFF_NETHER_STAR_ITEM.get(),
+								SoundSource.PLAYERS, 0.5F, 1.0F
+						);
+						ItemStack targetStack = target.getItem();
+						float power = ((float) targetStack.getCount() / targetStack.getMaxStackSize()) * 2.0F;
+						target.level().explode(target, target.getX(), target.getY(), target.getZ(), power, Level.ExplosionInteraction.MOB);
+						target.discard();
+					}
 				}
+				break;
 			}
-			break;
 		}
 		item.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(player.getUsedItemHand()));
 	}
@@ -247,7 +244,7 @@ public class BrainCoralStaffItem extends StaffItem implements ChooseAnimateTarge
 
 	@Override
 	public int getMaxCooldown(ItemStack item) {
-		return 300;
+		return 60;
 	}
 
 	public boolean isValidRepairItem(ItemStack pToRepair, ItemStack pRepair) {
@@ -255,8 +252,22 @@ public class BrainCoralStaffItem extends StaffItem implements ChooseAnimateTarge
 	}
 
 	@Override
-	public boolean highlightTarget(ItemStack stack, Player player) {
+	public boolean highlightSpecificItemTarget(ItemStack stack, Player player) {
 		return isOffCooldown(stack, player) && player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUseItem() == stack;
+	}
+
+	@Override
+	public float get1XOffset(ItemStack stack, Entity entity, boolean righthand) {
+		return 0.25F;
+	}
+
+	public float getY(ItemStack stack, Entity entity, boolean rightHand) {
+		return 0.58F;
+	}
+
+	@Override
+	public float getX(ItemStack stack, Entity entity, boolean righthand) {
+		return -0.065F;
 	}
 
 }

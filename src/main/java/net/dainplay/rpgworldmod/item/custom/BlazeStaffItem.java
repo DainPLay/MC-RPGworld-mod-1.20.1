@@ -21,14 +21,13 @@ import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.Tags;
 
 import java.util.Map;
 
-public class BlazeStaffItem extends StaffItem implements ChooseAnimateTargetItem {
+public class BlazeStaffItem extends StaffItem implements ChooseTargetItem {
 
 	public BlazeStaffItem(Properties properties) {
 		super(properties);
@@ -42,16 +41,6 @@ public class BlazeStaffItem extends StaffItem implements ChooseAnimateTargetItem
 	@Override
 	public boolean hasControls(ItemStack item) {
 		return true;
-	}
-
-	@Override
-	public int getUseDuration(ItemStack pStack) {
-		return 72000;
-	}
-
-	@Override
-	public UseAnim getUseAnimation(ItemStack pStack) {
-		return UseAnim.BOW;
 	}
 
 	@Override
@@ -271,16 +260,16 @@ public class BlazeStaffItem extends StaffItem implements ChooseAnimateTargetItem
 	}
 
 	@Override
-	public float getX(ItemStack stack, Entity entity) {
+	public float getX(ItemStack stack, Entity entity, boolean righthand) {
 		return -0.065F;
 	}
 	@Override
-	public float get1XOffset(ItemStack stack, Entity entity) {
-		return 0.25F;
+	public float get1XOffset(ItemStack stack, Entity entity, boolean righthand) {
+		return 0.225F;
 	}
 
 	@Override
-	public float get1YOffset(ItemStack stack, Entity entity) {
+	public float get1YOffset(ItemStack stack, Entity entity, boolean righthand) {
 		if (getGemType(stack) == GemType.EMBER_GEM)
 			return 0.65F;
 		else if (getGemType(stack) == GemType.HEART_OF_THE_SEA)
@@ -316,5 +305,9 @@ public class BlazeStaffItem extends StaffItem implements ChooseAnimateTargetItem
 
 	public boolean isValidRepairItem(ItemStack pToRepair, ItemStack pRepair) {
 		return pRepair.is(Tags.Items.RODS_BLAZE) || super.isValidRepairItem(pToRepair, pRepair);
+	}
+
+	public float getY(ItemStack stack, Entity entity, boolean rightHand) {
+		return 0.525F;
 	}
 }

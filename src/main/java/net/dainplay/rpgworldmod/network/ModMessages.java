@@ -119,6 +119,12 @@ public class ModMessages {
 				.consumerMainThread(UseOnAnimateTargetPacket::handle)
 				.add();
 
+		net.messageBuilder(UseOnItemTargetPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+				.decoder(UseOnItemTargetPacket::new)
+				.encoder(UseOnItemTargetPacket::toBytes)
+				.consumerMainThread(UseOnItemTargetPacket::handle)
+				.add();
+
 		net.messageBuilder(LeftClickWhileRightClickUsePacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
 				.decoder(LeftClickWhileRightClickUsePacket::new)
 				.encoder(LeftClickWhileRightClickUsePacket::toBytes)

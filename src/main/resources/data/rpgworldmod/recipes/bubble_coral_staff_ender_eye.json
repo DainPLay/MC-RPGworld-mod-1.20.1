@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " LG",
+    " LL",
+    "L  "
+  ],
+  "key": {
+    "L": {
+      "item": "minecraft:bubble_coral_block"
+    },
+    "G": {
+      "item": "minecraft:ender_eye"
+    }
+  },
+  "result": {
+    "item": "rpgworldmod:bubble_coral_staff",
+    "nbt": "{Gem:\"ender_eye\"}"
+  }
+}

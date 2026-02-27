@@ -5,8 +5,8 @@
 	"texture_size": [32, 32],
 	"textures": {
 		"1": "rpgworldmod:item/fire_coral_staff_3d",
-		"gem": "rpgworldmod:item/ember_gem_3d",
-		"particle": "rpgworldmod:item/fire_coral_staff_3d"
+		"particle": "rpgworldmod:item/fire_coral_staff_3d",
+		"gem": "rpgworldmod:item/ember_gem_3d"
 	},
 	"elements": [
 		{
@@ -307,11 +307,11 @@
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [0, 60, 0],
-			"translation": [11, 8, -3]
+			"translation": [10.75, 8, -2]
 		},
 		"thirdperson_lefthand": {
 			"rotation": [0, 90, 0],
-			"translation": [7.5, 8, 10]
+			"translation": [7.5, 8, 10.5]
 		},
 		"firstperson_righthand": {
 			"rotation": [0, -90, 25],

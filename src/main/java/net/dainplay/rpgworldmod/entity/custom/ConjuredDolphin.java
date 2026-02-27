@@ -17,6 +17,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Dolphin;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
@@ -32,6 +34,14 @@ public class ConjuredDolphin extends Dolphin {
 	public ConjuredDolphin(EntityType<? extends Dolphin> entityType, Level level) {
 		super(entityType, level);
 		this.livedTicks = 0;
+	}
+
+	@Override
+	@Nullable
+	public ItemStack getPickResult() {
+		ItemStack scroll = ModItems.HEART_OF_THE_SEA_SCROLL.get().getDefaultInstance();
+		scroll.enchant(ModEnchantments.CONJURATION.get(), 1);
+		return scroll;
 	}
 
 	@Override

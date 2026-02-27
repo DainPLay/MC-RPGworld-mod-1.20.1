@@ -4,6 +4,7 @@ import net.dainplay.rpgworldmod.entity.ModEntities;
 import net.dainplay.rpgworldmod.world.feature.ModConfiguredFeatures;
 import net.dainplay.rpgworldmod.world.feature.ModPlacedFeatures;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
@@ -80,7 +81,8 @@ public class EntSpawnEggItem extends ForgeSpawnEggItem {
 						.registryOrThrow(Registries.CONFIGURED_FEATURE)
 						.get(ModConfiguredFeatures.ENT_FACE_SOUTH_KEY);
 				break;
-			default: break;
+			default:
+				break;
 		}
 
 		if (treeFeature != null) {
@@ -109,49 +111,56 @@ public class EntSpawnEggItem extends ForgeSpawnEggItem {
 		return new TreeEggDispenseBehavior();
 	}
 
-	private class TreeEggDispenseBehavior extends DefaultDispenseItemBehavior {
+	private class TreeEggDispenseBehavior implements DispenseItemBehavior {
 		@Override
-		protected ItemStack execute(net.minecraft.core.BlockSource source, ItemStack stack) {
+		public ItemStack dispense(BlockSource source, ItemStack stack) {
 			ServerLevel level = source.getLevel();
-			Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
-			BlockPos pos = source.getPos().relative(direction);
+			BlockState state = source.getBlockState();
+
+			// Проверяем, что блок действительно раздатчик (иначе ничего не делаем)
+			if (!(state.getBlock() instanceof DispenserBlock)) {
+				return stack;
+			}
+
+			Direction direction = state.getValue(DispenserBlock.FACING);
+			BlockPos pos;
+			if (direction == Direction.UP)
+				pos = source.getPos().relative(direction).relative(direction);
+			else
+				pos = source.getPos().relative(direction);
+
+
+			// Случайный выбор лицевой стороны дерева (4 направления)
+			ResourceLocation[] faceKeys = {
+					ModConfiguredFeatures.ENT_FACE_EAST_KEY.location(),
+					ModConfiguredFeatures.ENT_FACE_WEST_KEY.location(),
+					ModConfiguredFeatures.ENT_FACE_NORTH_KEY.location(),
+					ModConfiguredFeatures.ENT_FACE_SOUTH_KEY.location()
+			};
+			ResourceLocation selectedKey = faceKeys[level.random.nextInt(faceKeys.length)];
 
 			ConfiguredFeature<?, ?> treeFeature = level.registryAccess()
 					.registryOrThrow(Registries.CONFIGURED_FEATURE)
-					.get(ModConfiguredFeatures.ENT_FACE_EAST_KEY);
+					.get(selectedKey);
 
-			// Получаем фичу дерева
-			switch (level.random.nextInt(3)) {
-				case 0:
-					treeFeature = level.registryAccess()
-							.registryOrThrow(Registries.CONFIGURED_FEATURE)
-							.get(ModConfiguredFeatures.ENT_FACE_WEST_KEY);
-					break;
-				case 1:
-					treeFeature = level.registryAccess()
-							.registryOrThrow(Registries.CONFIGURED_FEATURE)
-							.get(ModConfiguredFeatures.ENT_FACE_NORTH_KEY);
-					break;
-				case 2:
-					treeFeature = level.registryAccess()
-							.registryOrThrow(Registries.CONFIGURED_FEATURE)
-							.get(ModConfiguredFeatures.ENT_FACE_SOUTH_KEY);
-					break;
-				default: break;
+			if (treeFeature != null && treeFeature.place(level,
+					level.getChunkSource().getGenerator(),
+					level.random,
+					pos)) {
+
+				stack.shrink(1);
+				playSound(source);
+				playAnimation(source, direction);
 			}
-
-			if (treeFeature != null && treeFeature.feature() == Feature.TREE) {
-				if (treeFeature.place(level,
-						level.getChunkSource().getGenerator(),
-						level.random,
-						pos)) {
-
-					stack.shrink(1);
-					return stack;
-				}
-			}
-
 			return stack;
+		}
+
+		private void playSound(BlockSource source) {
+			source.getLevel().levelEvent(1000, source.getPos(), 0);
+		}
+
+		private void playAnimation(BlockSource source, Direction direction) {
+			source.getLevel().levelEvent(2000, source.getPos(), direction.get3DDataValue());
 		}
 	}
 }

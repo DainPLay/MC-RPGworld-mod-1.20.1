@@ -4,8 +4,8 @@
 	"texture_size": [32, 32],
 	"textures": {
 		"gem": "rpgworldmod:item/ember_gem_3d",
-		"base": "rpgworldmod:item/blaze_staff_3d",
-		"particle": "rpgworldmod:item/blaze_staff_3d"
+		"particle": "rpgworldmod:item/blaze_staff_3d",
+		"base": "rpgworldmod:item/blaze_staff_3d"
 	},
 	"elements": [
 		{
@@ -390,11 +390,11 @@
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [0, 60, 0],
-			"translation": [11, 8, -2]
+			"translation": [11, 8, -1.5]
 		},
 		"thirdperson_lefthand": {
 			"rotation": [0, 60, 0],
-			"translation": [3, 8, 12]
+			"translation": [3, 8, 12.5]
 		},
 		"firstperson_righthand": {
 			"rotation": [0, -90, 25],

@@ -204,6 +204,8 @@ public class ModSounds
         SPELL_DESTRUCTION_HEART_OF_THE_SEA_LOOP = registerSound("rpgworldmod.spell.destruction_heart_of_the_sea_loop");
         SPELL_DESTRUCTION_HEART_OF_THE_SEA_STOP = registerSound("rpgworldmod.spell.destruction_heart_of_the_sea_stop");
         SPELL_DESTRUCTION_HEART_OF_THE_SEA_CAST = registerSound("rpgworldmod.spell.destruction_heart_of_the_sea_cast");
+        STAFF_HEART_OF_THE_SEA_ITEM = registerSound("rpgworldmod.staff_heart_of_the_sea.item");
+        STAFF_NETHER_STAR_ITEM = registerSound("rpgworldmod.staff_nether_star.item");
     }
 
     private static RegistryObject<SoundEvent> registerSound(String name)

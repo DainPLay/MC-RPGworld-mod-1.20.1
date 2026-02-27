@@ -98,10 +98,17 @@ public class ClientPacketHandlers {
 	// --- Pull Player ---
 	public static void handlePullPlayer(Vec3 motion, int playerId) {
 		Minecraft mc = Minecraft.getInstance();
-		if (mc.level != null && mc.player != null && mc.player.getId() == playerId) {
+		if (mc.level == null || mc.player == null || mc.player.getId() != playerId) return;
+
+		// Если игрок уже не пассажир, применяем сразу
+		if (!mc.player.isPassenger()) {
 			mc.player.setDeltaMovement(mc.player.getDeltaMovement().add(motion));
 			mc.player.fallDistance = 0;
+			return;
 		}
+
+		// Иначе запускаем проверку с отложенным применением
+		ClientVelocityStorage.storeVelocity(playerId, motion);
 	}
 
 	// --- Move Particles ---

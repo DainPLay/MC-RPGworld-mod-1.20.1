@@ -45,9 +45,11 @@ import net.dainplay.rpgworldmod.world.feature.tree.RieTreeGrower;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -81,6 +83,7 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -335,7 +338,17 @@ public class ModBlocks {
 	public static final RegistryObject<Block> LIVING_WOOD_LOG = registerBlock("living_wood_log",
 			() -> new LivingWoodLogBlock(BlockBehaviour.Properties.copy(Blocks.WARPED_STEM).mapColor(MapColor.GLOW_LICHEN)));
 	public static final RegistryObject<Block> LIVING_WOOD_WOOD = registerBlock("living_wood_wood",
-			() -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.WARPED_HYPHAE).mapColor(MapColor.TERRACOTTA_GRAY)));
+			() -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.WARPED_HYPHAE).mapColor(MapColor.TERRACOTTA_GRAY)) {
+				@Nullable
+				@Override
+				public BlockState getToolModifiedState(BlockState state, UseOnContext context, ToolAction toolAction, boolean simulate) {
+					if(context.getItemInHand().getItem() instanceof AxeItem) {
+							return ModBlocks.STRIPPED_LIVING_WOOD_WOOD.get().defaultBlockState().setValue(AXIS, state.getValue(AXIS));
+					}
+
+					return super.getToolModifiedState(state, context, toolAction, simulate);
+				}
+			});
 	public static final RegistryObject<Block> STRIPPED_LIVING_WOOD_LOG = registerBlock("stripped_living_wood_log",
 			() -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_WARPED_STEM).mapColor(MapColor.GLOW_LICHEN)));
 	public static final RegistryObject<Block> STRIPPED_LIVING_WOOD_WOOD = registerBlock("stripped_living_wood_wood",

@@ -1,4 +1,5 @@
 {
+	"format_version": "1.9.0",
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
@@ -623,7 +624,7 @@
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [0, 90, 0],
-			"translation": [1.5, 0, 0]
+			"translation": [1.5, 0, 1.5]
 		},
 		"thirdperson_lefthand": {
 			"rotation": [90, 12, 90],

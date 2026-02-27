@@ -1,7 +1,10 @@
 package net.dainplay.rpgworldmod.block.custom;
 
+import net.dainplay.rpgworldmod.block.ModBlocks;
+import net.dainplay.rpgworldmod.block.entity.custom.EntFaceBlockEntity;
 import net.dainplay.rpgworldmod.block.entity.custom.TreeHollowBlockEntity;
 import net.dainplay.rpgworldmod.item.ModItems;
+import net.dainplay.rpgworldmod.item.custom.EntSpawnEggItem;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
@@ -77,13 +80,20 @@ public class TreeHollowBlock extends BaseEntityBlock {
 			if (pState.getValue(HAS_CONTENTS)) {
 				BlockEntity blockentity = pLevel.getBlockEntity(pPos);
 				TreeHollowBlockEntity TreeHollowBlockEntity = (TreeHollowBlockEntity) blockentity;
-				if (TreeHollowBlockEntity.getItem(0).getItem() instanceof SpawnEggItem || TreeHollowBlockEntity.getItem(0).isEmpty()) {
-					dispenseMob(pLevel, pPos, pState, pPlayer, pHit);
+				if (TreeHollowBlockEntity.getItem(0).getItem() instanceof EntSpawnEggItem) {
+					if (!pLevel.isClientSide)
+						TreeHollowBlockEntity.clearContent();
+					pLevel.setBlockAndUpdate(pPos, ModBlocks.ENT_FACE.get().defaultBlockState().setValue(FACING, pState.getValue(FACING)));
+					if (pLevel.getBlockEntity(pPos) instanceof EntFaceBlockEntity be) be.wakeUp();
 				} else {
-					dispenseItem(pLevel, pPos, pState);
+					if (TreeHollowBlockEntity.getItem(0).getItem() instanceof SpawnEggItem || TreeHollowBlockEntity.getItem(0).isEmpty()) {
+						dispenseMob(pLevel, pPos, pState, pPlayer, pHit);
+					} else {
+						dispenseItem(pLevel, pPos, pState);
+					}
+					pState = pState.setValue(HAS_CONTENTS, false);
+					pLevel.setBlock(pPos, pState, 2);
 				}
-				pState = pState.setValue(HAS_CONTENTS, false);
-				pLevel.setBlock(pPos, pState, 2);
 				return InteractionResult.sidedSuccess(pLevel.isClientSide);
 			} else {
 				ItemStack itemstack = pPlayer.getItemInHand(pHand);
@@ -197,12 +207,20 @@ public class TreeHollowBlock extends BaseEntityBlock {
 		if (!pState.is(pNewState.getBlock())) {
 			BlockEntity blockentity = pLevel.getBlockEntity(pPos);
 			TreeHollowBlockEntity TreeHollowBlockEntity = (TreeHollowBlockEntity) blockentity;
-			if (TreeHollowBlockEntity.getItem(0).getItem() instanceof SpawnEggItem || (TreeHollowBlockEntity.getItem(0).isEmpty() && TreeHollowBlockEntity.getBlockState().getValue(HAS_CONTENTS))) {
-				dropMob(pLevel, pPos, null);
+			if (TreeHollowBlockEntity.getItem(0).getItem() instanceof EntSpawnEggItem) {
+				super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
+				if (!pLevel.isClientSide)
+					TreeHollowBlockEntity.clearContent();
+				pLevel.setBlockAndUpdate(pPos, ModBlocks.ENT_FACE.get().defaultBlockState().setValue(FACING, pState.getValue(FACING)));
+				if (pLevel.getBlockEntity(pPos) instanceof EntFaceBlockEntity be) be.wakeUp();
 			} else {
-				this.dropItem(pLevel, pPos);
+				if (TreeHollowBlockEntity.getItem(0).getItem() instanceof SpawnEggItem || (TreeHollowBlockEntity.getItem(0).isEmpty() && TreeHollowBlockEntity.getBlockState().getValue(HAS_CONTENTS))) {
+					dropMob(pLevel, pPos, null);
+				} else {
+					this.dropItem(pLevel, pPos);
+				}
+				super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
 			}
-			super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
 		}
 	}
 

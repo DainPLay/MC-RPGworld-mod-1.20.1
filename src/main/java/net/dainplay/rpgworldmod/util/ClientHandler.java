@@ -5,6 +5,7 @@ import net.dainplay.rpgworldmod.block.custom.EntFaceBlock;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.item.custom.LivingWoodBowItem;
 import net.dainplay.rpgworldmod.network.ClientRainyChunkData;
+import net.dainplay.rpgworldmod.network.ClientVelocityStorage;
 import net.dainplay.rpgworldmod.network.EntFaceDestroyProgressPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.SyncEffectPacket;
@@ -41,6 +42,17 @@ public class ClientHandler {
 	public static void onClientTick(TickEvent.ClientTickEvent event) {
 		if (event.phase == TickEvent.Phase.END) {
 			ClientRainyChunkData.tick();
+			Minecraft mc = Minecraft.getInstance();
+			if (mc.player == null) return;
+
+			int playerId = mc.player.getId();
+			if (ClientVelocityStorage.hasVelocity(playerId)) {
+				if (!mc.player.isPassenger()) {
+					Vec3 velocity = ClientVelocityStorage.retrieveVelocity(playerId);
+					mc.player.setDeltaMovement(mc.player.getDeltaMovement().add(velocity));
+					mc.player.fallDistance = 0;
+				}
+			}
 		}
 		if (event.phase == TickEvent.Phase.END) {
 			Minecraft minecraft = Minecraft.getInstance();

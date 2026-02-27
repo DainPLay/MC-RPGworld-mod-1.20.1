@@ -295,11 +295,11 @@
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [0, 60, 0],
-			"translation": [11, 8, -3]
+			"translation": [11, 8, -1.25]
 		},
 		"thirdperson_lefthand": {
 			"rotation": [0, 60, 0],
-			"translation": [3, 8, 12]
+			"translation": [3, 8, 12.5]
 		},
 		"firstperson_righthand": {
 			"rotation": [0, -90, 25],

@@ -188,7 +188,7 @@ public class EmberScrollItem extends ScrollItem {
 	}
 
 	@Override
-	public boolean highlightTarget(ItemStack stack, Player player) {
+	public boolean highlightAnimateTarget(ItemStack stack, Player player) {
 		if (stack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0)
 			return (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUseItem() == stack);
 		return false;
@@ -1223,10 +1223,7 @@ public class EmberScrollItem extends ScrollItem {
 
 	private static boolean canLavaSpreadTo(ServerLevel level, BlockPos pos) {
 		BlockState state = level.getBlockState(pos);
-		return state.isAir() ||
-				state.getFluidState().is(FluidTags.WATER) ||
-				(state.getBlock() != Blocks.LAVA && state.getFluidState().isEmpty() &&
-						!state.isSolidRender(level, pos));
+		return state.isAir();
 	}
 
 	private static void spawnProjectile(ServerLevel level, Player player) {

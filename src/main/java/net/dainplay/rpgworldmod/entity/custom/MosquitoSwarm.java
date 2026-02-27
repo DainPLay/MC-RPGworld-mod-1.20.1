@@ -2109,11 +2109,13 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 					CompoundTag nbtData = new CompoundTag();
 					nbtData.putUUID("rpgworldmod.mosquitos_owner", this.getOwnerUUID());
 					bottle.setTag(nbtData);
-					if (itemstack.isEmpty())
+					if (itemstack.isEmpty()) {
 						pPlayer.setItemInHand(pHand, bottle);
-					else if (pPlayer.getInventory().getFreeSlot() == -1)
-						pPlayer.drop(bottle, false);
-					else pPlayer.getInventory().add(bottle);
+					} else {
+						if (!pPlayer.getInventory().add(bottle)) {
+							pPlayer.drop(bottle, false);
+						}
+					}
 				}
 				this.entityData.set(DATA_SWARM_SIZE, this.entityData.get(DATA_SWARM_SIZE) - 1);
 				if (this.entityData.get(DATA_SWARM_SIZE) == 0) this.proceedKill();
@@ -2121,11 +2123,13 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				if (!pPlayer.isCreative() && !pPlayer.level().isClientSide) {
 					itemstack.shrink(1);
 					ItemStack bottle = ModItems.MOSQUITO_BOTTLE.get().getDefaultInstance();
-					if (itemstack.isEmpty())
+					if (itemstack.isEmpty()) {
 						pPlayer.setItemInHand(pHand, bottle);
-					else if (pPlayer.getInventory().getFreeSlot() == -1)
-						pPlayer.drop(bottle, false);
-					else pPlayer.getInventory().add(bottle);
+					} else {
+						if (!pPlayer.getInventory().add(bottle)) {
+							pPlayer.drop(bottle, false);
+						}
+					}
 				}
 				this.entityData.set(DATA_SWARM_SIZE, this.entityData.get(DATA_SWARM_SIZE) - 1);
 				if (this.entityData.get(DATA_SWARM_SIZE) == 0) {

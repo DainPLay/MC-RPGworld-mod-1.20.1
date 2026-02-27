@@ -278,11 +278,11 @@
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [0, -75, 0],
-			"translation": [-6.25, 9.5, 13.75]
+			"translation": [-6.25, 9.5, 14.25]
 		},
 		"thirdperson_lefthand": {
 			"rotation": [0, 60, 0],
-			"translation": [3, 9.5, 15]
+			"translation": [3, 9.5, 15.5]
 		},
 		"firstperson_righthand": {
 			"rotation": [0, -90, 25],

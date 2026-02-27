@@ -49,7 +49,10 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlockContainer;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.WaterFluid;
@@ -170,7 +173,7 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 	}
 
 	@Override
-	public boolean highlightTarget(ItemStack stack, Player player) {
+	public boolean highlightAnimateTarget(ItemStack stack, Player player) {
 		ClientGuardianAttackData.AttackData attackData = ClientGuardianAttackData.getForPlayer(player.getId());
 
 		if ((stack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0 && (attackData == null || attackData.target == null))
@@ -952,26 +955,43 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 
 		int sourcesToRemove = Math.min(waterSources.size(), 4);
 		for (int i = 0; i < sourcesToRemove; i++) {
-			BlockPos pos = waterSources.get(i);
-			level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
-			level.sendParticles(ParticleTypes.BUBBLE_POP,
-					pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-					5, 0.2, 0.2, 0.2, 0.05);
+			removeWaterAt(level, waterSources.get(i));
 		}
 
 		int flowingToRemove = Math.min(flowingWaters.size(), 4);
 		for (int i = 0; i < flowingToRemove; i++) {
-			BlockPos pos = flowingWaters.get(i);
-			level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
-			level.sendParticles(ParticleTypes.BUBBLE_POP,
-					pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-					5, 0.2, 0.2, 0.2, 0.05);
+			removeWaterAt(level, flowingWaters.get(i));
 		}
 
 		if (sourcesToRemove > 0 || flowingToRemove > 0) {
 			if (player instanceof ServerPlayer serverPlayer)
 				ModAdvancements.SPELL_ALTERATION_HEART_OF_THE_SEA_TRIGGER.trigger(serverPlayer);
 		}
+	}
+
+	private static void removeWaterAt(ServerLevel level, BlockPos pos) {
+		BlockState state = level.getBlockState(pos);
+
+		if (state.is(Blocks.WATER)) {
+			// Это непосредственно блок воды – убираем его полностью
+			level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+		} else {
+			// Это waterlogged блок – пробуем снять флаг WATERLOGGED
+
+			if (state.getBlock() instanceof SimpleWaterloggedBlock) {
+				if(state.hasProperty(BlockStateProperties.WATERLOGGED))
+					level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.WATERLOGGED, false));
+			}
+			else if (state.getBlock() instanceof LiquidBlockContainer) {
+				level.destroyBlock(pos,true);
+				level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+			}
+		}
+
+		// Частицы всё равно отправляем для визуального эффекта
+		level.sendParticles(ParticleTypes.BUBBLE_POP,
+				pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+				5, 0.2, 0.2, 0.2, 0.05);
 	}
 
 	private static void processWaterAlteration(ServerLevel level, Player player) {
@@ -1035,10 +1055,6 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 	private static void spreadWaterUp(ServerLevel level, BlockPos sourcePos, BlockPos playerPos) {
 		Direction direction = Direction.UP;
 		BlockPos neighborPos = sourcePos.relative(direction);
-		if (level.getBlockState(neighborPos).is(Blocks.WATER)) {
-			return;
-		}
-
 		if (canWaterSpreadTo(level, neighborPos, playerPos)) {
 			if (level.getFluidState(sourcePos).getType() instanceof WaterFluid water)
 				water.spreadTo(level, neighborPos, level.getBlockState(neighborPos), direction, water.getFlowing(6, false));
@@ -1047,11 +1063,11 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 
 	private static boolean canWaterSpreadTo(ServerLevel level, BlockPos pos, BlockPos playerPos) {
 		BlockState state = level.getBlockState(pos);
+		if (level.getBlockState(pos).is(Blocks.WATER)) {
+			return false;
+		}
 		if (playerPos.getY() <= pos.getY()) return false;
-		return state.isAir() ||
-				state.getFluidState().is(FluidTags.WATER) ||
-				(state.getBlock() != Blocks.WATER && state.getFluidState().isEmpty() &&
-						!state.isSolidRender(level, pos));
+		return state.isAir();
 	}
 
 	public String getFirstPredicate(ItemStack item) {

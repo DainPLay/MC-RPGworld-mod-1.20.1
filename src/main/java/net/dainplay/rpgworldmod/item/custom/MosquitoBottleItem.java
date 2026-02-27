@@ -60,11 +60,14 @@ public class MosquitoBottleItem extends Item {
                 Player player = pContext.getPlayer();
                 if (!player.isCreative() && !level.isClientSide) {
                     itemstack.shrink(1);
-                    if (itemstack.isEmpty())
+                    if (itemstack.isEmpty()) {
                         player.setItemInHand(pContext.getHand(), new ItemStack(Items.GLASS_BOTTLE));
-                    else if (player.getInventory().getFreeSlot() == -1)
-                        player.drop(new ItemStack(Items.GLASS_BOTTLE), false);
-                    else player.getInventory().add(new ItemStack(Items.GLASS_BOTTLE));
+                    } else {
+                        ItemStack bottle = new ItemStack(Items.GLASS_BOTTLE);
+                        if (!player.getInventory().add(bottle)) {
+                            player.drop(bottle, false);
+                        }
+                    }
                 }
                 player.playSound(SoundEvents.BOTTLE_EMPTY, 1.0F, 1.0F);
                 level.gameEvent(pContext.getPlayer(), GameEvent.ENTITY_PLACE, blockpos);

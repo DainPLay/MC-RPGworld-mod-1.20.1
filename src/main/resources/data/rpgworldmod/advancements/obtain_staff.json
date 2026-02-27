@@ -24,6 +24,66 @@
         ]
       },
       "trigger": "minecraft:inventory_changed"
+    },
+    "tube_coral_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:tube_coral_staff"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "brain_coral_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:brain_coral_staff"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "bubble_coral_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:bubble_coral_staff"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "fire_coral_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:fire_coral_staff"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "horn_coral_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:horn_coral_staff"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
     }
   },
   "display": {
@@ -45,7 +105,12 @@
   "requirements": [
     [
       "living_wood_staff",
-      "blaze_staff"
+      "blaze_staff",
+      "tube_coral_staff",
+      "brain_coral_staff",
+      "bubble_coral_staff",
+      "fire_coral_staff",
+      "horn_coral_staff"
     ]
   ],
   "sends_telemetry_event": true

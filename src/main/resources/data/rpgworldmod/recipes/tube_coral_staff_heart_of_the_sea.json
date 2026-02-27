@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " LG",
+    " LL",
+    "L  "
+  ],
+  "key": {
+    "L": {
+      "item": "minecraft:tube_coral_block"
+    },
+    "G": {
+      "item": "minecraft:heart_of_the_sea"
+    }
+  },
+  "result": {
+    "item": "rpgworldmod:tube_coral_staff",
+    "nbt": "{Gem:\"heart_of_the_sea\"}"
+  }
+}

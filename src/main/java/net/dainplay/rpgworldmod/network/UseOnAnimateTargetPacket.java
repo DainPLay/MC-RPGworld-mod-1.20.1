@@ -1,6 +1,7 @@
 package net.dainplay.rpgworldmod.network;
 
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
+import net.dainplay.rpgworldmod.item.custom.BrainCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
 import net.dainplay.rpgworldmod.item.custom.HeartOfTheSeaScrollItem;
 import net.dainplay.rpgworldmod.item.custom.LivingWoodStaffItem;

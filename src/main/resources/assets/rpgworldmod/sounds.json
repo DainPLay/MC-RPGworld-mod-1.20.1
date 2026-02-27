@@ -1250,5 +1250,21 @@
       }
     ],
     "subtitle": "subtitles.rpgworldmod.spell.destruction_heart_of_the_sea_cast"
+  },
+  "rpgworldmod.staff_nether_star.item": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.wither.hurt"
+      }
+    ]
+  },
+  "rpgworldmod.staff_heart_of_the_sea.item": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.bubble_column.whirlpool_inside"
+      }
+    ]
   }
 }

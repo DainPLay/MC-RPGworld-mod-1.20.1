@@ -10,9 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
@@ -21,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ScrollItem extends Item implements RPGtooltip, ManaCostItem, OrbitingItem, ChooseAnimateTargetItem {
+public class ScrollItem extends Item implements RPGtooltip, ManaCostItem, OrbitingItem, ChooseTargetItem {
 	public ScrollItem(Properties pProperties) {
 		super(pProperties);
 	}

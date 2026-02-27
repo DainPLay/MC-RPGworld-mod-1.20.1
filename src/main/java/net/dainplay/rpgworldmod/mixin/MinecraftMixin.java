@@ -1,8 +1,9 @@
 package net.dainplay.rpgworldmod.mixin;
 
-import net.dainplay.rpgworldmod.item.custom.ChooseAnimateTargetItem;
+import net.dainplay.rpgworldmod.item.custom.ChooseTargetItem;
 import net.dainplay.rpgworldmod.network.C2SRequestTargetValidationPacket;
 import net.dainplay.rpgworldmod.network.ClientAnimateTargetData;
+import net.dainplay.rpgworldmod.network.ClientItemTargetData;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.util.ModTags;
 import net.dainplay.rpgworldmod.world.feature.ModConfiguredFeatures;
@@ -13,6 +14,7 @@ import net.minecraft.sounds.Music;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
@@ -25,6 +27,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static net.dainplay.rpgworldmod.util.FogEventHandler.isInRieWeald;
@@ -50,52 +53,154 @@ public abstract class MinecraftMixin {
 
 	@Inject(method = "shouldEntityAppearGlowing", at = @At("HEAD"), cancellable = true)
 	private void onShouldEntityAppearGlowing(Entity entity, CallbackInfoReturnable<Boolean> cir) {
-		if (this.player == null || this.level == null || !(entity instanceof LivingEntity)) {
+		if (this.player == null || this.level == null) {
 			return;
 		}
 
-		// Проверяем условия использования предмета
 		if (this.player.isUsingItem() &&
 				this.player.getUseItemRemainingTicks() > 0 &&
-				this.player.getUseItem().getItem() instanceof ChooseAnimateTargetItem) {
+				this.player.getUseItem().getItem() instanceof ChooseTargetItem) {
 
-			ChooseAnimateTargetItem catItem = (ChooseAnimateTargetItem) this.player.getUseItem().getItem();
-			if (catItem.highlightTarget(this.player.getUseItem(), this.player)) {
+			ChooseTargetItem catItem = (ChooseTargetItem) this.player.getUseItem().getItem();
 
+			// Подсветка живых целей (анимация)
+			if (catItem.highlightAnimateTarget(this.player.getUseItem(), this.player)) {
+				if (!(entity instanceof LivingEntity)) {
+					return;
+				}
 				LivingEntity target = null;
 				if (player.isShiftKeyDown() && catItem.canHighlightYourself(this.player.getUseItem(), this.player))
 					target = player;
 				else
-					target = findVisibleTargetInSight(this.player, 64.0, 15.0);
+					target = findVisibleAnimateTargetInSight(this.player, 64.0, 15.0);
 
 				if (target != null && target.getItemBySlot(EquipmentSlot.HEAD).isEnderMask(player, null))
 					target = null;
 
 				if (target instanceof Player) {
 					ModMessages.sendToServer(new C2SRequestTargetValidationPacket(target.getId()));
-
 					if (!ClientAnimateTargetData.isValidTarget(target)) {
 						target = null;
 					}
 				}
 
 				ClientAnimateTargetData.set(target);
-            	/*if(target != null) player.sendSystemMessage(target.getName());
-            	else player.sendSystemMessage(Component.literal("Без цели"));*/
 
 				if (target != null && target.getId() == entity.getId()) {
 					cir.setReturnValue(true);
 					cir.cancel();
 				}
 			}
+
+			if (catItem.highlightSpecificItemTarget(this.player.getUseItem(), this.player)) {
+				if (!(entity instanceof ItemEntity)) {
+					return;
+				}
+				ItemEntity target = findVisibleItemTargetInSight(this.player, 128.0, 15.0);
+				ClientItemTargetData.clear();
+				ClientItemTargetData.addTarget(target);
+
+				if (target != null && target.getId() == entity.getId()) {
+					cir.setReturnValue(true);
+					cir.cancel();
+				}
+			}
+
+			// Подсветка всех предметов в поле зрения (32 блока, угол 15°)
+			if (catItem.highlightItemsInSight(this.player.getUseItem(), this.player)) {
+				if (!(entity instanceof ItemEntity itemEntity)) {
+					return;
+				}
+				List<ItemEntity> targetsInSight = getAllVisibleItemsInSight(this.player, 32.0, 60.0);
+				ClientItemTargetData.clear();
+				for (ItemEntity item : targetsInSight) {
+					ClientItemTargetData.addTarget(item);
+				}
+				if (ClientItemTargetData.contains(itemEntity)) {
+					cir.setReturnValue(true);
+					cir.cancel();
+					return;
+				}
+			}
+
+			// Подсветка всех предметов в радиусе 16 блоков
+			if (catItem.highlightItemsInRadius(this.player.getUseItem(), this.player)) {
+				if (!(entity instanceof ItemEntity itemEntity)) {
+					return;
+				}
+				if (ClientItemTargetData.contains(itemEntity)) {
+					cir.setReturnValue(true);
+					cir.cancel();
+					return;
+				}
+			}
+
+			// Подсветка случайного предмета в радиусе 64 блоков
+			if (catItem.highlightRandomItemInRadius(this.player.getUseItem(), this.player)) {
+				if (!(entity instanceof ItemEntity)) {
+					return;
+				}
+				if (ClientItemTargetData.get() != null && ClientItemTargetData.get().getId() == entity.getId()) {
+					cir.setReturnValue(true);
+					cir.cancel();
+					return;
+				}
+			}
 		}
 	}
 
-	private LivingEntity findVisibleTargetInSight(Player player, double maxDistance, double angleThreshold) {
+	// Вспомогательные методы для поиска предметов
+
+	private List<ItemEntity> getAllVisibleItemsInSight(Player player, double maxDistance, double angleThreshold) {
+		Vec3 eyePos = player.getEyePosition();
+		AABB searchBox = player.getBoundingBox().inflate(maxDistance);
+		List<ItemEntity> entities = level.getEntitiesOfClass(
+				ItemEntity.class,
+				searchBox,
+				e -> isEntityVisible(player, e)
+		);
+
+		List<ItemEntity> visibleInSight = new ArrayList<>();
+		for (ItemEntity entity : entities) {
+			double angle = getAngleToCenter(player, entity);               // ← замена
+			if (angle < angleThreshold && hasLineOfSightToCenter(player, entity, eyePos, maxDistance)) { // ← замена
+				visibleInSight.add(entity);
+			}
+		}
+		return visibleInSight;
+	}
+
+	// ---- существующие методы (без изменений) ----
+	private ItemEntity findVisibleItemTargetInSight(Player player, double maxDistance, double angleThreshold) {
+		Vec3 eyePos = player.getEyePosition();
+		AABB searchBox = player.getBoundingBox().inflate(maxDistance);
+		List<ItemEntity> entities = level.getEntitiesOfClass(
+				ItemEntity.class,
+				searchBox,
+				e -> isEntityVisible(player, e)
+		);
+
+		ItemEntity closest = null;
+		double closestAngle = angleThreshold;
+
+		for (ItemEntity entity : entities) {
+			double angle = getAngleToCenter(player, entity);               // ← замена
+			if (angle < angleThreshold) {
+				if (hasLineOfSightToCenter(player, entity, eyePos, maxDistance)) { // ← замена
+					if (angle < closestAngle) {
+						closestAngle = angle;
+						closest = entity;
+					}
+				}
+			}
+		}
+		return closest;
+	}
+
+	private LivingEntity findVisibleAnimateTargetInSight(Player player, double maxDistance, double angleThreshold) {
 		Vec3 eyePos = player.getEyePosition();
 		Vec3 lookVec = player.getViewVector(1.0F);
 
-		// Получаем все живые сущности в радиусе
 		AABB searchBox = player.getBoundingBox().inflate(maxDistance);
 		List<LivingEntity> entities = level.getEntitiesOfClass(
 				LivingEntity.class,
@@ -107,11 +212,8 @@ public abstract class MinecraftMixin {
 		double closestAngle = angleThreshold;
 
 		for (LivingEntity entity : entities) {
-			// Проверяем, находится ли хоть какая-то точка хитбокса в поле зрения
 			double angle = getMinAngleToBoundingBox(player, entity, maxDistance);
-
 			if (angle < angleThreshold) {
-				// Проверяем видимость до хитбокса
 				if (hasLineOfSightToBoundingBox(player, entity, eyePos, maxDistance)
 						&& !entity.getType().is(ModTags.Entity.SOULLESS)) {
 					if (angle < closestAngle) {
@@ -121,66 +223,43 @@ public abstract class MinecraftMixin {
 				}
 			}
 		}
-
 		return closest;
 	}
 
 	private boolean isEntityVisible(Player player, Entity entity) {
-		// Проверяем базовую видимость сущности
 		if (entity.isInvisible() || entity.isSpectator()) {
 			return false;
 		}
-
-		// Для игроков дополнительная проверка
 		if (entity instanceof net.minecraft.world.entity.player.Player) {
 			net.minecraft.world.entity.player.Player targetPlayer = (net.minecraft.world.entity.player.Player) entity;
-
-			// Проверяем, может ли игрок видеть этого игрока
 			if (!targetPlayer.canBeSeenByAnyone()) {
 				return false;
 			}
-
-			// Проверяем режим игры
 			if (targetPlayer.isCreative() || targetPlayer.isSpectator()) {
 				return false;
 			}
 		}
-
-		// Проверяем, находится ли сущность в другом измерении или мире
 		if (entity.level() != player.level()) {
 			return false;
 		}
-
-		// Проверяем, находится ли сущность в поле зрения камеры (опционально)
 		if (!isInCameraFrustum(entity, player)) {
 			return false;
 		}
-
 		return true;
 	}
 
 	private boolean isInCameraFrustum(Entity entity, Player player) {
-		// Получаем позицию камеры
 		Vec3 cameraPos = player.getEyePosition();
-
-		// Получаем направление взгляда
 		Vec3 lookVec = player.getViewVector(1.0F);
-
-		// Получаем bounding box сущности
 		AABB entityBox = entity.getBoundingBox();
-
-		// Упрощенная проверка: если сущность позади игрока, она не видима
 		Vec3 toEntity = entityBox.getCenter().subtract(cameraPos);
 		if (toEntity.length() > 0) {
 			toEntity = toEntity.normalize();
 			double dot = lookVec.dot(toEntity);
-
-			// Если сущность позади игрока (угол > 90 градусов)
 			if (dot < 0) {
 				return false;
 			}
 		}
-
 		return true;
 	}
 
@@ -188,33 +267,22 @@ public abstract class MinecraftMixin {
 		Vec3 eyePos = player.getEyePosition();
 		Vec3 lookVec = player.getViewVector(1.0F).normalize();
 		AABB boundingBox = entity.getBoundingBox();
-
-		// Генерируем точки для проверки на поверхности bounding box
 		List<Vec3> testPoints = generateTestPoints(boundingBox);
-
 		double minAngle = 360.0;
-
 		for (Vec3 point : testPoints) {
 			Vec3 toPoint = point.subtract(eyePos);
 			double distance = toPoint.length();
-
 			if (distance > maxDistance) continue;
-
 			Vec3 normalizedToPoint = toPoint.normalize();
 			double dot = lookVec.dot(normalizedToPoint);
 			double angle = Math.acos(Math.max(-1.0, Math.min(1.0, dot))) * (180.0 / Math.PI);
-
 			minAngle = Math.min(minAngle, angle);
 		}
-
 		return minAngle;
 	}
 
 	private List<Vec3> generateTestPoints(AABB box) {
-		// Создаем точки для проверки на поверхности bounding box
-		List<Vec3> points = new java.util.ArrayList<>();
-
-		// Углы bounding box
+		List<Vec3> points = new ArrayList<>();
 		points.add(new Vec3(box.minX, box.minY, box.minZ));
 		points.add(new Vec3(box.minX, box.minY, box.maxZ));
 		points.add(new Vec3(box.minX, box.maxY, box.minZ));
@@ -223,38 +291,28 @@ public abstract class MinecraftMixin {
 		points.add(new Vec3(box.maxX, box.minY, box.maxZ));
 		points.add(new Vec3(box.maxX, box.maxY, box.minZ));
 		points.add(new Vec3(box.maxX, box.maxY, box.maxZ));
-
-		// Центры граней
 		points.add(new Vec3((box.minX + box.maxX) / 2, box.minY, (box.minZ + box.maxZ) / 2));
 		points.add(new Vec3((box.minX + box.maxX) / 2, box.maxY, (box.minZ + box.maxZ) / 2));
 		points.add(new Vec3(box.minX, (box.minY + box.maxY) / 2, (box.minZ + box.maxZ) / 2));
 		points.add(new Vec3(box.maxX, (box.minY + box.maxY) / 2, (box.minZ + box.maxZ) / 2));
 		points.add(new Vec3((box.minX + box.maxX) / 2, (box.minY + box.maxY) / 2, box.minZ));
 		points.add(new Vec3((box.minX + box.maxX) / 2, (box.minY + box.maxY) / 2, box.maxZ));
-
-		// Центр bounding box
 		points.add(new Vec3((box.minX + box.maxX) / 2, (box.minY + box.maxY) / 2, (box.minZ + box.maxZ) / 2));
-
 		return points;
 	}
 
 	private boolean hasLineOfSightToBoundingBox(Player player, Entity entity, Vec3 startPos, double maxDistance) {
 		AABB boundingBox = entity.getBoundingBox();
 		List<Vec3> testPoints = generateTestPoints(boundingBox);
-
-		// Сначала проверяем центр (самая вероятная видимая точка)
 		Vec3 center = boundingBox.getCenter();
 		if (hasLineOfSightToPoint(player, startPos, center, maxDistance)) {
 			return true;
 		}
-
-		// Затем проверяем остальные точки
 		for (Vec3 point : testPoints) {
 			if (hasLineOfSightToPoint(player, startPos, point, maxDistance)) {
 				return true;
 			}
 		}
-
 		return false;
 	}
 
@@ -263,31 +321,39 @@ public abstract class MinecraftMixin {
 		if (distance > maxDistance) {
 			return false;
 		}
-
-		// Проверяем коллизию с блоками
 		ClipContext context = new ClipContext(
 				start,
 				end,
-				ClipContext.Block.VISUAL, // Используем VISUAL для лучшей совместимости
+				ClipContext.Block.VISUAL,
 				ClipContext.Fluid.NONE,
 				player
 		);
-
 		BlockHitResult blockHit = level.clip(context);
-
-		// Если луч столкнулся с блоком до достижения точки
 		if (blockHit.getType() != HitResult.Type.MISS) {
 			double blockDist = blockHit.getLocation().distanceTo(start);
 			double pointDist = distance;
-
-			// Если блок находится ближе, чем точка (с небольшим запасом)
-			if (blockDist < pointDist - 0.3) { // Запас 0.3 блока для погрешности
+			if (blockDist < pointDist - 0.3) {
 				return false;
 			}
 		}
-
 		return true;
 	}
 
+	private double getAngleToCenter(Player player, Entity entity) {
+		Vec3 eyePos = player.getEyePosition();
+		Vec3 lookVec = player.getViewVector(1.0F).normalize();
+		Vec3 center = entity.getBoundingBox().getCenter();
+		Vec3 toCenter = center.subtract(eyePos);
+		double distance = toCenter.length();
+		if (distance <= 0) return 360.0;
+		Vec3 normalizedToCenter = toCenter.normalize();
+		double dot = lookVec.dot(normalizedToCenter);
+		double angle = Math.acos(Math.max(-1.0, Math.min(1.0, dot))) * (180.0 / Math.PI);
+		return angle;
+	}
 
+	private boolean hasLineOfSightToCenter(Player player, Entity entity, Vec3 startPos, double maxDistance) {
+		Vec3 center = entity.getBoundingBox().getCenter();
+		return hasLineOfSightToPoint(player, startPos, center, maxDistance);
+	}
 }

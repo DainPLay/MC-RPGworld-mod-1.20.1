@@ -254,7 +254,7 @@ public class OrbitingItemRenderer {
 					-0.6F + equipProgress * -0.6F,
 					-0.71999997F
 			);
-			ms.translate(flip * item1.get1XOffset(event.getItemStack(), player), item1.get1YOffset(event.getItemStack(), player), item1.get1ZOffset(event.getItemStack(), player));
+			ms.translate(flip * item1.get1XOffset(event.getItemStack(), player, rightHand), item1.get1YOffset(event.getItemStack(), player, rightHand), item1.get1ZOffset(event.getItemStack(), player, rightHand));
 			if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUsedItemHand() == event.getHand()) {
 				ms = item1.getEffectUsingPose(event.getItemStack(), player, ms, flip);
 			}
