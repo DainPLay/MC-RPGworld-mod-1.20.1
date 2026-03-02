@@ -11,6 +11,7 @@ import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.EmptyScrollItem;
+import net.dainplay.rpgworldmod.item.custom.HornCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.ScrollItem;
 import net.dainplay.rpgworldmod.network.BoundEntitySyncPacket;
 import net.dainplay.rpgworldmod.network.IllusionForceDataSyncS2CPacket;
@@ -61,6 +62,7 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
@@ -70,7 +72,10 @@ import net.minecraftforge.event.village.WandererTradesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = RPGworldMod.MOD_ID)
 public class ModEvents {
@@ -506,7 +511,7 @@ public class ModEvents {
 			serverPlayer.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
 				if (mana.getMana() > 0) {
 					mana.addMana(serverPlayer, itemStack.getItem().getFoodProperties(itemStack, serverPlayer).getNutrition() * 2);
-					if(serverPlayer.hasEffect(ModEffects.PARANOIA.get()))
+					if (serverPlayer.hasEffect(ModEffects.PARANOIA.get()))
 						ModAdvancements.EAT_SWEETS_PARANOID_TRIGGER.trigger(serverPlayer);
 				}
 			});
@@ -524,7 +529,7 @@ public class ModEvents {
 				serverPlayer.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
 					if (mana.getMana() > 0) {
 						mana.addMana(serverPlayer, 4);
-						if(serverPlayer.hasEffect(ModEffects.PARANOIA.get()))
+						if (serverPlayer.hasEffect(ModEffects.PARANOIA.get()))
 							ModAdvancements.EAT_SWEETS_PARANOID_TRIGGER.trigger(serverPlayer);
 					}
 				});
@@ -542,8 +547,7 @@ public class ModEvents {
 				event.setCanRefillAir(true);
 				event.setConsumeAirAmount(0);
 				event.setRefillAirAmount(4);
-			}
-			else {
+			} else {
 				event.setCanBreathe(false);
 				event.setCanRefillAir(false);
 				event.setConsumeAirAmount(1);
@@ -574,5 +578,33 @@ public class ModEvents {
 				specialItem
 		);
 		event.getDrops().add(drop);
+	}
+
+	@SubscribeEvent
+	public void onContainerClose(PlayerContainerEvent.Close event) {
+		Player player = event.getEntity();
+		if (!player.level().isClientSide) {
+			HornCoralStaffItem.removeStaffReachModifier(player);
+		}
+	}
+
+	@SubscribeEvent
+	public void onServerTick(TickEvent.ServerTickEvent event) {
+		if (event.phase == TickEvent.Phase.END) {
+			// Проходим по всем серверным игрокам
+			int counter = event.getServer().getTickCount() % 20;
+			if (counter == 0) {
+				for (ServerPlayer player : event.getServer().getPlayerList().getPlayers()) {
+					// Пропускаем клиентский мир (на сервере всё серверное)
+					if (player.level().isClientSide) continue;
+
+					boolean hasContainerOpen = player.containerMenu != player.inventoryMenu;
+
+					if (!hasContainerOpen) {
+						HornCoralStaffItem.removeStaffReachModifier(player);
+					}
+				}
+			}
+		}
 	}
 }

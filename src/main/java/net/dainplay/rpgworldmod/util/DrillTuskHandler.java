@@ -195,14 +195,16 @@ public class DrillTuskHandler {
 			BlockPos pos = toPush.get(i);
 			BlockState blockstate = level.getBlockState(pos);
 
+			PistonStructureResolver sResolver = event.getStructureHelper();
+			assert sResolver != null;
+			sResolver.resolve();
 			if (blockstate.getBlock() instanceof DrillTuskBlock && DrillTuskBlock.getConnectedDirection(blockstate) != event.getDirection()) {
-				Block.dropResources(blockstate, level, pos, null);
-				level.setBlock(pos, Blocks.AIR.defaultBlockState(), 18);
-				level.gameEvent(GameEvent.BLOCK_DESTROY, pos, GameEvent.Context.of(blockstate));
+				if (sResolver.getToPush().contains(pos)) {
+					Block.dropResources(blockstate, level, pos, null);
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 18);
+					level.gameEvent(GameEvent.BLOCK_DESTROY, pos, GameEvent.Context.of(blockstate));
+				}
 			} else {
-				PistonStructureResolver sResolver = event.getStructureHelper();
-				assert sResolver != null;
-				sResolver.resolve();
 				if (sResolver.getToPush().contains(pos))
 					if (blockstate.getBlock() instanceof DrillTuskBlock && DrillTuskBlock.getConnectedDirection(blockstate) == movingDirection) {
 						BlockPos pos1 = pos.relative(movingDirection);

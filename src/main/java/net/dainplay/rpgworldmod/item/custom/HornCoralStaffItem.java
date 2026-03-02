@@ -1,20 +1,26 @@
 package net.dainplay.rpgworldmod.item.custom;
 
-import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.network.LoopSoundPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.vehicle.ContainerEntity;
+import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
@@ -22,11 +28,19 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.ForgeMod;
 
-import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.UUID;
 
 public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
+	private static final UUID STAFF_REACH_MODIFIER_UUID = UUID.fromString("a1b2c3d4-e5f6-7890-1234-567890abcdef");
 
 	public HornCoralStaffItem(Properties properties) {
 		super(properties);
@@ -61,6 +75,35 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 			if (endTick - currentTick <= activeRechargeLevel) return;
 			cooldownsMap.remove(pStack.getItem());
 			cooldownsMap.put(pStack.getItem(), new ItemCooldowns.CooldownInstance(startTick, endTick - activeRechargeLevel));
+		}
+	}
+
+
+
+	private static void addStaffReachModifier(Player player) {
+		AttributeInstance blockReach = player.getAttribute(ForgeMod.BLOCK_REACH.get());
+		AttributeInstance entityReach = player.getAttribute(ForgeMod.ENTITY_REACH.get());
+		if (blockReach != null && entityReach != null) {
+			removeStaffReachModifier(player);
+			AttributeModifier modifier = new AttributeModifier(
+					STAFF_REACH_MODIFIER_UUID,
+					"Staff reach",
+					1000.0, // достаточно большое число
+					AttributeModifier.Operation.ADDITION
+			);
+			blockReach.addTransientModifier(modifier);
+			entityReach.addTransientModifier(modifier);
+		}
+	}
+
+	public static void removeStaffReachModifier(Player player) {
+		AttributeInstance blockReach = player.getAttribute(ForgeMod.BLOCK_REACH.get());
+		AttributeInstance entityReach = player.getAttribute(ForgeMod.ENTITY_REACH.get());
+		if (blockReach != null) {
+			blockReach.removeModifier(STAFF_REACH_MODIFIER_UUID);
+		}
+		if (entityReach != null) {
+			entityReach.removeModifier(STAFF_REACH_MODIFIER_UUID);
 		}
 	}
 
@@ -141,88 +184,296 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 		super.releaseUsing(stack, level, livingEntity, timeCharged);
 	}
 
-	public void cast(Player player, @Nullable LivingEntity target, ItemStack item) {
-		if (item.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get()) > 0 && player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F) {
+	// Метод для сущностей (без изменений, оставлен для полноты)
+	public void cast(Player player, Entity target, ItemStack item) {
+		if (item.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get()) > 0 &&
+				player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F) {
 			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = player.getCooldowns().cooldowns;
 			ItemCooldowns.CooldownInstance instance = cooldownsMap.get(item.getItem());
 			if (instance != null) {
 				int endTick = instance.endTime;
 				int currentTick = player.getCooldowns().tickCount;
-				player.getCooldowns().addCooldown(this, endTick - currentTick + getUseCooldown(item)*2);
+				player.getCooldowns().addCooldown(this, endTick - currentTick + getUseCooldown(item) * 2);
 			}
-		} else player.getCooldowns().addCooldown(this, getUseCooldown(item));
+		} else {
+			player.getCooldowns().addCooldown(this, getUseCooldown(item));
+		}
+
 		player.swing(player.getUsedItemHand());
 
-		switch (getGemType(item)) {
-			case EMBER_GEM: {
-				player.level().playSound(null,
-						player.getX(), player.getY(), player.getZ(),
-						RPGSounds.STAFF_EMBER_GEM_CAST.get(),
-						SoundSource.PLAYERS, 1.0F, 1.0F
-				);
-
-				if (target != null) {
+		if (target instanceof ContainerEntity containerEntity) {
+			switch (getGemType(item)) {
+				case EMBER_GEM:
+					player.level().playSound(null,
+							player.getX(), player.getY(), player.getZ(),
+							RPGSounds.STAFF_EMBER_GEM_CAST.get(),
+							SoundSource.PLAYERS, 1.0F, 1.0F);
 					target.level().playSound(null,
 							target.getX(), target.getY(), target.getZ(),
 							RPGSounds.STAFF_EMBER_GEM_CAST.get(),
-							SoundSource.PLAYERS, 1.0F, 1.0F
-					);
-					target.setSecondsOnFire(10);
-				}
-			}
-			break;
-			case ENDER_EYE: {
-				player.level().playSound(null,
-						player.getX(), player.getY(), player.getZ(),
-						RPGSounds.STAFF_ENDER_EYE_CAST.get(),
-						SoundSource.PLAYERS, 1.0F, 1.0F
-				);
+							SoundSource.PLAYERS, 1.0F, 1.0F);
+					containerEntity.unpackChestVehicleLootTable(player);
+					containerEntity.clearChestVehicleContent();
+					break;
 
-				if (target != null) {
+				case ENDER_EYE:
+					addStaffReachModifier(player);
+					player.level().playSound(null,
+							player.getX(), player.getY(), player.getZ(),
+							RPGSounds.STAFF_ENDER_EYE_CAST.get(),
+							SoundSource.PLAYERS, 1.0F, 1.0F);
 					target.level().playSound(null,
 							target.getX(), target.getY(), target.getZ(),
 							RPGSounds.STAFF_ENDER_EYE_CAST.get(),
-							SoundSource.PLAYERS, 1.0F, 1.0F
-					);
-					target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 1200));
-				}
-			}
-			break;
-			case HEART_OF_THE_SEA: {
-				player.level().playSound(null,
-						player.getX(), player.getY(), player.getZ(),
-						RPGSounds.STAFF_HEART_OF_THE_SEA_CAST.get(),
-						SoundSource.PLAYERS, 1.0F, 1.0F
-				);
+							SoundSource.PLAYERS, 1.0F, 1.0F);
+					containerEntity.unpackChestVehicleLootTable(player);
+					containerEntity.interactWithContainerVehicle(player);
+					break;
 
-				if (target != null) {
+				case HEART_OF_THE_SEA:
+					player.level().playSound(null,
+							player.getX(), player.getY(), player.getZ(),
+							RPGSounds.STAFF_HEART_OF_THE_SEA_ITEM.get(),
+							SoundSource.PLAYERS, 1.0F, 1.0F);
 					target.level().playSound(null,
 							target.getX(), target.getY(), target.getZ(),
-							RPGSounds.STAFF_HEART_OF_THE_SEA_CAST.get(),
-							SoundSource.PLAYERS, 1.0F, 1.0F
-					);
-					target.addEffect(new MobEffectInstance(ModEffects.AMPHIBIOSIS.get(), 400));
-				}
-			}
-			break;
-			case NETHER_STAR: {
-				player.level().playSound(null,
-						player.getX(), player.getY(), player.getZ(),
-						RPGSounds.STAFF_NETHER_STAR_CAST.get(),
-						SoundSource.PLAYERS, 0.5F, 1.0F
-				);
+							RPGSounds.STAFF_HEART_OF_THE_SEA_ITEM.get(),
+							SoundSource.PLAYERS, 1.0F, 1.0F);
+					containerEntity.unpackChestVehicleLootTable(player);
+					for (int i = 0; i < containerEntity.getContainerSize(); i++) {
+						ItemStack stack = containerEntity.removeChestVehicleItem(i, Integer.MAX_VALUE);
+						if (!stack.isEmpty()) {
+							player.getInventory().add(stack);
+							if (!stack.isEmpty()) {
+								player.drop(stack, false);
+							}
+						}
+					}
+					break;
 
-				if (target != null) {
+				case NETHER_STAR:
+					player.level().playSound(null,
+							player.getX(), player.getY(), player.getZ(),
+							RPGSounds.STAFF_NETHER_STAR_ITEM.get(),
+							SoundSource.PLAYERS, 0.5F, 1.0F);
 					target.level().playSound(null,
 							target.getX(), target.getY(), target.getZ(),
-							RPGSounds.STAFF_NETHER_STAR_CAST.get(),
-							SoundSource.PLAYERS, 0.5F, 1.0F
+							RPGSounds.STAFF_NETHER_STAR_ITEM.get(),
+							SoundSource.PLAYERS, 0.5F, 1.0F);
+					containerEntity.unpackChestVehicleLootTable(player);
+					int totalSlots = containerEntity.getContainerSize();
+					int emptySlots = 0;
+					for (int i = 0; i < totalSlots; i++) {
+						if (containerEntity.getChestVehicleItem(i).isEmpty()) {
+							emptySlots++;
+						}
+					}
+					float power = ((float) (totalSlots - emptySlots) / totalSlots) * 2.0F;
+					target.level().explode(
+							null,
+							target.getX(), target.getY(), target.getZ(),
+							power,
+							Level.ExplosionInteraction.MOB
 					);
-					target.addEffect(new MobEffectInstance(MobEffects.WITHER, 200, 1));
-				}
+					break;
 			}
-			break;
 		}
+
+		item.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(player.getUsedItemHand()));
+	}
+
+	// === Проверка типа хранилища (блоки) ===
+	public static boolean isStorage(BlockEntity be) {
+		if (be == null) return false;
+		return be instanceof BaseContainerBlockEntity || be instanceof EnderChestBlockEntity;
+	}
+
+	// Метод для блоков (исправленный)
+	public void cast(Player player, BlockPos pos, ItemStack item) {
+		if (item.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get()) > 0 &&
+				player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F) {
+			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = player.getCooldowns().cooldowns;
+			ItemCooldowns.CooldownInstance instance = cooldownsMap.get(item.getItem());
+			if (instance != null) {
+				int endTick = instance.endTime;
+				int currentTick = player.getCooldowns().tickCount;
+				player.getCooldowns().addCooldown(this, endTick - currentTick + getUseCooldown(item) * 2);
+			}
+		} else {
+			player.getCooldowns().addCooldown(this, getUseCooldown(item));
+		}
+
+		player.swing(player.getUsedItemHand());
+
+		BlockEntity target = player.level().getBlockEntity(pos);
+
+		if (isStorage(target)) {
+			// Отдельно обрабатываем эндер-сундук
+			if (target instanceof EnderChestBlockEntity enderChest) {
+				switch (getGemType(item)) {
+					case EMBER_GEM:
+						player.level().playSound(null,
+								player.getX(), player.getY(), player.getZ(),
+								RPGSounds.STAFF_EMBER_GEM_CAST.get(),
+								SoundSource.PLAYERS, 1.0F, 1.0F);
+						player.level().playSound(null,
+								pos.getX(), pos.getY(), pos.getZ(),
+								RPGSounds.STAFF_EMBER_GEM_CAST.get(),
+								SoundSource.PLAYERS, 1.0F, 1.0F);
+						player.getEnderChestInventory().clearContent();
+						break;
+
+					case ENDER_EYE:
+						player.level().playSound(null,
+								player.getX(), player.getY(), player.getZ(),
+								RPGSounds.STAFF_ENDER_EYE_CAST.get(),
+								SoundSource.PLAYERS, 1.0F, 1.0F);
+						player.level().playSound(null,
+								pos.getX(), pos.getY(), pos.getZ(),
+								RPGSounds.STAFF_ENDER_EYE_CAST.get(),
+								SoundSource.PLAYERS, 1.0F, 1.0F);
+						player.openMenu(new SimpleMenuProvider(
+								(id, inv, p) -> ChestMenu.threeRows(id, inv, player.getEnderChestInventory()),
+								Component.translatable("container.enderchest")
+						));
+						break;
+
+					case HEART_OF_THE_SEA:
+						player.level().playSound(null,
+								player.getX(), player.getY(), player.getZ(),
+								RPGSounds.STAFF_HEART_OF_THE_SEA_ITEM.get(),
+								SoundSource.PLAYERS, 1.0F, 1.0F);
+						player.level().playSound(null,
+								pos.getX(), pos.getY(), pos.getZ(),
+								RPGSounds.STAFF_HEART_OF_THE_SEA_ITEM.get(),
+								SoundSource.PLAYERS, 1.0F, 1.0F);
+						Container enderInv = player.getEnderChestInventory();
+						for (int i = 0; i < enderInv.getContainerSize(); i++) {
+							ItemStack stack = enderInv.getItem(i);
+							if (!stack.isEmpty()) {
+								enderInv.setItem(i, ItemStack.EMPTY);
+								player.getInventory().add(stack);
+								if (!stack.isEmpty()) {
+									player.drop(stack, false);
+								}
+							}
+						}
+						break;
+
+					case NETHER_STAR:
+						player.level().playSound(null,
+								player.getX(), player.getY(), player.getZ(),
+								RPGSounds.STAFF_NETHER_STAR_ITEM.get(),
+								SoundSource.PLAYERS, 0.5F, 1.0F);
+						player.level().playSound(null,
+								pos.getX(), pos.getY(), pos.getZ(),
+								RPGSounds.STAFF_NETHER_STAR_ITEM.get(),
+								SoundSource.PLAYERS, 0.5F, 1.0F);
+						int totalSlots = player.getEnderChestInventory().getContainerSize();
+						int filledSlots = 0;
+						for (int i = 0; i < totalSlots; i++) {
+							if (!player.getEnderChestInventory().getItem(i).isEmpty()) filledSlots++;
+						}
+						float power = 2.0F * (filledSlots / (float) totalSlots);
+						player.level().explode(player, pos.getX()+0.5F, pos.getY()+0.5F, pos.getZ()+0.5F, power, Level.ExplosionInteraction.BLOCK);
+						break;
+				}
+			}
+			// Обработка всех остальных контейнеров (включая двойные сундуки)
+			else {
+				// Определяем контейнер и MenuProvider с учётом возможного двойного сундука
+				Container container;
+				MenuProvider menuProvider;
+
+				if (target instanceof ChestBlockEntity) {
+					BlockState state = player.level().getBlockState(pos);
+					if (state.getBlock() instanceof ChestBlock chestBlock) {
+						// Получаем объединённый контейнер для двойного сундука
+						container = ChestBlock.getContainer(chestBlock, state, player.level(), pos, true);
+						// Получаем правильный MenuProvider от блока (он создаст меню на 6 рядов для двойного сундука)
+						menuProvider = chestBlock.getMenuProvider(state, player.level(), pos);
+					} else {
+						// На всякий случай, если блок не является ChestBlock (маловероятно)
+						container = (Container) target;
+						menuProvider = (MenuProvider) target;
+					}
+				} else {
+					// Для остальных типов (ваши BlockEntity, не являющиеся сундуками)
+					container = (Container) target;
+					menuProvider = (MenuProvider) target;
+				}
+
+				// Действие в зависимости от самоцвета
+				switch (getGemType(item)) {
+					case EMBER_GEM:
+						player.level().playSound(null,
+								player.getX(), player.getY(), player.getZ(),
+								RPGSounds.STAFF_EMBER_GEM_CAST.get(),
+								SoundSource.PLAYERS, 1.0F, 1.0F);
+						player.level().playSound(null,
+								pos.getX(), pos.getY(), pos.getZ(),
+								RPGSounds.STAFF_EMBER_GEM_CAST.get(),
+								SoundSource.PLAYERS, 1.0F, 1.0F);
+						container.clearContent();           // очищает все слоты (для двойного сундука очистит оба)
+						container.setChanged();             // уведомляет об изменении
+						break;
+
+					case ENDER_EYE:
+						player.level().playSound(null,
+								player.getX(), player.getY(), player.getZ(),
+								RPGSounds.STAFF_ENDER_EYE_CAST.get(),
+								SoundSource.PLAYERS, 1.0F, 1.0F);
+						player.level().playSound(null,
+								pos.getX(), pos.getY(), pos.getZ(),
+								RPGSounds.STAFF_ENDER_EYE_CAST.get(),
+								SoundSource.PLAYERS, 1.0F, 1.0F);
+						addStaffReachModifier(player);
+						player.openMenu(menuProvider);      // открывает правильное меню (для двойного сундука – объединённое)
+						break;
+
+					case HEART_OF_THE_SEA:
+						player.level().playSound(null,
+								player.getX(), player.getY(), player.getZ(),
+								RPGSounds.STAFF_HEART_OF_THE_SEA_ITEM.get(),
+								SoundSource.PLAYERS, 1.0F, 1.0F);
+						player.level().playSound(null,
+								pos.getX(), pos.getY(), pos.getZ(),
+								RPGSounds.STAFF_HEART_OF_THE_SEA_ITEM.get(),
+								SoundSource.PLAYERS, 1.0F, 1.0F);
+						for (int i = 0; i < container.getContainerSize(); i++) {
+							ItemStack stack = container.getItem(i);
+							if (!stack.isEmpty()) {
+								container.setItem(i, ItemStack.EMPTY);
+								player.getInventory().add(stack);
+								if (!stack.isEmpty()) {
+									player.drop(stack, false);
+								}
+							}
+						}
+						container.setChanged();
+						break;
+
+					case NETHER_STAR:
+						player.level().playSound(null,
+								player.getX(), player.getY(), player.getZ(),
+								RPGSounds.STAFF_NETHER_STAR_ITEM.get(),
+								SoundSource.PLAYERS, 0.5F, 1.0F);
+						player.level().playSound(null,
+								pos.getX(), pos.getY(), pos.getZ(),
+								RPGSounds.STAFF_NETHER_STAR_ITEM.get(),
+								SoundSource.PLAYERS, 0.5F, 1.0F);
+						int totalSlots = container.getContainerSize();
+						int filledSlots = 0;
+						for (int i = 0; i < totalSlots; i++) {
+							if (!container.getItem(i).isEmpty()) filledSlots++;
+						}
+						float power = 2.0F * (filledSlots / (float) totalSlots);
+						player.level().explode(player, pos.getX()+0.5F, pos.getY()+0.5F, pos.getZ()+0.5F, power, Level.ExplosionInteraction.BLOCK);
+						break;
+				}
+			}
+		}
+
 		item.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(player.getUsedItemHand()));
 	}
 
@@ -237,11 +488,11 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 	}
 
 	public boolean isValidRepairItem(ItemStack pToRepair, ItemStack pRepair) {
-		return pRepair.is(Items.BRAIN_CORAL) || super.isValidRepairItem(pToRepair, pRepair);
+		return pRepair.is(Items.HORN_CORAL) || super.isValidRepairItem(pToRepair, pRepair);
 	}
 
 	@Override
-	public boolean highlightAnimateTarget(ItemStack stack, Player player) {
+	public boolean highlightItemStorages(ItemStack stack, Player player) {
 		return isOffCooldown(stack, player) && player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUseItem() == stack;
 	}
 

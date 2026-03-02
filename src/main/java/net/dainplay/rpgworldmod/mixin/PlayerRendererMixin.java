@@ -55,12 +55,4 @@ public abstract class PlayerRendererMixin {
         }
     }
 
-    @Inject(method = "getArmPose", at = @At(value = "HEAD"), cancellable = true)
-    private static void getArmPoseTriangle(AbstractClientPlayer pPlayer, InteractionHand pHand, CallbackInfoReturnable<HumanoidModel.ArmPose> cir) {
-        ItemStack itemstack = pPlayer.getItemInHand(pHand);
-        if (!pPlayer.swinging && itemstack.getItem() instanceof MintalTriangleItem) {
-            cir.setReturnValue(HumanoidModel.ArmPose.CROSSBOW_HOLD);
-        }
-    }
-
 }

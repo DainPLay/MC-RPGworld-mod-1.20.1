@@ -44,6 +44,8 @@
     "LevelRendererMixin",
     "LivingEntityRendererMixin",
     "MinecraftMixin",
+    "MixinAbstractContainerMenuClick",
+    "MixinAbstractContainerMenuClient",
     "MobAppearanceParticleMixin",
     "MouseHandlerMixin",
     "MovementInputFromOptionsMixin",

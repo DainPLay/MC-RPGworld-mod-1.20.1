@@ -4,6 +4,7 @@ import net.dainplay.rpgworldmod.item.custom.ChooseTargetItem;
 import net.dainplay.rpgworldmod.network.C2SRequestTargetValidationPacket;
 import net.dainplay.rpgworldmod.network.ClientAnimateTargetData;
 import net.dainplay.rpgworldmod.network.ClientItemTargetData;
+import net.dainplay.rpgworldmod.network.ClientStorageTargetData;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.util.ModTags;
 import net.dainplay.rpgworldmod.world.feature.ModConfiguredFeatures;
@@ -11,11 +12,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.sounds.Music;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.vehicle.ContainerEntity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -141,6 +144,17 @@ public abstract class MinecraftMixin {
 					return;
 				}
 				if (ClientItemTargetData.get() != null && ClientItemTargetData.get().getId() == entity.getId()) {
+					cir.setReturnValue(true);
+					cir.cancel();
+					return;
+				}
+			}
+
+			if (catItem.highlightItemStorages(this.player.getUseItem(), this.player)) {
+				if (!(entity instanceof ContainerEntity)) {
+					return;
+				}
+				if (ClientStorageTargetData.getEntityTarget() != null && ClientStorageTargetData.getEntityTarget().getId() == entity.getId()) {
 					cir.setReturnValue(true);
 					cir.cancel();
 					return;

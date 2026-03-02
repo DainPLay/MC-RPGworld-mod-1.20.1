@@ -5,11 +5,13 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 
+import java.util.OptionalDouble;
 import java.util.function.Function;
 
 public class ModRenderTypes extends RenderType {
@@ -212,4 +214,22 @@ public class ModRenderTypes extends RenderType {
 				.createCompositeState(false);
 		return create("spell_effect", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, true, rendertype$compositestate);
 	});
+
+
+	public static final RenderType GLOWING_OUTLINE = RenderType.create(
+			"glowing_outline",
+			com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR_NORMAL,
+			com.mojang.blaze3d.vertex.VertexFormat.Mode.LINES,
+			256,
+			RenderType.CompositeState.builder()
+					.setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeLinesShader))
+					.setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty()))
+					.setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
+					.setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+					.setOutputState(RenderStateShard.ITEM_ENTITY_TARGET)
+					.setWriteMaskState(RenderStateShard.COLOR_WRITE) // только цвет, без глубины
+					.setCullState(RenderStateShard.NO_CULL)
+					.setDepthTestState(RenderStateShard.NO_DEPTH_TEST) // отключаем тест глубины -> видно сквозь стены
+					.createCompositeState(false)
+	);
 }

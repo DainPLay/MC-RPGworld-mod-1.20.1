@@ -25,8 +25,7 @@ public class HappinessBeamRenderer {
 	public static void onRenderLivingPost(RenderLivingEvent.Post<?, ?> event) {
 		LivingEntity entity = event.getEntity();
 
-		// Проверяем наличие эффекта регенерации
-		if (entity.hasEffect(ModEffects.HAPPINESS.get())) {
+		if (entity.hasEffect(ModEffects.HAPPINESS.get()) && !entity.isSpectator() && !entity.isInvisible()) {
 
 			var effect = entity.getEffect(ModEffects.HAPPINESS.get());
 			if (effect != null) {
@@ -50,7 +49,7 @@ public class HappinessBeamRenderer {
 			PoseStack poseStack,
 			MultiBufferSource bufferSource
 	) {
-		if(duration == -1) duration = 20;
+		if (duration == -1) duration = 2000;
 		VertexConsumer vertexconsumer = bufferSource.getBuffer(RenderType.lightning());
 		poseStack.pushPose();
 

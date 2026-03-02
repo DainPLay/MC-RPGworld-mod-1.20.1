@@ -8,15 +8,19 @@ import net.dainplay.rpgworldmod.item.custom.BubbleCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
 import net.dainplay.rpgworldmod.item.custom.FireCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.HeartOfTheSeaScrollItem;
+import net.dainplay.rpgworldmod.item.custom.HornCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.LivingWoodStaffItem;
 import net.dainplay.rpgworldmod.item.custom.TubeCoralStaffItem;
 import net.dainplay.rpgworldmod.network.ClientAdditionalHealthCostData;
 import net.dainplay.rpgworldmod.network.ClientItemTargetData;
+import net.dainplay.rpgworldmod.network.ClientStorageTargetData;
 import net.dainplay.rpgworldmod.network.IgniteSelfPacket;
 import net.dainplay.rpgworldmod.network.LeftClickWhileRightClickUsePacket;
 import net.dainplay.rpgworldmod.network.UseOnAnimateTargetPacket;
 import net.dainplay.rpgworldmod.network.ClientAnimateTargetData;
 import net.dainplay.rpgworldmod.network.ModMessages;
+import net.dainplay.rpgworldmod.network.UseOnItemStorageBlockTargetPacket;
+import net.dainplay.rpgworldmod.network.UseOnItemStorageEntityTargetPacket;
 import net.dainplay.rpgworldmod.network.UseOnItemTargetPacket;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.client.Minecraft;
@@ -247,6 +251,17 @@ public class ParalysisHandler {
 								.collect(Collectors.toList());
 						ModMessages.sendToServer(new UseOnItemTargetPacket(player.getId(), targetIds));
 						ClientItemTargetData.clear();
+						player.swing(player.getUsedItemHand());
+					}
+				}
+
+				if (useItem.getItem() instanceof HornCoralStaffItem staff && staff.isOffCooldown(useItem, player)) {
+					if (ClientStorageTargetData.getEntityTarget() != null) {
+						ModMessages.sendToServer(new UseOnItemStorageEntityTargetPacket(player.getId(), ClientStorageTargetData.getEntityTarget().getId()));
+						player.swing(player.getUsedItemHand());
+					}
+					else if (ClientStorageTargetData.getBlockTarget() != null) {
+						ModMessages.sendToServer(new UseOnItemStorageBlockTargetPacket(player.getId(), ClientStorageTargetData.getBlockTarget()));
 						player.swing(player.getUsedItemHand());
 					}
 				}

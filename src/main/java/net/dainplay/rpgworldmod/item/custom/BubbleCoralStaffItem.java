@@ -252,7 +252,7 @@ public class BubbleCoralStaffItem extends StaffItem implements ChooseTargetItem 
 	}
 
 	public boolean isValidRepairItem(ItemStack pToRepair, ItemStack pRepair) {
-		return pRepair.is(Items.BRAIN_CORAL) || super.isValidRepairItem(pToRepair, pRepair);
+		return pRepair.is(Items.BUBBLE_CORAL) || super.isValidRepairItem(pToRepair, pRepair);
 	}
 
 	@Override

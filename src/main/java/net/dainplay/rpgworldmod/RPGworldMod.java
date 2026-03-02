@@ -11,6 +11,7 @@ import net.dainplay.rpgworldmod.effect.FuelingHandler;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.entity.ModEntities;
+import net.dainplay.rpgworldmod.entity.custom.ModBoat;
 import net.dainplay.rpgworldmod.entity.projectile.BurrSpikeEntity;
 import net.dainplay.rpgworldmod.entity.projectile.FairapierSeedEntity;
 import net.dainplay.rpgworldmod.entity.projectile.ProjectruffleArrowEntity;
@@ -37,6 +38,7 @@ import net.dainplay.rpgworldmod.util.CauldronInteractionHandler;
 import net.dainplay.rpgworldmod.util.DrillTuskHandler;
 import net.dainplay.rpgworldmod.util.FoodSmokeParticlesHandler;
 import net.dainplay.rpgworldmod.util.KillEntityHandler;
+import net.dainplay.rpgworldmod.util.ModBoatDispenseItemBehavior;
 import net.dainplay.rpgworldmod.util.ProperBrewingRecipe;
 import net.dainplay.rpgworldmod.util.TriangleAnimationHandler;
 import net.dainplay.rpgworldmod.util.TweakReloadManager;
@@ -595,6 +597,8 @@ public class RPGworldMod
                     return arrow;
                 }
             });
+            DispenserBlock.registerBehavior(ModItems.RIE_BOAT.get(), new ModBoatDispenseItemBehavior(ModBoat.Type.RIE, false));
+            DispenserBlock.registerBehavior(ModItems.RIE_CHEST_BOAT.get(), new ModBoatDispenseItemBehavior(ModBoat.Type.RIE, true));
 
             BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(Potions.AWKWARD)), Ingredient.of(ModItems.PARALILY_BERRY.get()), PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARALYSIS_POTION.get())));
             BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.PARALYSIS_POTION.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_PARALYSIS_POTION.get())));

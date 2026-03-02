@@ -119,6 +119,24 @@ public class ModMessages {
 				.consumerMainThread(UseOnAnimateTargetPacket::handle)
 				.add();
 
+		net.messageBuilder(UseOnItemStorageEntityTargetPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+				.decoder(UseOnItemStorageEntityTargetPacket::new)
+				.encoder(UseOnItemStorageEntityTargetPacket::toBytes)
+				.consumerMainThread(UseOnItemStorageEntityTargetPacket::handle)
+				.add();
+
+		net.messageBuilder(UseOnItemStorageBlockTargetPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+				.decoder(UseOnItemStorageBlockTargetPacket::new)
+				.encoder(UseOnItemStorageBlockTargetPacket::toBytes)
+				.consumerMainThread(UseOnItemStorageBlockTargetPacket::handle)
+				.add();
+
+		net.messageBuilder(C2STriggerChestStaffsPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+				.decoder(C2STriggerChestStaffsPacket::decode)
+				.encoder(C2STriggerChestStaffsPacket::encode)
+				.consumerMainThread(C2STriggerChestStaffsPacket::handle)
+				.add();
+
 		net.messageBuilder(UseOnItemTargetPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
 				.decoder(UseOnItemTargetPacket::new)
 				.encoder(UseOnItemTargetPacket::toBytes)

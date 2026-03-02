@@ -43,7 +43,7 @@ public class DrillTuskBlock extends FaceAttachedHorizontalDirectionalBlock {
                 blockstate = this.defaultBlockState().setValue(FACE, AttachFace.WALL).setValue(FACING, direction.getOpposite());
             }
 
-            if (canAttach(pContext.getLevel(), pContext.getClickedPos(), getConnectedDirection(blockstate).getOpposite())) {
+            if (canAttachOrHoney(pContext.getLevel(), pContext.getClickedPos(), getConnectedDirection(blockstate).getOpposite())) {
                 return blockstate;
             }
         }
@@ -52,9 +52,14 @@ public class DrillTuskBlock extends FaceAttachedHorizontalDirectionalBlock {
     }
     @Override
     public void randomTick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
-            if(!canAttach(pLevel, pPos, getConnectedDirection(pState).getOpposite())){
+            if(!canAttachOrHoney(pLevel, pPos, getConnectedDirection(pState).getOpposite())){
                 pLevel.destroyBlock(pPos, true);
             }
+    }
+
+    public static boolean canAttachOrHoney(LevelReader pReader, BlockPos pPos, Direction pDirection) {
+        BlockPos blockpos = pPos.relative(pDirection);
+        return pReader.getBlockState(blockpos).isFaceSturdy(pReader, blockpos, pDirection.getOpposite()) || pReader.getBlockState(blockpos).getBlock() instanceof HoneyBlock;
     }
 
     public boolean propagatesSkylightDown(BlockState pState, BlockGetter pReader, BlockPos pPos) {

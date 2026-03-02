@@ -25,6 +25,10 @@ public interface ChooseTargetItem {
 		return false;
 	}
 
+	default boolean highlightItemStorages(ItemStack stack, Player player) {
+		return false;
+	}
+
 	default boolean canHighlightYourself(ItemStack stack, Player player) {
 		return true;
 	}

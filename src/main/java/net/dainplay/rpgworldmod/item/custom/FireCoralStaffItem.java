@@ -252,7 +252,7 @@ public class FireCoralStaffItem extends StaffItem implements ChooseTargetItem {
 	}
 
 	public boolean isValidRepairItem(ItemStack pToRepair, ItemStack pRepair) {
-		return pRepair.is(Items.BRAIN_CORAL) || super.isValidRepairItem(pToRepair, pRepair);
+		return pRepair.is(Items.FIRE_CORAL) || super.isValidRepairItem(pToRepair, pRepair);
 	}
 
 	@Override

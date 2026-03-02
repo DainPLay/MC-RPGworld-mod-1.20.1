@@ -3,6 +3,7 @@ package net.dainplay.rpgworldmod.entity.custom;
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.entity.ModEntities;
 import net.dainplay.rpgworldmod.item.ModItems;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -12,8 +13,13 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.NetworkHooks;
 
 public class ModBoat extends Boat {
@@ -44,6 +50,40 @@ public class ModBoat extends Boat {
         };
     }
 
+    @Override
+    protected void checkFallDamage(double pY, boolean pOnGround, BlockState pState, BlockPos pPos) {
+        this.lastYd = this.getDeltaMovement().y;
+        if (!this.isPassenger()) {
+            if (pOnGround) {
+                if (this.fallDistance > 3.0F) {
+                    if (this.status != Boat.Status.ON_LAND) {
+                        this.resetFallDistance();
+                        return;
+                    }
+                    this.causeFallDamage(this.fallDistance, 1.0F, this.damageSources().fall());
+                    if (!this.level().isClientSide && !this.isRemoved()) {
+                        this.kill();
+                        if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+                            // Drop custom planks (3)
+                            ModBoat.Type type = this.getModBoatType();
+                            Block planksBlock = type.getPlanks(); // assumes this method exists
+                            for (int i = 0; i < 3; ++i) {
+                                this.spawnAtLocation(new ItemStack(planksBlock));
+                            }
+                            // Drop sticks (2)
+                            for (int j = 0; j < 2; ++j) {
+                                this.spawnAtLocation(Items.STICK);
+                            }
+                        }
+                    }
+                }
+                this.resetFallDistance();
+            } else if (!this.canBoatInFluid(this.level().getFluidState(this.blockPosition().below())) && pY < 0.0D) {
+                this.fallDistance -= (float) pY;
+            }
+        }
+    }
+
     public void setModBoatType(ModBoat.Type boatType) {
         this.getEntityData().set(BOAT_TYPE, boatType.ordinal());
     }
@@ -71,23 +111,27 @@ public class ModBoat extends Boat {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
+    public void setVariant(ModBoat.Type pVariant) {
+        this.entityData.set(DATA_ID_TYPE, pVariant.ordinal());
+    }
+
     public enum Type {
         RIE(ModBlocks.RIE_PLANKS.get(), "rie");
 
+        private final Block planks;
         private final String name;
-        private final Block block;
 
-        Type(Block block, String name) {
+        Type(Block planks, String name) {
+            this.planks = planks;
             this.name = name;
-            this.block = block;
+        }
+
+        public Block getPlanks() {
+            return this.planks;
         }
 
         public String getName() {
             return this.name;
-        }
-
-        public Block asPlank() {
-            return this.block;
         }
 
         public String toString() {

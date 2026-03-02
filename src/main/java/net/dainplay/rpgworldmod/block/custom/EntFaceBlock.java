@@ -33,6 +33,8 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class EntFaceBlock extends BaseEntityBlock {
@@ -54,6 +56,16 @@ public class EntFaceBlock extends BaseEntityBlock {
 				.setValue(DEALT_DAMAGE, false)
 				.setValue(MELEE_PROGRESS, 0)
 				.setValue(DESTROY_STAGE, 0));
+	}
+
+		@Override
+		public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+		return Shapes.empty();
+	}
+
+		@Override
+		public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+		return 1.0F;
 	}
 
 	@Override

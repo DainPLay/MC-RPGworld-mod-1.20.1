@@ -82,6 +82,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -348,11 +349,41 @@ public class ModBlocks {
 
 					return super.getToolModifiedState(state, context, toolAction, simulate);
 				}
+
+					@Override
+					public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+					return Shapes.empty();
+				}
+
+					@Override
+					public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+					return 1.0F;
+				}
 			});
 	public static final RegistryObject<Block> STRIPPED_LIVING_WOOD_LOG = registerBlock("stripped_living_wood_log",
-			() -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_WARPED_STEM).mapColor(MapColor.GLOW_LICHEN)));
+			() -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_WARPED_STEM).mapColor(MapColor.GLOW_LICHEN)){
+				@Override
+				public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+					return Shapes.empty();
+				}
+
+				@Override
+				public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+					return 1.0F;
+				}
+			});
 	public static final RegistryObject<Block> STRIPPED_LIVING_WOOD_WOOD = registerBlock("stripped_living_wood_wood",
-			() -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_WARPED_HYPHAE).mapColor(MapColor.GLOW_LICHEN)));
+			() -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_WARPED_HYPHAE).mapColor(MapColor.GLOW_LICHEN)){
+				@Override
+				public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+					return Shapes.empty();
+				}
+
+				@Override
+				public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+					return 1.0F;
+				}
+			});
 
 	public static final RegistryObject<Block> RIE_LOG = registerBlock("rie_log",
 			() -> new ModFlammableRotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.OAK_LOG).mapColor(MapColor.GLOW_LICHEN)));
@@ -500,7 +531,21 @@ public class ModBlocks {
 	public static final RegistryObject<Block> MINTAL_BLOCK = registerBlock("mintal_block",
 			() -> new Block(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).mapColor(MapColor.WARPED_STEM).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL)));
 	public static final RegistryObject<Block> WINGOLD_BLOCK = registerBlock("wingold_block",
-			() -> new Block(BlockBehaviour.Properties.copy(Blocks.GOLD_BLOCK).mapColor(MapColor.GOLD).requiresCorrectToolForDrops().strength(5.0F, 6.0F)));
+			() -> new Block(BlockBehaviour.Properties.copy(Blocks.GOLD_BLOCK)
+					.mapColor(MapColor.GOLD)
+					.requiresCorrectToolForDrops()
+					.strength(5.0F, 6.0F)
+			){
+				@Override
+				public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+					return Shapes.empty();
+				}
+
+				@Override
+				public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+					return 1.0F;
+				}
+			});
 	public static final RegistryObject<Block> ARBOR_FUEL_CAULDRON = registerBlockWithoutBlockItem("arbor_fuel_cauldron", () -> new ArborFuelCauldron(BlockBehaviour.Properties.copy(Blocks.CAULDRON), ModCauldronInteraction.ARBOR_FUEL));
 
 	public static final RegistryObject<Block> MOSQUITOS = registerBlockWithoutBlockItem("mosquitos", () -> new MosquitosBlock(BlockBehaviour.Properties.of().mapColor(MapColor.NONE).replaceable().noCollission().strength(0.2F).sound(SoundType.FROGSPAWN).pushReaction(PushReaction.DESTROY)));

@@ -22,6 +22,8 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.ToolAction;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,6 +35,15 @@ public class LivingWoodLogBlock extends RotatedPillarBlock {
 		this.registerDefaultState(this.defaultBlockState()
 				.setValue(RELATED_TO_ENT, 0)
 				.setValue(AXIS, Direction.Axis.Y));
+	}
+		@Override
+		public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+		return Shapes.empty();
+	}
+
+		@Override
+		public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+		return 1.0F;
 	}
 
 	@Override
