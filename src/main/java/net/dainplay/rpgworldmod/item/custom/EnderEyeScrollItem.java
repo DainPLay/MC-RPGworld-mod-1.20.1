@@ -705,7 +705,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 		int side = arm == HumanoidArm.LEFT ? -1 : 1;
 		Vec3 toReturn;
 
-		if (firstPerson) {
+		if (player == mc.player && firstPerson) {
 			Camera camera = mc.gameRenderer.getMainCamera();
 			Vec3 cameraPos = camera.getPosition();
 			double scale = 1000.0 / mc.getEntityRenderDispatcher().options.fov().get().intValue();

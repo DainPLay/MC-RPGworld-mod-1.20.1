@@ -15,7 +15,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,6 +40,9 @@ public class ForgeGuiMixin {
     @Inject(method = "render", at = @At(value = "HEAD"))
     private void renderParalysisCheck(GuiGraphics guiGraphics, float partialTick, CallbackInfo ci) {
         Minecraft mc = Minecraft.getInstance();
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
 
         if (mc.player != null && mc.player.getEffect(ModEffects.PARALYSIS.get()) != null
                 && mc.player.getEffect(ModEffects.PARALYSIS.get()).getAmplifier() >= 1) {

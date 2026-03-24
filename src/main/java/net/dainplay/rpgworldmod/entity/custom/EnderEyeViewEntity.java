@@ -3,12 +3,11 @@ package net.dainplay.rpgworldmod.entity.custom;
 import net.dainplay.rpgworldmod.entity.ModEntities;
 import net.dainplay.rpgworldmod.network.C2SEyeDestroyPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
+import net.dainplay.rpgworldmod.util.ClientEyeHelper;
 import net.dainplay.rpgworldmod.util.ClientEyeViewHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -149,20 +148,7 @@ public class EnderEyeViewEntity extends Entity implements ItemSupplier {
 
 
 		if (level().isClientSide()) {
-
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-						if (this == ClientEyeViewHandler.getActiveEye()) {
-							Player owner = Minecraft.getInstance().player;
-							if (owner != null) {
-								owner.zza = 0;
-								owner.yya = 0;
-								owner.xxa = 0;
-								owner.setJumping(false);
-								owner.setSprinting(false);
-							}
-						}
-					}
-			);
+			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientEyeHelper.handleClientTick(this));
 		}
 		if (!this.level().isClientSide) {
 			Player owner = getOwner();
