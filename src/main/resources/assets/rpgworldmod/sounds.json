@@ -1076,6 +1076,12 @@
     ],
     "subtitle": "subtitles.rpgworldmod.spell.alteration_stop"
   },
+  "rpgworldmod.spell.alteration_cast": {
+    "sounds": [
+      "rpgworldmod:spell/alteration_cast"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.alteration_cast"
+  },
   "rpgworldmod.spell.illusion_start": {
     "sounds": [
       "rpgworldmod:spell/illusion_start"
@@ -1265,6 +1271,25 @@
         "type": "event",
         "name": "block.bubble_column.whirlpool_inside"
       }
+    ]
+  },
+  "rpgworldmod.spell.destruction_ender_eye_start": {
+    "sounds": [
+      "rpgworldmod:spell/destruction_ender_eye_start1",
+      "rpgworldmod:spell/destruction_ender_eye_start2",
+      "rpgworldmod:spell/destruction_ender_eye_start3",
+      "rpgworldmod:spell/destruction_ender_eye_start4"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.destruction_ender_eye_start"
+  },
+  "rpgworldmod.spell.destruction_ender_eye_loop": {
+    "sounds": [
+      "rpgworldmod:spell/destruction_ender_eye_loop"
+    ]
+  },
+  "rpgworldmod.spell.destruction_ender_eye_stop": {
+    "sounds": [
+      "rpgworldmod:spell/destruction_ender_eye_stop"
     ]
   }
 }

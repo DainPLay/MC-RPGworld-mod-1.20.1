@@ -9,8 +9,11 @@ import net.dainplay.rpgworldmod.block.entity.custom.EntFaceBlockEntity;
 import net.dainplay.rpgworldmod.data.tags.DepressionDeathCheck;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.effect.ModEffects;
+import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.EmptyScrollItem;
+import net.dainplay.rpgworldmod.item.custom.EnderEyeScrollItem;
+import net.dainplay.rpgworldmod.item.custom.GasbassItem;
 import net.dainplay.rpgworldmod.item.custom.HornCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.ScrollItem;
 import net.dainplay.rpgworldmod.network.BoundEntitySyncPacket;
@@ -26,6 +29,7 @@ import net.dainplay.rpgworldmod.network.PlayerManaProvider;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.dainplay.rpgworldmod.util.BoundEntityHelper;
 import net.dainplay.rpgworldmod.util.ModTags;
+import net.dainplay.rpgworldmod.util.RemoteOpenContainerRegistry;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.core.BlockPos;
@@ -35,22 +39,33 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.Container;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.PlayerEnderChestContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.GrindstoneEvent;
@@ -67,6 +82,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -145,9 +161,9 @@ public class ModEvents {
 		if (event.player instanceof ServerPlayer serverPlayer) {
 			serverPlayer.getCapability(PlayerIllusionForceProvider.PLAYER_ILLUSION_FORCE).ifPresent(illusionForce -> {
 				if (illusionForce.getIllusionForce() >= 0) {
-					illusionForce.setIllusionForce(serverPlayer, Math.max(0, illusionForce.getIllusionForce() - 1));
+					illusionForce.setIllusionForce(serverPlayer, Math.max(0, illusionForce.getIllusionForce() - 1), illusionForce.getIllusionForce()>0, illusionForce.getIsEnt());
 					if (illusionForce.getIllusionForce() == 0)
-						illusionForce.setEntPosition(serverPlayer, null);
+						illusionForce.clearEntPosition(serverPlayer);
 				}
 			});
 			/*if (serverPlayer.getAdvancements().getOrStartProgress(serverPlayer.getServer().getAdvancements().getAdvancement(DepressionDeathCheck.ID)).isDone() && !serverPlayer.isDeadOrDying()) {
@@ -203,7 +219,14 @@ public class ModEvents {
 				ModMessages.sendToPlayer(new IsManaRegenBlockedDataSyncS2CPacket(mana.getManaRegenBlocked()), player);
 			});
 			player.getCapability(PlayerIllusionForceProvider.PLAYER_ILLUSION_FORCE).ifPresent(illusionForce -> {
-				ModMessages.sendToPlayer(new IllusionForceDataSyncS2CPacket(illusionForce.getIllusionForce(), illusionForce.getEntPosition()), player);
+				ModMessages.sendToPlayer(new IllusionForceDataSyncS2CPacket(
+						illusionForce.getIllusionForce(),
+						illusionForce.getEntPosX(),
+						illusionForce.getEntPosY(),
+						illusionForce.getEntPosZ(),
+						false,
+						illusionForce.getIsEnt()
+				), player);
 			});
 		}
 	}
@@ -218,7 +241,14 @@ public class ModEvents {
 				ModMessages.sendToPlayer(new IsManaRegenBlockedDataSyncS2CPacket(mana.getManaRegenBlocked()), player);
 			});
 			player.getCapability(PlayerIllusionForceProvider.PLAYER_ILLUSION_FORCE).ifPresent(illusionForce -> {
-				ModMessages.sendToPlayer(new IllusionForceDataSyncS2CPacket(illusionForce.getIllusionForce(), illusionForce.getEntPosition()), player);
+				ModMessages.sendToPlayer(new IllusionForceDataSyncS2CPacket(
+						illusionForce.getIllusionForce(),
+						illusionForce.getEntPosX(),
+						illusionForce.getEntPosY(),
+						illusionForce.getEntPosZ(),
+						false,
+						illusionForce.getIsEnt()
+				), player);
 			});
 		}
 	}
@@ -254,9 +284,9 @@ public class ModEvents {
 					ModMessages.sendToPlayer(new MaxManaDataSyncS2CPacket(mana.getMaxMana()), player);
 				});
 				player.getCapability(PlayerIllusionForceProvider.PLAYER_ILLUSION_FORCE).ifPresent(illusionForce -> {
-					illusionForce.setIllusionForce(player, 0);
-					illusionForce.setEntPosition(player, null);
-					ModMessages.sendToPlayer(new IllusionForceDataSyncS2CPacket(0, null), player);
+					illusionForce.setIllusionForce(player, 0, false, false);
+					illusionForce.clearEntPosition(player);
+					ModMessages.sendToPlayer(new IllusionForceDataSyncS2CPacket(0, 0.0f, 0.0f, 0.0f, false, false), player);
 				});
 			});
 
@@ -395,6 +425,17 @@ public class ModEvents {
 				arrowTag.remove("ShotTime");
 				arrowTag.remove("BoundPullRange");
 				arrow.setNoGravity(false);
+			}
+		}
+
+		LivingEntity entity = event.getEntity();
+		if (!entity.level().isClientSide && entity instanceof Player player) {
+			if (player.isUsingItem() && player.getUseItem().getItem() instanceof GasbassItem) {
+				boolean pvpCooldownDisabled = player.level().getGameRules().getBoolean(RPGworldMod.DISABLE_GASBASS_PVP_COOLDOWN);
+				if (!pvpCooldownDisabled) {
+					player.stopUsingItem();
+					player.getCooldowns().addCooldown(ModItems.GASBASS.get(), 15);
+				}
 			}
 		}
 	}
@@ -581,14 +622,6 @@ public class ModEvents {
 	}
 
 	@SubscribeEvent
-	public void onContainerClose(PlayerContainerEvent.Close event) {
-		Player player = event.getEntity();
-		if (!player.level().isClientSide) {
-			HornCoralStaffItem.removeStaffReachModifier(player);
-		}
-	}
-
-	@SubscribeEvent
 	public void onServerTick(TickEvent.ServerTickEvent event) {
 		if (event.phase == TickEvent.Phase.END) {
 			// Проходим по всем серверным игрокам
@@ -607,4 +640,82 @@ public class ModEvents {
 			}
 		}
 	}
+
+	@SubscribeEvent
+	public void onContainerClose(PlayerContainerEvent.Close event) {
+		Player player = event.getEntity();
+		AbstractContainerMenu menu = event.getContainer();
+		Level level = player.level();
+
+		if (!player.level().isClientSide) {
+			HornCoralStaffItem.removeStaffReachModifier(player);
+		}
+
+		if (level.isClientSide) return;
+
+		// Определяем позицию контейнера
+		BlockPos pos = null;
+
+		if (menu instanceof ChestMenu chestMenu) {
+			Container container = chestMenu.getContainer();
+			if (container instanceof BaseContainerBlockEntity blockEntity) {
+				pos = blockEntity.getBlockPos();
+			} else if (container instanceof PlayerEnderChestContainer) {
+				long savedPos = player.getPersistentData().getLong("RPGLastEnderChestPos");
+				if (savedPos != 0L) {
+					pos = BlockPos.of(savedPos);
+					player.getPersistentData().remove("RPGLastEnderChestPos");
+				}
+			}
+		}
+
+		if (pos != null) {
+			RemoteOpenContainerRegistry.removeOpener(level, pos, player);
+		}
+	}
+
+	@SubscribeEvent
+	public void onLevelUnload(LevelEvent.Unload event) {
+		Level level = (Level) event.getLevel();
+		if (!level.isClientSide()) {
+			RemoteOpenContainerRegistry.removeAllForLevel(level);
+		}
+	}
+
+	@SubscribeEvent
+	public static void onLivingDeath(LivingDeathEvent event) {
+		if (event.isCanceled()) return;
+		if (!(event.getEntity() instanceof Player player)) return;
+		if (player.level().isClientSide) return;
+
+		if (!player.isUsingItem()) return;
+		ItemStack usingItem = player.getUseItem();
+		if (!(usingItem.getItem() instanceof EnderEyeScrollItem scroll)) return;
+		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), usingItem) <= 0) return;
+
+		event.setCanceled(true);
+
+		player.setHealth(1.0F);
+		player.removeAllEffects();
+		player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 225, 1));
+		player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 100, 1));
+		player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 225, 0));
+		if (player instanceof ServerPlayer serverPlayer) {
+			ModAdvancements.SPELL_RESTORATION_ENDER_EYE_TRIGGER.trigger(serverPlayer);
+		}
+
+		// Взрываем все кристаллы в радиусе 32 блоков
+		double radius = 32.0D;
+		AABB aabb = player.getBoundingBox().inflate(radius);
+		List<EndCrystal> crystals = player.level().getEntitiesOfClass(EndCrystal.class, aabb);
+		for (EndCrystal crystal : crystals) {
+			if (crystal.isAlive()) {
+				crystal.hurt(player.level().damageSources().playerAttack(player), Float.MAX_VALUE);
+			}
+		}
+
+		player.getCooldowns().addCooldown(usingItem.getItem(), 15);
+	}
+
+
 }

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "item": "minecraft:paper"
+    },
+    "G": {
+      "item": "minecraft:ender_eye"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "PGP",
+    "PPP"
+  ],
+  "result": {
+    "item": "rpgworldmod:ender_eye_scroll"
+  },
+  "show_notification": true
+}

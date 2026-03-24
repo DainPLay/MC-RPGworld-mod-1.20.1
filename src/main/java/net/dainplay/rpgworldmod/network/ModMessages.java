@@ -190,6 +190,24 @@ public class ModMessages {
 				.encoder(RainyChunkSyncPacket::toBytes)
 				.consumerMainThread(RainyChunkSyncPacket::handle)
 				.add();
+
+		net.messageBuilder(S2CViewEyePacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.encoder(S2CViewEyePacket::encode)
+				.decoder(S2CViewEyePacket::decode)
+				.consumerMainThread(S2CViewEyePacket::handle)
+				.add();
+
+		net.messageBuilder(C2SEyeDestroyPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+				.encoder(C2SEyeDestroyPacket::encode)
+				.decoder(C2SEyeDestroyPacket::decode)
+				.consumerMainThread(C2SEyeDestroyPacket::handle)
+				.add();
+
+		net.messageBuilder(C2SEyeRotationPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+				.encoder(C2SEyeRotationPacket::encode)
+				.decoder(C2SEyeRotationPacket::decode)
+				.consumerMainThread(C2SEyeRotationPacket::handle)
+				.add();
 	}
 
 	public static <MSG> void sendToServer(MSG message) {

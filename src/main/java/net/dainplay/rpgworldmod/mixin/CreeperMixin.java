@@ -14,14 +14,22 @@ import java.util.stream.Collectors;
 public abstract class CreeperMixin {
 
     @Redirect(
-        method = "spawnLingeringCloud",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/Creeper;getActiveEffects()Ljava/util/Collection;")
+            method = "spawnLingeringCloud",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/Creeper;getActiveEffects()Ljava/util/Collection;")
     )
-    private Collection<MobEffectInstance> filterMosquitoingEffect(Creeper creeper) {
+    private Collection<MobEffectInstance> filterEffectsForCloud(Creeper creeper) {
         Collection<MobEffectInstance> original = creeper.getActiveEffects();
 
         return original.stream()
-                .filter(effect -> !effect.getEffect().equals(ModEffects.MOSQUITOING.get()))
+                .filter(effect -> {
+                    if (effect.getEffect().equals(ModEffects.MOSQUITOING.get())) {
+                        return false;
+                    }
+                    if (effect.getEffect().equals(ModEffects.PARALYSIS.get()) && effect.getAmplifier() == 21) {
+                        return false;
+                    }
+                    return true;
+                })
                 .collect(Collectors.toList());
     }
 }

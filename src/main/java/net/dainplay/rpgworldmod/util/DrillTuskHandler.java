@@ -35,8 +35,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import java.util.List;
 
 public class DrillTuskHandler {
-	static final RandomSource random = RandomSource.create();
-
 
 	public static List<BlockPos> resolve(PistonEvent.Pre event) {
 		List<BlockPos> toPush = Lists.newArrayList();
@@ -83,9 +81,6 @@ public class DrillTuskHandler {
 			return true;
 		} else {
 			int i = 1;
-			if (i + toPush.size() > 12) {
-				return false;
-			} else {
 				BlockState oldState;
 				while (blockstate.isStickyBlock()) {
 					BlockPos blockpos = pOriginPos.relative(pushDirection.getOpposite(), i);
@@ -96,9 +91,6 @@ public class DrillTuskHandler {
 					}
 
 					++i;
-					if (i + toPush.size() > 12) {
-						return false;
-					}
 				}
 
 				int l = 0;
@@ -132,22 +124,17 @@ public class DrillTuskHandler {
 					}
 
 					if (!PistonBaseBlock.isPushable(blockstate, (Level) level, blockpos1, pushDirection, true, pushDirection) || blockpos1.equals(pistonPos)) {
-						return false;
+						return true;
 					}
 
 					if (blockstate.getPistonPushReaction() == PushReaction.DESTROY) {
 						return true;
 					}
 
-					if (toPush.size() >= 12) {
-						return false;
-					}
-
 					toPush.add(blockpos1);
 					++l;
 					++j1;
 				}
-			}
 		}
 	}
 
@@ -188,16 +175,19 @@ public class DrillTuskHandler {
 		LevelAccessor level = event.getLevel();
 		List<BlockPos> toPush = resolve(event);
 		Direction movingDirection;
-		if (event.getPistonMoveType() == PistonEvent.PistonMoveType.EXTEND) movingDirection = event.getDirection();
-		else movingDirection = event.getDirection().getOpposite();
+		if (event.getPistonMoveType() == PistonEvent.PistonMoveType.EXTEND)
+			movingDirection = event.getDirection();
+		else
+			movingDirection = event.getDirection().getOpposite();
 
 		for (int i = 0; i <= toPush.size() - 1; i++) {
 			BlockPos pos = toPush.get(i);
 			BlockState blockstate = level.getBlockState(pos);
 
 			PistonStructureResolver sResolver = event.getStructureHelper();
-			assert sResolver != null;
+			if(sResolver == null) return;
 			sResolver.resolve();
+
 			if (blockstate.getBlock() instanceof DrillTuskBlock && DrillTuskBlock.getConnectedDirection(blockstate) != event.getDirection()) {
 				if (sResolver.getToPush().contains(pos)) {
 					Block.dropResources(blockstate, level, pos, null);
@@ -205,36 +195,50 @@ public class DrillTuskHandler {
 					level.gameEvent(GameEvent.BLOCK_DESTROY, pos, GameEvent.Context.of(blockstate));
 				}
 			} else {
-				if (sResolver.getToPush().contains(pos))
+				if (sResolver.getToPush().contains(pos)) {
 					if (blockstate.getBlock() instanceof DrillTuskBlock && DrillTuskBlock.getConnectedDirection(blockstate) == movingDirection) {
 						BlockPos pos1 = pos.relative(movingDirection);
 						BlockState blockstate1 = level.getBlockState(pos1);
 
 						if (blockstate1.getBlock().getExplosionResistance(blockstate1, level, pos1, null) < 20F) {
-							if (blockstate1.is(Tags.Blocks.ORES))
-								for (ServerPlayer serverplayer : level.getEntitiesOfClass(ServerPlayer.class, new AABB(pos1).inflate(10.0D, 5.0D, 10.0D))) {
-									ModAdvancements.DRILL_TUSK_ORE.trigger(serverplayer);
+							// Серверная часть
+							if (!level.isClientSide() && level instanceof ServerLevel serverLevel) {
+								if (blockstate1.is(Tags.Blocks.ORES)) {
+									for (ServerPlayer serverplayer : level.getEntitiesOfClass(ServerPlayer.class, new AABB(pos1).inflate(10.0D, 5.0D, 10.0D))) {
+										ModAdvancements.DRILL_TUSK_ORE.trigger(serverplayer);
+									}
 								}
-							if (level.isClientSide())
+
+								if (blockstate.getBlock() instanceof QuartziteDrillTuskBlock) {
+									ItemStack silkTouchTool = new ItemStack(Items.DIAMOND_PICKAXE);
+									silkTouchTool.enchant(Enchantments.SILK_TOUCH, 1);
+
+									LootParams.Builder lootparams$builder = (new LootParams.Builder(serverLevel))
+											.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos1))
+											.withParameter(LootContextParams.TOOL, silkTouchTool);
+									List<ItemStack> drops = blockstate1.getDrops(lootparams$builder);
+
+									for (ItemStack itemStack : drops) {
+										Block.popResource(serverLevel, pos1, itemStack);
+									}
+								} else {
+									Block.dropResources(blockstate1, level, pos1, null);
+								}
+							}
+
+							// Клиентская часть (звук и эффект разрушения)
+							if (level.isClientSide()) {
 								((ClientLevel) level).addDestroyBlockEffect(pos1, blockstate1);
-							if (blockstate.getBlock() instanceof QuartziteDrillTuskBlock) {
-								ItemStack silkTouchTool = new ItemStack(Items.DIAMOND_PICKAXE);
-								silkTouchTool.enchant(Enchantments.SILK_TOUCH, 1);
+							}
 
-								LootParams.Builder lootparams$builder = (new LootParams.Builder((ServerLevel) level)).withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos1)).withParameter(LootContextParams.TOOL, silkTouchTool);
-								List<ItemStack> drops = blockstate1.getDrops(lootparams$builder);
-
-								for (ItemStack itemStack : drops) {
-									Block.popResource((Level) level, pos1, itemStack);
-								}
-							} else Block.dropResources(blockstate1, level, pos1, null);
-							level.playSound(null, pos1, RPGSounds.DRILL.get(), SoundSource.BLOCKS, 0.5F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
+							level.playSound(null, pos1, RPGSounds.DRILL.get(), SoundSource.BLOCKS, 0.5F,
+									(level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2F + 1.0F);
 							level.setBlock(pos1, Blocks.AIR.defaultBlockState(), 18);
 							level.gameEvent(GameEvent.BLOCK_DESTROY, pos1, GameEvent.Context.of(blockstate1));
 						}
 					}
+				}
 			}
-
 		}
 	}
 }

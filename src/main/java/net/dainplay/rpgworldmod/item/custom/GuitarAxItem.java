@@ -36,7 +36,6 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GuitarAxItem extends AxeItem implements RPGtooltip {
-    protected final RandomSource random = RandomSource.create();
     public GuitarAxItem(Tier pTier, int pAttackDamageModifier, float pAttackSpeedModifier, Properties pProperties) {
         super(pTier, pAttackDamageModifier, pAttackSpeedModifier, pProperties);
     }
@@ -54,7 +53,7 @@ public class GuitarAxItem extends AxeItem implements RPGtooltip {
         pStack.hurtAndBreak(2, pAttacker, (p_41007_) -> {
             p_41007_.broadcastBreakEvent(EquipmentSlot.MAINHAND);
         });
-        pAttacker.level().playSound(null, pTarget.blockPosition(), RPGSounds.GUITAR_AX_PLAY.get(), SoundSource.PLAYERS, volume(pStack), (random.nextFloat() - random.nextFloat()) * 0.05F + 1.0F);
+        pAttacker.level().playSound(null, pTarget.blockPosition(), RPGSounds.GUITAR_AX_PLAY.get(), SoundSource.PLAYERS, volume(pStack), (pAttacker.getRandom().nextFloat() - pAttacker.getRandom().nextFloat()) * 0.05F + 1.0F);
         Level pLevel = pAttacker.level();
         LivingEntity pPlayer = pAttacker;
         AtomicBoolean skip = new AtomicBoolean(false);
@@ -97,7 +96,7 @@ public class GuitarAxItem extends AxeItem implements RPGtooltip {
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
         ItemStack itemstack = pPlayer.getItemInHand(pUsedHand);
         if(pUsedHand.equals(InteractionHand.OFF_HAND)) {
-            pLevel.playSound(pPlayer, pPlayer.blockPosition(), RPGSounds.GUITAR_AX_PLAY.get(), SoundSource.PLAYERS, volume(itemstack), (random.nextFloat() - random.nextFloat()) * 0.05F + 1.0F);
+            pLevel.playSound(pPlayer, pPlayer.blockPosition(), RPGSounds.GUITAR_AX_PLAY.get(), SoundSource.PLAYERS, volume(itemstack), (pPlayer.getRandom().nextFloat() - pPlayer.getRandom().nextFloat()) * 0.05F + 1.0F);
             if(!pLevel.isClientSide) ((ServerLevel) pLevel).sendParticles(ParticleTypes.SONIC_BOOM, pPlayer.getX(), pPlayer.getY(0.5D), pPlayer.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
             if(!pLevel.isClientSide) pPlayer.getCooldowns().addCooldown(this, 20);
             pPlayer.swing(InteractionHand.MAIN_HAND);

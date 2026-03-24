@@ -181,6 +181,7 @@ public class ModSounds
         SPELL_ALTERATION_START = registerSound("rpgworldmod.spell.alteration_start");
         SPELL_ALTERATION_LOOP = registerSound("rpgworldmod.spell.alteration_loop");
         SPELL_ALTERATION_STOP = registerSound("rpgworldmod.spell.alteration_stop");
+        SPELL_ALTERATION_CAST = registerSound("rpgworldmod.spell.alteration_cast");
         SPELL_ILLUSION_START = registerSound("rpgworldmod.spell.illusion_start");
         SPELL_ILLUSION_LOOP = registerSound("rpgworldmod.spell.illusion_loop");
         SPELL_ILLUSION_STOP = registerSound("rpgworldmod.spell.illusion_stop");
@@ -206,6 +207,9 @@ public class ModSounds
         SPELL_DESTRUCTION_HEART_OF_THE_SEA_CAST = registerSound("rpgworldmod.spell.destruction_heart_of_the_sea_cast");
         STAFF_HEART_OF_THE_SEA_ITEM = registerSound("rpgworldmod.staff_heart_of_the_sea.item");
         STAFF_NETHER_STAR_ITEM = registerSound("rpgworldmod.staff_nether_star.item");
+        SPELL_DESTRUCTION_ENDER_EYE_START = registerSound("rpgworldmod.spell.destruction_ender_eye_start");
+        SPELL_DESTRUCTION_ENDER_EYE_LOOP = registerSound("rpgworldmod.spell.destruction_ender_eye_loop");
+        SPELL_DESTRUCTION_ENDER_EYE_STOP = registerSound("rpgworldmod.spell.destruction_ender_eye_stop");
     }
 
     private static RegistryObject<SoundEvent> registerSound(String name)

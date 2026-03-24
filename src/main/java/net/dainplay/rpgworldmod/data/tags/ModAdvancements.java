@@ -54,6 +54,12 @@ public class ModAdvancements {
     public static final SpellIllusionHeartOfTheSeaTrigger SPELL_ILLUSION_HEART_OF_THE_SEA_TRIGGER = CriteriaTriggers.register(new SpellIllusionHeartOfTheSeaTrigger());
     public static final SpellConjurationHeartOfTheSeaTrigger SPELL_CONJURATION_HEART_OF_THE_SEA_TRIGGER = CriteriaTriggers.register(new SpellConjurationHeartOfTheSeaTrigger());
     public static final SpellNecromancyHeartOfTheSeaTrigger SPELL_NECROMANCY_HEART_OF_THE_SEA_TRIGGER = CriteriaTriggers.register(new SpellNecromancyHeartOfTheSeaTrigger());
+    public static final SpellDestructionEnderEyeTrigger SPELL_DESTRUCTION_ENDER_EYE_TRIGGER = CriteriaTriggers.register(new SpellDestructionEnderEyeTrigger());
+    public static final SpellRestorationEnderEyeTrigger SPELL_RESTORATION_ENDER_EYE_TRIGGER = CriteriaTriggers.register(new SpellRestorationEnderEyeTrigger());
+    public static final SpellAlterationEnderEyeTrigger SPELL_ALTERATION_ENDER_EYE_TRIGGER = CriteriaTriggers.register(new SpellAlterationEnderEyeTrigger());
+    public static final SpellIllusionEnderEyeTrigger SPELL_ILLUSION_ENDER_EYE_TRIGGER = CriteriaTriggers.register(new SpellIllusionEnderEyeTrigger());
+    public static final SpellConjurationEnderEyeTrigger SPELL_CONJURATION_ENDER_EYE_TRIGGER = CriteriaTriggers.register(new SpellConjurationEnderEyeTrigger());
+    public static final SpellNecromancyEnderEyeTrigger SPELL_NECROMANCY_ENDER_EYE_TRIGGER = CriteriaTriggers.register(new SpellNecromancyEnderEyeTrigger());
     public static final UseRainSpellInEndTrigger USE_RAIN_SPELL_IN_END_TRIGGER = CriteriaTriggers.register(new UseRainSpellInEndTrigger());
     public static final ChestStaffsTrigger CHEST_STAFFS_TRIGGER = CriteriaTriggers.register(new ChestStaffsTrigger());
 

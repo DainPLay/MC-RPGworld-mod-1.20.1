@@ -218,18 +218,17 @@ public class ModRenderTypes extends RenderType {
 
 	public static final RenderType GLOWING_OUTLINE = RenderType.create(
 			"glowing_outline",
-			com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR_NORMAL,
-			com.mojang.blaze3d.vertex.VertexFormat.Mode.LINES,
+			DefaultVertexFormat.POSITION_COLOR_NORMAL,
+			VertexFormat.Mode.LINES,
 			256,
 			RenderType.CompositeState.builder()
 					.setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeLinesShader))
 					.setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty()))
 					.setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
-					.setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-					.setOutputState(RenderStateShard.ITEM_ENTITY_TARGET)
-					.setWriteMaskState(RenderStateShard.COLOR_WRITE) // только цвет, без глубины
+					.setTransparencyState(RenderStateShard.NO_TRANSPARENCY)   // <-- изменено
+					.setWriteMaskState(RenderStateShard.COLOR_WRITE)
 					.setCullState(RenderStateShard.NO_CULL)
-					.setDepthTestState(RenderStateShard.NO_DEPTH_TEST) // отключаем тест глубины -> видно сквозь стены
+					.setDepthTestState(RenderStateShard.NO_DEPTH_TEST)
 					.createCompositeState(false)
 	);
 }

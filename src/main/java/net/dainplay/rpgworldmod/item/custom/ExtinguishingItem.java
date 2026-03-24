@@ -15,7 +15,6 @@ import net.minecraft.world.level.block.Block;
 import java.util.Properties;
 
 public class ExtinguishingItem extends Item {
-    protected final RandomSource random = RandomSource.create();
     public ExtinguishingItem(Properties p_41580_) {
         super(p_41580_);
     }

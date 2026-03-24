@@ -7,14 +7,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -29,16 +33,42 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class GasbassItem extends Item {
-    // Константа для ключа биома Rie Weald (замените на актуальный путь к вашему биому)
     private static final ResourceKey<Biome> RIE_WEALD_KEY = ResourceKey.create(Registries.BIOME,
             new ResourceLocation(RPGworldMod.MOD_ID, "rie_weald"));
-
-    // Или используйте тег, если у вас есть тег для этого биома:
-    // private static final TagKey<Biome> RIE_WEALD_TAG = TagKey.create(Registries.BIOME,
-    //     new ResourceLocation(RPGworldMod.MOD_ID, "rie_weald"));
+    private static final String USE_DURATION_TAG = "gasbass_use_duration";
 
     public GasbassItem(Item.Properties pProperties) {
         super(pProperties);
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack) {
+        if (stack.hasTag() && stack.getTag().contains(USE_DURATION_TAG)) {
+            return stack.getTag().getInt(USE_DURATION_TAG);
+        }
+        return 32; // значение по умолчанию
+    }
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+
+        // Определяем длительность использования и сохраняем в NBT
+        int duration = calculateUseDuration(player);
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putInt(USE_DURATION_TAG, duration);
+        stack.setTag(tag);
+
+        return super.use(level, player, hand);
+    }
+
+    private int calculateUseDuration(Player player) {
+        boolean pvpCooldownDisabled = player.level().getGameRules().getBoolean(RPGworldMod.DISABLE_GASBASS_PVP_COOLDOWN);
+        if (pvpCooldownDisabled) {
+            return 32;
+        } else {
+            boolean recentlyHurt = player.getLastDamageSource() != null;
+            return recentlyHurt ? 120 : 32;
+        }
     }
 
     /**
@@ -278,5 +308,10 @@ public class GasbassItem extends Item {
                     0.0, 0.02, 0.0
             );
         }
+    }
+
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return !ItemStack.isSameItem(oldStack, newStack);
     }
 }

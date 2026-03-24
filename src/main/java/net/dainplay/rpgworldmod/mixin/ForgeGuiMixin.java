@@ -1,13 +1,20 @@
 package net.dainplay.rpgworldmod.mixin;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.gui.ManaOverlayEventHandler;
 import net.dainplay.rpgworldmod.network.ClientEntPositionData;
 import net.dainplay.rpgworldmod.network.ClientMaxManaData;
+import net.dainplay.rpgworldmod.util.ClientEyeViewHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -15,6 +22,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Optional;
 
 @Mixin(ForgeGui.class)
 public class ForgeGuiMixin {
@@ -26,7 +35,7 @@ public class ForgeGuiMixin {
     @Unique
     private boolean rpgworldmod$wasEntDataNull = true;
 
-    @Inject(method = "render", at = @At(value = "TAIL"))
+    @Inject(method = "render", at = @At(value = "HEAD"))
     private void renderParalysisCheck(GuiGraphics guiGraphics, float partialTick, CallbackInfo ci) {
         Minecraft mc = Minecraft.getInstance();
 
@@ -78,6 +87,11 @@ public class ForgeGuiMixin {
             rpgworldmod$lastRenderTime = 0L;
             rpgworldmod$wasEntDataNull = true;
         }
+
+        // Рендерим оверлей, если камера внутри твёрдого непрозрачного блока
+        if (ClientEyeViewHandler.isActive()) {
+            renderBlockOverlay(guiGraphics, mc);
+        }
     }
 
     @ModifyVariable(
@@ -95,4 +109,61 @@ public class ForgeGuiMixin {
         }
         return height;
     }
+
+    /**
+     * Проверяет, находится ли камера внутри твёрдого непрозрачного блока.
+     * Если да – рисует текстуру этого блока на весь экран.
+     */
+    @Unique
+    private void renderBlockOverlay(GuiGraphics guiGraphics, Minecraft mc) {
+        if (mc.player == null || mc.level == null) return;
+
+        // Позиция камеры
+        var camera = mc.gameRenderer.getMainCamera();
+        BlockPos pos = camera.getBlockPosition();
+        BlockState blockState = mc.level.getBlockState(pos);
+
+        // Проверяем, что блок существует, твёрдый и непрозрачный
+        if (!blockState.isAir() && blockState.isSolidRender(mc.level, pos) && blockState.isSolid()) {
+            ResourceLocation texture = getBlockTexture(blockState.getBlock());
+            int width = mc.getWindow().getGuiScaledWidth();
+            int height = mc.getWindow().getGuiScaledHeight();
+
+            RenderSystem.disableDepthTest();
+            RenderSystem.depthMask(false);
+            RenderSystem.defaultBlendFunc();
+
+            if (texture != null) {
+                // Рисуем текстуру блока полностью непрозрачной
+                guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+                guiGraphics.blit(texture, 0, 0, 0, 0, 0, width, height, width, height);
+            } else {
+                // Если текстура не найдена, рисуем чёрный квадрат (полностью непрозрачный)
+                guiGraphics.fill(0, 0, width, height, 0xFF000000);
+            }
+
+            // Затемнение на 95% – чёрный слой с альфой 0x95 (242/255 ≈ 0.95)
+            guiGraphics.fill(0, 0, width, height, 0xF2000000);
+
+            // Восстанавливаем цвет и настройки рендеринга
+            guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.depthMask(true);
+            RenderSystem.enableDepthTest();
+        }
+    }
+
+    /**
+     * Получает ResourceLocation текстуры блока, предполагая стандартный путь
+     * textures/block/{registry_path}.png.
+     */
+    @Unique
+    private ResourceLocation getBlockTexture(Block block) {
+        ResourceLocation key = BuiltInRegistries.BLOCK.getKey(block);
+        if (key == null) return null;
+        ResourceLocation location = new ResourceLocation(key.getNamespace(), "textures/block/" + key.getPath() + ".png");
+        // Проверяем существование ресурса
+        Optional<Resource> resource = Minecraft.getInstance().getResourceManager().getResource(location);
+        return resource.isPresent() ? location : null;
+    }
+
 }

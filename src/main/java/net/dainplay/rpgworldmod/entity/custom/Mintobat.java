@@ -251,7 +251,6 @@ public class Mintobat extends Monster {
         private int attackStep;
         private int attackTime;
         private int lastSeen;
-        protected final RandomSource random = RandomSource.create();
 
         public MintobatAttackGoal(net.dainplay.rpgworldmod.entity.custom.Mintobat p_32247_) {
             this.mintobat = p_32247_;
@@ -327,7 +326,7 @@ public class Mintobat extends Monster {
 
                         if (this.attackStep > 1) {
                             if (!this.mintobat.isSilent()) {
-                                this.mintobat.playSound(RPGSounds.MINTOBAT_ATTACK.get(), 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+                                this.mintobat.playSound(RPGSounds.MINTOBAT_ATTACK.get(), 1.0F, (this.mintobat.getRandom().nextFloat() - this.mintobat.getRandom().nextFloat()) * 0.2F + 1.0F);
                             }
 
 

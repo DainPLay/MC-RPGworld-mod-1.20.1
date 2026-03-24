@@ -98,9 +98,9 @@ public class FairapierWiltedPlantBlock extends BaseEntityBlock implements net.mi
                     double d0 = (double) EntityType.ITEM.getWidth();
                     double d1 = 1.0D - d0;
                     double d2 = d0 / 2.0D;
-                    double d3 = Math.floor(pPos.getX()) + RandomSource.create().nextDouble() * d1 + d2;
-                    double d4 = Math.floor(pPos.getY()) + RandomSource.create().nextDouble() * d1;
-                    double d5 = Math.floor(pPos.getZ()) + RandomSource.create().nextDouble() * d1 + d2;
+                    double d3 = Math.floor(pPos.getX()) + pLevel.getRandom().nextDouble() * d1 + d2;
+                    double d4 = Math.floor(pPos.getY()) + pLevel.getRandom().nextDouble() * d1;
+                    double d5 = Math.floor(pPos.getZ()) + pLevel.getRandom().nextDouble() * d1 + d2;
                     ItemStack itemstack1 = itemstack.copy();
                     ItemEntity itementity = new ItemEntity(pLevel, d3, d4, d5, itemstack1);
                     itementity.setDefaultPickUpDelay();

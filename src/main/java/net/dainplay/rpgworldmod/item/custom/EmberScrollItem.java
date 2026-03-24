@@ -71,6 +71,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1082,45 +1083,59 @@ public class EmberScrollItem extends ScrollItem {
 		int radius = 5;
 		int radiusSquared = radius * radius;
 
-		BlockPos nearestLavaPos = null;
-		double nearestDistance = Double.MAX_VALUE;
+		List<BlockPos> lavaSources = new ArrayList<>();
+		List<BlockPos> flowingLavas = new ArrayList<>();
 
-		// Ищем ближайший блок лавы в радиусе
+		// Собираем все блоки с лавой в радиусе
 		for (int x = -radius; x <= radius; x++) {
 			for (int y = -radius; y <= radius; y++) {
 				for (int z = -radius; z <= radius; z++) {
 					BlockPos checkPos = playerPos.offset(x, y, z);
-					double distance = playerPos.distSqr(checkPos);
-
-					// Проверяем, что блок находится в сферическом радиусе
-					if (distance <= radiusSquared) {
-						BlockState state = level.getBlockState(checkPos);
+					if (playerPos.distSqr(checkPos) <= radiusSquared) {
 						FluidState fluidState = level.getFluidState(checkPos);
-
-						// Проверяем, является ли блок лавой (источником или текущей)
-						boolean isLavaSource = state.is(Blocks.LAVA) && fluidState.isSource();
-						boolean isFlowingLava = fluidState.is(FluidTags.LAVA) && !fluidState.isSource();
-
-						if ((isLavaSource || isFlowingLava) && distance < nearestDistance) {
-							nearestLavaPos = checkPos;
-							nearestDistance = distance;
+						if (fluidState.is(FluidTags.LAVA)) {
+							if (fluidState.isSource()) {
+								lavaSources.add(checkPos);
+							} else {
+								flowingLavas.add(checkPos);
+							}
 						}
 					}
 				}
 			}
 		}
 
-		// Если нашли блок лавы, удаляем его
-		if (nearestLavaPos != null) {
-			// Удаляем блок лавы
-			level.setBlockAndUpdate(nearestLavaPos, Blocks.AIR.defaultBlockState());
-			if(player instanceof ServerPlayer serverPlayer) ModAdvancements.SPELL_ALTERATION_EMBER_TRIGGER.trigger(serverPlayer);
+		// Сортируем по расстоянию до игрока (ближайшие первые)
+		lavaSources.sort(Comparator.comparingDouble(playerPos::distSqr));
+		flowingLavas.sort(Comparator.comparingDouble(playerPos::distSqr));
 
-			// Спавним частицы дыма для визуального эффекта
-			level.sendParticles(ParticleTypes.SMOKE,
-					nearestLavaPos.getX() + 0.5, nearestLavaPos.getY() + 0.5, nearestLavaPos.getZ() + 0.5,
-					5, 0.2, 0.2, 0.2, 0.05);
+		boolean removedAny = false;
+
+		// Удаляем один ближайший источник, если есть
+		if (!lavaSources.isEmpty()) {
+			BlockPos sourcePos = lavaSources.get(0);
+			removeLavaAt(level, sourcePos);
+			removedAny = true;
 		}
+
+		// Удаляем один ближайший текучий блок, если есть
+		if (!flowingLavas.isEmpty()) {
+			BlockPos flowingPos = flowingLavas.get(0);
+			removeLavaAt(level, flowingPos);
+			removedAny = true;
+		}
+
+		// Триггер вызывается, если удалили хотя бы один блок
+		if (removedAny && player instanceof ServerPlayer serverPlayer) {
+			ModAdvancements.SPELL_ALTERATION_EMBER_TRIGGER.trigger(serverPlayer);
+		}
+	}
+
+	private static void removeLavaAt(ServerLevel level, BlockPos pos) {
+		level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+		level.sendParticles(ParticleTypes.SMOKE,
+				pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+				5, 0.2, 0.2, 0.2, 0.05);
 	}
 
 	private static void processLavaAlteration(ServerLevel level, Player player) {

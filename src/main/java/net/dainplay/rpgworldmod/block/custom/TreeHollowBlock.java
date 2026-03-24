@@ -86,7 +86,7 @@ public class TreeHollowBlock extends BaseEntityBlock {
 					pLevel.setBlockAndUpdate(pPos, ModBlocks.ENT_FACE.get().defaultBlockState().setValue(FACING, pState.getValue(FACING)));
 					if (pLevel.getBlockEntity(pPos) instanceof EntFaceBlockEntity be) be.wakeUp();
 				} else {
-					if (TreeHollowBlockEntity.getItem(0).getItem() instanceof SpawnEggItem || TreeHollowBlockEntity.getItem(0).isEmpty()) {
+					if (TreeHollowBlockEntity.getItem(0).getItem() instanceof SpawnEggItem) {
 						dispenseMob(pLevel, pPos, pState, pPlayer, pHit);
 					} else {
 						dispenseItem(pLevel, pPos, pState);
@@ -124,14 +124,13 @@ public class TreeHollowBlock extends BaseEntityBlock {
 				TreeHollowBlockEntity TreeHollowBlockEntity = (TreeHollowBlockEntity) blockentity;
 				ItemStack itemstack = TreeHollowBlockEntity.getItem(0);
 				TreeHollowBlockEntity.clearContent();
-				Item item;
-				if (!itemstack.isEmpty()) item = itemstack.getItem();
-				else item = ModItems.BIBBIT_SPAWN_EGG.get();
-				EntityType<?> entityType = (((SpawnEggItem) item).getType(itemstack.getTag()));
-				BlockPos blockpos = pHit.getBlockPos();
-				pLevel.playSound((Player) null, pPos, RPGSounds.TREE_HOLLOW_GET.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
-				entityType.spawn((ServerLevel) pLevel, itemstack, pPlayer, blockpos.relative(pState.getValue(FACING)), MobSpawnType.DISPENSER, false, false);
-
+				if (!itemstack.isEmpty()) {
+					Item item = itemstack.getItem();
+					EntityType<?> entityType = (((SpawnEggItem) item).getType(itemstack.getTag()));
+					BlockPos blockpos = pHit.getBlockPos();
+					pLevel.playSound((Player) null, pPos, RPGSounds.TREE_HOLLOW_GET.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+					entityType.spawn((ServerLevel) pLevel, itemstack, pPlayer, blockpos.relative(pState.getValue(FACING)), MobSpawnType.DISPENSER, false, false);
+				}
 			}
 		}
 	}
@@ -166,13 +165,13 @@ public class TreeHollowBlock extends BaseEntityBlock {
 			if (blockentity instanceof TreeHollowBlockEntity) {
 				TreeHollowBlockEntity TreeHollowBlockEntity = (TreeHollowBlockEntity) blockentity;
 				ItemStack itemstack = TreeHollowBlockEntity.getItem(0);
-				Item item;
-				if (!itemstack.isEmpty()) item = itemstack.getItem();
-				else item = ModItems.BIBBIT_SPAWN_EGG.get();
-				pLevel.playSound((Player) null, pPos, RPGSounds.TREE_HOLLOW_GET.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
-				TreeHollowBlockEntity.clearContent();
-				EntityType<?> entityType = (((SpawnEggItem) item).getType(itemstack.getTag()));
-				entityType.spawn((ServerLevel) pLevel, itemstack, pPlayer, pPos, MobSpawnType.DISPENSER, false, false);
+				if (!itemstack.isEmpty()) {
+					Item item = itemstack.getItem();
+					pLevel.playSound((Player) null, pPos, RPGSounds.TREE_HOLLOW_GET.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+					TreeHollowBlockEntity.clearContent();
+					EntityType<?> entityType = (((SpawnEggItem) item).getType(itemstack.getTag()));
+					entityType.spawn((ServerLevel) pLevel, itemstack, pPlayer, pPos, MobSpawnType.DISPENSER, false, false);
+				}
 			}
 		}
 	}
@@ -190,9 +189,9 @@ public class TreeHollowBlock extends BaseEntityBlock {
 					double d0 = (double) EntityType.ITEM.getWidth();
 					double d1 = 1.0D - d0;
 					double d2 = d0 / 2.0D;
-					double d3 = Math.floor(pPos.getX()) + RandomSource.create().nextDouble() * d1 + d2;
-					double d4 = Math.floor(pPos.getY()) + RandomSource.create().nextDouble() * d1;
-					double d5 = Math.floor(pPos.getZ()) + RandomSource.create().nextDouble() * d1 + d2;
+					double d3 = Math.floor(pPos.getX()) + pLevel.getRandom().nextDouble() * d1 + d2;
+					double d4 = Math.floor(pPos.getY()) + pLevel.getRandom().nextDouble() * d1;
+					double d5 = Math.floor(pPos.getZ()) + pLevel.getRandom().nextDouble() * d1 + d2;
 					ItemStack itemstack1 = itemstack.copy();
 					ItemEntity itementity = new ItemEntity(pLevel, d3, d4, d5, itemstack1);
 					itementity.setDefaultPickUpDelay();
@@ -214,10 +213,10 @@ public class TreeHollowBlock extends BaseEntityBlock {
 				pLevel.setBlockAndUpdate(pPos, ModBlocks.ENT_FACE.get().defaultBlockState().setValue(FACING, pState.getValue(FACING)));
 				if (pLevel.getBlockEntity(pPos) instanceof EntFaceBlockEntity be) be.wakeUp();
 			} else {
-				if (TreeHollowBlockEntity.getItem(0).getItem() instanceof SpawnEggItem || (TreeHollowBlockEntity.getItem(0).isEmpty() && TreeHollowBlockEntity.getBlockState().getValue(HAS_CONTENTS))) {
+				if (TreeHollowBlockEntity.getItem(0).getItem() instanceof SpawnEggItem) {
 					dropMob(pLevel, pPos, null);
 				} else {
-					this.dropItem(pLevel, pPos);
+					dropItem(pLevel, pPos);
 				}
 				super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
 			}

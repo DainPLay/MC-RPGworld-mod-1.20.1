@@ -217,7 +217,7 @@ public class LivingWoodStaffItem extends StaffItem implements ChooseTargetItem {
 							RPGSounds.STAFF_NETHER_STAR_CAST.get(),
 							SoundSource.PLAYERS, 0.5F, 1.0F
 					);
-					target.addEffect(new MobEffectInstance(MobEffects.WITHER, 200, 1));
+					target.addEffect(new MobEffectInstance(MobEffects.WITHER, 140, 1));
 				}
 			}
 			break;

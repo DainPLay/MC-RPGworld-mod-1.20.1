@@ -13,7 +13,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import java.util.UUID;
 
 public class ParanoiaEffect extends MobEffect {
-	protected final RandomSource random = RandomSource.create();
 
 	public ParanoiaEffect(MobEffectCategory mobEffectCategory, int color) {
 		super(mobEffectCategory, color);

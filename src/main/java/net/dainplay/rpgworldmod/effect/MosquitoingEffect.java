@@ -25,7 +25,6 @@ import net.minecraft.world.phys.Vec3;
 import java.util.UUID;
 
 public class MosquitoingEffect extends MobEffect {
-    protected final RandomSource random = RandomSource.create();
     public MosquitoingEffect(MobEffectCategory mobEffectCategory, int color) {
         super(mobEffectCategory, color);
     }
@@ -57,7 +56,7 @@ public class MosquitoingEffect extends MobEffect {
             if (duration == -1) duration = entity.tickCount;
 
             if (duration % 60 == 0) {
-                level.playSound(entity, entity.blockPosition(), RPGSounds.MOSQUITO_SWARM_AMBIENT.get(), SoundSource.PLAYERS, 1F, (random.nextFloat() - random.nextFloat()) * 0.05F + 1.0F);
+                level.playSound(entity, entity.blockPosition(), RPGSounds.MOSQUITO_SWARM_AMBIENT.get(), SoundSource.PLAYERS, 1F, (entity.getRandom().nextFloat() - entity.getRandom().nextFloat()) * 0.05F + 1.0F);
             }
             if (duration % 5 == 0) {
                 spawnParticles(entity);

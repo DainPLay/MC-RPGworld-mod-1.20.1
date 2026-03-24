@@ -48,6 +48,30 @@
     "spell_necromancy_heart_of_the_sea": {
       "conditions": {},
       "trigger": "rpgworldmod:spell_necromancy_heart_of_the_sea"
+    },
+    "spell_destruction_ender_eye": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_destruction_ender_eye"
+    },
+    "spell_restoration_ender_eye": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_restoration_ender_eye"
+    },
+    "spell_alteration_ender_eye": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_alteration_ender_eye"
+    },
+    "spell_illusion_ender_eye": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_illusion_ender_eye"
+    },
+    "spell_conjuration_ender_eye": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_conjuration_ender_eye"
+    },
+    "spell_necromancy_ender_eye": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_necromancy_ender_eye"
     }
   },
   "display": {
@@ -102,10 +126,28 @@
     ],
     [
       "spell_necromancy_heart_of_the_sea"
+    ],
+    [
+      "spell_destruction_ender_eye"
+    ],
+    [
+      "spell_restoration_ender_eye"
+    ],
+    [
+      "spell_alteration_ender_eye"
+    ],
+    [
+      "spell_illusion_ender_eye"
+    ],
+    [
+      "spell_conjuration_ender_eye"
+    ],
+    [
+      "spell_necromancy_ender_eye"
     ]
   ],
   "rewards": {
-    "experience": 120
+    "experience": 180
   },
   "sends_telemetry_event": true
 }

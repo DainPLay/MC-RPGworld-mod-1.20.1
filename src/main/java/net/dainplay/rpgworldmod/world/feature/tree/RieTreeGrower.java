@@ -12,12 +12,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 
 public class RieTreeGrower extends AbstractTreeGrower {
-    protected RandomSource random = RandomSource.create(21);
     @Nullable
     @Override
     protected ResourceKey<ConfiguredFeature<?, ?>> getConfiguredFeature(RandomSource pRandom, boolean p_204308_) {
         if (pRandom.nextInt(10) == 0) {
-            int random1 = random.nextInt(1);
+            int random1 = pRandom.nextInt(1);
             return switch (random1) {
                 case 0, 1 -> ModConfiguredFeatures.BIBBIT_HOLLOW_EAST_FANCY_RIE_TREE_KEY;
                 case 2, 3 -> ModConfiguredFeatures.BIBBIT_HOLLOW_WEST_FANCY_RIE_TREE_KEY;
@@ -30,7 +29,7 @@ public class RieTreeGrower extends AbstractTreeGrower {
                 default -> ModConfiguredFeatures.FANCY_RIE_TREE_KEY;
             };
         } else if (pRandom.nextInt(10) == 0) {
-            int random1 = random.nextInt(4);
+            int random1 = pRandom.nextInt(4);
             return switch (random1) {
                 case 0 -> ModConfiguredFeatures.ENT_FACE_EAST_KEY;
                 case 1 -> ModConfiguredFeatures.ENT_FACE_NORTH_KEY;
@@ -38,7 +37,7 @@ public class RieTreeGrower extends AbstractTreeGrower {
                 default -> ModConfiguredFeatures.ENT_FACE_WEST_KEY;
             };
         } else {
-            int random1 = random.nextInt(63);
+            int random1 = pRandom.nextInt(63);
             return switch (random1) {
                 case 0, 1 -> ModConfiguredFeatures.BIBBIT_HOLLOW_EAST_RIE_TREE_KEY;
                 case 2, 3 -> ModConfiguredFeatures.BIBBIT_HOLLOW_WEST_RIE_TREE_KEY;

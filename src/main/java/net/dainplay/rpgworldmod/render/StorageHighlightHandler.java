@@ -82,7 +82,7 @@ public class StorageHighlightHandler {
 
 	@SubscribeEvent
 	public static void onRenderLevelLast(RenderLevelStageEvent event) {
-		if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES) return;
+		if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) return;
 		Player player = Minecraft.getInstance().player;
 		Level level = Minecraft.getInstance().level;
 		if (player == null || level == null) return;
@@ -200,25 +200,19 @@ public class StorageHighlightHandler {
 		if (shape.isEmpty()) {
 			shape = Shapes.block();
 		}
-
-		VertexConsumer consumer = bufferSource.getBuffer(RenderType.LINES);
+		VertexConsumer consumer = bufferSource.getBuffer(ModRenderTypes.GLOWING_OUTLINE);
 		double camX = camera.getPosition().x;
 		double camY = camera.getPosition().y;
 		double camZ = camera.getPosition().z;
-
-		List<AABB> boxes = shape.toAabbs();
-		for (AABB box : boxes) {
-			double minX = pos.getX() + box.minX - camX;
-			double minY = pos.getY() + box.minY - camY;
-			double minZ = pos.getZ() + box.minZ - camZ;
-			double maxX = pos.getX() + box.maxX - camX;
-			double maxY = pos.getY() + box.maxY - camY;
-			double maxZ = pos.getZ() + box.maxZ - camZ;
-
-			LevelRenderer.renderLineBox(poseStack, consumer,
-					minX, minY, minZ, maxX, maxY, maxZ,
-					1.0f, 1.0f, 1.0f, 1.0f);
-		}
+		LevelRenderer.renderShape(
+				poseStack,
+				consumer,
+				shape,
+				pos.getX() - camX,
+				pos.getY() - camY,
+				pos.getZ() - camZ,
+				1.0f, 1.0f, 1.0f, 1.0f  // белый цвет (RGBA), полностью непрозрачный
+		);
 	}
 
 	// === Вспомогательные методы для геометрии и видимости ===

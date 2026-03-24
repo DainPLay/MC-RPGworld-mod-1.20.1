@@ -5,6 +5,7 @@ import net.dainplay.rpgworldmod.network.C2STriggerChestStaffsPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.util.ITriggerChestStaffs;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -69,6 +70,7 @@ public abstract class MixinAbstractContainerMenuClick implements ITriggerChestSt
         Set<String> uniqueKeys = new HashSet<>();
         for (Slot slot : menu.slots) {
             if (slot.container instanceof Inventory) continue;
+            if (slot instanceof CreativeModeInventoryScreen.CustomCreativeSlot) continue;
 
             ItemStack stack = slot.getItem();
             if (stack.getItem() instanceof StaffItem staff) {

@@ -513,8 +513,12 @@ public class EntFaceBlockEntity extends BlockEntity {
 		// Устанавливаем способность игроку
 		player.getCapability(PlayerIllusionForceProvider.PLAYER_ILLUSION_FORCE).ifPresent(illusionForce -> {
 			if (player instanceof ServerPlayer serverPlayer) {
-				illusionForce.setIllusionForce(serverPlayer, 3);
-				illusionForce.setEntPosition(serverPlayer, worldPosition);
+				illusionForce.setIllusionForce(serverPlayer, 3, true, true);
+				// Передаём координаты центра блока энта
+				illusionForce.setEntPosition(serverPlayer, true,
+						(float)worldPosition.getX() + 0.5f,
+						(float)worldPosition.getY() + 0.5f,
+						(float)worldPosition.getZ() + 0.5f, true);
 			}
 		});
 	}
@@ -522,11 +526,18 @@ public class EntFaceBlockEntity extends BlockEntity {
 	private boolean isPlayerUnderOtherEntIllusion(Player player) {
 		AtomicBoolean result = new AtomicBoolean(false);
 		player.getCapability(PlayerIllusionForceProvider.PLAYER_ILLUSION_FORCE).ifPresent(illusionForce -> {
-			// Если игрок уже находится под иллюзией и позиция энта не совпадает с нашим
-			if (illusionForce.getIllusionForce() > 0 &&
-					illusionForce.getEntPosition() != null &&
-					!illusionForce.getEntPosition().equals(worldPosition)) {
-				result.set(true);
+			// Если игрок уже находится под иллюзией и позиция энта задана
+			if (illusionForce.getIllusionForce() > 0) {
+				// Преобразуем сохранённые координаты в BlockPos центра блока
+				BlockPos otherEntPos = BlockPos.containing(
+						illusionForce.getEntPosX(),
+						illusionForce.getEntPosY(),
+						illusionForce.getEntPosZ()
+				);
+				// Сравниваем с текущим блоком энта (worldPosition)
+				if (!otherEntPos.equals(worldPosition)) {
+					result.set(true);
+				}
 			}
 		});
 		return result.get();

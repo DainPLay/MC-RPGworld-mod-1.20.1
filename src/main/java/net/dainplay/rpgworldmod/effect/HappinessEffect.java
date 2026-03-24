@@ -15,7 +15,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import java.util.UUID;
 
 public class HappinessEffect extends MobEffect {
-	protected final RandomSource random = RandomSource.create();
 
 	public HappinessEffect(MobEffectCategory mobEffectCategory, int color) {
 		super(mobEffectCategory, color);

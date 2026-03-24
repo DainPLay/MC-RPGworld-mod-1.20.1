@@ -32,7 +32,6 @@ import net.minecraft.world.phys.Vec3;
 import java.util.UUID;
 
 public class FuelingEffect extends MobEffect {
-    protected final RandomSource random = RandomSource.create();
     public FuelingEffect(MobEffectCategory mobEffectCategory, int color) {
         super(mobEffectCategory, color);
     }

@@ -91,6 +91,12 @@ public class RPGworldClient {
         BakedModel illusionHeartOfTheSeaScrollModel = null;
         BakedModel conjurationHeartOfTheSeaScrollModel = null;
         BakedModel necromancyHeartOfTheSeaScrollModel = null;
+        BakedModel alterationEnderEyeScrollModel = null;
+        BakedModel destructionEnderEyeScrollModel = null;
+        BakedModel restorationEnderEyeScrollModel = null;
+        BakedModel illusionEnderEyeScrollModel = null;
+        BakedModel conjurationEnderEyeScrollModel = null;
+        BakedModel necromancyEnderEyeScrollModel = null;
 
         BakedModel boundCampfireModel = null;
 
@@ -175,6 +181,30 @@ public class RPGworldClient {
                 necromancyHeartOfTheSeaScrollModel = new ScrollGlintItemModelSupport(originalModel);
             }
 
+            if (idString.contains("rpgworldmod:item/ender_eye_scroll_alteration")) {
+                alterationEnderEyeScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/ender_eye_scroll_destruction")) {
+                destructionEnderEyeScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/ender_eye_scroll_restoration")) {
+                restorationEnderEyeScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/ender_eye_scroll_illusion")) {
+                illusionEnderEyeScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/ender_eye_scroll_conjuration")) {
+                conjurationEnderEyeScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/ender_eye_scroll_necromancy")) {
+                necromancyEnderEyeScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
             if (idString.contains("rpgworldmod:item/bound_campfire")) {
                 boundCampfireModel = new ScrollGlintItemModelSupport(originalModel);
             }
@@ -220,6 +250,18 @@ public class RPGworldClient {
                         originalModel
                 ));
             }
+            if (idString.contains("rpgworldmod:ender_eye_scroll")) {
+                map.put(id, new ScrollGlintItemModel(
+                        originalModel,
+                        alterationEnderEyeScrollModel == null ? originalModel : alterationEnderEyeScrollModel,
+                        restorationEnderEyeScrollModel == null ? originalModel : restorationEnderEyeScrollModel,
+                        destructionEnderEyeScrollModel == null ? originalModel : destructionEnderEyeScrollModel,
+                        illusionEnderEyeScrollModel == null ? originalModel : illusionEnderEyeScrollModel,
+                        conjurationEnderEyeScrollModel == null ? originalModel : conjurationEnderEyeScrollModel,
+                        necromancyEnderEyeScrollModel == null ? originalModel : necromancyEnderEyeScrollModel,
+                        originalModel
+                ));
+            }
         }
     }
 
@@ -245,6 +287,12 @@ public class RPGworldClient {
         event.register(new ResourceLocation("rpgworldmod:item/heart_of_the_sea_scroll_alteration"));
         event.register(new ResourceLocation("rpgworldmod:item/heart_of_the_sea_scroll_conjuration"));
         event.register(new ResourceLocation("rpgworldmod:item/heart_of_the_sea_scroll_necromancy"));
+        event.register(new ResourceLocation("rpgworldmod:item/ender_eye_scroll_restoration"));
+        event.register(new ResourceLocation("rpgworldmod:item/ender_eye_scroll_destruction"));
+        event.register(new ResourceLocation("rpgworldmod:item/ender_eye_scroll_illusion"));
+        event.register(new ResourceLocation("rpgworldmod:item/ender_eye_scroll_alteration"));
+        event.register(new ResourceLocation("rpgworldmod:item/ender_eye_scroll_conjuration"));
+        event.register(new ResourceLocation("rpgworldmod:item/ender_eye_scroll_necromancy"));
     }
 
     @SubscribeEvent

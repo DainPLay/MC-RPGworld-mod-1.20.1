@@ -5,10 +5,12 @@ import net.dainplay.rpgworldmod.network.C2STriggerChestStaffsPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.util.ITriggerChestStaffs;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -80,6 +82,7 @@ public abstract class MixinAbstractContainerMenuClient implements ITriggerChestS
 		for (Slot slot : menu.slots) {
 			// Пропускаем инвентарь игрока
 			if (slot.container instanceof Inventory) continue;
+			if (slot instanceof CreativeModeInventoryScreen.CustomCreativeSlot) continue;
 
 			ItemStack stack = slot.getItem();
 			if (stack.getItem() instanceof StaffItem staff) {

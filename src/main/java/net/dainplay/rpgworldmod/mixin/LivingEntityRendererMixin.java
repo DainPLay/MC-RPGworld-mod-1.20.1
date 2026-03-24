@@ -16,10 +16,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LivingEntityRenderer.class)
 public class LivingEntityRendererMixin {
 
-    @Inject(method = "isShaking", at = @At(value = "HEAD"), cancellable = true)
-    private void renderParalysisCheck(LivingEntity p_115304_, CallbackInfoReturnable<Boolean> info) {
-        if (p_115304_.getAttribute(Attributes.MOVEMENT_SPEED).getModifier(ParalysisEffect.MODIFIER_UUID) != null) { //Movement speed
-            info.setReturnValue(true);
-        }
-    }
+	@Inject(method = "isShaking", at = @At(value = "HEAD"), cancellable = true)
+	private void renderParalysisCheck(LivingEntity livingEntity, CallbackInfoReturnable<Boolean> info) {
+		if (livingEntity.getAttribute(Attributes.MOVEMENT_SPEED).getModifier(ParalysisEffect.MODIFIER_UUID) != null) {
+			if (!livingEntity.getAttribute(Attributes.MOVEMENT_SPEED).getModifier(ParalysisEffect.MODIFIER_UUID).getName().equals("effect.rpgworldmod.paralysis 21"))
+				info.setReturnValue(true);
+		}
+	}
 }

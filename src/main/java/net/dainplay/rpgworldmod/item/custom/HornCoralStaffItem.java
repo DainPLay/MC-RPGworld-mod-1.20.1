@@ -4,13 +4,16 @@ import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.network.LoopSoundPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
+import net.dainplay.rpgworldmod.util.RemoteOpenContainerRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleMenuProvider;
@@ -28,12 +31,16 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
+import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 
 import java.util.Map;
@@ -88,7 +95,7 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 			AttributeModifier modifier = new AttributeModifier(
 					STAFF_REACH_MODIFIER_UUID,
 					"Staff reach",
-					1000.0, // достаточно большое число
+					64.0,
 					AttributeModifier.Operation.ADDITION
 			);
 			blockReach.addTransientModifier(modifier);
@@ -332,10 +339,26 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 								pos.getX(), pos.getY(), pos.getZ(),
 								RPGSounds.STAFF_ENDER_EYE_CAST.get(),
 								SoundSource.PLAYERS, 1.0F, 1.0F);
-						player.openMenu(new SimpleMenuProvider(
-								(id, inv, p) -> ChestMenu.threeRows(id, inv, player.getEnderChestInventory()),
-								Component.translatable("container.enderchest")
-						));
+						addStaffReachModifier(player);
+
+						BlockState state = player.level().getBlockState(pos);
+						Block block = state.getBlock();
+						BlockHitResult hitResult = new BlockHitResult(
+								new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5),
+								Direction.UP, pos, false
+						);
+						InteractionResult result = block.use(state, player.level(), pos, player, player.getUsedItemHand(), hitResult);
+
+						if (result.consumesAction()) {
+							RemoteOpenContainerRegistry.addOpener(player.level(), pos, player);
+						} else {
+							player.openMenu(new SimpleMenuProvider(
+									(id, inv, p) -> ChestMenu.threeRows(id, inv, player.getEnderChestInventory()),
+									Component.translatable("container.enderchest")
+							));
+							RemoteOpenContainerRegistry.addOpener(player.level(), pos, player);
+						}
+						player.getPersistentData().putLong("RPGLastEnderChestPos", pos.asLong());
 						break;
 
 					case HEART_OF_THE_SEA:
@@ -414,8 +437,11 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 								pos.getX(), pos.getY(), pos.getZ(),
 								RPGSounds.STAFF_EMBER_GEM_CAST.get(),
 								SoundSource.PLAYERS, 1.0F, 1.0F);
-						container.clearContent();           // очищает все слоты (для двойного сундука очистит оба)
-						container.setChanged();             // уведомляет об изменении
+						if (target instanceof RandomizableContainerBlockEntity rndContainer) {
+							rndContainer.unpackLootTable(player);
+						}
+						container.clearContent();
+						container.setChanged();
 						break;
 
 					case ENDER_EYE:
@@ -428,7 +454,20 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 								RPGSounds.STAFF_ENDER_EYE_CAST.get(),
 								SoundSource.PLAYERS, 1.0F, 1.0F);
 						addStaffReachModifier(player);
-						player.openMenu(menuProvider);      // открывает правильное меню (для двойного сундука – объединённое)
+						BlockState state = player.level().getBlockState(pos);
+						Block block = state.getBlock();
+						BlockHitResult hitResult = new BlockHitResult(
+								new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5),
+								Direction.UP, pos, false
+						);
+						InteractionResult result = block.use(state, player.level(), pos, player, player.getUsedItemHand(), hitResult);
+
+						if (result.consumesAction()) {
+							RemoteOpenContainerRegistry.addOpener(player.level(), pos, player);
+						} else {
+							player.openMenu(menuProvider);
+							RemoteOpenContainerRegistry.addOpener(player.level(), pos, player);
+						}
 						break;
 
 					case HEART_OF_THE_SEA:

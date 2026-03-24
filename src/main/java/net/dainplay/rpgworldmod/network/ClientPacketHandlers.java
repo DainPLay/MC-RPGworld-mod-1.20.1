@@ -4,6 +4,7 @@ import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.entity.custom.Razorleaf;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
+import net.dainplay.rpgworldmod.item.custom.EnderEyeScrollItem;
 import net.dainplay.rpgworldmod.item.custom.HeartOfTheSeaScrollItem;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.dainplay.rpgworldmod.sounds.LoopSound;
@@ -81,9 +82,9 @@ public class ClientPacketHandlers {
 	}
 
 	// --- Illusion Force ---
-	public static void handleIllusionForceSync(int illusionForce, BlockPos entPosition) {
-		ClientIllusionForceData.set(illusionForce);
-		ClientEntPositionData.set(entPosition);
+	public static void handleIllusionForceSync(int illusionForce, float entPositionX, float entPositionY, float entPositionZ, boolean isSet, boolean isEnt) {
+		ClientIllusionForceData.set(illusionForce, isEnt);
+		ClientEntPositionData.set(entPositionX, entPositionY, entPositionZ, isSet);
 	}
 
 	// --- Bound Entity ---
@@ -206,6 +207,18 @@ public class ClientPacketHandlers {
 			if (itemStack.getItem() instanceof HeartOfTheSeaScrollItem) {
 				if (itemStack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0)
 					soundEvent = RPGSounds.SPELL_DESTRUCTION_HEART_OF_THE_SEA_LOOP.get();
+				if (itemStack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0)
+					soundEvent = RPGSounds.SPELL_RESTORATION_LOOP.get();
+				if (itemStack.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0)
+					soundEvent = RPGSounds.SPELL_ALTERATION_LOOP.get();
+				if (itemStack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0)
+					soundEvent = RPGSounds.SPELL_ILLUSION_LOOP.get();
+				if (itemStack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0)
+					soundEvent = RPGSounds.SPELL_NECROMANCY_LOOP.get();
+			}
+			if (itemStack.getItem() instanceof EnderEyeScrollItem) {
+				if (itemStack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0)
+					soundEvent = RPGSounds.SPELL_DESTRUCTION_ENDER_EYE_LOOP.get();
 				if (itemStack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0)
 					soundEvent = RPGSounds.SPELL_RESTORATION_LOOP.get();
 				if (itemStack.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0)

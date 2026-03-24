@@ -7,7 +7,7 @@
         {
           "type": "minecraft:item",
           "name": "rpgworldmod:maskonite_upgrade_smithing_template",
-          "weight": 10
+          "weight": 20
         },
         {
           "type": "minecraft:item",
@@ -17,18 +17,18 @@
         {
           "type": "minecraft:item",
           "name": "rpgworldmod:mintobat_spawn_egg",
-          "weight": 24
+          "weight": 48
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:cobweb",
-          "weight": 7,
+          "weight": 14,
           "functions": []
         },
         {
           "type": "minecraft:item",
           "name": "rpgworldmod:quartzite",
-          "weight": 17,
+          "weight": 34,
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -42,7 +42,7 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:wheat",
-          "weight": 20,
+          "weight": 40,
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -56,7 +56,7 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:rotten_flesh",
-          "weight": 20,
+          "weight": 40,
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -66,6 +66,16 @@
               }
             }
           ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "rpgworldmod:music_disc_howling",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "rpgworldmod:leaves_armor_trim_smithing_template",
+          "weight": 1
         }
       ],
       "functions": []

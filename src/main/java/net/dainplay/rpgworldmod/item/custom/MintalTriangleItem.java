@@ -55,7 +55,6 @@ import java.util.function.Consumer;
 import static net.minecraft.world.level.block.Block.dropResources;
 
 public class MintalTriangleItem extends Item implements Vanishable, RPGtooltip {
-    protected final RandomSource random = RandomSource.create();
     public MintalTriangleItem(Properties pProperties) {
         super(pProperties);
     }
@@ -99,7 +98,7 @@ public class MintalTriangleItem extends Item implements Vanishable, RPGtooltip {
             setVibes(itemstack, 23);
             ModAdvancements.MINTAL_TRIANGLE_USED.trigger((ServerPlayer) pPlayer);
         }
-        pLevel.playSound(pPlayer, pPlayer.blockPosition(), RPGSounds.TRIANGLE_DING.get(), SoundSource.PLAYERS, volume(itemstack), (random.nextFloat() - random.nextFloat()) * 0.05F + 1.0F + pitch(itemstack));
+        pLevel.playSound(pPlayer, pPlayer.blockPosition(), RPGSounds.TRIANGLE_DING.get(), SoundSource.PLAYERS, volume(itemstack), (pPlayer.getRandom().nextFloat() - pPlayer.getRandom().nextFloat()) * 0.05F + 1.0F + pitch(itemstack));
 
         AtomicBoolean skip = new AtomicBoolean(false);
 

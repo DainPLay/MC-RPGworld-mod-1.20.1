@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
+import net.dainplay.rpgworldmod.entity.custom.EnderEyeViewEntity;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
 import net.dainplay.rpgworldmod.item.custom.ManaCostItem;
 import net.dainplay.rpgworldmod.item.custom.OrbitingItem;
@@ -33,6 +34,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.joml.Matrix4f;
@@ -82,6 +84,10 @@ public class OrbitingItemRenderer {
 
 	@SubscribeEvent
 	public static void onRenderPlayerHand(RenderHandEvent event) {
+		if (Minecraft.getInstance().getCameraEntity() instanceof EnderEyeViewEntity) {
+			event.setCanceled(true);
+			return;
+		}
 		if (event.getItemStack().getItem() instanceof OrbitingItem item1 && item1.shouldOrbit(event.getItemStack(), Minecraft.getInstance().player)) {
 			Minecraft mc = Minecraft.getInstance();
 			AbstractClientPlayer player = mc.player;
@@ -349,6 +355,7 @@ public class OrbitingItemRenderer {
 													   float partialTick,
 													   MultiBufferSource buffer, List<ItemStack> orbitingItems) {
 		if (orbitingItems.isEmpty()) return;
+		if (player.isSpectator()) return;
 
 		Minecraft minecraft = Minecraft.getInstance();
 		ItemRenderer itemRenderer = minecraft.getItemRenderer();
@@ -401,6 +408,7 @@ public class OrbitingItemRenderer {
 	private static void renderRotatingItems(PoseStack poseStack, LivingEntity entity, float partialTick,
 											MultiBufferSource buffer, List<ItemStack> orbitingItems) {
 		if (orbitingItems.isEmpty()) return;
+		if (entity instanceof Player player && player.isSpectator()) return;
 
 		Minecraft minecraft = Minecraft.getInstance();
 		ItemRenderer itemRenderer = minecraft.getItemRenderer();

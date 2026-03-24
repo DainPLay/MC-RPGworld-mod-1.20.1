@@ -25,6 +25,7 @@ import net.dainplay.rpgworldmod.item.ModCreativeModeTab;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
 import net.dainplay.rpgworldmod.item.custom.EmptyScrollItem;
+import net.dainplay.rpgworldmod.item.custom.EnderEyeScrollItem;
 import net.dainplay.rpgworldmod.item.custom.HeartOfTheSeaScrollItem;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.dainplay.rpgworldmod.item.custom.WealdBladeItem;
@@ -69,6 +70,7 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ComposterBlock;
@@ -107,6 +109,11 @@ public class RPGworldMod
     public static final String MOD_ID = "rpgworldmod";
     public static final DeferredRegister<SoundEvent> SOUND_EVENT_REGISTER = DeferredRegister.create(Registries.SOUND_EVENT, MOD_ID);
     public static final Logger LOGGER = LogManager.getLogger();
+
+    public static final GameRules.Key<GameRules.BooleanValue> DISABLE_GASBASS_PVP_COOLDOWN =
+            GameRules.register("disableGasbassPvpCooldown", GameRules.Category.PLAYER,
+                    GameRules.BooleanValue.create(false));
+
     public RPGworldMod() {
 
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -328,6 +335,7 @@ public class RPGworldMod
             event.accept(ModItems.SHEENTROUT_BUCKET);
             event.accept(ModItems.GASBASS_BUCKET);
             event.accept(ModItems.ARBOR_FUEL_BUCKET);
+            event.accept(ModItems.FIREPROOF_SKIRT);
             event.accept(ModItems.EMBER_GEM);
             event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.RESTORATION.get(), ModEnchantments.RESTORATION.get().getMaxLevel())));
             event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
@@ -341,7 +349,12 @@ public class RPGworldMod
             event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
             event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
             event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
-            event.accept(ModItems.FIREPROOF_SKIRT);
+            event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.RESTORATION.get(), ModEnchantments.RESTORATION.get().getMaxLevel())));
+            event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
+            event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ILLUSION.get(), ModEnchantments.ILLUSION.get().getMaxLevel())));
+            event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
+            event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
+            event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
             event.accept(ModItems.LIVING_WOOD_HELMET);
             event.accept(ModItems.LIVING_WOOD_CHESTPLATE);
             event.accept(ModItems.LIVING_WOOD_LEGGINGS);
@@ -515,6 +528,7 @@ public class RPGworldMod
             event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
             event.accept(ModItems.EMBER_SCROLL);
             event.accept(ModItems.HEART_OF_THE_SEA_SCROLL);
+            event.accept(ModItems.ENDER_EYE_SCROLL);
         }
 
         if(event.getTab() == ModCreativeModeTab.RPGWORLD_SPAWN_EGGS_TAB.get()) {

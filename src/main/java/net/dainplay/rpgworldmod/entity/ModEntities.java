@@ -7,6 +7,7 @@ import net.dainplay.rpgworldmod.entity.custom.Bramblefox;
 import net.dainplay.rpgworldmod.entity.custom.Burr_purr;
 import net.dainplay.rpgworldmod.entity.custom.ConjuredDolphin;
 import net.dainplay.rpgworldmod.entity.custom.Drillhog;
+import net.dainplay.rpgworldmod.entity.custom.EnderEyeViewEntity;
 import net.dainplay.rpgworldmod.entity.custom.Fireflantern;
 import net.dainplay.rpgworldmod.entity.custom.Gasbass;
 import net.dainplay.rpgworldmod.entity.custom.Mintobat;
@@ -61,6 +62,13 @@ public class ModEntities {
             () -> EntityType.Builder.of((EntityType.EntityFactory<ThrownDrillSpear>) ThrownDrillSpear::new, MobCategory.MISC)
                     .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20).build("drill_spear_projectile"));
 
+    public static final RegistryObject<EntityType<EnderEyeViewEntity>> ENDER_EYE_VIEW = ENTITY_TYPES.register("ender_eye_view",
+            () -> EntityType.Builder.<EnderEyeViewEntity>of(EnderEyeViewEntity::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f)
+                    .clientTrackingRange(64)
+                    .updateInterval(1)
+                    .build("ender_eye_view"));
+
     public static final RegistryObject<EntityType<EntRieFruitProjectile>> ENT_RIE_FRUIT_PROJECTILE =
             ENTITY_TYPES.register("ent_rie_fruit_projectile", () ->
                     EntityType.Builder.<EntRieFruitProjectile>of(EntRieFruitProjectile::new, MobCategory.MISC)
@@ -113,6 +121,7 @@ public class ModEntities {
             () -> EntityType.Builder.of(Sheentrout::new, MobCategory.WATER_AMBIENT).sized(0.5F, 0.3F).clientTrackingRange(4).build("sheentrout"));
     public static final RegistryObject<EntityType<Gasbass>> GASBASS = ENTITY_TYPES.register("gasbass",
             () -> EntityType.Builder.of(Gasbass::new, MobCategory.WATER_AMBIENT).sized(0.5F, 0.3F).clientTrackingRange(4).build("gasbass"));
+
     private static <T extends Entity> Supplier<EntityType<T>> create(String key, EntityType.Builder<T> builder) {
         return ENTITY_TYPES.register(key, () -> builder.build(key));
     }

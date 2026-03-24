@@ -50,7 +50,7 @@ public class EntFeature {
                 ),
                 BlockStateProvider.simple(ModBlocks.RIE_LEAVES.get().defaultBlockState().setValue(RieLeavesBlock.SPAWNED_FOR_ENT, true)),
                 new FancyFoliagePlacer(ConstantInt.of(2), ConstantInt.of(4), 4),
-                new TwoLayersFeatureSize(0, 0, 0, OptionalInt.of(4))))
+                new TwoLayersFeatureSize(0, 0, 0, OptionalInt.of(8))))
                 .decorators(ImmutableList.of(TrunkVineDecorator.INSTANCE, new LeaveVineDecorator(0.1F)))
                 .ignoreVines();
     }

@@ -6,6 +6,7 @@ import net.dainplay.rpgworldmod.item.custom.BlazeStaffItem;
 import net.dainplay.rpgworldmod.item.custom.BrainCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.BubbleCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
+import net.dainplay.rpgworldmod.item.custom.EnderEyeScrollItem;
 import net.dainplay.rpgworldmod.item.custom.FireCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.HeartOfTheSeaScrollItem;
 import net.dainplay.rpgworldmod.item.custom.HornCoralStaffItem;
@@ -217,6 +218,17 @@ public class ParalysisHandler {
 				}
 
 				if (useItem.getItem() instanceof HeartOfTheSeaScrollItem scroll) {
+					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), useItem) > 0 && ClientAnimateTargetData.get() != null) {
+						ModMessages.sendToServer(new UseOnAnimateTargetPacket(player.getId(), ClientAnimateTargetData.get().getId()));
+						player.swing(player.getUsedItemHand());
+					}
+					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), useItem) > 0
+							&& ClientAnimateTargetData.get() != null) {
+						ModMessages.sendToServer(new UseOnAnimateTargetPacket(player.getId(), ClientAnimateTargetData.get().getId()));
+					}
+				}
+
+				if (useItem.getItem() instanceof EnderEyeScrollItem scroll) {
 					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), useItem) > 0 && ClientAnimateTargetData.get() != null) {
 						ModMessages.sendToServer(new UseOnAnimateTargetPacket(player.getId(), ClientAnimateTargetData.get().getId()));
 						player.swing(player.getUsedItemHand());

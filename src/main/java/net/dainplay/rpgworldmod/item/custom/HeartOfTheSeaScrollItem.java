@@ -49,6 +49,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BubbleColumnBlock;
 import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -438,7 +439,7 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 				RPGSounds.SPELL_RESTORATION_CAST.get(),
 				SoundSource.PLAYERS, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F
 		);
-		player.addEffect(new MobEffectInstance(MobEffects.CONDUIT_POWER, 600, 0));
+		player.addEffect(new MobEffectInstance(MobEffects.CONDUIT_POWER, 1200, 0));
 		if (player instanceof ServerPlayer serverPlayer) {
 			ModAdvancements.SPELL_RESTORATION_HEART_OF_THE_SEA_TRIGGER.trigger(serverPlayer);
 		}
@@ -984,6 +985,9 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 			}
 			else if (state.getBlock() instanceof LiquidBlockContainer) {
 				level.destroyBlock(pos,true);
+				level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+			}
+			else if (state.getBlock() instanceof BubbleColumnBlock) {
 				level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
 			}
 		}

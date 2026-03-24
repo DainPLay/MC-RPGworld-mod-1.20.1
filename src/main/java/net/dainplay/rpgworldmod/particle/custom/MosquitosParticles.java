@@ -9,7 +9,6 @@ import net.minecraft.util.RandomSource;
 import javax.annotation.Nullable;
 
 public class MosquitosParticles extends TextureSheetParticle {
-	static final RandomSource RANDOM = RandomSource.create();
 	protected final SpriteSet sprites;
 
 	MosquitosParticles(ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed, SpriteSet pSprites) {
@@ -48,7 +47,7 @@ public class MosquitosParticles extends TextureSheetParticle {
 		@Nullable
 		@Override
 		public Particle createParticle(SimpleParticleType pType, ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
-			MosquitosParticles mosquitosparticle = new MosquitosParticles(pLevel, pX, pY, pZ, 0.5D - MosquitosParticles.RANDOM.nextDouble(), pYSpeed, 0.5D - MosquitosParticles.RANDOM.nextDouble(), this.sprite);
+			MosquitosParticles mosquitosparticle = new MosquitosParticles(pLevel, pX, pY, pZ, 0.5D - pLevel.getRandom().nextDouble(), pYSpeed, 0.5D - pLevel.getRandom().nextDouble(), this.sprite);
 			if (pLevel.random.nextBoolean()) {
 				mosquitosparticle.setColor(77F / 255F, 117F / 255F, 117F / 255F);
 			} else {

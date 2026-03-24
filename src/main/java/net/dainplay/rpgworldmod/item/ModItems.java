@@ -190,6 +190,7 @@ public class ModItems {
     public static final RegistryObject<Item> EMPTY_SCROLL = ITEMS.register("empty_scroll",  () -> new EmptyScrollItem((new Item.Properties()).stacksTo(16)));
     public static final RegistryObject<Item> EMBER_SCROLL = ITEMS.register("ember_scroll",  () -> new EmberScrollItem((new Item.Properties()).stacksTo(1).rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> HEART_OF_THE_SEA_SCROLL = ITEMS.register("heart_of_the_sea_scroll",  () -> new HeartOfTheSeaScrollItem((new Item.Properties()).stacksTo(1).rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> ENDER_EYE_SCROLL = ITEMS.register("ender_eye_scroll",  () -> new EnderEyeScrollItem((new Item.Properties()).stacksTo(1).rarity(Rarity.UNCOMMON)));
 
     public static final RegistryObject<Item> FIRE_CATCHER_ITEM = ITEMS.register("fire_catcher",
             () -> new FireCatcherItem(ModBlocks.FIRE_CATCHER.get(),new Item.Properties().fireResistant()));

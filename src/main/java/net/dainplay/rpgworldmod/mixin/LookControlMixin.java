@@ -1,9 +1,7 @@
 package net.dainplay.rpgworldmod.mixin;
 
 import net.dainplay.rpgworldmod.effect.ModEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.animal.horse.SkeletonHorse;
@@ -23,10 +21,27 @@ public abstract class LookControlMixin {
         this.mob = mob;
     }
 
-    @Inject(method = "setLookAt(DDDFF)V", at = @At(value = "HEAD"), cancellable = true)
+    // Отмена установки цели взгляда (уже есть)
+    @Inject(method = "setLookAt(DDDFF)V", at = @At("HEAD"), cancellable = true)
     private void setLookAtParalysisCheck(CallbackInfo ci) {
-        if (!(mob instanceof AbstractSkeleton) && !(mob instanceof SkeletonHorse)
-                && mob.hasEffect(ModEffects.PARALYSIS.get()) && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(mob) && mob.getEffect(ModEffects.PARALYSIS.get()).getAmplifier() >= 1)
+        if (shouldParalyzeLook()) {
             ci.cancel();
+        }
+    }
+
+    // Полная отмена обновления взгляда в тике
+    @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
+    private void tickParalysisCheck(CallbackInfo ci) {
+        if (shouldParalyzeLook()) {
+            ci.cancel();
+        }
+    }
+
+    private boolean shouldParalyzeLook() {
+        // Ваша оригинальная логика проверки (можно вынести, чтобы не дублировать)
+        return !(mob instanceof AbstractSkeleton) && !(mob instanceof SkeletonHorse)
+                && mob.hasEffect(ModEffects.PARALYSIS.get())
+                && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(mob)
+                && mob.getEffect(ModEffects.PARALYSIS.get()).getAmplifier() >= 1;
     }
 }

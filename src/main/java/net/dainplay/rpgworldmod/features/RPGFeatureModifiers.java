@@ -15,4 +15,6 @@ public class RPGFeatureModifiers {
     // Существующий декор для ствола
     public static final RegistryObject<TreeDecoratorType<TrunkDecorator>> TRUNK_DECORATOR =
             TREE_DECORATORS.register("trunkside_decorator", () -> new TreeDecoratorType<>(TrunkDecorator.CODEC));
+
+    public static final RegistryObject<TreeDecoratorType<BibbitHollowTrunkDecorator>> BIBBIT_HOLLOW_DECORATOR = TREE_DECORATORS.register("bibbit_hollow_decorator", () -> new TreeDecoratorType<>(BibbitHollowTrunkDecorator.CODEC));
 }

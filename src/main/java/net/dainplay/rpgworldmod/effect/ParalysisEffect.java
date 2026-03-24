@@ -27,6 +27,7 @@ public class ParalysisEffect extends MobEffect {
         addAttributeModifier(Attributes.MOVEMENT_SPEED, ParalysisEffect.MODIFIER_UUID.toString(), 0D, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
     }
+
     @Override
     public void applyEffectTick(LivingEntity pLivingEntity, int pAmplifier) {
         if (!pLivingEntity.level().isClientSide() && pLivingEntity instanceof AbstractVillager) {

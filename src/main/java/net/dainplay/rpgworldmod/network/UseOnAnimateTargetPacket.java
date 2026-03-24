@@ -3,6 +3,7 @@ package net.dainplay.rpgworldmod.network;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.custom.BrainCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
+import net.dainplay.rpgworldmod.item.custom.EnderEyeScrollItem;
 import net.dainplay.rpgworldmod.item.custom.HeartOfTheSeaScrollItem;
 import net.dainplay.rpgworldmod.item.custom.LivingWoodStaffItem;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
@@ -103,6 +104,38 @@ public class UseOnAnimateTargetPacket {
 
                         // Удаляем данные об использовании
                         var levelUseData = HeartOfTheSeaScrollItem.getPlayerUseData(player.level());
+                        levelUseData.remove(player.getUUID());
+
+                        player.level().playSound(null,
+                                player.getX(), player.getY(), player.getZ(),
+                                RPGSounds.SPELL_ILLUSION_STOP.get(),
+                                SoundSource.PLAYERS, 1.0F, 1.0F
+                        );
+
+                        // Отправляем пакет для остановки звука
+                        ModMessages.sendToNearbyPlayers(
+                                new LoopSoundPacket(player.getId(), false, itemInHand),
+                                player.serverLevel(),
+                                player.blockPosition(),
+                                64.0
+                        );
+
+                        LivingEntity target = null;
+                        Entity entity = player.level().getEntity(msg.targetId);
+                        if (entity instanceof LivingEntity livingEntity) {
+                            target = livingEntity;
+                        }
+
+                        scroll.cast(player, target, itemInHand);
+                    }
+                }
+                if (itemInHand.getItem() instanceof EnderEyeScrollItem scroll) {
+                    if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), itemInHand) > 0) {
+                        // Останавливаем использование
+                        player.stopUsingItem();
+
+                        // Удаляем данные об использовании
+                        var levelUseData = EnderEyeScrollItem.getPlayerUseData(player.level());
                         levelUseData.remove(player.getUUID());
 
                         player.level().playSound(null,

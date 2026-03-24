@@ -177,6 +177,11 @@ public class Burr_purr extends Monster implements NeutralMob {
 	}
 
 
+	@Override
+	public boolean isPreventingPlayerRest(Player pPlayer) {
+		return this.getTarget() != null;
+	}
+
 	public boolean hasGoldenKill(ServerPlayer player) {
 		PlayerAdvancements advancements = player.getAdvancements();
 

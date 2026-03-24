@@ -35,7 +35,6 @@ import javax.annotation.Nullable;
 
 public class WidoweedBlock extends BushBlock {
 	protected static final float AABB_OFFSET = 6.0F;
-	protected RandomSource random = RandomSource.create();
 	protected static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
 
 	public WidoweedBlock(Properties properties) {
@@ -66,6 +65,7 @@ public class WidoweedBlock extends BushBlock {
 			pLevel.addParticle(ParticleTypes.HAPPY_VILLAGER, (double) pPos.getX() + 0.5D, (double) pPos.getY() + 0.5D, (double) pPos.getZ() + 0.5D, 0.0D, 0.0D, 0.0D);
 		} else if (!pLevel.isClientSide() && pEntity instanceof ItemEntity item && item.getItem().is(ModTags.Items.WIDOWEED_CONSUMABLE)) {
 			item.hurt(ModDamageTypes.getDamageSource(pLevel, ModDamageTypes.WIDOWEED), 2.5F);
+			RandomSource random = pLevel.getRandom();
 			if (pLevel instanceof ServerLevel serverLevel)
 				serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER, pPos.getX() + 0.5f, pPos.getY() + 0.5f, pPos.getZ() + 0.5f, 8, serverLevel.getRandom().nextFloat() / 5, serverLevel.getRandom().nextFloat() / 5, serverLevel.getRandom().nextFloat() / 5, 0.0f);
 			if ((pLevel.getBlockState(pPos.south()).getBlock() == Blocks.AIR || pLevel.getBlockState(pPos.south()).is(BlockTags.REPLACEABLE)) && random.nextInt(2) > 0 && this.canSurvive(pLevel.getBlockState(pPos.south()), pLevel, pPos.south()))

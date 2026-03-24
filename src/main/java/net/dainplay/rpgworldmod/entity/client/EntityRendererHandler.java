@@ -29,6 +29,7 @@ import net.dainplay.rpgworldmod.entity.client.render.BurrSpikeRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.Burr_purrRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.ConjuredDolphinRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.DrillhogRenderer;
+import net.dainplay.rpgworldmod.entity.client.render.EnderEyeViewRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.EntRieFruitProjectileRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.EntRootsRenderer;
 import net.dainplay.rpgworldmod.entity.client.render.FairapierSeedRenderer;
@@ -68,6 +69,7 @@ public class EntityRendererHandler {
         EntityRenderers.register(ModEntities.DRILL_SPEAR_PROJECTILE.get(), ThrownDrillSpearRenderer::new);
         EntityRenderers.register(ModEntities.ENT_ROOTS.get(), EntRootsRenderer::new);
         EntityRenderers.register(ModEntities.ENT_RIE_FRUIT_PROJECTILE.get(), EntRieFruitProjectileRenderer::new);
+        EntityRenderers.register(ModEntities.ENDER_EYE_VIEW.get(), EnderEyeViewRenderer::new);
         MinecraftForge.EVENT_BUS.register(BoundEntityRenderer.class);
     }
     @SubscribeEvent

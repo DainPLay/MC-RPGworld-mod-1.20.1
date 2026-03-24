@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "rpgworldmod:item/scroll_conjuration",
+    "layer1": "rpgworldmod:item/ender_eye_spell_overlay"
+  }
+}

@@ -36,7 +36,6 @@ import java.util.UUID;
 
 public class MossiosisEffect extends MobEffect {
     public static final UUID MODIFIER_UUID = UUID.fromString("F6A6BC5A-2DC2-48C4-BFFE-0B4B3CB91361");
-    protected final RandomSource random = RandomSource.create();
     public MossiosisEffect(MobEffectCategory mobEffectCategory, int color) {
         super(mobEffectCategory, color);
         addAttributeModifier(Attributes.MAX_HEALTH, MossiosisEffect.MODIFIER_UUID.toString(), 0D, AttributeModifier.Operation.MULTIPLY_TOTAL);

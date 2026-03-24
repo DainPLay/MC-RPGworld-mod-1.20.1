@@ -137,6 +137,7 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> SPELL_ALTERATION_START;
     public static RegistryObject<SoundEvent> SPELL_ALTERATION_LOOP;
     public static RegistryObject<SoundEvent> SPELL_ALTERATION_STOP;
+    public static RegistryObject<SoundEvent> SPELL_ALTERATION_CAST;
     public static RegistryObject<SoundEvent> SPELL_ILLUSION_START;
     public static RegistryObject<SoundEvent> SPELL_ILLUSION_LOOP;
     public static RegistryObject<SoundEvent> SPELL_ILLUSION_STOP;
@@ -162,4 +163,7 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_HEART_OF_THE_SEA_CAST;
     public static RegistryObject<SoundEvent> STAFF_HEART_OF_THE_SEA_ITEM;
     public static RegistryObject<SoundEvent> STAFF_NETHER_STAR_ITEM;
+    public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_ENDER_EYE_START;
+    public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_ENDER_EYE_LOOP;
+    public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_ENDER_EYE_STOP;
 }

@@ -51,8 +51,8 @@ public class ClientRPGtooltipHandler {
 
         if (InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), Minecraft.getInstance().options.keyShift.getKey().getValue())) {
             if (tooltipItem.hasFeatures(pStack)) {
-            List<Component> featureLines = getDisplayFeaturesWithLineBreaks(pStack, tooltipItem);
-            pTooltip.addAll(featureLines);
+                List<Component> featureLines = getDisplayFeaturesWithLineBreaks(pStack, tooltipItem);
+                pTooltip.addAll(featureLines);
             }
             if (tooltipItem.hasControls(pStack)) {
                 List<Component> controlsLines = getDisplayControlsWithLineBreaks(pStack, tooltipItem);
@@ -60,7 +60,7 @@ public class ClientRPGtooltipHandler {
             }
         } else {
             if (tooltipItem.hasFeatures(pStack)) {
-                List<Component> combinedLines = getHoldShiftTooltipWithLineBreaks();
+                List<Component> combinedLines = getHoldShiftTooltipWithLineBreaks(pStack);
                 pTooltip.addAll(combinedLines);
             }
         }
@@ -71,6 +71,7 @@ public class ClientRPGtooltipHandler {
 
     private static List<Component> getDisplayTargetWithLineBreaks(ItemStack item) {
         List<Component> result = new ArrayList<>();
+        int maxLineLength = getMaxLineLength(item);
 
         String header = Component.translatable("tooltip.rpgworldmod.target").getString();
         String targetText = Component.translatable(item.getDescriptionId() + ".target").getString();
@@ -88,7 +89,7 @@ public class ClientRPGtooltipHandler {
             color = 0xC62A37;
         }
 
-        List<String> wrappedLines = wrapText(fullText, 25);
+        List<String> wrappedLines = wrapText(fullText, maxLineLength);
 
         if (!wrappedLines.isEmpty()) {
             String firstLine = wrappedLines.get(0);
@@ -118,12 +119,13 @@ public class ClientRPGtooltipHandler {
 
     private static List<Component> getDisplayCooldownWithLineBreaks(ItemStack item, StaffItem staffItem) {
         List<Component> result = new ArrayList<>();
+        int maxLineLength = getMaxLineLength(item);
 
         String header = Component.translatable("tooltip.rpgworldmod.cooldown_text").getString();
         String cooldownText = staffItem.getDisplayCooldown(item).getString();
         String fullText = header + " " + cooldownText;
 
-        List<String> wrappedLines = wrapText(fullText, 25);
+        List<String> wrappedLines = wrapText(fullText, maxLineLength);
 
         if (!wrappedLines.isEmpty()) {
             String firstLine = wrappedLines.get(0);
@@ -151,12 +153,13 @@ public class ClientRPGtooltipHandler {
 
     private static List<Component> getDisplayFeaturesWithLineBreaks(ItemStack item, RPGtooltip tooltipItem) {
         List<Component> result = new ArrayList<>();
+        int maxLineLength = getMaxLineLength(item);
 
         String header = Component.translatable("tooltip.rpgworldmod.features").getString();
         String featuresText = tooltipItem.getDisplayFeatures(item).getString();
         String fullText = header + " " + featuresText;
 
-        List<String> wrappedLines = wrapText(fullText, 25);
+        List<String> wrappedLines = wrapText(fullText, maxLineLength);
 
         if (!wrappedLines.isEmpty()) {
             String firstLine = wrappedLines.get(0);
@@ -184,12 +187,13 @@ public class ClientRPGtooltipHandler {
 
     private static List<Component> getDisplayControlsWithLineBreaks(ItemStack item, RPGtooltip tooltipItem) {
         List<Component> result = new ArrayList<>();
+        int maxLineLength = getMaxLineLength(item);
 
         String header = Component.translatable("tooltip.rpgworldmod.controls").getString();
         String controlsText = tooltipItem.getDisplayControls(item).getString();
         String fullText = header + " " + controlsText;
 
-        List<String> wrappedLines = wrapText(fullText, 25);
+        List<String> wrappedLines = wrapText(fullText, maxLineLength);
 
         if (!wrappedLines.isEmpty()) {
             String firstLine = wrappedLines.get(0);
@@ -215,7 +219,7 @@ public class ClientRPGtooltipHandler {
         return result;
     }
 
-    private static List<Component> getHoldShiftTooltipWithLineBreaks() {
+    private static List<Component> getHoldShiftTooltipWithLineBreaks(ItemStack item) {
         List<Component> result = new ArrayList<>();
 
         String featuresText = Component.translatable("tooltip.rpgworldmod.features").getString();
@@ -223,8 +227,9 @@ public class ClientRPGtooltipHandler {
                 Minecraft.getInstance().options.keyShift.getKey().getDisplayName()).getString();
 
         String fullText = featuresText + " " + holdShiftText;
+        int maxLineLength = getMaxLineLength(item);
 
-        List<String> wrappedLines = wrapText(fullText, 25);
+        List<String> wrappedLines = wrapText(fullText, maxLineLength);
 
         if (!wrappedLines.isEmpty()) {
             String firstLine = wrappedLines.get(0);
@@ -248,6 +253,12 @@ public class ClientRPGtooltipHandler {
         }
 
         return result;
+    }
+
+    private static int getMaxLineLength(ItemStack stack) {
+        String displayName = stack.getHoverName().getString();
+        int nameLength = displayName.length();
+        return Math.max(25, nameLength);
     }
 
     private static List<String> wrapText(String text, int maxLineLength) {
