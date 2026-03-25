@@ -37,7 +37,7 @@ description='''A world that §mhas§r will have everything'''
 [[dependencies.rpgworldmod]]
 modId="forge"
 mandatory=true
-versionRange="[39.0.19,)"
+versionRange="[47.4.10,)"
 ordering="NONE"
 side="BOTH"
 

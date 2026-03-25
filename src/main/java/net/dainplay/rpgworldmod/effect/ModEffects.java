@@ -15,6 +15,9 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> PARALYSIS = MOB_EFFECTS.register("paralysis",
             () -> new ParalysisEffect(MobEffectCategory.HARMFUL, 16666551));
 
+    public static final RegistryObject<MobEffect> MOB_BECKON = MOB_EFFECTS.register("mob_beckon",
+            () -> new MobBeckonEffect(MobEffectCategory.HARMFUL, 0x00000000));
+
     public static final RegistryObject<MobEffect> MOSSIOSIS = MOB_EFFECTS.register("mossiosis",
             () -> new MossiosisEffect(MobEffectCategory.HARMFUL, 7377453));
 

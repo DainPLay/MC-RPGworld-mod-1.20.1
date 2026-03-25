@@ -9,6 +9,7 @@ import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.horse.SkeletonHorse;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.player.Player;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -45,6 +46,8 @@ public abstract class LivingEntityMixin {
     private void tickHeadTurnParalysisCheck(float p_21260_, float p_21261_, CallbackInfoReturnable<Float> cir) {
         if (!(entity instanceof AbstractSkeleton) && !(entity instanceof SkeletonHorse)
                 && entity.hasEffect(ModEffects.PARALYSIS.get()) && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity) && entity.getEffect(ModEffects.PARALYSIS.get()).getAmplifier() >= 1)
+            cir.setReturnValue(p_21261_);
+        if (entity instanceof LivingEntity && !(entity instanceof Player) && ((LivingEntity) entity).hasEffect(ModEffects.MOB_BECKON.get()) && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity))
             cir.setReturnValue(p_21261_);
     }
 }

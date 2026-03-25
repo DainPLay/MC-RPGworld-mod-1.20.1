@@ -2,13 +2,10 @@ package net.dainplay.rpgworldmod.item.custom;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.dainplay.rpgworldmod.block.custom.EntFaceBlock;
 import net.dainplay.rpgworldmod.damage.ModDamageTypes;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
-import net.dainplay.rpgworldmod.entity.ModEntities;
-import net.dainplay.rpgworldmod.entity.custom.ConjuredDolphin;
 import net.dainplay.rpgworldmod.entity.custom.EnderEyeViewEntity;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.network.ClientManaData;
@@ -25,7 +22,6 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -33,12 +29,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.tags.StructureTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -48,24 +41,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LiquidBlockContainer;
-import net.minecraft.world.level.block.SimpleWaterloggedBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.WaterFluid;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -75,18 +58,15 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.fml.DistExecutor;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-public class EnderEyeScrollItem extends ScrollItem {
+public class NetherStarScrollItem extends ScrollItem {
 
 	// Хранилище для отслеживания использования игроком с привязкой к уровню
 	private static final Map<Level, Map<UUID, PlayerUseData>> playerUseData = new HashMap<>();
@@ -96,14 +76,14 @@ public class EnderEyeScrollItem extends ScrollItem {
 	private static final float CLOUD_MAX_RADIUS = 5.0F;
 	private static final int CLOUD_DURATION = 200;
 
-	public EnderEyeScrollItem(Properties pProperties) {
+	public NetherStarScrollItem(Properties pProperties) {
 		super(pProperties);
 	}
 
 	@Override
 	public String getTexture(ItemStack stack, Entity entity) {
 		if (entity instanceof Player player && player.isUsingItem() && player.getUseItem() == stack) {
-			return "textures/entity/spells/ender";
+			return "textures/entity/spells/nether";
 		}
 		return "textures/entity/spells/ender_dust";
 	}
@@ -245,7 +225,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 
 	@Override
 	public int getAnimationLength(ItemStack stack, Entity entity) {
-		return 8;
+		return 10;
 	}
 
 	@Override
@@ -366,7 +346,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 	}
 
 	public static ItemStack createForEnchantment(EnchantmentInstance pInstance) {
-		ItemStack itemstack = new ItemStack(ModItems.ENDER_EYE_SCROLL.get());
+		ItemStack itemstack = new ItemStack(ModItems.NETHER_STAR_SCROLL.get());
 		itemstack.enchant(pInstance.enchantment, pInstance.level);
 		return itemstack;
 	}
@@ -669,7 +649,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 			data.active = false;
 		}
 
-		if (usingItem.getItem() instanceof EnderEyeScrollItem scroll) {
+		if (usingItem.getItem() instanceof NetherStarScrollItem scroll) {
 			scroll.stopEnchantmentSounds(level, player, usingItem);
 		}
 
@@ -813,7 +793,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 			}
 
 			ItemStack usingItem = player.getUseItem();
-			if (!(usingItem.getItem() instanceof EnderEyeScrollItem)) {
+			if (!(usingItem.getItem() instanceof NetherStarScrollItem)) {
 				data.active = false;
 				player.stopUsingItem();
 				continue;
@@ -942,9 +922,9 @@ public class EnderEyeScrollItem extends ScrollItem {
 					result.getLocation().distanceToSqr(eyePos) < 0.01;
 			if (!visible) continue;
 
-			mob.removeEffect(ModEffects.MOB_BECKON.get());
+			mob.removeEffect(ModEffects.PARALYSIS.get());
 			mob.getLookControl().setLookAt(player);
-			mob.addEffect(new MobEffectInstance(ModEffects.MOB_BECKON.get(), 5, 0, false, false));
+			mob.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 5, 21, false, false));
 			if (player instanceof ServerPlayer serverPlayer) {
 				ModAdvancements.SPELL_ALTERATION_ENDER_EYE_TRIGGER.trigger(serverPlayer);
 			}
@@ -1052,13 +1032,13 @@ public class EnderEyeScrollItem extends ScrollItem {
 			return false;
 		}
 
-		net.minecraft.world.level.ClipContext context = new net.minecraft.world.level.ClipContext(eyePos, playerEyePos,
-				net.minecraft.world.level.ClipContext.Block.COLLIDER, net.minecraft.world.level.ClipContext.Fluid.NONE, null);
+		ClipContext context = new ClipContext(eyePos, playerEyePos,
+				ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null);
 
-		net.minecraft.world.phys.BlockHitResult hitResult = player.level().clip(context);
+		BlockHitResult hitResult = player.level().clip(context);
 
 		// Если луч попал в блок до игрока, значит игрок не виден
-		if (hitResult.getType() != net.minecraft.world.phys.HitResult.Type.MISS) {
+		if (hitResult.getType() != HitResult.Type.MISS) {
 			double distanceToHit = hitResult.getLocation().distanceTo(eyePos);
 			double distanceToPlayer = playerEyePos.distanceTo(eyePos);
 

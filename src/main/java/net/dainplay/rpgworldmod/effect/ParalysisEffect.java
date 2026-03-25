@@ -19,13 +19,11 @@ import java.util.UUID;
 
 public class ParalysisEffect extends MobEffect {
 
-    protected static final ResourceLocation PARALYSIS_OUTLINE_LOCATION = new ResourceLocation(RPGworldMod.MOD_ID,"textures/misc/paralysis_outline.png");
     public static final UUID MODIFIER_UUID = UUID.fromString("55C22FFD-3972-4E3E-BB81-8C12E803E30F");
 
     public ParalysisEffect(MobEffectCategory mobEffectCategory, int color) {
         super(mobEffectCategory, color);
         addAttributeModifier(Attributes.MOVEMENT_SPEED, ParalysisEffect.MODIFIER_UUID.toString(), 0D, AttributeModifier.Operation.MULTIPLY_TOTAL);
-
     }
 
     @Override

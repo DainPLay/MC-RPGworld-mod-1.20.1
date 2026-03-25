@@ -39,6 +39,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.CompoundContainer;
 import net.minecraft.world.Container;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -635,6 +636,7 @@ public class ModEvents {
 
 					if (!hasContainerOpen) {
 						HornCoralStaffItem.removeStaffReachModifier(player);
+						//player.sendSystemMessage(Component.literal("Тикер удалил модификатор досягаемости"));
 					}
 				}
 			}
@@ -649,6 +651,7 @@ public class ModEvents {
 
 		if (!player.level().isClientSide) {
 			HornCoralStaffItem.removeStaffReachModifier(player);
+			//player.sendSystemMessage(Component.literal("Закрытие контейнера удалило модификатор досягаемости"));
 		}
 
 		if (level.isClientSide) return;
@@ -665,6 +668,11 @@ public class ModEvents {
 				if (savedPos != 0L) {
 					pos = BlockPos.of(savedPos);
 					player.getPersistentData().remove("RPGLastEnderChestPos");
+				}
+			} else if (container instanceof CompoundContainer compoundContainer) {
+				Container container1 = compoundContainer.container1;
+				if (container1 instanceof BaseContainerBlockEntity blockEntity) {
+					pos = blockEntity.getBlockPos();
 				}
 			}
 		}

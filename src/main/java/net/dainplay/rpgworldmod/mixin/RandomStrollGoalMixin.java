@@ -36,10 +36,10 @@ public abstract class RandomStrollGoalMixin {
     }
 
     private boolean shouldParalyzeLook() {
-        // Ваша оригинальная логика проверки (можно вынести, чтобы не дублировать)
-        return !(mob instanceof AbstractSkeleton) && !(mob instanceof SkeletonHorse)
+        return (!(mob instanceof AbstractSkeleton) && !(mob instanceof SkeletonHorse)
                 && mob.hasEffect(ModEffects.PARALYSIS.get())
                 && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(mob)
-                && mob.getEffect(ModEffects.PARALYSIS.get()).getAmplifier() >= 1;
+                && mob.getEffect(ModEffects.PARALYSIS.get()).getAmplifier() >= 1) ||
+                (mob.hasEffect(ModEffects.MOB_BECKON.get()) && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(mob));
     }
 }

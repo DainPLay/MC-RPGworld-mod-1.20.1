@@ -25,7 +25,7 @@ public abstract class CreeperMixin {
                     if (effect.getEffect().equals(ModEffects.MOSQUITOING.get())) {
                         return false;
                     }
-                    if (effect.getEffect().equals(ModEffects.PARALYSIS.get()) && effect.getAmplifier() == 21) {
+                    if (effect.getEffect().equals(ModEffects.MOB_BECKON.get())) {
                         return false;
                     }
                     return true;

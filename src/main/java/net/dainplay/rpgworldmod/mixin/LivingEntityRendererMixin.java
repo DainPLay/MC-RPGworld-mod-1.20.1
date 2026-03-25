@@ -19,7 +19,6 @@ public class LivingEntityRendererMixin {
 	@Inject(method = "isShaking", at = @At(value = "HEAD"), cancellable = true)
 	private void renderParalysisCheck(LivingEntity livingEntity, CallbackInfoReturnable<Boolean> info) {
 		if (livingEntity.getAttribute(Attributes.MOVEMENT_SPEED).getModifier(ParalysisEffect.MODIFIER_UUID) != null) {
-			if (!livingEntity.getAttribute(Attributes.MOVEMENT_SPEED).getModifier(ParalysisEffect.MODIFIER_UUID).getName().equals("effect.rpgworldmod.paralysis 21"))
 				info.setReturnValue(true);
 		}
 	}

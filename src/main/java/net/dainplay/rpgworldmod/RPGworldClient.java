@@ -79,24 +79,34 @@ public class RPGworldClient {
         BakedModel illusionScrollModel = null;
         BakedModel conjurationScrollModel = null;
         BakedModel necromancyScrollModel = null;
+
         BakedModel alterationEmberScrollModel = null;
         BakedModel destructionEmberScrollModel = null;
         BakedModel restorationEmberScrollModel = null;
         BakedModel illusionEmberScrollModel = null;
         BakedModel conjurationEmberScrollModel = null;
         BakedModel necromancyEmberScrollModel = null;
+
         BakedModel alterationHeartOfTheSeaScrollModel = null;
         BakedModel destructionHeartOfTheSeaScrollModel = null;
         BakedModel restorationHeartOfTheSeaScrollModel = null;
         BakedModel illusionHeartOfTheSeaScrollModel = null;
         BakedModel conjurationHeartOfTheSeaScrollModel = null;
         BakedModel necromancyHeartOfTheSeaScrollModel = null;
+
         BakedModel alterationEnderEyeScrollModel = null;
         BakedModel destructionEnderEyeScrollModel = null;
         BakedModel restorationEnderEyeScrollModel = null;
         BakedModel illusionEnderEyeScrollModel = null;
         BakedModel conjurationEnderEyeScrollModel = null;
         BakedModel necromancyEnderEyeScrollModel = null;
+
+        BakedModel alterationNetherStarScrollModel = null;
+        BakedModel destructionNetherStarScrollModel = null;
+        BakedModel restorationNetherStarScrollModel = null;
+        BakedModel illusionNetherStarScrollModel = null;
+        BakedModel conjurationNetherStarScrollModel = null;
+        BakedModel necromancyNetherStarScrollModel = null;
 
         BakedModel boundCampfireModel = null;
 
@@ -205,6 +215,30 @@ public class RPGworldClient {
                 necromancyEnderEyeScrollModel = new ScrollGlintItemModelSupport(originalModel);
             }
 
+            if (idString.contains("rpgworldmod:item/nether_star_scroll_alteration")) {
+                alterationNetherStarScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/nether_star_scroll_destruction")) {
+                destructionNetherStarScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/nether_star_scroll_restoration")) {
+                restorationNetherStarScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/nether_star_scroll_illusion")) {
+                illusionNetherStarScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/nether_star_scroll_conjuration")) {
+                conjurationNetherStarScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
+            if (idString.contains("rpgworldmod:item/nether_star_scroll_necromancy")) {
+                necromancyNetherStarScrollModel = new ScrollGlintItemModelSupport(originalModel);
+            }
+
             if (idString.contains("rpgworldmod:item/bound_campfire")) {
                 boundCampfireModel = new ScrollGlintItemModelSupport(originalModel);
             }
@@ -262,6 +296,18 @@ public class RPGworldClient {
                         originalModel
                 ));
             }
+            if (idString.contains("rpgworldmod:nether_star_scroll")) {
+                map.put(id, new ScrollGlintItemModel(
+                        originalModel,
+                        alterationNetherStarScrollModel == null ? originalModel : alterationNetherStarScrollModel,
+                        restorationNetherStarScrollModel == null ? originalModel : restorationNetherStarScrollModel,
+                        destructionNetherStarScrollModel == null ? originalModel : destructionNetherStarScrollModel,
+                        illusionNetherStarScrollModel == null ? originalModel : illusionNetherStarScrollModel,
+                        conjurationNetherStarScrollModel == null ? originalModel : conjurationNetherStarScrollModel,
+                        necromancyNetherStarScrollModel == null ? originalModel : necromancyNetherStarScrollModel,
+                        originalModel
+                ));
+            }
         }
     }
 
@@ -293,6 +339,12 @@ public class RPGworldClient {
         event.register(new ResourceLocation("rpgworldmod:item/ender_eye_scroll_alteration"));
         event.register(new ResourceLocation("rpgworldmod:item/ender_eye_scroll_conjuration"));
         event.register(new ResourceLocation("rpgworldmod:item/ender_eye_scroll_necromancy"));
+        event.register(new ResourceLocation("rpgworldmod:item/nether_star_scroll_restoration"));
+        event.register(new ResourceLocation("rpgworldmod:item/nether_star_scroll_destruction"));
+        event.register(new ResourceLocation("rpgworldmod:item/nether_star_scroll_illusion"));
+        event.register(new ResourceLocation("rpgworldmod:item/nether_star_scroll_alteration"));
+        event.register(new ResourceLocation("rpgworldmod:item/nether_star_scroll_conjuration"));
+        event.register(new ResourceLocation("rpgworldmod:item/nether_star_scroll_necromancy"));
     }
 
     @SubscribeEvent

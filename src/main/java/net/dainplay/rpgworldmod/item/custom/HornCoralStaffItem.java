@@ -11,6 +11,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.CompoundContainer;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -88,10 +89,12 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 
 
 	private static void addStaffReachModifier(Player player) {
+		//player.sendSystemMessage(Component.literal("Выдан модификатор досягаемости"));
 		AttributeInstance blockReach = player.getAttribute(ForgeMod.BLOCK_REACH.get());
 		AttributeInstance entityReach = player.getAttribute(ForgeMod.ENTITY_REACH.get());
 		if (blockReach != null && entityReach != null) {
 			removeStaffReachModifier(player);
+			//player.sendSystemMessage(Component.literal("Удалён старый модификатор досягаемости"));
 			AttributeModifier modifier = new AttributeModifier(
 					STAFF_REACH_MODIFIER_UUID,
 					"Staff reach",
@@ -462,10 +465,16 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 						);
 						InteractionResult result = block.use(state, player.level(), pos, player, player.getUsedItemHand(), hitResult);
 
-						if (result.consumesAction()) {
-							RemoteOpenContainerRegistry.addOpener(player.level(), pos, player);
-						} else {
+						if (!result.consumesAction()) {
 							player.openMenu(menuProvider);
+						}
+						if(container instanceof CompoundContainer compoundContainer) {
+							Container container1 = compoundContainer.container1;
+							if (container1 instanceof BaseContainerBlockEntity blockEntity) {
+								RemoteOpenContainerRegistry.addOpener(player.level(), blockEntity.getBlockPos(), player);
+							}
+						}
+						else {
 							RemoteOpenContainerRegistry.addOpener(player.level(), pos, player);
 						}
 						break;

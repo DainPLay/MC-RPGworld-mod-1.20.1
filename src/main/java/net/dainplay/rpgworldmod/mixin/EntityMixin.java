@@ -6,6 +6,7 @@ import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.horse.SkeletonHorse;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,6 +22,8 @@ public abstract class EntityMixin {
 	private void setYRotParalysisCheck(CallbackInfo ci) {
 		if (!(entity instanceof AbstractSkeleton) && !(entity instanceof SkeletonHorse) && entity instanceof LivingEntity
 				&& ((LivingEntity) entity).hasEffect(ModEffects.PARALYSIS.get()) && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity) && ((LivingEntity) entity).getEffect(ModEffects.PARALYSIS.get()).getAmplifier() >= 1)
+			ci.cancel();
+		if (entity instanceof LivingEntity && !(entity instanceof Player) && ((LivingEntity) entity).hasEffect(ModEffects.MOB_BECKON.get()) && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity))
 			ci.cancel();
 	}
 
@@ -42,6 +45,8 @@ public abstract class EntityMixin {
 	private void setXRotParalysisCheck(CallbackInfo ci) {
 		if (!(entity instanceof AbstractSkeleton) && !(entity instanceof SkeletonHorse) && entity instanceof LivingEntity
 				&& ((LivingEntity) entity).hasEffect(ModEffects.PARALYSIS.get()) && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity) && ((LivingEntity) entity).getEffect(ModEffects.PARALYSIS.get()).getAmplifier() >= 1)
+			ci.cancel();
+		if (entity instanceof LivingEntity && !(entity instanceof Player) && ((LivingEntity) entity).hasEffect(ModEffects.MOB_BECKON.get()) && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity))
 			ci.cancel();
 	}
 

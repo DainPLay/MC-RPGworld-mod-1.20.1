@@ -2,10 +2,12 @@ package net.dainplay.rpgworldmod.mixin;
 
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.animal.horse.SkeletonHorse;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,10 +40,10 @@ public abstract class LookControlMixin {
     }
 
     private boolean shouldParalyzeLook() {
-        // Ваша оригинальная логика проверки (можно вынести, чтобы не дублировать)
-        return !(mob instanceof AbstractSkeleton) && !(mob instanceof SkeletonHorse)
+        return (!(mob instanceof AbstractSkeleton) && !(mob instanceof SkeletonHorse)
                 && mob.hasEffect(ModEffects.PARALYSIS.get())
                 && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(mob)
-                && mob.getEffect(ModEffects.PARALYSIS.get()).getAmplifier() >= 1;
+                && mob.getEffect(ModEffects.PARALYSIS.get()).getAmplifier() >= 1) ||
+        (mob.hasEffect(ModEffects.MOB_BECKON.get()) && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(mob));
     }
 }

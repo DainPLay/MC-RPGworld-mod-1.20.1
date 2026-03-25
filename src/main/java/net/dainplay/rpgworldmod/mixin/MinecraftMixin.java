@@ -56,9 +56,6 @@ public abstract class MinecraftMixin {
 
 	Minecraft mc = (Minecraft) (Object) this;
 
-	/**
-	 * Отменяет атаку (левая кнопка мыши), если активен режим наблюдения.
-	 */
 	@Inject(method = "startAttack", at = @At("HEAD"), cancellable = true)
 	private void onStartAttack(CallbackInfoReturnable<Boolean> cir) {
 		if (ClientEyeViewHandler.isActive()) {
@@ -66,9 +63,13 @@ public abstract class MinecraftMixin {
 		}
 	}
 
-	/**
-	 * Отменяет использование предмета (правая кнопка мыши), если активен режим наблюдения.
-	 */
+	@Inject(method = "continueAttack", at = @At("HEAD"), cancellable = true)
+	private void onContinueAttack(boolean pLeftClick, CallbackInfo ci) {
+		if (ClientEyeViewHandler.isActive()) {
+			ci.cancel();
+		}
+	}
+
 	@Inject(method = "startUseItem", at = @At("HEAD"), cancellable = true)
 	private void onStartUseItem(CallbackInfo ci) {
 		if (ClientEyeViewHandler.isActive()) {
