@@ -208,6 +208,18 @@ public class ModMessages {
 				.decoder(C2SEyeRotationPacket::decode)
 				.consumerMainThread(C2SEyeRotationPacket::handle)
 				.add();
+
+		net.messageBuilder(UseBeaconSpellPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+				.decoder(UseBeaconSpellPacket::new)
+				.encoder(UseBeaconSpellPacket::toBytes)
+				.consumerMainThread(UseBeaconSpellPacket::handle)
+				.add();
+
+		net.messageBuilder(S2CBeamUpdatePacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.encoder(S2CBeamUpdatePacket::encode)
+				.decoder(S2CBeamUpdatePacket::decode)
+				.consumerMainThread(S2CBeamUpdatePacket::handle)
+				.add();
 	}
 
 	public static <MSG> void sendToServer(MSG message) {

@@ -104,7 +104,7 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 	@Override
 	public float getSize(ItemStack stack, Entity entity) {
 		if (entity instanceof Player player && player.isUsingItem() && player.getUseItem() == stack) {
-			return 0.25F;
+			return 0.3F;
 		}
 		return 0.15F;
 	}
@@ -225,11 +225,14 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 		consumer.accept(new IClientItemExtensions() {
 
 			private static final HumanoidModel.ArmPose DESTRUCTION_POSE = HumanoidModel.ArmPose.create("DESTRUCTION", false, (model, entity, arm) -> {
+				float xOffset = 0F;
+				if(model.crouching) xOffset = -0.6f;
+				if(model.swimAmount > 0.0F) xOffset = -1.185f;
 				if (arm == HumanoidArm.RIGHT) {
-					model.rightArm.xRot = (-(float) Math.PI / 2F) + model.head.xRot;
+					model.rightArm.xRot = (-(float) Math.PI / 2F) + model.head.xRot + xOffset;
 					model.rightArm.yRot = -0.1F + model.head.yRot;
 				} else {
-					model.leftArm.xRot = (-(float) Math.PI / 2F) + model.head.xRot;
+					model.leftArm.xRot = (-(float) Math.PI / 2F) + model.head.xRot + xOffset;
 					model.leftArm.yRot = 0.1F + model.head.yRot;
 				}
 			});

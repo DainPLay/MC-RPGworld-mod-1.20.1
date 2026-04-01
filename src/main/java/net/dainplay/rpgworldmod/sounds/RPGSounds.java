@@ -166,4 +166,10 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_ENDER_EYE_START;
     public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_ENDER_EYE_LOOP;
     public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_ENDER_EYE_STOP;
+    public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_NETHER_STAR_CHARGE;
+    public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_NETHER_STAR_START;
+    public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_NETHER_STAR_LOOP;
+    public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_NETHER_STAR_STOP;
+    public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_NETHER_STAR_HIT_ENTITY;
+    public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_NETHER_STAR_HIT_BLOCK;
 }

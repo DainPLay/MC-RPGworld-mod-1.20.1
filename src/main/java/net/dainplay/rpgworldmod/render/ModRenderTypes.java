@@ -215,6 +215,16 @@ public class ModRenderTypes extends RenderType {
 		return create("spell_effect", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, true, rendertype$compositestate);
 	});
 
+	public static final Function<ResourceLocation, RenderType> GLOW_SPELL_EFFECT = Util.memoize((texture) -> {
+		RenderType.CompositeState rendertype$compositestate = RenderType.CompositeState.builder()
+				.setShaderState(RENDERTYPE_ENTITY_ALPHA_SHADER)
+				.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+				.setTransparencyState(ADDITIVE_TRANSPARENCY)
+				.setWriteMaskState(COLOR_DEPTH_WRITE)
+				.createCompositeState(false);
+		return create("glow_spell_effect", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, true, rendertype$compositestate);
+	});
+
 
 	public static final RenderType GLOWING_OUTLINE = RenderType.create(
 			"glowing_outline",

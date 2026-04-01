@@ -3,8 +3,10 @@ package net.dainplay.rpgworldmod.util;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.block.custom.EntFaceBlock;
 import net.dainplay.rpgworldmod.effect.ModEffects;
+import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.entity.custom.EnderEyeViewEntity;
 import net.dainplay.rpgworldmod.item.custom.LivingWoodBowItem;
+import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
 import net.dainplay.rpgworldmod.network.ClientRainyChunkData;
 import net.dainplay.rpgworldmod.network.ClientVelocityStorage;
 import net.dainplay.rpgworldmod.network.EntFaceDestroyProgressPacket;
@@ -20,6 +22,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -187,6 +190,11 @@ public class ClientHandler {
 			Item useItem = player.getUseItem().getItem();
 			if (useItem instanceof LivingWoodBowItem) {
 				float f = player.getTicksUsingItem() / 20.0F;
+				f = f > 1.0F ? 1.0F : f * f;
+				event.setNewFovModifier((float) Mth.lerp(Minecraft.getInstance().options.fovEffectScale().get(), 1.0F, (event.getFovModifier() * (1.0F - f * 0.15F))));
+			}
+			if ((useItem instanceof NetherStarScrollItem && EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), player.getUseItem()) > 0 && player.getTicksUsingItem() <= 40)) {
+				float f = player.getTicksUsingItem() / 40.0F;
 				f = f > 1.0F ? 1.0F : f * f;
 				event.setNewFovModifier((float) Mth.lerp(Minecraft.getInstance().options.fovEffectScale().get(), 1.0F, (event.getFovModifier() * (1.0F - f * 0.15F))));
 			}

@@ -2,6 +2,7 @@ package net.dainplay.rpgworldmod.particle;
 
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.particle.custom.AirParticle;
+import net.dainplay.rpgworldmod.particle.custom.BlackNetherStarBeamParticles;
 import net.dainplay.rpgworldmod.particle.custom.FlamesParticle;
 import net.dainplay.rpgworldmod.particle.custom.LeavesParticle;
 import net.dainplay.rpgworldmod.particle.custom.ManaParticle;
@@ -9,6 +10,7 @@ import net.dainplay.rpgworldmod.particle.custom.MosquitosParticles;
 import net.dainplay.rpgworldmod.particle.custom.ParanoiaEyeParticle;
 import net.dainplay.rpgworldmod.particle.custom.QuartziteParticles;
 import net.dainplay.rpgworldmod.particle.custom.SummonRevokeParticle;
+import net.dainplay.rpgworldmod.particle.custom.WhiteNetherStarBeamParticles;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraftforge.api.distmarker.Dist;
@@ -31,6 +33,8 @@ public class ModParticles {
     public static final RegistryObject<SimpleParticleType> MANA = PARTICLE_TYPES.register("mana",() -> new SimpleParticleType(true));
     public static final RegistryObject<SimpleParticleType> SUMMON_REVOKE = PARTICLE_TYPES.register("summon_revoke",() -> new SimpleParticleType(true));
     public static final RegistryObject<SimpleParticleType> PARANOIA_EYE = PARTICLE_TYPES.register("paranoia_eye",() -> new SimpleParticleType(true));
+    public static final RegistryObject<SimpleParticleType> WHITE_NETHER_STAR_BEAM = PARTICLE_TYPES.register("white_nether_star_beam",() -> new SimpleParticleType(true));
+    public static final RegistryObject<SimpleParticleType> BLACK_NETHER_STAR_BEAM = PARTICLE_TYPES.register("black_nether_star_beam",() -> new SimpleParticleType(true));
 
     @SubscribeEvent
     public static void registerFactories(RegisterParticleProvidersEvent event) {
@@ -42,5 +46,7 @@ public class ModParticles {
         event.registerSpriteSet(ModParticles.MANA.get(), ManaParticle.Provider::new);
         event.registerSpriteSet(ModParticles.SUMMON_REVOKE.get(), SummonRevokeParticle.Provider::new);
         event.registerSpriteSet(ModParticles.PARANOIA_EYE.get(), ParanoiaEyeParticle.Provider::new);
+        event.registerSpriteSet(ModParticles.WHITE_NETHER_STAR_BEAM.get(), WhiteNetherStarBeamParticles.Provider::new);
+        event.registerSpriteSet(ModParticles.BLACK_NETHER_STAR_BEAM.get(), BlackNetherStarBeamParticles.Provider::new);
     }
 }

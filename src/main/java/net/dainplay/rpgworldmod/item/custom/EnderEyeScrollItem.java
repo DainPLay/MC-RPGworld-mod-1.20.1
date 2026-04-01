@@ -2,13 +2,10 @@ package net.dainplay.rpgworldmod.item.custom;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.dainplay.rpgworldmod.block.custom.EntFaceBlock;
 import net.dainplay.rpgworldmod.damage.ModDamageTypes;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
-import net.dainplay.rpgworldmod.entity.ModEntities;
-import net.dainplay.rpgworldmod.entity.custom.ConjuredDolphin;
 import net.dainplay.rpgworldmod.entity.custom.EnderEyeViewEntity;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.network.ClientManaData;
@@ -25,7 +22,6 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -33,12 +29,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.tags.StructureTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -48,24 +41,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LiquidBlockContainer;
-import net.minecraft.world.level.block.SimpleWaterloggedBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.WaterFluid;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -75,13 +58,10 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.fml.DistExecutor;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -127,7 +107,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 	@Override
 	public float getSize(ItemStack stack, Entity entity) {
 		if (entity instanceof Player player && player.isUsingItem() && player.getUseItem() == stack) {
-			return 0.25F;
+			return 0.3F;
 		}
 		return 0.15F;
 	}
@@ -253,11 +233,14 @@ public class EnderEyeScrollItem extends ScrollItem {
 		consumer.accept(new IClientItemExtensions() {
 
 			private static final HumanoidModel.ArmPose DESTRUCTION_POSE = HumanoidModel.ArmPose.create("DESTRUCTION", false, (model, entity, arm) -> {
+				float xOffset = 0F;
+				if(model.crouching) xOffset = -0.6f;
+				if(model.swimAmount > 0.0F) xOffset = -1.185f;
 				if (arm == HumanoidArm.RIGHT) {
-					model.rightArm.xRot = (-(float) Math.PI / 2F) + model.head.xRot;
+					model.rightArm.xRot = (-(float) Math.PI / 2F) + model.head.xRot + xOffset;
 					model.rightArm.yRot = -0.1F + model.head.yRot;
 				} else {
-					model.leftArm.xRot = (-(float) Math.PI / 2F) + model.head.xRot;
+					model.leftArm.xRot = (-(float) Math.PI / 2F) + model.head.xRot + xOffset;
 					model.leftArm.yRot = 0.1F + model.head.yRot;
 				}
 			});
@@ -444,6 +427,8 @@ public class EnderEyeScrollItem extends ScrollItem {
 				data.breathProgress = 0;
 				data.lastBreathTargetPos = null;
 				data.active = true;
+				data.nearestCrystalId = null;
+				data.wasCrystalAliveLastTick = false;
 			}
 
 			startEnchantmentSounds(level, player, itemstack);
@@ -521,7 +506,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 			AtomicBoolean result = new AtomicBoolean(false);
 			player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
 				if (mana.getMana() >= getManaCost(stack, player)) {
-					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), stack) == 0) {
+					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), stack) == 0) {
 						mana.reduceMana((ServerPlayer) player, getManaCost(stack, player));
 					}
 					result.set(true);
@@ -672,11 +657,6 @@ public class EnderEyeScrollItem extends ScrollItem {
 		if (usingItem.getItem() instanceof EnderEyeScrollItem scroll) {
 			scroll.stopEnchantmentSounds(level, player, usingItem);
 		}
-
-		ModMessages.sendToNearbyPlayers(
-				new S2CGuardianAttackData(player.getId(), 0, 0, false, damageDealt),
-				level, player.blockPosition(), 64.0
-		);
 
 		player.getCooldowns().addCooldown(usingItem.getItem(), 15);
 	}
@@ -856,9 +836,8 @@ public class EnderEyeScrollItem extends ScrollItem {
 				processGazeControl(level, player, data, usingItem);
 			}
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), usingItem) > 0) {
-				// Лечение от ближайшего кристалла энда и урон при его разрушении
-				int healInterval = 10; // тиков между лечением (как у дракона)
-				double searchRadius = 32.0D; // радиус поиска кристаллов
+				int healInterval = 10;
+				double searchRadius = 32.0D;
 
 				// Поиск ближайшего кристалла, если текущий отсутствует
 				if (data.nearestCrystalId == null) {
@@ -874,7 +853,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 					}
 					if (nearest != null) {
 						data.nearestCrystalId = nearest.getUUID();
-						data.wasCrystalAliveLastTick = true; // кристалл найден и жив
+						data.wasCrystalAliveLastTick = true;
 					}
 				}
 
@@ -882,34 +861,40 @@ public class EnderEyeScrollItem extends ScrollItem {
 				if (data.nearestCrystalId != null) {
 					Entity crystalEntity = level.getEntity(data.nearestCrystalId);
 					if (crystalEntity instanceof EndCrystal crystal) {
-						boolean alive = crystal.isAlive();
-
-						if (!alive && data.wasCrystalAliveLastTick) {
-							float damageAmount = 10.0F;
-							player.hurt(level.damageSources().explosion(crystal, null), damageAmount);
-						}
-
-						if (alive) {
-							data.wasCrystalAliveLastTick = true;
-
-							// Лечение с интервалом
-							long gameTime = level.getGameTime();
-							if (gameTime - data.lastHealGameTime >= healInterval && player.getHealth() < player.getMaxHealth()) {
-								player.heal(1.0F); // восстанавливает 1 половинку сердца
-								if (player instanceof ServerPlayer serverPlayer) {
-									ModAdvancements.SPELL_RESTORATION_ENDER_EYE_TRIGGER.trigger(serverPlayer);
-								}
-								data.lastHealGameTime = gameTime;
-							}
-						} else {
-							// Кристалл мёртв или исчез — сбрасываем данные
+						// Проверяем, находится ли кристалл в радиусе действия
+						double distanceSq = crystal.distanceToSqr(player);
+						if (distanceSq > searchRadius * searchRadius) {
+							// Кристалл вышел за пределы радиуса — сбрасываем данные и ищем новый
 							data.nearestCrystalId = null;
 							data.wasCrystalAliveLastTick = false;
+						} else {
+							boolean alive = crystal.isAlive();
+
+							if (!alive && data.wasCrystalAliveLastTick) {
+								float damageAmount = 10.0F;
+								player.hurt(level.damageSources().explosion(crystal, null), damageAmount);
+							}
+
+							if (alive) {
+								data.wasCrystalAliveLastTick = true;
+
+								long gameTime = level.getGameTime();
+								if (gameTime - data.lastHealGameTime >= healInterval && player.getHealth() < player.getMaxHealth()) {
+									player.heal(1.0F);
+									if (player instanceof ServerPlayer serverPlayer) {
+										ModAdvancements.SPELL_RESTORATION_ENDER_EYE_TRIGGER.trigger(serverPlayer);
+									}
+									data.lastHealGameTime = gameTime;
+								}
+							} else {
+								// Кристалл мёртв или исчез — сбрасываем данные
+								data.nearestCrystalId = null;
+								data.wasCrystalAliveLastTick = false;
+							}
 						}
 					} else {
 						// Сущность не является кристаллом или полностью удалена
 						if (data.wasCrystalAliveLastTick) {
-							// Если в прошлом тике кристалл был жив, считаем что он разрушен
 							player.hurt(level.damageSources().explosion(null, null), 10.0F);
 						}
 						data.nearestCrystalId = null;

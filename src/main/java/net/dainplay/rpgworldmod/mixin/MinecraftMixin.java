@@ -50,10 +50,6 @@ public abstract class MinecraftMixin {
 	@Shadow
 	public HitResult hitResult;
 
-	@Shadow
-	@Nullable
-	public abstract Entity getCameraEntity();
-
 	Minecraft mc = (Minecraft) (Object) this;
 
 	@Inject(method = "startAttack", at = @At("HEAD"), cancellable = true)

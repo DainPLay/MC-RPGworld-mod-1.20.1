@@ -11,12 +11,14 @@ import net.dainplay.rpgworldmod.item.custom.FireCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.HeartOfTheSeaScrollItem;
 import net.dainplay.rpgworldmod.item.custom.HornCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.LivingWoodStaffItem;
+import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
 import net.dainplay.rpgworldmod.item.custom.TubeCoralStaffItem;
 import net.dainplay.rpgworldmod.network.ClientAdditionalHealthCostData;
 import net.dainplay.rpgworldmod.network.ClientItemTargetData;
 import net.dainplay.rpgworldmod.network.ClientStorageTargetData;
 import net.dainplay.rpgworldmod.network.IgniteSelfPacket;
 import net.dainplay.rpgworldmod.network.LeftClickWhileRightClickUsePacket;
+import net.dainplay.rpgworldmod.network.UseBeaconSpellPacket;
 import net.dainplay.rpgworldmod.network.UseOnAnimateTargetPacket;
 import net.dainplay.rpgworldmod.network.ClientAnimateTargetData;
 import net.dainplay.rpgworldmod.network.ModMessages;
@@ -24,6 +26,7 @@ import net.dainplay.rpgworldmod.network.UseOnItemStorageBlockTargetPacket;
 import net.dainplay.rpgworldmod.network.UseOnItemStorageEntityTargetPacket;
 import net.dainplay.rpgworldmod.network.UseOnItemTargetPacket;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
+import net.dainplay.rpgworldmod.util.StarMenuHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
@@ -49,7 +52,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = RPGworldMod.MOD_ID, value = Dist.CLIENT)
-public class ParalysisHandler {
+public class ClientClicksHandler {
 
 	private static boolean wasAttackKeyPressed = false;
 
@@ -205,6 +208,13 @@ public class ParalysisHandler {
 		if (isAttackKeyPressed && !wasAttackKeyPressed) {
 			if (player.isUsingItem()) {
 				ItemStack useItem = player.getUseItem();
+
+				if (useItem.getItem() instanceof NetherStarScrollItem scroll) {
+					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), useItem) > 0 && StarMenuHandler.isActive()) {
+						ModMessages.sendToServer(new UseBeaconSpellPacket(player.getId(), StarMenuHandler.getSelecetdSegment()));
+						player.swing(player.getUsedItemHand());
+					}
+				}
 
 				if (useItem.getItem() instanceof EmberScrollItem scroll) {
 					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), useItem) > 0 && ClientAnimateTargetData.get() != null) {

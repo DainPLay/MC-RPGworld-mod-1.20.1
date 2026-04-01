@@ -15,6 +15,7 @@ import net.dainplay.rpgworldmod.item.custom.EmptyScrollItem;
 import net.dainplay.rpgworldmod.item.custom.EnderEyeScrollItem;
 import net.dainplay.rpgworldmod.item.custom.GasbassItem;
 import net.dainplay.rpgworldmod.item.custom.HornCoralStaffItem;
+import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
 import net.dainplay.rpgworldmod.item.custom.ScrollItem;
 import net.dainplay.rpgworldmod.network.BoundEntitySyncPacket;
 import net.dainplay.rpgworldmod.network.IllusionForceDataSyncS2CPacket;
@@ -438,6 +439,11 @@ public class ModEvents {
 					player.getCooldowns().addCooldown(ModItems.GASBASS.get(), 15);
 				}
 			}
+			if (player.isUsingItem() && player.getUseItem().getItem() instanceof NetherStarScrollItem
+			&& player.getUseItem().getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0) {
+					player.stopUsingItem();
+					player.getCooldowns().addCooldown(ModItems.NETHER_STAR_SCROLL.get(), 15);
+			}
 		}
 	}
 
@@ -701,6 +707,16 @@ public class ModEvents {
 		if (!(usingItem.getItem() instanceof EnderEyeScrollItem scroll)) return;
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), usingItem) <= 0) return;
 
+		// Проверяем наличие живого кристалла Энда в радиусе 32 блоков
+		double radius = 32.0D;
+		AABB aabb = player.getBoundingBox().inflate(radius);
+		List<EndCrystal> crystals = player.level().getEntitiesOfClass(EndCrystal.class, aabb);
+		boolean hasCrystal = crystals.stream().anyMatch(EndCrystal::isAlive);
+		if (!hasCrystal) {
+			// Нет кристалла — не спасаем игрока, он умирает
+			return;
+		}
+
 		event.setCanceled(true);
 
 		player.setHealth(1.0F);
@@ -712,10 +728,7 @@ public class ModEvents {
 			ModAdvancements.SPELL_RESTORATION_ENDER_EYE_TRIGGER.trigger(serverPlayer);
 		}
 
-		// Взрываем все кристаллы в радиусе 32 блоков
-		double radius = 32.0D;
-		AABB aabb = player.getBoundingBox().inflate(radius);
-		List<EndCrystal> crystals = player.level().getEntitiesOfClass(EndCrystal.class, aabb);
+		// Уничтожаем все кристаллы в радиусе
 		for (EndCrystal crystal : crystals) {
 			if (crystal.isAlive()) {
 				crystal.hurt(player.level().damageSources().playerAttack(player), Float.MAX_VALUE);

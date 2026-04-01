@@ -1,16 +1,23 @@
 package net.dainplay.rpgworldmod.event; // или в пакет, где у вас клиентские события
 
 import net.dainplay.rpgworldmod.RPGworldMod;
+import net.dainplay.rpgworldmod.effect.ModEffects;
+import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.custom.ChooseTargetItem;
+import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
 import net.dainplay.rpgworldmod.network.ClientAnimateTargetData;
 import net.dainplay.rpgworldmod.network.C2SRequestTargetValidationPacket;
 import net.dainplay.rpgworldmod.network.ClientItemTargetData;
 import net.dainplay.rpgworldmod.network.ModMessages;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
@@ -25,7 +32,23 @@ public class ClientModEvents {
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.player instanceof LocalPlayer player) {
-            if (player.isUsingItem() &&
+            boolean usingNetherWarpSpell = player.isUsingItem() && player.getUseItem().getItem() instanceof NetherStarScrollItem &&
+                    player.getUseItem().getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0;
+            if (player.hasEffect(ModEffects.NETHER_PORTAL_ILLUSION.get()) || usingNetherWarpSpell) {
+                float newIntensity = player.spinningEffectIntensity + 0.032F;
+                player.spinningEffectIntensity = Math.min(1.0F, newIntensity);
+            }
+            if(usingNetherWarpSpell && player.getTicksUsingItem() == 1 && event.phase == TickEvent.Phase.END) {
+                Minecraft.getInstance().getSoundManager().play(
+                        SimpleSoundInstance.forLocalAmbience(
+                                SoundEvents.PORTAL_TRIGGER,
+                                player.getRandom().nextFloat() * 0.4F + 0.8F,
+                                0.25F
+                        )
+                );
+            }
+
+                if (player.isUsingItem() &&
                     player.getUseItemRemainingTicks() > 0 &&
                     player.getUseItem().getItem() instanceof ChooseTargetItem) {
 

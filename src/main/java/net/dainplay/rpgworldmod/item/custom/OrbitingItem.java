@@ -11,6 +11,10 @@ public interface OrbitingItem {
 		return -65536;
 	}
 
+	default boolean useCubeEffect(ItemStack stack, Entity entity) {
+		return false;
+	}
+
 	default String getTexture(ItemStack stack, Entity entity) {
 		return null;
 	}
@@ -40,7 +44,7 @@ public interface OrbitingItem {
 	}
 
 	default float getSize(ItemStack stack, Entity entity) {
-		return 0.25F;
+		return 0.3F;
 	}
 
 	default float getX(ItemStack stack, Entity entity) {

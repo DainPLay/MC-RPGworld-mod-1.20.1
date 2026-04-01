@@ -5,15 +5,19 @@ import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.entity.custom.EnderEyeViewEntity;
 import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
+import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;  // импорт вашего предмета
 import net.dainplay.rpgworldmod.network.ClientAdditionalHealthCostData;
 import net.dainplay.rpgworldmod.network.ClientEntPositionData;
 import net.dainplay.rpgworldmod.util.ClientEyeViewHandler;
+import net.dainplay.rpgworldmod.util.StarMenuHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.SmoothDouble;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -38,15 +42,52 @@ public class MouseHandlerMixin {
 	@Unique private float currentYaw = 0;
 	@Unique private float currentPitch = 0;
 	@Unique private boolean isTracking = false;
+
 	@Shadow private double lastMouseEventTime;
 	@Shadow private SmoothDouble smoothTurnX;
 	@Shadow private SmoothDouble smoothTurnY;
+
+	// Новые поля для сглаживания при использовании Destruction scroll
+	@Unique private final SmoothDouble customSmoothTurnX = new SmoothDouble();
+	@Unique private final SmoothDouble customSmoothTurnY = new SmoothDouble();
+	@Unique private boolean wasDestructionActive = false;
 
 	@Inject(method = "turnPlayer", at = @At(value = "HEAD"), cancellable = true)
 	private void onTurnPlayer(CallbackInfo ci) {
 		Player player = Minecraft.getInstance().player;
 		if (player == null) return;
 
+		// --- StarMenu ---
+		if (StarMenuHandler.isActive()) {
+			Minecraft mc = Minecraft.getInstance();
+			double d0 = Blaze3D.getTime();
+			double d1 = d0 - lastMouseEventTime;
+			lastMouseEventTime = d0;
+
+			double d4 = mc.options.sensitivity().get() * 0.6 + 0.2;
+			double d5 = d4 * d4 * d4;
+			double d6 = d5 * 8.0;
+			double d2, d3;
+			if (mc.options.smoothCamera) {
+				double d7 = this.smoothTurnX.getNewDeltaValue(this.accumulatedDX * d6, d1 * d6);
+				double d8 = this.smoothTurnY.getNewDeltaValue(this.accumulatedDY * d6, d1 * d6);
+				d2 = d7;
+				d3 = d8;
+			} else {
+				this.smoothTurnX.reset();
+				this.smoothTurnY.reset();
+				d2 = this.accumulatedDX * d6;
+				d3 = this.accumulatedDY * d6;
+			}
+			accumulatedDX = 0;
+			accumulatedDY = 0;
+
+			StarMenuHandler.onMouseMove(d2, d3);
+			ci.cancel();
+			return;
+		}
+
+		// --- Eye View ---
 		if (ClientEyeViewHandler.isActive()) {
 			Minecraft mc = Minecraft.getInstance();
 			EnderEyeViewEntity eye = ClientEyeViewHandler.getActiveEye();
@@ -89,7 +130,61 @@ public class MouseHandlerMixin {
 			}
 		}
 
-		// Остальная обработка (для других зачарований) без изменений
+		// ================= НОВЫЙ БЛОК: Ограничение скорости для Destruction scroll =================
+		if (player.isUsingItem()) {
+			ItemStack usingItem = player.getUseItem();
+			// Проверяем, что предмет — NetherStarScrollItem и имеет зачарование Destruction
+			if (usingItem.getItem() instanceof NetherStarScrollItem &&
+					EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), usingItem) > 0 &&
+					player.getTicksUsingItem() > 40) {
+
+				Minecraft mc = Minecraft.getInstance();
+				double d0 = Blaze3D.getTime();
+				double d1 = d0 - lastMouseEventTime;
+				lastMouseEventTime = d0;
+
+				// Чувствительность мыши (как в оригинале)
+				double d4 = mc.options.sensitivity().get() * 0.6 + 0.2;
+				double d5 = d4 * d4 * d4;
+				double d6 = d5 * 8.0;  // множитель для обычного движения (не scoping)
+
+				// Сбрасываем сглаживание только при первом входе в режим
+				if (!wasDestructionActive) {
+					customSmoothTurnX.reset();
+					customSmoothTurnY.reset();
+					wasDestructionActive = true;
+				}
+
+				// Применяем сглаживание с помощью собственных SmoothDouble
+				double d2 = customSmoothTurnX.getNewDeltaValue(this.accumulatedDX * d6, d1 * d6);
+				double d3 = customSmoothTurnY.getNewDeltaValue(this.accumulatedDY * d6, d1 * d6);
+
+				// Ограничиваем максимальное изменение угла за тик (10 градусов, можно настроить)
+				float maxAngleDelta = 1f;
+				d2 = Mth.clamp(d2, -maxAngleDelta, maxAngleDelta);
+				d3 = Mth.clamp(d3, -maxAngleDelta, maxAngleDelta);
+
+				// Учитываем инверсию мыши по вертикали
+				int invert = mc.options.invertYMouse().get() ? -1 : 1;
+
+				// Применяем поворот к игроку
+				player.turn((float) d2, (float) (d3 * invert));
+
+				// Сбрасываем накопленные движения мыши
+				this.accumulatedDX = 0;
+				this.accumulatedDY = 0;
+
+				ci.cancel();
+				return;
+			}
+		}
+
+		// Если условие не выполняется, сбрасываем флаг активности режима
+		if (wasDestructionActive) {
+			wasDestructionActive = false;
+		}
+
+		// --- Остальная обработка (EmberScroll, Paralysis, Tracking) ---
 		if (player.isUsingItem() &&
 				player.getUseItemRemainingTicks() > 0 &&
 				player.getUseItem().getItem() instanceof EmberScrollItem &&

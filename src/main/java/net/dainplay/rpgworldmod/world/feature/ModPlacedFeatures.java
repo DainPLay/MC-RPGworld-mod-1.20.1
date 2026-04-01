@@ -108,15 +108,14 @@ public class ModPlacedFeatures {
                 FancyTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
         register(context, BIBBIT_HOLLOW_EAST_FANCY_RIE_TREE_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.BIBBIT_HOLLOW_EAST_FANCY_RIE_TREE_KEY),
                 FancyTreeFeature.treePlacement(PlacementUtils.countExtra(3, 0.1f, 1)));
-        register(context, ENT_FACE_SOUTH_CHECKED_KEY,
-                configuredFeatures.getOrThrow(ModConfiguredFeatures.ENT_FACE_SOUTH_KEY),
-                EntFeature.treePlacement(RarityFilter.onAverageOnceEvery(39)));
+        register(context, ENT_FACE_SOUTH_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.ENT_FACE_SOUTH_KEY),
+                EntFeature.treePlacement(RarityFilter.onAverageOnceEvery(30)));
         register(context, ENT_FACE_NORTH_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.ENT_FACE_NORTH_KEY),
-                EntFeature.treePlacement(RarityFilter.onAverageOnceEvery(39)));
+                EntFeature.treePlacement(RarityFilter.onAverageOnceEvery(30)));
         register(context, ENT_FACE_WEST_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.ENT_FACE_WEST_KEY),
-                EntFeature.treePlacement(RarityFilter.onAverageOnceEvery(39)));
+                EntFeature.treePlacement(RarityFilter.onAverageOnceEvery(30)));
         register(context, ENT_FACE_EAST_CHECKED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.ENT_FACE_EAST_KEY),
-                EntFeature.treePlacement(RarityFilter.onAverageOnceEvery(39)));
+                EntFeature.treePlacement(RarityFilter.onAverageOnceEvery(30)));
 
         register(context, RIE_FLOWER_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.RIE_FLOWER_KEY), RarityFilter.onAverageOnceEvery(2147483647),
                 InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome());

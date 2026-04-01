@@ -28,6 +28,12 @@ public abstract class CreeperMixin {
                     if (effect.getEffect().equals(ModEffects.MOB_BECKON.get())) {
                         return false;
                     }
+                    if (effect.getEffect().equals(ModEffects.BURN_ILLUSION.get())) {
+                        return false;
+                    }
+                    if (effect.getEffect().equals(ModEffects.NETHER_PORTAL_ILLUSION.get())) {
+                        return false;
+                    }
                     return true;
                 })
                 .collect(Collectors.toList());

@@ -23,6 +23,24 @@ public interface RPGtooltip {
                 getSecondPredicate(item));
     }
 
+    default MutableComponent getEffectDuration1(ItemStack item) {
+        return Component.translatable(((Item)this).getDescriptionId(item) + ".effect_duration1",
+                getFirstPredicate(item),
+                getSecondPredicate(item));
+    }
+
+    default MutableComponent getEffectDuration2(ItemStack item) {
+        return Component.translatable(((Item)this).getDescriptionId(item) + ".effect_duration2",
+                getFirstPredicate(item),
+                getSecondPredicate(item));
+    }
+
+    default MutableComponent getEffectDuration3(ItemStack item) {
+        return Component.translatable(((Item)this).getDescriptionId(item) + ".effect_duration3",
+                getFirstPredicate(item),
+                getSecondPredicate(item));
+    }
+
     default String getFirstPredicate(ItemStack item) {
         return "";
     }

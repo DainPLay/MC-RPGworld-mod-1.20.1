@@ -36,6 +36,9 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> BURN_ILLUSION = MOB_EFFECTS.register("burn_illusion",
             () -> new BurnIllusionEffect(MobEffectCategory.HARMFUL, 0x00000000));
 
+    public static final RegistryObject<MobEffect> NETHER_PORTAL_ILLUSION = MOB_EFFECTS.register("nether_portal_illusion",
+            () -> new NetherPortalIllusionEffect(MobEffectCategory.HARMFUL, 0x00000000));
+
     public static final RegistryObject<MobEffect> NECROSIS = MOB_EFFECTS.register("necrosis",
             () -> new NecrosisEffect(MobEffectCategory.HARMFUL, 0x00000000));
 

@@ -6,8 +6,8 @@ import com.mojang.math.Axis;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.entity.custom.EnderEyeViewEntity;
-import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
 import net.dainplay.rpgworldmod.item.custom.ManaCostItem;
+import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
 import net.dainplay.rpgworldmod.item.custom.OrbitingItem;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.dainplay.rpgworldmod.network.ClientManaData;
@@ -19,7 +19,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -28,13 +27,12 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.joml.Matrix4f;
@@ -127,7 +125,6 @@ public class OrbitingItemRenderer {
 			ms.mulPose(Axis.YP.rotationDegrees(flip * -135.0F));
 			ms.translate(flip * 5.6F, 0.0F, 0.0F);
 
-
 			if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUsedItemHand() == event.getHand()) {
 				ms = item1.getUsingPose(event.getItemStack(), player, ms, flip);
 			}
@@ -157,53 +154,125 @@ public class OrbitingItemRenderer {
 					f3 + -0.6F + equipProgress * -0.6F,
 					f4 + -0.71999997F
 			);
+			boolean useCube = item.useCubeEffect(event.getItemStack(), player);
+			boolean isSlim = "slim".equals(player.getModelName());
+			if (useCube) {
+				ms.mulPose(Axis.YP.rotationDegrees(flip * 45.0F));
+				ms.mulPose(Axis.YP.rotationDegrees(flip * f6 * 70.0F));
+				ms.mulPose(Axis.ZP.rotationDegrees(flip * f5 * -20.0F));
+
+				ms.mulPose(Axis.ZP.rotationDegrees(flip * 120.0F));
+				ms.mulPose(Axis.XP.rotationDegrees(200.0F));
+				ms.mulPose(Axis.YP.rotationDegrees(flip * -135.0F));
+
+				ms.mulPose(Axis.ZP.rotationDegrees(flip * 5F));
+				if (isSlim) ms.translate(flip * -0.075F,0.1F,0.5F);
+				else ms.translate(flip * -0.1F,0.1F,0.5F);
+
+				if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUsedItemHand() == event.getHand()) {
+					ms = item1.getUsingPose(event.getItemStack(), player, ms, flip);
+				}
+			}
 			ms.translate(flip * item.get1XOffset(event.getItemStack(), player), item.get1YOffset(event.getItemStack(), player), item.get1ZOffset(event.getItemStack(), player));
 			if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUsedItemHand() == event.getHand()) {
 				ms = item1.getEffectUsingPose(event.getItemStack(), player, ms, flip);
 			}
+
+			float size = useCube ? 0.15F : item.get1Size(event.getItemStack(), player);
+			if (item instanceof NetherStarScrollItem
+					&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), event.getItemStack()) > 0
+					&& player.getTicksUsingItem() <= 40) {
+				size += (0.6F-size)*player.getTicksUsingItem()/40;
+			}
 			VertexConsumer vertexconsumer;
-			float size = item.get1Size(event.getItemStack(), player);
 			Matrix4f matrix4f = ms.last().pose();
-			if (hasEnough || player.getAbilities().instabuild) {
+
+			if ((hasEnough || player.getAbilities().instabuild)
+					&& !(item instanceof NetherStarScrollItem
+					&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), event.getItemStack()) > 0
+					&& player.getTicksUsingItem() > 40)) {
 				if (textureString != null && !textureString.isEmpty()) {
 					int currentFrame = (player.tickCount / animationSpeed) % animationLength;
 					float frameHeight = 1.0F / animationLength;
-					float vMin = currentFrame * frameHeight;
-					float vMax = vMin + frameHeight;
+					float vMin1 = currentFrame * frameHeight;
+					float vMax1 = vMin1 + frameHeight;
+					float vMin2 = (currentFrame+8) % animationLength * frameHeight;
+					float vMax2 = vMin2 + frameHeight;
+					float vMin3 = (currentFrame+16) % animationLength * frameHeight;
+					float vMax3 = vMin3 + frameHeight;
+					float vMin4 = (currentFrame+24) % animationLength * frameHeight;
+					float vMax4 = vMin4 + frameHeight;
+					if (useCube) {
+						vertexconsumer = buffer.getBuffer(ModRenderTypes.GLOW_SPELL_EFFECT.apply(new ResourceLocation(RPGworldMod.MOD_ID, textureString + ".png")));
+					}
+					else {
+						vertexconsumer = buffer.getBuffer(ModRenderTypes.SPELL_EFFECT.apply(new ResourceLocation(RPGworldMod.MOD_ID, textureString + ".png")));
+					}
 
-					vertexconsumer = buffer.getBuffer(ModRenderTypes.SPELL_EFFECT.apply(new ResourceLocation(RPGworldMod.MOD_ID, textureString + ".png")));
+					if (useCube) {
 
-					vertexconsumer.vertex(matrix4f, -size, -size, 0.0F)
-							.color(1.0F, 1.0F, 1.0F, 1.0F)
-							.uv(0.0F, vMax)
-							.overlayCoords(OverlayTexture.NO_OVERLAY)
-							.uv2(15728880)
-							.normal(0.0F, 0.0F, 1.0F)
-							.endVertex();
+						float hsX = size;
 
-					vertexconsumer.vertex(matrix4f, size, -size, 0.0F)
-							.color(1.0F, 1.0F, 1.0F, 1.0F)
-							.uv(1.0F, vMax)
-							.overlayCoords(OverlayTexture.NO_OVERLAY)
-							.uv2(15728880)
-							.normal(0.0F, 0.0F, 1.0F)
-							.endVertex();
+						if (isSlim) {
+							hsX = 0.1125F;
+						}
+						addQuad(vertexconsumer, matrix4f,
+								-hsX, -size, size,
+								hsX, -size, size,
+								hsX, size, size,
+								-hsX, size, size,
+								0, vMax1, 1, vMax1, 1, vMin1, 0, vMin1, 0, 0, 1);
+						addQuad(vertexconsumer, matrix4f,
+								hsX, -size, -size,
+								-hsX, -size, -size,
+								-hsX, size, -size,
+								hsX, size, -size,
+								0, vMax3, 1, vMax3, 1, vMin3, 0, vMin3, 0, 0, -1);
+						addQuad(vertexconsumer, matrix4f,
+								-hsX, -size, -size,
+								-hsX, -size, size,
+								-hsX, size, size,
+								-hsX, size, -size,
+								0, vMax4, 1, vMax4, 1, vMin4, 0, vMin4, -1, 0, 0);
+						addQuad(vertexconsumer, matrix4f,
+								hsX, -size, size,
+								hsX, -size, -size,
+								hsX, size, -size,
+								hsX, size, size,
+								0, vMax2, 1, vMax2, 1, vMin2, 0, vMin2, 1, 0, 0);
+					} else {
+						vertexconsumer.vertex(matrix4f, -size, -size, 0.0F)
+								.color(1.0F, 1.0F, 1.0F, 1.0F)
+								.uv(0.0F, vMax1)
+								.overlayCoords(OverlayTexture.NO_OVERLAY)
+								.uv2(15728880)
+								.normal(0.0F, 0.0F, 1.0F)
+								.endVertex();
 
-					vertexconsumer.vertex(matrix4f, size, size, 0.0F)
-							.color(1.0F, 1.0F, 1.0F, 1.0F)
-							.uv(1.0F, vMin)
-							.overlayCoords(OverlayTexture.NO_OVERLAY)
-							.uv2(15728880)
-							.normal(0.0F, 0.0F, 1.0F)
-							.endVertex();
+						vertexconsumer.vertex(matrix4f, size, -size, 0.0F)
+								.color(1.0F, 1.0F, 1.0F, 1.0F)
+								.uv(1.0F, vMax1)
+								.overlayCoords(OverlayTexture.NO_OVERLAY)
+								.uv2(15728880)
+								.normal(0.0F, 0.0F, 1.0F)
+								.endVertex();
 
-					vertexconsumer.vertex(matrix4f, -size, size, 0.0F)
-							.color(1.0F, 1.0F, 1.0F, 1.0F)
-							.uv(0.0F, vMin)
-							.overlayCoords(OverlayTexture.NO_OVERLAY)
-							.uv2(15728880)
-							.normal(0.0F, 0.0F, 1.0F)
-							.endVertex();
+						vertexconsumer.vertex(matrix4f, size, size, 0.0F)
+								.color(1.0F, 1.0F, 1.0F, 1.0F)
+								.uv(1.0F, vMin1)
+								.overlayCoords(OverlayTexture.NO_OVERLAY)
+								.uv2(15728880)
+								.normal(0.0F, 0.0F, 1.0F)
+								.endVertex();
+
+						vertexconsumer.vertex(matrix4f, -size, size, 0.0F)
+								.color(1.0F, 1.0F, 1.0F, 1.0F)
+								.uv(0.0F, vMin1)
+								.overlayCoords(OverlayTexture.NO_OVERLAY)
+								.uv2(15728880)
+								.normal(0.0F, 0.0F, 1.0F)
+								.endVertex();
+					}
 				} else {
 					int color = item.getColor(event.getItemStack(), player);
 					int alpha = 150;
@@ -213,21 +282,35 @@ public class OrbitingItemRenderer {
 
 					vertexconsumer = buffer.getBuffer(RenderType.lightning());
 
-					vertexconsumer.vertex(matrix4f, size, size, 0.0F)
-							.color(red, green, blue, alpha)
-							.endVertex();
-					vertexconsumer.vertex(matrix4f, -size, size, 0.0F)
-							.color(red, green, blue, alpha)
-							.endVertex();
-					vertexconsumer.vertex(matrix4f, -size, -size, 0.0F)
-							.color(red, green, blue, alpha)
-							.endVertex();
-					vertexconsumer.vertex(matrix4f, size, -size, 0.0F)
-							.color(red, green, blue, alpha)
-							.endVertex();
+					if (useCube) {
+						addColoredQuad(vertexconsumer, matrix4f,
+								-size, -size, size, size, -size, size, size, size, size, -size, size, size,
+								red, green, blue, alpha, 0, 0, 1);
+						addColoredQuad(vertexconsumer, matrix4f,
+								size, -size, -size, -size, -size, -size, -size, size, -size, size, size, -size,
+								red, green, blue, alpha, 0, 0, -1);
+						addColoredQuad(vertexconsumer, matrix4f,
+								-size, -size, -size, -size, -size, size, -size, size, size, -size, size, -size,
+								red, green, blue, alpha, -1, 0, 0);
+						addColoredQuad(vertexconsumer, matrix4f,
+								size, -size, size, size, -size, -size, size, size, -size, size, size, size,
+								red, green, blue, alpha, 1, 0, 0);
+					} else {
+						vertexconsumer.vertex(matrix4f, size, size, 0.0F)
+								.color(red, green, blue, alpha)
+								.endVertex();
+						vertexconsumer.vertex(matrix4f, -size, size, 0.0F)
+								.color(red, green, blue, alpha)
+								.endVertex();
+						vertexconsumer.vertex(matrix4f, -size, -size, 0.0F)
+								.color(red, green, blue, alpha)
+								.endVertex();
+						vertexconsumer.vertex(matrix4f, size, -size, 0.0F)
+								.color(red, green, blue, alpha)
+								.endVertex();
+					}
 				}
 			}
-
 			ms.popPose();
 
 			event.setCanceled(true);
@@ -451,5 +534,34 @@ public class OrbitingItemRenderer {
 
 			poseStack.popPose();
 		}
+	}
+
+	private static void addQuad(VertexConsumer consumer, Matrix4f matrix,
+								float x1, float y1, float z1,
+								float x2, float y2, float z2,
+								float x3, float y3, float z3,
+								float x4, float y4, float z4,
+								float u1, float v1,
+								float u2, float v2,
+								float u3, float v3,
+								float u4, float v4,
+								float nx, float ny, float nz) {
+		consumer.vertex(matrix, x1, y1, z1).color(1, 1, 1, 1).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(nx, ny, nz).endVertex();
+		consumer.vertex(matrix, x2, y2, z2).color(1, 1, 1, 1).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(nx, ny, nz).endVertex();
+		consumer.vertex(matrix, x3, y3, z3).color(1, 1, 1, 1).uv(u3, v3).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(nx, ny, nz).endVertex();
+		consumer.vertex(matrix, x4, y4, z4).color(1, 1, 1, 1).uv(u4, v4).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(nx, ny, nz).endVertex();
+	}
+
+	private static void addColoredQuad(VertexConsumer consumer, Matrix4f matrix,
+									   float x1, float y1, float z1,
+									   float x2, float y2, float z2,
+									   float x3, float y3, float z3,
+									   float x4, float y4, float z4,
+									   int r, int g, int b, int a,
+									   float nx, float ny, float nz) {
+		consumer.vertex(matrix, x1, y1, z1).color(r, g, b, a).endVertex();
+		consumer.vertex(matrix, x2, y2, z2).color(r, g, b, a).endVertex();
+		consumer.vertex(matrix, x3, y3, z3).color(r, g, b, a).endVertex();
+		consumer.vertex(matrix, x4, y4, z4).color(r, g, b, a).endVertex();
 	}
 }

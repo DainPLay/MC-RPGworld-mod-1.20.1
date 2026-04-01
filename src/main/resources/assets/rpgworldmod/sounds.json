@@ -1291,5 +1291,38 @@
     "sounds": [
       "rpgworldmod:spell/destruction_ender_eye_stop"
     ]
+  },
+  "rpgworldmod.spell.destruction_nether_star_charge": {
+    "sounds": [
+      "rpgworldmod:spell/destruction_nether_star_charge"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.destruction_nether_star_charge"
+  },
+  "rpgworldmod.spell.destruction_nether_star_start": {
+    "sounds": [
+      "rpgworldmod:spell/destruction_nether_star_start"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.destruction_nether_star_start"
+  },
+  "rpgworldmod.spell.destruction_nether_star_loop": {
+    "sounds": [
+      "rpgworldmod:spell/destruction_nether_star_loop"
+    ]
+  },
+  "rpgworldmod.spell.destruction_nether_star_stop": {
+    "sounds": [
+      "rpgworldmod:spell/destruction_nether_star_stop"
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.destruction_nether_star_stop"
+  },
+  "rpgworldmod.spell.destruction_nether_star_hit_entity": {
+    "sounds": [
+      "rpgworldmod:spell/destruction_nether_star_hit_entity"
+    ]
+  },
+  "rpgworldmod.spell.destruction_nether_star_hit_block": {
+    "sounds": [
+      "rpgworldmod:spell/destruction_nether_star_hit_block"
+    ]
   }
 }

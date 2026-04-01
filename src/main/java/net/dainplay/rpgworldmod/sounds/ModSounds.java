@@ -210,6 +210,12 @@ public class ModSounds
         SPELL_DESTRUCTION_ENDER_EYE_START = registerSound("rpgworldmod.spell.destruction_ender_eye_start");
         SPELL_DESTRUCTION_ENDER_EYE_LOOP = registerSound("rpgworldmod.spell.destruction_ender_eye_loop");
         SPELL_DESTRUCTION_ENDER_EYE_STOP = registerSound("rpgworldmod.spell.destruction_ender_eye_stop");
+        SPELL_DESTRUCTION_NETHER_STAR_CHARGE = registerSound("rpgworldmod.spell.destruction_nether_star_charge");
+        SPELL_DESTRUCTION_NETHER_STAR_START = registerSound("rpgworldmod.spell.destruction_nether_star_start");
+        SPELL_DESTRUCTION_NETHER_STAR_LOOP = registerSound("rpgworldmod.spell.destruction_nether_star_loop");
+        SPELL_DESTRUCTION_NETHER_STAR_STOP = registerSound("rpgworldmod.spell.destruction_nether_star_stop");
+        SPELL_DESTRUCTION_NETHER_STAR_HIT_ENTITY = registerSound("rpgworldmod.spell.destruction_nether_star_hit_entity");
+        SPELL_DESTRUCTION_NETHER_STAR_HIT_BLOCK = registerSound("rpgworldmod.spell.destruction_nether_star_hit_block");
     }
 
     private static RegistryObject<SoundEvent> registerSound(String name)

@@ -1,6 +1,7 @@
 package net.dainplay.rpgworldmod.item.custom;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.ManaCostItem;
 import net.dainplay.rpgworldmod.item.custom.RPGtooltip;
@@ -53,6 +54,33 @@ public class ClientRPGtooltipHandler {
             if (tooltipItem.hasFeatures(pStack)) {
                 List<Component> featureLines = getDisplayFeaturesWithLineBreaks(pStack, tooltipItem);
                 pTooltip.addAll(featureLines);
+            }
+            if (tooltipItem instanceof NetherStarScrollItem && pStack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0) {
+                MutableComponent effectText = Component.literal("- ").withStyle(ChatFormatting.GRAY)
+                        .append(Component.translatable("effect.minecraft.speed").withStyle(ChatFormatting.BLUE))
+                        .append(Component.literal(" "))
+                        .append(tooltipItem.getEffectDuration1(pStack).withStyle(ChatFormatting.BLUE));
+                pTooltip.add(effectText);
+                effectText = Component.literal("- ").withStyle(ChatFormatting.GRAY)
+                        .append(Component.translatable("effect.minecraft.haste").withStyle(ChatFormatting.BLUE))
+                        .append(Component.literal(" "))
+                        .append(tooltipItem.getEffectDuration1(pStack).withStyle(ChatFormatting.BLUE));
+                pTooltip.add(effectText);
+                effectText = Component.literal("- ").withStyle(ChatFormatting.GRAY)
+                        .append(Component.translatable("effect.minecraft.resistance").withStyle(ChatFormatting.BLUE))
+                        .append(Component.literal(" "))
+                        .append(tooltipItem.getEffectDuration2(pStack).withStyle(ChatFormatting.BLUE));
+                pTooltip.add(effectText);
+                effectText = Component.literal("- ").withStyle(ChatFormatting.GRAY)
+                        .append(Component.translatable("effect.minecraft.jump_boost").withStyle(ChatFormatting.BLUE))
+                        .append(Component.literal(" "))
+                        .append(tooltipItem.getEffectDuration2(pStack).withStyle(ChatFormatting.BLUE));
+                pTooltip.add(effectText);
+                effectText = Component.literal("- ").withStyle(ChatFormatting.GRAY)
+                        .append(Component.translatable("effect.minecraft.strength").withStyle(ChatFormatting.BLUE))
+                        .append(Component.literal(" "))
+                        .append(tooltipItem.getEffectDuration3(pStack).withStyle(ChatFormatting.BLUE));
+                pTooltip.add(effectText);
             }
             if (tooltipItem.hasControls(pStack)) {
                 List<Component> controlsLines = getDisplayControlsWithLineBreaks(pStack, tooltipItem);
