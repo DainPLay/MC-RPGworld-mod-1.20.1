@@ -177,6 +177,7 @@ public class ModSounds
         SPELL_RESTORATION_STOP = registerSound("rpgworldmod.spell.restoration_stop");
         SPELL_RESTORATION_CAST = registerSound("rpgworldmod.spell.restoration_cast");
         SPELL_CONJURATION_START = registerSound("rpgworldmod.spell.conjuration_start");
+        SPELL_CONJURATION_LOOP = registerSound("rpgworldmod.spell.conjuration_loop");
         SPELL_CONJURATION_STOP = registerSound("rpgworldmod.spell.conjuration_stop");
         SPELL_ALTERATION_START = registerSound("rpgworldmod.spell.alteration_start");
         SPELL_ALTERATION_LOOP = registerSound("rpgworldmod.spell.alteration_loop");
@@ -216,6 +217,7 @@ public class ModSounds
         SPELL_DESTRUCTION_NETHER_STAR_STOP = registerSound("rpgworldmod.spell.destruction_nether_star_stop");
         SPELL_DESTRUCTION_NETHER_STAR_HIT_ENTITY = registerSound("rpgworldmod.spell.destruction_nether_star_hit_entity");
         SPELL_DESTRUCTION_NETHER_STAR_HIT_BLOCK = registerSound("rpgworldmod.spell.destruction_nether_star_hit_block");
+        SPELL_NECROMANCY_NETHER_STAR_PRIMED = registerSound("rpgworldmod.spell.necromancy_nether_star_primed");
     }
 
     private static RegistryObject<SoundEvent> registerSound(String name)

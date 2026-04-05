@@ -1,16 +1,19 @@
 package net.dainplay.rpgworldmod.mixin;
 
+import net.dainplay.rpgworldmod.item.custom.MintalTriangleItem;
+import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
+import net.dainplay.rpgworldmod.network.C2SCheckItemForTempNBTPacket;
 import net.dainplay.rpgworldmod.network.C2STriggerChestStaffsPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.util.ITriggerChestStaffs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -47,6 +50,14 @@ public abstract class MixinAbstractContainerMenuClient implements ITriggerChestS
 		if (stack.getItem() instanceof StaffItem) {
 			this.checkAndSendTrigger();
 		}
+		if (stack.getItem() instanceof NetherStarScrollItem) {
+			if (stack.getTag() != null && stack.getTag().contains("isPickaxe", Tag.TAG_INT)) {
+				this.CheckItemForTempNBTPacket(slotId);
+			}
+		}
+		if (stack.getItem() instanceof MintalTriangleItem) {
+			this.CheckItemForTempNBTPacket(slotId);
+		}
 	}
 
 	// При полной инициализации всех слотов (открытие контейнера, полный ресет)
@@ -61,6 +72,14 @@ public abstract class MixinAbstractContainerMenuClient implements ITriggerChestS
 		if (stack.getItem() instanceof StaffItem) {
 			this.checkAndSendTrigger();
 		}
+		if (stack.getItem() instanceof NetherStarScrollItem) {
+			if (stack.getTag() != null && stack.getTag().contains("isPickaxe", Tag.TAG_INT)) {
+				this.CheckItemForTempNBTPacket(slot);
+			}
+		}
+		if (stack.getItem() instanceof MintalTriangleItem) {
+			this.CheckItemForTempNBTPacket(slot);
+		}
 	}
 
 	// Без копирования (редко, но тоже нужно)
@@ -69,6 +88,23 @@ public abstract class MixinAbstractContainerMenuClient implements ITriggerChestS
 		if (stack.getItem() instanceof StaffItem) {
 			this.checkAndSendTrigger();
 		}
+		if (stack.getItem() instanceof NetherStarScrollItem) {
+			if (stack.getTag() != null && stack.getTag().contains("isPickaxe", Tag.TAG_INT)) {
+				this.CheckItemForTempNBTPacket(slot);
+			}
+		}
+		if (stack.getItem() instanceof MintalTriangleItem) {
+			this.CheckItemForTempNBTPacket(slot);
+		}
+	}
+
+	@Unique
+	private void CheckItemForTempNBTPacket(int slot) {
+		AbstractContainerMenu menu = (AbstractContainerMenu) (Object) this;
+
+		if (menu.slots.get(slot).container instanceof Inventory) return;
+		if (menu.slots.get(slot) instanceof CreativeModeInventoryScreen.CustomCreativeSlot) return;
+		ModMessages.sendToServer(new C2SCheckItemForTempNBTPacket(slot));
 	}
 
 	@Unique

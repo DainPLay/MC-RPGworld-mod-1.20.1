@@ -35,6 +35,7 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -60,9 +61,11 @@ import net.minecraft.world.inventory.PlayerEnderChestContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
@@ -84,6 +87,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
@@ -738,5 +742,23 @@ public class ModEvents {
 		player.getCooldowns().addCooldown(usingItem.getItem(), 15);
 	}
 
+	@SubscribeEvent
+	public static void onBlockBreak(BlockEvent.BreakEvent event) {
+		Player player = event.getPlayer();
+		if (player == null) return;
+
+		ItemStack mainHand = player.getMainHandItem();
+
+		ItemStack usingStack;
+
+		if (mainHand.getItem() instanceof NetherStarScrollItem scroll) {
+			usingStack = mainHand;
+		}
+		else return;
+
+		if (scroll.isPickaxeMode(usingStack) && !player.isShiftKeyDown()) {
+			event.setExpToDrop(0);
+		}
+	}
 
 }

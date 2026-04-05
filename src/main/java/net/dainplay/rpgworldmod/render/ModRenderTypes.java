@@ -2,15 +2,24 @@ package net.dainplay.rpgworldmod.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix4f;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.OptionalDouble;
 import java.util.function.Function;
 
@@ -239,6 +248,18 @@ public class ModRenderTypes extends RenderType {
 					.setWriteMaskState(RenderStateShard.COLOR_WRITE)
 					.setCullState(RenderStateShard.NO_CULL)
 					.setDepthTestState(RenderStateShard.NO_DEPTH_TEST)
+					.createCompositeState(false)
+	);
+
+	public static final RenderType BEAMS_RENDER_TYPE = RenderType.create(
+			"custom_beams",
+			DefaultVertexFormat.POSITION_COLOR,
+			VertexFormat.Mode.QUADS,
+			256, false, true,
+			RenderType.CompositeState.builder()
+					.setShaderState(RENDERTYPE_LIGHTNING_SHADER)
+					.setWriteMaskState(COLOR_DEPTH_WRITE)
+					.setTransparencyState(LIGHTNING_TRANSPARENCY)
 					.createCompositeState(false)
 	);
 }

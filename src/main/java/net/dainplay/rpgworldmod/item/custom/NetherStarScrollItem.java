@@ -1,20 +1,21 @@
 package net.dainplay.rpgworldmod.item.custom;
 
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.dainplay.rpgworldmod.damage.ModDamageTypes;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
-import net.dainplay.rpgworldmod.entity.custom.EnderEyeViewEntity;
 import net.dainplay.rpgworldmod.item.ModItems;
+import net.dainplay.rpgworldmod.item.ModTiers;
 import net.dainplay.rpgworldmod.network.ClientManaData;
 import net.dainplay.rpgworldmod.network.LoopSoundPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
-import net.dainplay.rpgworldmod.network.PlayerIllusionForceProvider;
 import net.dainplay.rpgworldmod.network.PlayerManaProvider;
+import net.dainplay.rpgworldmod.network.PortalEffectPacket;
 import net.dainplay.rpgworldmod.network.S2CBeamUpdatePacket;
-import net.dainplay.rpgworldmod.network.S2CViewEyePacket;
 import net.dainplay.rpgworldmod.network.UpdateItemTagMessage;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.ChatFormatting;
@@ -23,13 +24,14 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -37,19 +39,23 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.NetherPortalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -65,6 +71,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -72,12 +79,10 @@ import java.util.function.Function;
 
 public class NetherStarScrollItem extends ScrollItem {
 
-	// Хранилище для отслеживания использования игроком с привязкой к уровню
 	private static final Map<Level, Map<UUID, PlayerUseData>> playerUseData = new HashMap<>();
 
 	private static final double DESTRUCTION_BEAM_RANGE = 128.0;
-	private static final double DESTRUCTION_BEAM_RADIUS = 1.2; // ширина/высота 1 -> радиус 0.5
-	private static final int DESTRUCTION_DAMAGE_INTERVAL_TICKS = 1;
+	private static final double DESTRUCTION_BEAM_RADIUS = 1.2;
 	private static final int DESTRUCTION_CHARGE_TICKS = 40;
 
 	public NetherStarScrollItem(Properties pProperties) {
@@ -146,6 +151,12 @@ public class NetherStarScrollItem extends ScrollItem {
 			if (stack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0) {
 				return 0.2F;
 			}
+			if (stack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0) {
+				return 0.2F;
+			}
+			if (stack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0) {
+				return 0.2F;
+			}
 		}
 		return 0.05F;
 	}
@@ -183,6 +194,22 @@ public class NetherStarScrollItem extends ScrollItem {
 			float shakeRotY = (float) (Math.cos(player.getTicksUsingItem() * 1.5) * 0.3F);
 			poseStack.mulPose(Axis.YP.rotationDegrees(shakeRotY));
 		}
+		if (stack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0) {
+			poseStack.mulPose(Axis.ZP.rotationDegrees(flip * 36.0F));
+			poseStack.mulPose(Axis.XP.rotationDegrees(-7.0F));
+			poseStack.mulPose(Axis.YP.rotationDegrees((-(float) Math.PI / 6F)));
+			poseStack.translate(0F, 0.4F, 0F);
+			float shakeRotY = (float) (Math.cos(player.getTicksUsingItem() * 1.5) * 0.3F);
+			poseStack.mulPose(Axis.YP.rotationDegrees(shakeRotY));
+		}
+		if (stack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0) {
+			poseStack.mulPose(Axis.ZP.rotationDegrees(flip * 36.0F));
+			poseStack.mulPose(Axis.XP.rotationDegrees(-7.0F));
+			poseStack.mulPose(Axis.YP.rotationDegrees((-(float) Math.PI / 6F)));
+			poseStack.translate(0F, 0.4F, 0F);
+			float shakeRotY = (float) (Math.cos(player.getTicksUsingItem() * 1.5) * 0.3F);
+			poseStack.mulPose(Axis.YP.rotationDegrees(shakeRotY));
+		}
 		if (stack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0) {
 			poseStack.mulPose(Axis.ZP.rotationDegrees(flip * 36.0F));
 			poseStack.mulPose(Axis.XP.rotationDegrees(-7.0F));
@@ -205,7 +232,13 @@ public class NetherStarScrollItem extends ScrollItem {
 		if (stack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0) {
 			poseStack.translate(flip * 0.35F, 0.5F, 0F);
 		}
+		if (stack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0) {
+			poseStack.translate(flip * 0.35F, 0.5F, 0F);
+		}
 		if (stack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0) {
+			poseStack.translate(flip * 0.35F, 0.5F, 0F);
+		}
+		if (stack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0) {
 			poseStack.translate(flip * 0.35F, 0.5F, 0F);
 		}
 		return poseStack;
@@ -256,6 +289,45 @@ public class NetherStarScrollItem extends ScrollItem {
 				}
 			});
 
+			private static final HumanoidModel.ArmPose SUMMON_POSE = HumanoidModel.ArmPose.create("SUMMON", false, (model, entity, arm) -> {
+				// Определяем руку и получаем предмет
+				InteractionHand hand = (arm == HumanoidArm.RIGHT) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+				ItemStack stack = entity.getItemInHand(hand);
+				float progress = 0f; // от 0 до 1
+				if (stack.getItem() instanceof NetherStarScrollItem && stack.getTag() != null) {
+					CompoundTag tag = stack.getTag();
+					if (tag.contains("summonProgress", Tag.TAG_INT) && tag.getInt("summonProgress") > 15) {
+						int val = tag.getInt("summonProgress") - 15;
+						progress = Math.min(5, Math.max(0, val)) / 5f;
+					}
+				}
+
+				if (arm == HumanoidArm.RIGHT) {
+					// Целевые углы при progress=1 (summonProgress=20)
+					float highXRot = -(float) Math.PI * 0.8f;
+					float highZRot = -(float) Math.PI * 0.1f;
+					// Целевые углы при progress=0
+					float lowXRot = -(float) Math.PI / 10f;
+					float lowZRot = 0f;
+					// Интерполяция
+					float targetXRot = lowXRot + (highXRot - lowXRot) * progress;
+					float targetZRot = lowZRot + (highZRot - lowZRot) * progress;
+					model.rightArm.xRot = model.rightArm.xRot * 0.5f + targetXRot;
+					model.rightArm.zRot = model.rightArm.zRot * 0.5f + targetZRot;
+					model.rightArm.yRot = 0f;
+				} else { // левая рука
+					float highXRot = -(float) Math.PI * 0.8f;
+					float highZRot = (float) Math.PI * 0.1f; // положительный для левой
+					float lowXRot = -(float) Math.PI / 10f;
+					float lowZRot = 0f;
+					float targetXRot = lowXRot + (highXRot - lowXRot) * progress;
+					float targetZRot = lowZRot + (highZRot - lowZRot) * progress;
+					model.leftArm.xRot = model.leftArm.xRot * 0.5f + targetXRot;
+					model.leftArm.zRot = model.leftArm.zRot * 0.5f + targetZRot;
+					model.leftArm.yRot = 0f;
+				}
+			});
+
 			@Override
 			public HumanoidModel.ArmPose getArmPose(LivingEntity entityLiving, InteractionHand hand, ItemStack itemStack) {
 				if (!itemStack.isEmpty() && itemStack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0) {
@@ -271,6 +343,26 @@ public class NetherStarScrollItem extends ScrollItem {
 				if (!itemStack.isEmpty() && itemStack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0) {
 					if (entityLiving.isUsingItem() && entityLiving.getUseItemRemainingTicks() > 0 && entityLiving.getUsedItemHand() == hand) {
 						return ACTIVE_USE_POSE;
+					}
+				}
+				if (!itemStack.isEmpty() && itemStack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0) {
+					if (entityLiving.isUsingItem() && entityLiving.getUseItemRemainingTicks() > 0 && entityLiving.getUsedItemHand() == hand) {
+						return ACTIVE_USE_POSE;
+					}
+				}
+				if (!itemStack.isEmpty() && itemStack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0) {
+					CompoundTag tag = itemStack.getTag();
+					if (tag != null && tag.contains("isPickaxe", Tag.TAG_INT)) {
+						if (tag.contains("summonProgress", Tag.TAG_INT) && tag.getInt("summonProgress") > 0) {
+							return SUMMON_POSE;
+						} else {
+							return HumanoidModel.ArmPose.ITEM;
+						}
+					} else {
+						// Обычное поведение: поза только во время использования
+						if (entityLiving.isUsingItem() && entityLiving.getUseItemRemainingTicks() > 0 && entityLiving.getUsedItemHand() == hand) {
+							return ACTIVE_USE_POSE;
+						}
 					}
 				}
 				if (!itemStack.isEmpty() && itemStack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0) {
@@ -303,10 +395,10 @@ public class NetherStarScrollItem extends ScrollItem {
 			return "25";
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), item) > 0) {
-			return "12";
+			return "5";
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), item) > 0) {
-			return "4";
+			return "5";
 		}
 		return "5";
 	}
@@ -326,10 +418,14 @@ public class NetherStarScrollItem extends ScrollItem {
 			return 1;
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), item) > 0) {
-			return 12;
+			CompoundTag tag = item.getTag();
+			if (tag != null && tag.contains("isPickaxe", Tag.TAG_INT)) {
+				return 1;
+			}
+			return 5;
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), item) > 0) {
-			return 4;
+			return 5;
 		}
 		return 5;
 	}
@@ -340,6 +436,9 @@ public class NetherStarScrollItem extends ScrollItem {
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), item) > 0) {
 			return Component.translatable("tooltip.rpgworldmod.cost_per_second").withStyle(ChatFormatting.BLUE);
+		}
+		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), item) > 0) {
+			return Component.translatable("tooltip.rpgworldmod.plus_cost_per_block_destroyed", "1").withStyle(ChatFormatting.BLUE);
 		}
 		return Component.literal("");
 	}
@@ -370,34 +469,10 @@ public class NetherStarScrollItem extends ScrollItem {
 		}
 		if (!level.isClientSide) {
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), itemstack) > 0) {
-				if (!canUse(player, itemstack)) {
+				CompoundTag tag = itemstack.getTag();
+				if (tag != null && tag.contains("isPickaxe", Tag.TAG_INT)) {
 					return InteractionResultHolder.fail(itemstack);
 				}
-
-				ServerLevel serverLevel = (ServerLevel) level;
-				Vec3 eyePos = player.getEyePosition();
-				Vec3 lookVec = player.getLookAngle();
-				double maxDistance = 30.0;
-				Vec3 targetPos = eyePos.add(lookVec.scale(maxDistance));
-
-				EnderEyeViewEntity eye = new EnderEyeViewEntity(serverLevel, player, eyePos.x, eyePos.y, eyePos.z);
-				eye.setYaw(player.getYRot());
-				eye.setPitch(player.getXRot());
-				eye.signalTo(targetPos);
-				serverLevel.addFreshEntity(eye);
-
-				ModMessages.sendToPlayer(new S2CViewEyePacket(eye.getId()), (ServerPlayer) player);
-
-				player.getCooldowns().addCooldown(this, 15);
-				level.playSound(null, player.blockPosition(), SoundEvents.ENDER_EYE_LAUNCH,
-						SoundSource.PLAYERS, 1.0F, 1.0F);
-				if (player instanceof ServerPlayer serverPlayer) {
-					ModAdvancements.SPELL_CONJURATION_ENDER_EYE_TRIGGER.trigger(serverPlayer);
-				}
-				return InteractionResultHolder.success(itemstack);
-			}
-			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), itemstack) > 0) {
-				return handleNecromancy(level, player, itemstack);
 			}
 
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), itemstack) > 0) {
@@ -413,6 +488,8 @@ public class NetherStarScrollItem extends ScrollItem {
 				if (targetDim == Level.NETHER && !netherEnabled) {
 					player.displayClientMessage(
 							Component.translatable("message.rpgworldmod.nether_disabled"), true);
+					if (player instanceof ServerPlayer serverPlayer)
+						ModAdvancements.SPELL_ALTERATION_NETHER_STAR_TRIGGER.trigger(serverPlayer);
 					return InteractionResultHolder.fail(itemstack);
 				}
 				if (player.isPassenger() || player.isSleeping()) {
@@ -463,13 +540,10 @@ public class NetherStarScrollItem extends ScrollItem {
 				}
 			}
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), itemstack) > 0) {
-				if (!canUseClient(player, itemstack)) {
+				CompoundTag tag = itemstack.getTag();
+				if (tag != null && tag.contains("isPickaxe", Tag.TAG_INT)) {
 					return InteractionResultHolder.fail(itemstack);
 				}
-				return InteractionResultHolder.success(itemstack);
-			}
-			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), itemstack) > 0) {
-				return InteractionResultHolder.success(itemstack);
 			}
 			player.startUsingItem(hand);
 		}
@@ -486,42 +560,6 @@ public class NetherStarScrollItem extends ScrollItem {
 				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), stack) > 0;
 	}
 
-	private InteractionResultHolder<ItemStack> handleNecromancy(Level level, Player player, ItemStack stack) {
-		if (!player.getAbilities().instabuild) {
-			int amp = getManaCost(stack, player);
-			if (Mth.ceil(player.getHealth()) < amp) {
-				return InteractionResultHolder.pass(stack);
-			}
-			if (player.getMaxHealth() <= amp) {
-				player.hurt(ModDamageTypes.getDamageSource(player.level(), ModDamageTypes.NECROSIS), Float.MAX_VALUE);
-			} else {
-				player.hurt(ModDamageTypes.getDamageSource(player.level(), ModDamageTypes.NECROSIS), amp);
-				if (player.hasEffect(ModEffects.NECROSIS.get()))
-					amp += 1 + player.getEffect(ModEffects.NECROSIS.get()).getAmplifier();
-				MobEffectInstance necrosis = new MobEffectInstance(ModEffects.NECROSIS.get(), 1200, amp - 1);
-				necrosis.setCurativeItems(new ArrayList<>());
-				player.addEffect(necrosis);
-			}
-		}
-		player.getCooldowns().addCooldown(this, 15);
-		level.playSound(null, player.blockPosition(),
-				SoundEvents.ENDER_CHEST_OPEN,
-				SoundSource.PLAYERS, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F
-		);
-		level.playSound(null, player.blockPosition(),
-				RPGSounds.SPELL_NECROMANCY_CAST.get(),
-				SoundSource.PLAYERS, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F
-		);
-		if (player instanceof ServerPlayer serverPlayer) {
-			ModAdvancements.SPELL_NECROMANCY_ENDER_EYE_TRIGGER.trigger(serverPlayer);
-		}
-		player.openMenu(new SimpleMenuProvider(
-				(id, inv, p) -> ChestMenu.threeRows(id, inv, player.getEnderChestInventory()),
-				Component.translatable("container.enderchest")
-		));
-		return InteractionResultHolder.success(stack);
-	}
-
 	private boolean canUse(Player player, ItemStack stack) {
 		if (player.getAbilities().instabuild) return true;
 		if (usesHealthInsteadOfMana(stack)) {
@@ -532,7 +570,9 @@ public class NetherStarScrollItem extends ScrollItem {
 				if (mana.getMana() >= getManaCost(stack, player)) {
 					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), stack) <= 0
 							&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), stack) <= 0
-							&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) <= 0) {
+							&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) <= 0
+							&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), stack) <= 0
+							&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), stack) <= 0) {
 						mana.reduceMana((ServerPlayer) player, getManaCost(stack, player));
 					}
 					result.set(true);
@@ -553,8 +593,7 @@ public class NetherStarScrollItem extends ScrollItem {
 
 	private void startEnchantmentSounds(Level level, Player player, ItemStack stack) {
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), stack) > 0) {
-			level.playSound(null, player.getX(), player.getY(), player.getZ(),
-					RPGSounds.SPELL_DESTRUCTION_NETHER_STAR_CHARGE.get(), SoundSource.PLAYERS, 4F, 1.0F);
+			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -565,6 +604,16 @@ public class NetherStarScrollItem extends ScrollItem {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_RESTORATION_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
+		}
+		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), stack) > 0) {
+			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
+		}
+		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), stack) > 0) {
+			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
+			level.playSound(null, player.getX(), player.getY(), player.getZ(),
+					RPGSounds.SPELL_NECROMANCY_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+			level.playSound(null, player.getX(), player.getY(), player.getZ(),
+					RPGSounds.SPELL_NECROMANCY_NETHER_STAR_PRIMED.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -607,7 +656,7 @@ public class NetherStarScrollItem extends ScrollItem {
 					break;
 			}
 			if (player instanceof ServerPlayer serverPlayer)
-				ModAdvancements.SPELL_RESTORATION_ENDER_EYE_TRIGGER.trigger(serverPlayer);
+				ModAdvancements.SPELL_RESTORATION_NETHER_STAR_TRIGGER.trigger(serverPlayer);
 			player.level().playSound(null, player.blockPosition(),
 					RPGSounds.SPELL_RESTORATION_CAST.get(),
 					SoundSource.PLAYERS, 1.0F, (player.level().random.nextFloat() - player.level().random.nextFloat()) * 0.2F + 1.0F
@@ -654,14 +703,16 @@ public class NetherStarScrollItem extends ScrollItem {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_ILLUSION_STOP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 		}
+		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), stack) > 0) {
+			level.playSound(null, player.getX(), player.getY(), player.getZ(),
+					RPGSounds.SPELL_NECROMANCY_STOP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+		}
 		ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), false, stack),
 				(ServerLevel) level, player.blockPosition(), 64.0);
 	}
 
 	@Override
 	public int getUseDuration(ItemStack stack) {
-		if (stack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0) return 0;
-		if (stack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0) return 0;
 		return 72000;
 	}
 
@@ -681,6 +732,33 @@ public class NetherStarScrollItem extends ScrollItem {
 			if (!using && useTime > 0.0F) {
 				setUseTime(stack, useTime - 1);
 			}
+		}
+		AtomicBoolean isDepressed = new AtomicBoolean(false);
+		if (!level.isClientSide) {
+			if (entity instanceof Player player && !player.getAbilities().instabuild) {
+				player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+					if (mana.getMana() <= 0) {
+						isDepressed.set(true);
+					}
+				});
+			}
+		}
+		if ((!(held || entity instanceof Player player && player.getOffhandItem() == stack) || isDepressed.get())
+				&& stack.getTag() != null
+				&& stack.getTag().contains("isPickaxe", Tag.TAG_INT)) {
+			CompoundTag nbtData = stack.getOrCreateTag();
+			nbtData.remove("isPickaxe");
+			stack.setTag(nbtData);
+			level.playSound(null, entity.blockPosition(), RPGSounds.SPELL_CONJURATION_STOP.get(), SoundSource.PLAYERS, 1F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F);
+		}
+		if (stack.getTag() != null && stack.getTag().contains("summonProgress", Tag.TAG_INT) && stack.getOrCreateTag().getInt("summonProgress") > 0) {
+			CompoundTag nbtData = stack.getOrCreateTag();
+			if (stack.getOrCreateTag().getInt("summonProgress") == 0) {
+				nbtData.remove("summonProgress");
+			} else {
+				nbtData.putInt("summonProgress", nbtData.getInt("summonProgress") - 1);
+			}
+			stack.setTag(nbtData);
 		}
 	}
 
@@ -780,6 +858,8 @@ public class NetherStarScrollItem extends ScrollItem {
 
 			// Обработка зачарований
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), usingItem) > 0) {
+				if (player instanceof ServerPlayer serverPlayer)
+					ModAdvancements.SPELL_ILLUSION_NETHER_STAR_TRIGGER.trigger(serverPlayer);
 				double radius = 15.0;
 				AABB aabb = player.getBoundingBox().inflate(radius);
 				List<Player> nearbyPlayers = level.getEntitiesOfClass(Player.class, aabb,
@@ -791,6 +871,36 @@ public class NetherStarScrollItem extends ScrollItem {
 						illusion.setCurativeItems(new ArrayList<>());
 						target.addEffect(illusion);
 					}
+				}
+			}
+			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), usingItem) > 0 && data.useTicks > 30) {
+				if (usingItem.getItem() instanceof NetherStarScrollItem netherStarScrollItem) {
+					if (!player.getAbilities().instabuild) {
+						int amp = netherStarScrollItem.getManaCost(usingItem, player);
+						if (Mth.ceil(player.getHealth()) < amp) {
+							return;
+						}
+						if (player.getMaxHealth() <= amp) {
+							player.hurt(ModDamageTypes.getDamageSource(player.level(), ModDamageTypes.NECROSIS), Float.MAX_VALUE);
+						} else {
+							player.hurt(ModDamageTypes.getDamageSource(player.level(), ModDamageTypes.NECROSIS), amp);
+							if (player.hasEffect(ModEffects.NECROSIS.get()))
+								amp += 1 + player.getEffect(ModEffects.NECROSIS.get()).getAmplifier();
+							MobEffectInstance necrosis = new MobEffectInstance(ModEffects.NECROSIS.get(), 1200, amp - 1);
+							necrosis.setCurativeItems(new ArrayList<>());
+							player.addEffect(necrosis);
+						}
+					}
+					player.getCooldowns().addCooldown(ModItems.NETHER_STAR_SCROLL.get(), 15);
+					data.active = false;
+					stopPlayerUse(level, player, usingItem, false);
+					level.playSound(null, player.blockPosition(),
+							RPGSounds.SPELL_NECROMANCY_CAST.get(),
+							SoundSource.PLAYERS, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F
+					);
+					if (player instanceof ServerPlayer serverPlayer)
+						ModAdvancements.SPELL_NECROMANCY_NETHER_STAR_TRIGGER.trigger(serverPlayer);
+					player.level().explode(player, player.getX(), player.getY(), player.getZ(), 4.5F, Level.ExplosionInteraction.MOB);
 				}
 			}
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), usingItem) > 0) {
@@ -806,16 +916,43 @@ public class NetherStarScrollItem extends ScrollItem {
 				if (targetDim == Level.NETHER && !netherEnabled) {
 					player.displayClientMessage(
 							Component.translatable("message.rpgworldmod.nether_disabled"), true);
-					player.stopUsingItem();
+					if (player instanceof ServerPlayer serverPlayer)
+						ModAdvancements.SPELL_ALTERATION_NETHER_STAR_TRIGGER.trigger(serverPlayer);
+					data.active = false;
+					stopPlayerUse(level, player, usingItem, false);
 					player.getCooldowns().addCooldown(ModItems.NETHER_STAR_SCROLL.get(), 15);
 					return;
 				}
 				if (player.isPassenger() || player.isSleeping()) {
 					player.displayClientMessage(
 							Component.translatable("message.rpgworldmod.cannot_teleport_now"), true);
-					player.stopUsingItem();
+					data.active = false;
+					stopPlayerUse(level, player, usingItem, false);
 					player.getCooldowns().addCooldown(ModItems.NETHER_STAR_SCROLL.get(), 15);
 					return;
+				}
+			}
+			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), usingItem) > 0 && data.useTicks > 40) {
+				if (usingItem.getItem() instanceof NetherStarScrollItem netherStarScrollItem) {
+					player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+						int cost = netherStarScrollItem.getManaCost(usingItem, player);
+						if (mana.getMana() >= cost || player.getAbilities().instabuild) {
+							if (!player.getAbilities().instabuild) mana.reduceMana((ServerPlayer) player, cost);
+							data.active = false;
+							stopPlayerUse(level, player, usingItem, false);
+							player.getCooldowns().addCooldown(ModItems.NETHER_STAR_SCROLL.get(), 15);
+							level.playSound(null, player.blockPosition(),
+									RPGSounds.SPELL_CONJURATION_START.get(),
+									SoundSource.PLAYERS, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F
+							);
+							CompoundTag nbtData = usingItem.getOrCreateTag();
+							nbtData.putInt("isPickaxe", 1);
+							nbtData.putInt("summonProgress", 20);
+							usingItem.setTag(nbtData);
+							if (player instanceof ServerPlayer serverPlayer)
+								ModAdvancements.SPELL_CONJURATION_NETHER_STAR_TRIGGER.trigger(serverPlayer);
+						}
+					});
 				}
 			}
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), usingItem) > 0 && data.useTicks > 80) {
@@ -825,7 +962,8 @@ public class NetherStarScrollItem extends ScrollItem {
 						if (mana.getMana() >= cost || player.getAbilities().instabuild) {
 
 							if (!player.getAbilities().instabuild) mana.reduceMana((ServerPlayer) player, cost);
-							player.stopUsingItem();
+							data.active = false;
+							stopPlayerUse(level, player, usingItem, false);
 							player.getCooldowns().addCooldown(ModItems.NETHER_STAR_SCROLL.get(), 15);
 							level.playSound(null, player.blockPosition(),
 									RPGSounds.SPELL_ALTERATION_CAST.get(),
@@ -839,13 +977,15 @@ public class NetherStarScrollItem extends ScrollItem {
 							} else if (currentDim == Level.NETHER) {
 								targetDim = Level.OVERWORLD;
 							} else {
-								level.explode((Entity)null, level.damageSources().badRespawnPointExplosion(player.getPosition(0)), (ExplosionDamageCalculator)null, player.getPosition(0), 5.0F, true, Level.ExplosionInteraction.BLOCK);
+								level.explode((Entity) null, level.damageSources().badRespawnPointExplosion(player.getPosition(0)), (ExplosionDamageCalculator) null, player.getPosition(0), 5.0F, true, Level.ExplosionInteraction.BLOCK);
 								return;
 							}
 
 							// Проверки
 							if (targetDim == Level.NETHER && !level.getServer().isNetherEnabled()) {
 								player.displayClientMessage(Component.translatable("message.rpgworldmod.nether_disabled"), true);
+								if (player instanceof ServerPlayer serverPlayer)
+									ModAdvancements.SPELL_ALTERATION_NETHER_STAR_TRIGGER.trigger(serverPlayer);
 								return;
 							}
 							if (player.isPassenger() || player.isSleeping()) {
@@ -854,7 +994,11 @@ public class NetherStarScrollItem extends ScrollItem {
 							}
 
 							ServerLevel targetLevel = ((ServerPlayer) player).server.getLevel(targetDim);
-							if (targetLevel == null) return;
+							if (targetLevel == null) {
+								if (player instanceof ServerPlayer serverPlayer)
+									ModAdvancements.SPELL_ALTERATION_NETHER_STAR_TRIGGER.trigger(serverPlayer);
+								return;
+							}
 
 							// Масштабирование координат
 							BlockPos sourcePos = player.blockPosition();
@@ -867,8 +1011,13 @@ public class NetherStarScrollItem extends ScrollItem {
 								z = sourcePos.getZ() * 8.0;
 							}
 
+							double x1 = player.getBlockX() + 0.5;
+							double y1 = player.getBlockY() + 1;
+							double z1 = player.getBlockZ() + 0.5;
+							ModMessages.sendToNearbyPlayers(new PortalEffectPacket(x1, y1, z1), level, player.blockPosition(), 64.0);
+
 							BlockPos safePos = findSafePortalPosition(targetLevel, new BlockPos((int) x, sourcePos.getY(), (int) z), Direction.Axis.X);
-							safePos = new BlockPos(safePos.getX(), safePos.getY()+1, safePos.getZ());
+							safePos = new BlockPos(safePos.getX(), safePos.getY() + 1, safePos.getZ());
 
 							// Выполняем телепортацию
 							player.changeDimension(targetLevel, new CustomTeleporter(safePos));
@@ -892,6 +1041,13 @@ public class NetherStarScrollItem extends ScrollItem {
 									}
 								}
 							}
+							ensureSafePosition(targetLevel, player);
+							if (player instanceof ServerPlayer serverPlayer)
+								ModAdvancements.SPELL_ALTERATION_NETHER_STAR_TRIGGER.trigger(serverPlayer);
+							double x2 = player.getBlockX() + 0.5;
+							double y2 = player.getBlockY() + 1;
+							double z2 = player.getBlockZ() + 0.5;
+							ModMessages.sendToNearbyPlayers(new PortalEffectPacket(x2, y2, z2), targetLevel, player.blockPosition(), 64.0);
 						}
 					});
 				}
@@ -907,7 +1063,7 @@ public class NetherStarScrollItem extends ScrollItem {
 
 					// Отправляем пакет каждый тик
 					if (data.lastSentBeamEndPoint == null) {
-						handleBeamStart(player, eyePos, endPoint);
+						handleBeamStart(player, eyePos, endPoint, usingItem);
 					}
 					data.lastSentBeamEndPoint = endPoint;
 					ModMessages.sendToNearbyPlayers(
@@ -916,6 +1072,41 @@ public class NetherStarScrollItem extends ScrollItem {
 					);
 				}
 			}
+		}
+	}
+
+	private static void ensureSafePosition(ServerLevel level, Player player) {
+		BlockPos playerPos = player.blockPosition();
+		BlockState blockAtFeet = level.getBlockState(playerPos);
+		BlockState blockAtHead = level.getBlockState(playerPos.above());
+
+		// Если игрок не внутри твёрдого блока (ноги и голова в воздухе или заменяемых блоках), выходим
+		boolean isInsideSolid = (blockAtFeet.isSolid() && !blockAtFeet.canBeReplaced()) ||
+				(blockAtHead.isSolid() && !blockAtHead.canBeReplaced());
+		if (!isInsideSolid) {
+			return;
+		}
+
+		// Разрушаем блоки в области 3x3x2 вокруг игрока (X: -1..1, Z: -1..1, Y: 0..1 относительно ног)
+		float explosionResistanceThreshold = 20.0F; // как в примере со Spiky Ivy
+		BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
+		for (int dx = -1; dx <= 1; dx++) {
+			for (int dz = -1; dz <= 1; dz++) {
+				for (int dy = 0; dy <= 1; dy++) {
+					mutablePos.set(playerPos.getX() + dx, playerPos.getY() + dy, playerPos.getZ() + dz);
+					BlockState state = level.getBlockState(mutablePos);
+					// Проверяем, не взрывоустойчив ли блок (как в randomTick)
+					if (state.getExplosionResistance(level, mutablePos, null) < explosionResistanceThreshold) {
+						level.destroyBlock(mutablePos, true); // true - дропать предметы
+					}
+				}
+			}
+		}
+
+		// Дополнительно: попробуем немного сдвинуть игрока вверх, если он всё ещё внутри блока
+		// (на случай, если блоки были неразрушаемыми)
+		if (!level.getBlockState(player.blockPosition()).isAir()) {
+			player.teleportTo(player.getX(), player.getY() + 1, player.getZ());
 		}
 	}
 
@@ -1068,8 +1259,8 @@ public class NetherStarScrollItem extends ScrollItem {
 	private static BlockPos findSafeGroundAbove(ServerLevel level, BlockPos startPos, int maxRise) {
 		BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
 		for (int dy = 0; dy <= maxRise; dy++) {
-			int limit = level.dimension() == Level.OVERWORLD ? level.getMaxBuildHeight()-1 : 127;
-			if (startPos.getY()+dy >= limit) return null;
+			int limit = level.dimension() == Level.OVERWORLD ? level.getMaxBuildHeight() - 1 : 127;
+			if (startPos.getY() + dy >= limit) return null;
 			mutable.set(startPos.getX(), startPos.getY() + dy, startPos.getZ());
 			BlockState state = level.getBlockState(mutable);
 			if (state.isSolid() && !state.is(Blocks.LAVA)) {
@@ -1117,7 +1308,7 @@ public class NetherStarScrollItem extends ScrollItem {
 		}
 	}
 
-	public static void handleBeamStart(Player player, Vec3 start, Vec3 end) {
+	public static void handleBeamStart(Player player, Vec3 start, Vec3 end, ItemStack itemStack) {
 		Vec3 direction = end.subtract(start).normalize();
 		double length = start.distanceTo(end);
 		double step = 1.0;
@@ -1127,6 +1318,10 @@ public class NetherStarScrollItem extends ScrollItem {
 					RPGSounds.SPELL_DESTRUCTION_NETHER_STAR_START.get(), SoundSource.PLAYERS,
 					0.1F, 1.0F);
 		}
+		if (player instanceof ServerPlayer serverPlayer)
+			ModAdvancements.SPELL_DESTRUCTION_NETHER_STAR_TRIGGER.trigger(serverPlayer);
+		ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), false, itemStack),
+				(ServerLevel) player.level(), player.blockPosition(), 64.0);
 	}
 
 	public static void handleBeamStop(Player player, Vec3 start, Vec3 end) {
@@ -1258,8 +1453,10 @@ public class NetherStarScrollItem extends ScrollItem {
 
 	private static boolean hasAnyEnchantForContinuation(ItemStack stack) {
 		return EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), stack) > 0 ||
+				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), stack) > 0 ||
 				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) > 0 ||
 				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), stack) > 0 ||
+				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), stack) > 0 ||
 				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), stack) > 0;
 	}
 
@@ -1297,7 +1494,8 @@ public class NetherStarScrollItem extends ScrollItem {
 			}
 			if (item.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0
 					|| item.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0
-					|| item.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0)
+					|| item.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0
+					|| item.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0)
 				return false;
 			if (useTicks - lastManaTick >= tick) {
 				lastManaTick = useTicks;
@@ -1317,5 +1515,111 @@ public class NetherStarScrollItem extends ScrollItem {
 
 	public boolean hasControls(ItemStack item) {
 		return item.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0;
+	}
+
+	@Override
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+		if (ItemStack.isSameItem(oldStack, newStack)) {
+			boolean enchantmentsEqual = EnchantmentHelper.getEnchantments(oldStack)
+					.equals(EnchantmentHelper.getEnchantments(newStack));
+			boolean pickaxeTagsEqual = arePickaxeTagsEqual(oldStack, newStack);
+			return !enchantmentsEqual || !pickaxeTagsEqual;
+		} else {
+			return true;
+		}
+	}
+
+	private boolean arePickaxeTagsEqual(ItemStack a, ItemStack b) {
+		int valA = getPickaxeTagValueOrNull(a);
+		int valB = getPickaxeTagValueOrNull(b);
+		return valA == valB;
+	}
+
+	private int getPickaxeTagValueOrNull(ItemStack stack) {
+		CompoundTag tag = stack.getTag();
+		if (tag != null && tag.contains("isPickaxe", Tag.TAG_INT)) {
+			return tag.getInt("isPickaxe");
+		}
+		return -1;
+	}
+
+	public boolean isPickaxeMode(ItemStack stack) {
+		if (stack.isEmpty()) return false;
+		CompoundTag tag = stack.getTag();
+		return tag != null && tag.contains("isPickaxe", Tag.TAG_INT) &&
+				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), stack) > 0;
+	}
+
+	@Override
+	public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
+		if (isPickaxeMode(stack))
+			return net.minecraftforge.common.ToolActions.DEFAULT_PICKAXE_ACTIONS.contains(toolAction);
+		else return super.canPerformAction(stack, toolAction);
+	}
+
+	private static final Tier PICKAXE_TIER = ModTiers.CONJURED;
+
+	@Override
+	public float getDestroySpeed(ItemStack pStack, BlockState pState) {
+		if (isPickaxeMode(pStack) && pState.is(BlockTags.MINEABLE_WITH_PICKAXE)) {
+			return PICKAXE_TIER.getSpeed();
+		}
+		return super.getDestroySpeed(pStack, pState);
+	}
+
+	@Override
+	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+		if (isPickaxeMode(stack)) {
+			if (attacker instanceof Player player) {
+				if (!player.getAbilities().instabuild) {
+					player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+						mana.reduceMana((ServerPlayer) player, getManaCost(stack, player) * 2);
+					});
+				}
+			}
+			return true;
+		}
+		return super.hurtEnemy(stack, target, attacker);
+	}
+
+	@Override
+	public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity entity) {
+		if (isPickaxeMode(stack)) {
+			if (!level.isClientSide && state.getDestroySpeed(level, pos) != 0.0F) {
+				if (entity instanceof Player player) {
+					if (!player.getAbilities().instabuild) {
+						player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+							mana.reduceMana((ServerPlayer) player, getManaCost(stack, player));
+						});
+					}
+				}
+			}
+			return true;
+		}
+		return super.mineBlock(stack, level, state, pos, entity);
+	}
+
+	@Override
+	public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
+		if (isPickaxeMode(stack) && slot == EquipmentSlot.MAINHAND) {
+			ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+			float attackDamage = -2.0F + PICKAXE_TIER.getAttackDamageBonus();
+			float attackSpeed = -2.8F;
+			builder.put(Attributes.ATTACK_DAMAGE,
+					new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Tool modifier", attackDamage, AttributeModifier.Operation.ADDITION));
+			builder.put(Attributes.ATTACK_SPEED,
+					new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Tool modifier", attackSpeed, AttributeModifier.Operation.ADDITION));
+			return builder.build();
+		}
+		return super.getAttributeModifiers(slot, stack);
+	}
+
+	@Override
+	public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {
+		if (isPickaxeMode(stack)) {
+			return state.is(BlockTags.MINEABLE_WITH_PICKAXE) &&
+					net.minecraftforge.common.TierSortingRegistry.isCorrectTierForDrops(PICKAXE_TIER, state);
+		}
+		return super.isCorrectToolForDrops(stack, state);
 	}
 }

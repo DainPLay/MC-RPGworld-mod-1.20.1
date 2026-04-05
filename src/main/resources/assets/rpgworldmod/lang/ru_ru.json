@@ -393,10 +393,10 @@
   "item.rpgworldmod.nether_star_scroll.alteration.features": "Перемещает чтеца в Незер. Использование в Незере, наоборот, перемещает чтеца в верхний мир.",
   "item.rpgworldmod.nether_star_scroll.conjuration": "Заклинание призывной кирки",
   "item.rpgworldmod.nether_star_scroll.conjuration.desc": "То же, что и приставка \"ай\"",
-  "item.rpgworldmod.nether_star_scroll.conjuration.features": "___",
-  "item.rpgworldmod.nether_star_scroll.necromancy": "Заклинание камикадзе",
+  "item.rpgworldmod.nether_star_scroll.conjuration.features": "Призывает кирку в руку чтеца, которая будет тратить его ману вместо прочности. Обычное использование кирки будет иметь эффект шёлкового касания, а использование с зажатой клавишей [%1$s] - эффект удачи 3.",
+  "item.rpgworldmod.nether_star_scroll.necromancy": "Заклинание взрыва",
   "item.rpgworldmod.nether_star_scroll.necromancy.desc": "Прочти перед использованием",
-  "item.rpgworldmod.nether_star_scroll.necromancy.features": "___",
+  "item.rpgworldmod.nether_star_scroll.necromancy.features": "Взрывает чтеца без вреда для него.",
 
   "item.rpgworldmod.platinumfish": "Платиновая рыбка",
   "item.rpgworldmod.mossfront": "Мохолобик",
@@ -883,6 +883,7 @@
   "subtitles.rpgworldmod.spell.destruction_nether_star_start": "Нечистый маяк заряжен",
   "subtitles.rpgworldmod.spell.destruction_nether_star_stop": "Нечистый маяк разряжен",
   "subtitles.rpgworldmod.spell.destruction_nether_star_charge": "Нечистый маяк заряжается",
+  "subtitles.rpgworldmod.spell.necromancy_nether_star_primed": "Шипение",
 
   "subtitles.rpgworldmod.staff.start": "Посох заряжается",
   "subtitles.rpgworldmod.staff.stop": "Посох разряжается",
@@ -918,6 +919,7 @@
   "tooltip.rpgworldmod.cost_per_second": " в секунду",
   "tooltip.rpgworldmod.plus_cost_per_second": " + %s⭐ в секунду",
   "tooltip.rpgworldmod.cost_per_second_plus": " в секунду + %s⭐",
+  "tooltip.rpgworldmod.plus_cost_per_block_destroyed": " + %s⭐/блок",
   "tooltip.rpgworldmod.hp_cost_number": "%s❤",
   "tooltip.rpgworldmod.target": "Цель:"
 }

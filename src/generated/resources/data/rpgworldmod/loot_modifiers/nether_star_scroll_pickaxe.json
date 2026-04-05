@@ -1,0 +1,13 @@
+{
+  "type": "rpgworldmod:nether_star_pickaxe",
+  "conditions": [
+    {
+      "condition": "minecraft:match_tool",
+      "predicate": {
+        "items": [
+          "rpgworldmod:nether_star_scroll"
+        ]
+      }
+    }
+  ]
+}

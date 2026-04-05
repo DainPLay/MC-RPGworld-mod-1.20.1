@@ -1,5 +1,7 @@
 package net.dainplay.rpgworldmod.event; // или в пакет, где у вас клиентские события
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
@@ -13,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -20,6 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -102,5 +106,55 @@ public class ClientModEvents {
         List<ItemEntity> items = getAllItemsInRadius(player, radius);
         if (items.isEmpty()) return null;
         return items.get(player.getRandom().nextInt(items.size()));
+    }
+
+    @SubscribeEvent
+    public static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
+        Player player = event.getEntity();
+        ItemStack itemStack = player.getUseItem();
+        if (itemStack.getItem() instanceof NetherStarScrollItem &&
+                itemStack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0 &&
+                player.isUsingItem() &&
+                player.getUseItem() == itemStack &&
+                player.getTicksUsingItem() > 0) {
+
+            float progress = Math.min(30, player.getTicksUsingItem()) / 30.0F;
+            if (progress > 0) {
+                PoseStack poseStack = event.getPoseStack();
+                poseStack.pushPose();
+                // Масштаб
+                float f = progress;
+                float f1 = 1.0F + Mth.sin(f * 100.0F) * f * 0.01F;
+                f = Mth.clamp(f, 0.0F, 1.0F);
+                f *= f;
+                f *= f;
+                float f2 = (1.0F + f * 0.4F) * f1;
+                float f3 = (1.0F + f * 0.1F) / f1;
+                poseStack.scale(f2, f3, f2);
+
+                boolean white = (int)(progress * 10) % 2 == 0;
+                if (white) {
+                    RenderSystem.setShaderColor(255F, 255F, 255F, 1.0F);
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onRenderPlayerPost(RenderPlayerEvent.Post event) {
+        Player player = event.getEntity();
+        ItemStack itemStack = player.getUseItem();
+        if (itemStack.getItem() instanceof NetherStarScrollItem &&
+                itemStack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0 &&
+                player.isUsingItem() &&
+                player.getUseItem() == itemStack &&
+                player.getTicksUsingItem() > 0) {
+
+            float progress = Math.min(30, player.getTicksUsingItem()) / 30.0F;
+            if (progress > 0) {
+                event.getPoseStack().popPose();
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F); // сброс цвета
+            }
+        }
     }
 }

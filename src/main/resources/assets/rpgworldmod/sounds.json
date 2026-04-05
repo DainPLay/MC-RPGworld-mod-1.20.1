@@ -1059,6 +1059,11 @@
     ],
     "subtitle": "subtitles.rpgworldmod.spell.conjuration_stop"
   },
+  "rpgworldmod.spell.conjuration_loop": {
+    "sounds": [
+      "rpgworldmod:spell/conjuration_loop"
+    ]
+  },
   "rpgworldmod.spell.alteration_loop": {
     "sounds": [
       "rpgworldmod:spell/alteration_loop"
@@ -1324,5 +1329,14 @@
     "sounds": [
       "rpgworldmod:spell/destruction_nether_star_hit_block"
     ]
+  },
+  "rpgworldmod.spell.necromancy_nether_star_primed": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.creeper.primed"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.necromancy_nether_star_primed"
   }
 }

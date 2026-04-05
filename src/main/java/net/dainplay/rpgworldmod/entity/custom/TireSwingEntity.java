@@ -5,6 +5,7 @@ import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.PacketTireSwingInteraction;
 import net.dainplay.rpgworldmod.network.PullPlayerPacket;
+import net.dainplay.rpgworldmod.network.SwingPlayerPacket;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -1316,7 +1317,7 @@ public class TireSwingEntity extends Entity {
 		// Теперь применяем скорость к уже спешенному игроку
 		if (!this.level().isClientSide && passenger != null && seatVelocity.lengthSqr() > 0) {
 			if (passenger instanceof ServerPlayer serverPlayer) {
-				ModMessages.sendToPlayer(new PullPlayerPacket(seatVelocity, serverPlayer.getId()), serverPlayer);
+				ModMessages.sendToPlayer(new SwingPlayerPacket(seatVelocity, serverPlayer.getId()), serverPlayer);
 			}
 		}
 

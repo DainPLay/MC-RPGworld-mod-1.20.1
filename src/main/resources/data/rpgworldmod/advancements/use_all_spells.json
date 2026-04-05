@@ -72,6 +72,30 @@
     "spell_necromancy_ender_eye": {
       "conditions": {},
       "trigger": "rpgworldmod:spell_necromancy_ender_eye"
+    },
+    "spell_destruction_nether_star": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_destruction_nether_star"
+    },
+    "spell_restoration_nether_star": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_restoration_nether_star"
+    },
+    "spell_alteration_nether_star": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_alteration_nether_star"
+    },
+    "spell_illusion_nether_star": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_illusion_nether_star"
+    },
+    "spell_conjuration_nether_star": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_conjuration_nether_star"
+    },
+    "spell_necromancy_nether_star": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_necromancy_nether_star"
     }
   },
   "display": {
@@ -144,10 +168,28 @@
     ],
     [
       "spell_necromancy_ender_eye"
+    ],
+    [
+      "spell_destruction_nether_star"
+    ],
+    [
+      "spell_restoration_nether_star"
+    ],
+    [
+      "spell_alteration_nether_star"
+    ],
+    [
+      "spell_illusion_nether_star"
+    ],
+    [
+      "spell_conjuration_nether_star"
+    ],
+    [
+      "spell_necromancy_nether_star"
     ]
   ],
   "rewards": {
-    "experience": 180
+    "experience": 240
   },
   "sends_telemetry_event": true
 }

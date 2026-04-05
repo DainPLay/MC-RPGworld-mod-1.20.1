@@ -53,6 +53,31 @@ public class ClientPacketHandlers {
 		ClientIsManaRegenBlockedData.set(blocked);
 	}
 
+	public static void handlePortalEffect(double x, double y, double z) {
+		Level level = Minecraft.getInstance().level;
+		if (level == null) return;
+
+		// Координаты центра эффекта (передаются как центр блока + 0.5 по X/Z, Y - уровень блока + 1)
+		double centerX = x;
+		double centerY = y;
+		double centerZ = z;
+
+		for (int k3 = 0; k3 < 8; ++k3) {
+			for (double d12 = 0.0; d12 < Math.PI * 2; d12 += 0.15707963267948966) {
+				double cos = Math.cos(d12);
+				double sin = Math.sin(d12);
+				// Первый слой частиц (скорость -5)
+				level.addParticle(ParticleTypes.PORTAL,
+						centerX + cos * 5.0, centerY - 0.4, centerZ + sin * 5.0,
+						cos * -5.0, 0.0, sin * -5.0);
+				// Второй слой (скорость -7)
+				level.addParticle(ParticleTypes.PORTAL,
+						centerX + cos * 5.0, centerY - 0.4, centerZ + sin * 5.0,
+						cos * -7.0, 0.0, sin * -7.0);
+			}
+		}
+	}
+
 	// --- Razorleaf ---
 	public static void handleSyncRazorleafData(int entityId, int state, int attackType, int attackTimer,
 											   int tongueAnimationTime, Vec3 spitDirection, Vec3 pullDirection,
@@ -109,10 +134,19 @@ public class ClientPacketHandlers {
 		if (!mc.player.isPassenger()) {
 			mc.player.setDeltaMovement(mc.player.getDeltaMovement().add(motion));
 			mc.player.fallDistance = 0;
+		}
+	}
+	public static void handleSwingPlayer(Vec3 motion, int playerId) {
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.level == null || mc.player == null || mc.player.getId() != playerId) return;
+
+		// Если игрок уже не пассажир, применяем сразу
+		if (!mc.player.isPassenger()) {
+			mc.player.setDeltaMovement(mc.player.getDeltaMovement().add(motion));
+			mc.player.fallDistance = 0;
 			return;
 		}
 
-		// Иначе запускаем проверку с отложенным применением
 		ClientVelocityStorage.storeVelocity(playerId, motion);
 	}
 
@@ -234,13 +268,15 @@ public class ClientPacketHandlers {
 			}
 			if (itemStack.getItem() instanceof NetherStarScrollItem) {
 				if (itemStack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_DESTRUCTION_NETHER_STAR_LOOP.get();
+					soundEvent = RPGSounds.SPELL_DESTRUCTION_NETHER_STAR_CHARGE.get();
 				if (itemStack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0)
 					soundEvent = RPGSounds.SPELL_RESTORATION_LOOP.get();
 				if (itemStack.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0)
 					soundEvent = RPGSounds.SPELL_ALTERATION_LOOP.get();
 				if (itemStack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0)
 					soundEvent = RPGSounds.SPELL_ILLUSION_LOOP.get();
+				if (itemStack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0)
+					soundEvent = RPGSounds.SPELL_CONJURATION_LOOP.get();
 				if (itemStack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0)
 					soundEvent = RPGSounds.SPELL_NECROMANCY_LOOP.get();
 			}
@@ -452,7 +488,7 @@ public class ClientPacketHandlers {
 					PositionedLoopSound newSound = new PositionedLoopSound(
 							RPGSounds.SPELL_DESTRUCTION_NETHER_STAR_HIT_BLOCK.get(),
 							ownerId, endPos);
-					newSound.setVolume(1.0F);
+					newSound.setVolume(0.3F);
 					newSound.setActive(true);
 					Minecraft.getInstance().getSoundManager().play(newSound);
 					activeEndSound.put(ownerId, newSound);
@@ -460,7 +496,7 @@ public class ClientPacketHandlers {
 					// Обновляем существующий
 					oldEndSound.setPosition(endPos);
 					oldEndSound.setActive(true);
-					oldEndSound.setVolume(1.0F);
+					oldEndSound.setVolume(0.3F);
 				}
 			}
 		}

@@ -95,6 +95,12 @@ public class ModMessages {
 				.consumerMainThread(PullPlayerPacket::handle)
 				.add();
 
+		net.messageBuilder(SwingPlayerPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(SwingPlayerPacket::new)
+				.encoder(SwingPlayerPacket::toBytes)
+				.consumerMainThread(SwingPlayerPacket::handle)
+				.add();
+
 		net.messageBuilder(UpdateItemTagMessage.class, id(), NetworkDirection.PLAY_TO_SERVER)
 				.decoder(UpdateItemTagMessage::decode)
 				.encoder(UpdateItemTagMessage::encode)
@@ -135,6 +141,12 @@ public class ModMessages {
 				.decoder(C2STriggerChestStaffsPacket::decode)
 				.encoder(C2STriggerChestStaffsPacket::encode)
 				.consumerMainThread(C2STriggerChestStaffsPacket::handle)
+				.add();
+
+		net.messageBuilder(C2SCheckItemForTempNBTPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+				.decoder(C2SCheckItemForTempNBTPacket::decode)
+				.encoder(C2SCheckItemForTempNBTPacket::encode)
+				.consumerMainThread(C2SCheckItemForTempNBTPacket::handle)
 				.add();
 
 		net.messageBuilder(UseOnItemTargetPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
@@ -219,6 +231,12 @@ public class ModMessages {
 				.encoder(S2CBeamUpdatePacket::encode)
 				.decoder(S2CBeamUpdatePacket::decode)
 				.consumerMainThread(S2CBeamUpdatePacket::handle)
+				.add();
+
+		net.messageBuilder(PortalEffectPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(PortalEffectPacket::new)
+				.encoder(PortalEffectPacket::toBytes)
+				.consumerMainThread(PortalEffectPacket::handle)
 				.add();
 	}
 

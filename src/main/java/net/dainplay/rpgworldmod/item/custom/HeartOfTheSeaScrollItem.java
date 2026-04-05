@@ -588,8 +588,10 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 		}
 		serverLevel.addFreshEntity(dolphin);
 		player.getCooldowns().addCooldown(this, 15);
-		level.playSound(null, context.getClickedPos(), RPGSounds.SPELL_CONJURATION_START.get(),
-				SoundSource.NEUTRAL, 1.0F, 1.0F);
+		level.playSound(null, context.getClickedPos(),
+				RPGSounds.SPELL_CONJURATION_START.get(),
+				SoundSource.NEUTRAL, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F
+		);
 		if (player instanceof ServerPlayer serverPlayer) {
 			ModAdvancements.SPELL_CONJURATION_HEART_OF_THE_SEA_TRIGGER.trigger(serverPlayer);
 		}

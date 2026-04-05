@@ -133,6 +133,7 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> SPELL_RESTORATION_STOP;
     public static RegistryObject<SoundEvent> SPELL_RESTORATION_CAST;
     public static RegistryObject<SoundEvent> SPELL_CONJURATION_START;
+    public static RegistryObject<SoundEvent> SPELL_CONJURATION_LOOP;
     public static RegistryObject<SoundEvent> SPELL_CONJURATION_STOP;
     public static RegistryObject<SoundEvent> SPELL_ALTERATION_START;
     public static RegistryObject<SoundEvent> SPELL_ALTERATION_LOOP;
@@ -172,4 +173,5 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_NETHER_STAR_STOP;
     public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_NETHER_STAR_HIT_ENTITY;
     public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_NETHER_STAR_HIT_BLOCK;
+    public static RegistryObject<SoundEvent> SPELL_NECROMANCY_NETHER_STAR_PRIMED;
 }

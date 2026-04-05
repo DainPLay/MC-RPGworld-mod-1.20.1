@@ -1,0 +1,16 @@
+{
+  "type": "rpgworldmod:spell",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "rpgworldmod:empty_scroll"
+    },
+    {
+      "item": "minecraft:nether_star"
+    }
+  ],
+  "result": {
+    "item": "rpgworldmod:nether_star_scroll",
+    "count": 1
+  }
+}

@@ -41,7 +41,14 @@
     "foliage_provider": {
       "type": "minecraft:simple_state_provider",
       "state": {
-        "Name": "rpgworldmod:maskonite_glass"
+        "Name": "rpgworldmod:rie_leaves",
+        "Properties": {
+          "distance": "7",
+          "persistent": "false",
+          "related_to_ent": "0",
+          "spawned_for_ent": "true",
+          "waterlogged": "false"
+        }
       }
     },
     "force_dirt": false,

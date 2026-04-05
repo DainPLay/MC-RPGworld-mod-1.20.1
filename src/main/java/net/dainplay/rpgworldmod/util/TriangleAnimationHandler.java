@@ -3,6 +3,10 @@ package net.dainplay.rpgworldmod.util;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.DoubleSidedRecordItem;
 import net.dainplay.rpgworldmod.item.custom.MintalTriangleItem;
+import net.dainplay.rpgworldmod.sounds.RPGSounds;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -36,6 +40,14 @@ public class TriangleAnimationHandler {
             // Check if the spawned item is damageable
             if (itemStack.getItem() == ModItems.MINTAL_TRIANGLE.get()) {
                 MintalTriangleItem.setVibes(itemStack, 0); // Reduce durability by 1
+            }
+
+            if (itemStack.getItem() == ModItems.NETHER_STAR_SCROLL.get()
+            && itemStack.getTag() != null && itemStack.getTag().contains("isPickaxe", Tag.TAG_INT)) {
+                CompoundTag nbtData = itemStack.getOrCreateTag();
+                nbtData.remove("isPickaxe");
+                itemStack.setTag(nbtData);
+                event.getLevel().playSound(null, event.getEntity().blockPosition(), RPGSounds.SPELL_CONJURATION_STOP.get(), SoundSource.PLAYERS, 1F, (event.getLevel().random.nextFloat() - event.getLevel().random.nextFloat()) * 0.2F + 1.0F);
             }
 
             if (itemStack.getItem() instanceof DoubleSidedRecordItem) {

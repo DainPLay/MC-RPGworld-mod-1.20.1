@@ -1,0 +1,241 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+		"1": "rpgworldmod:item/conjured_pickaxe",
+		"particle": "rpgworldmod:item/conjured_pickaxe"
+	},
+	"elements": [
+		{
+			"name": "body",
+			"from": [8.6, -1.1, 7.4],
+			"to": [7.4, 17.1, 8.6],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 11.75, 8]},
+			"faces": {
+				"north": {"uv": [0, 3, 0.5, 12], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [0.5, 3, 1, 12], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [1, 3, 1.5, 12], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [1.5, 3, 2, 12], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [10, 10.5, 9.5, 10], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [10.5, 9.5, 10, 10], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
+			}
+		},
+		{
+			"name": "knot",
+			"from": [9.1, 13.4, 6.9],
+			"to": [6.9, 16.6, 9.1],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 11.75, 8]},
+			"faces": {
+				"north": {"uv": [8, 3, 9, 4.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [4, 8, 5, 9.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [8, 4.5, 9, 6], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [5, 8, 6, 9.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [10, 8, 9, 7], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [9, 9, 8, 10], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
+			}
+		},
+		{
+			"name": "knot",
+			"from": [11.1, 15.1, 7.4],
+			"to": [8.9, 16.1, 8.6],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 11.75, 8]},
+			"faces": {
+				"north": {"uv": [7, 3, 8, 3.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [10.5, 10, 11, 10.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [7, 3.5, 8, 4], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [10.5, 3, 11, 3.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [8, 4.5, 7, 4], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [8, 4.5, 7, 5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
+			}
+		},
+		{
+			"name": "knot",
+			"from": [7.1, 14.9, 7.4],
+			"to": [2.9, 16.1, 8.6],
+			"rotation": {"angle": 0, "axis": "y", "origin": [4, 11.75, 8]},
+			"faces": {
+				"north": {"uv": [4, 3, 6, 3.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [10, 10, 10.5, 10.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [4, 3.5, 6, 4], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [11, 3, 11.5, 3.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [6, 4.5, 4, 4], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [6, 4.5, 4, 5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
+			}
+		},
+		{
+			"name": "knot",
+			"from": [13.1, 13.9, 7.4],
+			"to": [4.9, 15.1, 8.6],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 11.75, 8]},
+			"faces": {
+				"north": {"uv": [4, 5, 8, 5.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [10.5, 3.5, 11, 4], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [4, 5.5, 8, 6], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [4, 10.5, 4.5, 11], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [8, 6.5, 4, 6], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [8, 6.5, 4, 7], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
+			}
+		},
+		{
+			"name": "body",
+			"from": [7.5, -1, 7.5],
+			"to": [8.5, 17, 8.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 11.75, 8]},
+			"faces": {
+				"north": {"uv": [2, 3, 2.5, 12], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [2.5, 3, 3, 12], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [3, 3, 3.5, 12], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [3.5, 3, 4, 12], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [11, 4.5, 10.5, 4], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [5, 10.5, 4.5, 11], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
+			}
+		},
+		{
+			"name": "knot",
+			"from": [7, 13.5, 7],
+			"to": [9, 16.5, 9],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 11.75, 8]},
+			"faces": {
+				"north": {"uv": [6, 8, 7, 9.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [8, 6, 9, 7.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [7, 8, 8, 9.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [8, 7.5, 9, 9], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [10, 9, 9, 8], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [10, 9, 9, 10], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
+			}
+		},
+		{
+			"name": "knot",
+			"from": [3, 15, 7.5],
+			"to": [11, 16, 8.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 11.75, 8]},
+			"faces": {
+				"north": {"uv": [7, 0, 11, 0.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [10.5, 4.5, 11, 5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [7, 0.5, 11, 1], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [5, 10.5, 5.5, 11], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [11, 1.5, 7, 1], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [11, 1.5, 7, 2], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
+			}
+		},
+		{
+			"name": "knot",
+			"from": [5, 14, 7.5],
+			"to": [13, 15, 8.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 11.75, 8]},
+			"faces": {
+				"north": {"uv": [7, 2, 11, 2.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [5.5, 10.5, 6, 11], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [7, 2.5, 11, 3], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [6, 10.5, 6.5, 11], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [8, 7.5, 4, 7], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [8, 7.5, 4, 8], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
+			}
+		},
+		{
+			"name": "knot",
+			"from": [1, 13, 7.99],
+			"to": [15, 16, 8.01],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 11.75, 8]},
+			"faces": {
+				"north": {"uv": [0, 0, 7, 1.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [0, 0, 0, 1.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [0, 1.5, 7, 3], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [0, 0, 0, 1.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [7, 0, 0, 0], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [8.5, 16, 16, 16], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
+			}
+		},
+		{
+			"name": "knot",
+			"from": [14.075, 15, 7.925],
+			"to": [11.1, 16.1, 8.125],
+			"rotation": {"angle": 0, "axis": "y", "origin": [11.075, 11.7, 7.925]},
+			"faces": {
+				"north": {"uv": [4, 9.5, 5.5, 10], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [6.5, 10.5, 7, 11], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [5.5, 9.5, 7, 10], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [7, 10.5, 7.5, 11], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [5.5, 10.5, 4, 10], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [11.5, 5, 10, 5.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
+			}
+		},
+		{
+			"name": "knot",
+			"from": [15.1, 13.9, 7.925],
+			"to": [12.925, 15.1, 8.125],
+			"rotation": {"angle": 0, "axis": "y", "origin": [11.1, 10.65, 7.925]},
+			"faces": {
+				"north": {"uv": [10, 7, 11, 7.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [7.5, 10.5, 8, 11], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [10, 7.5, 11, 8], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [8, 10.5, 8.5, 11], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [9, 10.5, 8, 10], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [11, 8, 10, 8.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
+			}
+		},
+		{
+			"name": "knot",
+			"from": [4.9, 13.9, 7.925],
+			"to": [1.875, 16.1, 8.125],
+			"rotation": {"angle": 0, "axis": "y", "origin": [2, 10.65, 7.925]},
+			"faces": {
+				"north": {"uv": [9, 3, 10.5, 4], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [10, 8.5, 10.5, 9.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [9, 4, 10.5, 5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [9, 10, 9.5, 11], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [7, 10.5, 5.5, 10], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [11.5, 5.5, 10, 6], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
+			}
+		},
+		{
+			"name": "knot",
+			"from": [3.075, 12.9, 7.925],
+			"to": [0.875, 15.1, 8.125],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0.075, 9.65, 7.925]},
+			"faces": {
+				"north": {"uv": [9, 5, 10, 6], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"east": {"uv": [7, 9.5, 7.5, 10.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"south": {"uv": [9, 6, 10, 7], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"west": {"uv": [7.5, 9.5, 8, 10.5], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"up": {"uv": [11, 6.5, 10, 6], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }},
+				"down": {"uv": [11, 6.5, 10, 7], "texture": "#1", "forge_data": { "color": "FFFFFFFF", "block_light": 15, "sky_light": 15 }}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [0, 90, 0],
+			"translation": [0, 2.5, 1],
+			"scale": [0.85, 0.85, 0.85]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [0, -90, 0],
+			"translation": [0, 2.5, 1],
+			"scale": [0.85, 0.85, 0.85]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 80, 15],
+			"translation": [1.13, 2.5, 1.13],
+			"scale": [0.68, 0.68, 0.68]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, -80, -15],
+			"translation": [1.13, 2.5, 1.13],
+			"scale": [0.68, 0.68, 0.68]
+		},
+		"ground": {
+			"rotation": [0, 0, -45],
+			"translation": [-1, -1.5, 0]
+		},
+		"gui": {
+			"rotation": [0, 0, -45],
+			"translation": [-1, -1.5, 0]
+		},
+		"fixed": {
+			"rotation": [0, 0, -45],
+			"translation": [-1, -1.5, 0]
+		}
+	}
+}

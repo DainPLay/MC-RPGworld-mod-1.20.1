@@ -16,4 +16,6 @@ public class ModTiers {
             () -> Ingredient.EMPTY);
     public static final ForgeTier BURR = new ForgeTier(2, 440, 6.0F, 2.0F, 12, BlockTags.NEEDS_IRON_TOOL,
             () -> Ingredient.of(ModItems.BURR_SPIKE.get()));
+    public static final ForgeTier CONJURED = new ForgeTier(4, 2031, 35.0F, 4.0F, 15, BlockTags.MINEABLE_WITH_PICKAXE,
+            () -> Ingredient.EMPTY);
 }

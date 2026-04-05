@@ -44,6 +44,11 @@ public class ModGlobalLootModifiersProvider extends GlobalLootModifierProvider {
 						WeatherCheck.weather().setRaining(false).setThundering(false).build(),
 						new LootTableIdCondition.Builder(BuiltInLootTables.FISHING).build()}, RPGLootTables.RIE_WEALD_FISHING));
 		add("tool_smelting", new SmeltingModifier(new LootItemCondition[]{MatchTool.toolMatches(ItemPredicate.Builder.item().of(ModItems.FLINT_PICKAXE.get(), ModItems.FLINT_SHOVEL.get(), ModItems.FLINT_SWORD.get(), ModItems.FLINT_AXE.get(), ModItems.FLINT_HOE.get())).build()}));
+		add("nether_star_scroll_pickaxe", new NetherStarScrollPickaxeModifier(
+				new LootItemCondition[] {
+						MatchTool.toolMatches(ItemPredicate.Builder.item().of(ModItems.NETHER_STAR_SCROLL.get())).build()
+				}
+		));
 		add("scrolls_in_library", new AddEnchantedScrollModifier(
 				new LootItemCondition[]{
 						new LootTableIdCondition.Builder(new ResourceLocation("chests/stronghold_library")).build()

@@ -1,11 +1,13 @@
 package net.dainplay.rpgworldmod.render;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.entity.custom.EnderEyeViewEntity;
+import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.ManaCostItem;
 import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
 import net.dainplay.rpgworldmod.item.custom.OrbitingItem;
@@ -19,6 +21,9 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -27,6 +32,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -42,6 +48,7 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class OrbitingItemRenderer {
+	private static final float HALF_SQRT_3 = (float) (Math.sqrt(3.0D) / 2.0D);
 
 	@SubscribeEvent
 	public static void onRenderLiving(RenderLivingEvent.Post<LivingEntity, ?> event) {
@@ -86,6 +93,87 @@ public class OrbitingItemRenderer {
 			event.setCanceled(true);
 			return;
 		}
+		if (event.getItemStack().getItem() instanceof NetherStarScrollItem &&
+				event.getItemStack().getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0 &&
+				event.getItemStack().getTag() != null &&
+				event.getItemStack().getTag().contains("isPickaxe", Tag.TAG_INT)) {
+
+			event.setCanceled(true);
+
+			Minecraft mc = Minecraft.getInstance();
+			AbstractClientPlayer player = mc.player;
+			if (player == null) return;
+
+			// Создаём временный стак с нужными NBT, чтобы модель подхватила summonedObjectModel
+			ItemStack dummyStack = new ItemStack(ModItems.NETHER_STAR_SCROLL.get());
+			CompoundTag nbtData = new CompoundTag();
+			nbtData.putInt("SummonedObject", 1);
+			dummyStack.setTag(nbtData);
+			dummyStack.enchant(ModEnchantments.CONJURATION.get(), 1);
+
+			ItemRenderer itemRenderer = mc.getItemRenderer();
+			PoseStack ms = event.getPoseStack();
+			MultiBufferSource buffer = event.getMultiBufferSource();
+			int light = event.getPackedLight();
+			float swingProgress = event.getSwingProgress();
+			float equipProgress = event.getEquipProgress();
+			InteractionHand hand = event.getHand();
+
+			boolean rightHand = hand == InteractionHand.MAIN_HAND ^ (mc.player.getMainArm() == HumanoidArm.LEFT);
+			float flip = rightHand ? 1.0F : -1.0F;
+
+			// Анимация руки
+			float sqrtSwing = Mth.sqrt(swingProgress);
+			float f5 = -0.4F * Mth.sin(sqrtSwing * (float) Math.PI);
+			float f6 = 0.2F * Mth.sin(sqrtSwing * ((float) Math.PI * 2F));
+			float f10 = -0.2F * Mth.sin(swingProgress * (float) Math.PI);
+
+			ms.pushPose();
+			ms.translate(flip * f5, f6, f10);
+			ms.translate(flip * 0.56F, -0.52F + equipProgress * -0.6F, -0.72F);
+
+			if (event.getItemStack().getTag() != null && event.getItemStack().getTag().contains("summonProgress", Tag.TAG_INT)) {
+				int summonProgress = event.getItemStack().getTag().getInt("summonProgress");
+				if (summonProgress > 0) {
+					float iprogress;
+					if (summonProgress / 20.0f < 0.25f) {
+						// Быстрое появление: 0 → 1 за 0.5 секунды (10 тиков)
+						iprogress = summonProgress / 20.0f * 4f;
+					} else {
+						// Плавное исчезновение: 1 → 0 за 1.5 секунды (30 тиков)
+						iprogress = 1f - ((summonProgress / 20.0f - 0.25f) / 0.75f);
+					}
+					renderSummonBeamsFirstPerson(flip, ms, buffer, iprogress, player.tickCount + Minecraft.getInstance().getFrameTime());
+				}
+			}
+			float f = Mth.sin(swingProgress * swingProgress * (float) Math.PI);
+			float f1 = Mth.sin(sqrtSwing * (float) Math.PI);
+			ms.mulPose(Axis.YP.rotationDegrees(flip * (45.0F + f * -20.0F)));
+			ms.mulPose(Axis.ZP.rotationDegrees(flip * f1 * -20.0F));
+			ms.mulPose(Axis.XP.rotationDegrees(f1 * -80.0F));
+			ms.mulPose(Axis.YP.rotationDegrees(flip * -45.0F));
+
+			if (event.getItemStack().getTag() != null && event.getItemStack().getTag().contains("summonProgress", Tag.TAG_INT) && event.getItemStack().getTag().getInt("summonProgress") > 0) {
+				int progress = event.getItemStack().getTag().getInt("summonProgress");
+				float color = 0.0F;
+				if (progress <= 10)
+					color = 1.0f - (progress / 10.0f);
+				float alpha = 0.0F;
+				if (progress <= 16)
+					alpha = 1.0f - (progress / 16.0f);
+				RenderSystem.setShaderColor(1.0F + (1F - color) * 10F, 1.0F + (1F - color) * 10F, 1.0F + (1F - color) * 10F, alpha);
+				itemRenderer.renderStatic(player, dummyStack,
+						rightHand ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND,
+						!rightHand, ms, buffer, mc.level, light, OverlayTexture.NO_OVERLAY, 0);
+				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+			} else
+				itemRenderer.renderStatic(player, dummyStack,
+						rightHand ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND,
+						!rightHand, ms, buffer, mc.level, light, OverlayTexture.NO_OVERLAY, 0);
+			ms.popPose();
+			return;
+		}
 		if (event.getItemStack().getItem() instanceof OrbitingItem item1 && item1.shouldOrbit(event.getItemStack(), Minecraft.getInstance().player)) {
 			Minecraft mc = Minecraft.getInstance();
 			AbstractClientPlayer player = mc.player;
@@ -124,6 +212,21 @@ public class OrbitingItemRenderer {
 			ms.mulPose(Axis.XP.rotationDegrees(200.0F));
 			ms.mulPose(Axis.YP.rotationDegrees(flip * -135.0F));
 			ms.translate(flip * 5.6F, 0.0F, 0.0F);
+
+			boolean isNecromancy = event.getItemStack().getItem() instanceof NetherStarScrollItem &&
+					EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), event.getItemStack()) > 0;
+			float necroProgress;
+			if (isNecromancy && player.isUsingItem() && player.getUseItem() == event.getItemStack() && player.getTicksUsingItem() > 0) {
+				necroProgress = Math.min(30, player.getTicksUsingItem()) / 30.0F;
+				float f = necroProgress;
+				float c1 = 1.0F + Mth.sin(f * 100.0F) * f * 0.01F;
+				f = Mth.clamp(f, 0.0F, 1.0F);
+				f *= f;
+				f *= f;
+				float c2 = (1.0F + f * 0.4F) * c1;
+				float c3 = (1.0F + f * 0.1F) / c1;
+				ms.scale(c2, c3, c2);
+			}
 
 			if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUsedItemHand() == event.getHand()) {
 				ms = item1.getUsingPose(event.getItemStack(), player, ms, flip);
@@ -166,8 +269,8 @@ public class OrbitingItemRenderer {
 				ms.mulPose(Axis.YP.rotationDegrees(flip * -135.0F));
 
 				ms.mulPose(Axis.ZP.rotationDegrees(flip * 5F));
-				if (isSlim) ms.translate(flip * -0.075F,0.1F,0.5F);
-				else ms.translate(flip * -0.1F,0.1F,0.5F);
+				if (isSlim) ms.translate(flip * -0.075F, 0.1F, 0.5F);
+				else ms.translate(flip * -0.1F, 0.1F, 0.5F);
 
 				if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUsedItemHand() == event.getHand()) {
 					ms = item1.getUsingPose(event.getItemStack(), player, ms, flip);
@@ -177,12 +280,23 @@ public class OrbitingItemRenderer {
 			if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUsedItemHand() == event.getHand()) {
 				ms = item1.getEffectUsingPose(event.getItemStack(), player, ms, flip);
 			}
+			if (isNecromancy && player.isUsingItem() && player.getUseItem() == event.getItemStack() && player.getTicksUsingItem() > 0) {
+				necroProgress = Math.min(30, player.getTicksUsingItem()) / 30.0F;
+				float f = necroProgress;
+				f = Mth.clamp(f, 0.0F, 1.0F);
+				f = f * f;
+				f = f * f;
+				float tx = flip * 0.2F * f;
+				float ty = 0.5F * f;
+				float tz = 0.0F;
+				ms.translate(tx, ty, tz);
+			}
 
 			float size = useCube ? 0.15F : item.get1Size(event.getItemStack(), player);
 			if (item instanceof NetherStarScrollItem
 					&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), event.getItemStack()) > 0
 					&& player.getTicksUsingItem() <= 40) {
-				size += (0.6F-size)*player.getTicksUsingItem()/40;
+				size += (0.6F - size) * player.getTicksUsingItem() / 40;
 			}
 			VertexConsumer vertexconsumer;
 			Matrix4f matrix4f = ms.last().pose();
@@ -196,16 +310,15 @@ public class OrbitingItemRenderer {
 					float frameHeight = 1.0F / animationLength;
 					float vMin1 = currentFrame * frameHeight;
 					float vMax1 = vMin1 + frameHeight;
-					float vMin2 = (currentFrame+8) % animationLength * frameHeight;
+					float vMin2 = (currentFrame + 8) % animationLength * frameHeight;
 					float vMax2 = vMin2 + frameHeight;
-					float vMin3 = (currentFrame+16) % animationLength * frameHeight;
+					float vMin3 = (currentFrame + 16) % animationLength * frameHeight;
 					float vMax3 = vMin3 + frameHeight;
-					float vMin4 = (currentFrame+24) % animationLength * frameHeight;
+					float vMin4 = (currentFrame + 24) % animationLength * frameHeight;
 					float vMax4 = vMin4 + frameHeight;
 					if (useCube) {
 						vertexconsumer = buffer.getBuffer(ModRenderTypes.GLOW_SPELL_EFFECT.apply(new ResourceLocation(RPGworldMod.MOD_ID, textureString + ".png")));
-					}
-					else {
+					} else {
 						vertexconsumer = buffer.getBuffer(ModRenderTypes.SPELL_EFFECT.apply(new ResourceLocation(RPGworldMod.MOD_ID, textureString + ".png")));
 					}
 
@@ -241,6 +354,7 @@ public class OrbitingItemRenderer {
 								hsX, size, size,
 								0, vMax2, 1, vMax2, 1, vMin2, 0, vMin2, 1, 0, 0);
 					} else {
+
 						vertexconsumer.vertex(matrix4f, -size, -size, 0.0F)
 								.color(1.0F, 1.0F, 1.0F, 1.0F)
 								.uv(0.0F, vMax1)
@@ -563,5 +677,55 @@ public class OrbitingItemRenderer {
 		consumer.vertex(matrix, x2, y2, z2).color(r, g, b, a).endVertex();
 		consumer.vertex(matrix, x3, y3, z3).color(r, g, b, a).endVertex();
 		consumer.vertex(matrix, x4, y4, z4).color(r, g, b, a).endVertex();
+	}
+
+	private static void renderSummonBeamsFirstPerson(float flip, PoseStack poseStack, MultiBufferSource buffer, float progress, float ageTicks) {
+		if (progress <= 0) return;
+
+		VertexConsumer vertexConsumer = buffer.getBuffer(ModRenderTypes.BEAMS_RENDER_TYPE);
+		poseStack.pushPose();
+
+		float rotationAngle = ageTicks * 5.0f;
+		int beamCount = 12;
+		float maxLength = 0.8f;
+		float maxWidth = 0.3f;
+		float beamLength = maxLength * progress;
+		float beamWidth = maxWidth * progress;
+		int alpha = (int) (200 * progress);
+
+		for (int i = 0; i < beamCount; i++) {
+			poseStack.pushPose();
+			poseStack.translate(flip * 0.65, 0F, -0.5);
+			float angle = rotationAngle + (360f / beamCount) * i;
+			poseStack.mulPose(Axis.ZP.rotationDegrees(angle));
+
+			Matrix4f matrix = poseStack.last().pose();
+
+			vertex01(vertexConsumer, matrix, alpha, 0, 0, 255);
+			vertex3(vertexConsumer, matrix, beamLength, beamWidth, 0, 0, 255);
+			vertex4(vertexConsumer, matrix, beamLength, beamWidth, 0, 0, 255);
+			vertex01(vertexConsumer, matrix, alpha, 0, 0, 255);
+			vertex4(vertexConsumer, matrix, beamLength, beamWidth, 0, 0, 255);
+			vertex2(vertexConsumer, matrix, beamLength, beamWidth, 0, 0, 255);
+
+			poseStack.popPose();
+		}
+		poseStack.popPose();
+	}
+
+	private static void vertex01(VertexConsumer consumer, Matrix4f matrix, int alpha, int r, int g, int b) {
+		consumer.vertex(matrix, 0.0F, 0.0F, 0.0F).color(r, g, b, alpha).endVertex();
+	}
+
+	private static void vertex2(VertexConsumer consumer, Matrix4f matrix, float length, float width, int r, int g, int b) {
+		consumer.vertex(matrix, -HALF_SQRT_3 * width, length, -0.5F * width).color(r, g, b, 0).endVertex();
+	}
+
+	private static void vertex3(VertexConsumer consumer, Matrix4f matrix, float length, float width, int r, int g, int b) {
+		consumer.vertex(matrix, HALF_SQRT_3 * width, length, -0.5F * width).color(r, g, b, 0).endVertex();
+	}
+
+	private static void vertex4(VertexConsumer consumer, Matrix4f matrix, float length, float width, int r, int g, int b) {
+		consumer.vertex(matrix, 0.0F, length, 1.0F * width).color(r, g, b, 0).endVertex();
 	}
 }

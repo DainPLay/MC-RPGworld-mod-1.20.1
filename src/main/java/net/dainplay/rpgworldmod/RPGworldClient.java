@@ -109,6 +109,7 @@ public class RPGworldClient {
         BakedModel necromancyNetherStarScrollModel = null;
 
         BakedModel boundCampfireModel = null;
+        BakedModel conjuredPickaxeModel = null;
 
         for (ResourceLocation id : map.keySet()) {
             String idString = id.toString();
@@ -242,6 +243,10 @@ public class RPGworldClient {
             if (idString.contains("rpgworldmod:item/bound_campfire")) {
                 boundCampfireModel = new ScrollGlintItemModelSupport(originalModel);
             }
+
+            if (idString.contains("rpgworldmod:item/conjured_pickaxe")) {
+                conjuredPickaxeModel = new ScrollGlintItemModelSupport(originalModel);
+            }
         }
 
         // Отдельный цикл для свитков, если нужно явное разделение логики
@@ -305,7 +310,7 @@ public class RPGworldClient {
                         illusionNetherStarScrollModel == null ? originalModel : illusionNetherStarScrollModel,
                         conjurationNetherStarScrollModel == null ? originalModel : conjurationNetherStarScrollModel,
                         necromancyNetherStarScrollModel == null ? originalModel : necromancyNetherStarScrollModel,
-                        originalModel
+                        conjuredPickaxeModel == null ? originalModel : conjuredPickaxeModel
                 ));
             }
         }
@@ -326,7 +331,6 @@ public class RPGworldClient {
         event.register(new ResourceLocation("rpgworldmod:item/ember_scroll_alteration"));
         event.register(new ResourceLocation("rpgworldmod:item/ember_scroll_conjuration"));
         event.register(new ResourceLocation("rpgworldmod:item/ember_scroll_necromancy"));
-        event.register(new ResourceLocation("rpgworldmod:item/bound_campfire"));
         event.register(new ResourceLocation("rpgworldmod:item/heart_of_the_sea_scroll_restoration"));
         event.register(new ResourceLocation("rpgworldmod:item/heart_of_the_sea_scroll_destruction"));
         event.register(new ResourceLocation("rpgworldmod:item/heart_of_the_sea_scroll_illusion"));
@@ -345,6 +349,8 @@ public class RPGworldClient {
         event.register(new ResourceLocation("rpgworldmod:item/nether_star_scroll_alteration"));
         event.register(new ResourceLocation("rpgworldmod:item/nether_star_scroll_conjuration"));
         event.register(new ResourceLocation("rpgworldmod:item/nether_star_scroll_necromancy"));
+        event.register(new ResourceLocation("rpgworldmod:item/bound_campfire"));
+        event.register(new ResourceLocation("rpgworldmod:item/conjured_pickaxe"));
     }
 
     @SubscribeEvent
@@ -430,6 +436,17 @@ public class RPGworldClient {
         event.enqueueWork(() -> {
 
             ItemProperties.register(ModItems.EMBER_SCROLL.get().asItem(), new ResourceLocation( "summoned_object"), (stack, world, entity, seed) -> {
+                if (stack.isEmpty()) {
+                    return 0.0F;
+                }
+                CompoundTag tag = stack.getTag();
+                if (tag != null && tag.contains("SummonedObject", Tag.TAG_INT)) {
+                    return 1.0F;
+                }
+                return 0.0F;
+            });
+
+            ItemProperties.register(ModItems.NETHER_STAR_SCROLL.get().asItem(), new ResourceLocation( "summoned_object"), (stack, world, entity, seed) -> {
                 if (stack.isEmpty()) {
                     return 0.0F;
                 }

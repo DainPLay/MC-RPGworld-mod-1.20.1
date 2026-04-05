@@ -1,6 +1,7 @@
-// 1.20.1	2026-02-14T17:38:11.788585	Global Loot Modifiers : rpgworldmod
-ca2d4d302400d42ea4a97c1e0dfa10cc8920011f data/forge/loot_modifiers/global_loot_modifiers.json
+// 1.20.1	2026-04-05T03:49:02.1861728	Global Loot Modifiers : rpgworldmod
+63ca61fd0c6e6c7ed9e2f822cbff43af90554977 data/forge/loot_modifiers/global_loot_modifiers.json
 27b274c740c9cf24e2e283b50d13e5cb8fb7317a data/rpgworldmod/loot_modifiers/necromancy_scrolls_in_ancient_city.json
+46b320e605bbdfd2b470900682de03634e27cc87 data/rpgworldmod/loot_modifiers/nether_star_scroll_pickaxe.json
 67474b69f8b438677d7b92bb0353ba5b78da938b data/rpgworldmod/loot_modifiers/rie_weald_fish.json
 15f74b1bc473ae4191e9fdbdded1f2c73071495d data/rpgworldmod/loot_modifiers/rie_weald_fog_fish.json
 958df57f8f48d1c86a8896a9e54998b4559973a3 data/rpgworldmod/loot_modifiers/rie_weald_fog_fish1.json

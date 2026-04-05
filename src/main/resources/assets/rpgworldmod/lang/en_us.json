@@ -393,10 +393,10 @@
   "item.rpgworldmod.nether_star_scroll.alteration.features": "Warps caster to the Nether dimension. if used in the Nether, warps caster to the overworld instead.",
   "item.rpgworldmod.nether_star_scroll.conjuration": "Conjure Pickaxe Spell",
   "item.rpgworldmod.nether_star_scroll.conjuration.desc": "Same as the \"i\" prefix",
-  "item.rpgworldmod.nether_star_scroll.conjuration.features": "___",
-  "item.rpgworldmod.nether_star_scroll.necromancy": "Kamikaze Spell",
+  "item.rpgworldmod.nether_star_scroll.conjuration.features": "Summons a pickaxe into caster's hand, which will spend their mana instead of durability. Normal use of the pickaxe will have a Silk Touch effect, and using it while holding [%1$s] will have a Fortune 3 effect.",
+  "item.rpgworldmod.nether_star_scroll.necromancy": "Explosion Spell",
   "item.rpgworldmod.nether_star_scroll.necromancy.desc": "Read before using",
-  "item.rpgworldmod.nether_star_scroll.necromancy.features": "___",
+  "item.rpgworldmod.nether_star_scroll.necromancy.features": "Explodes the caster without harming them.",
 
   "item.rpgworldmod.platinumfish": "Platinumfish",
   "item.rpgworldmod.mossfront": "Mossfront",
@@ -446,7 +446,7 @@
   "block.rpgworldmod.drill_tusk": "Drill Tusk",
   "block.rpgworldmod.quartzite_drill_tusk": "Quartzite Drill Tusk",
   "block.rpgworldmod.quartzite_drill_tusk.desc": "New car shine",
-  "block.rpgworldmod.quartzite_drill_tusk.features": "Mining blocks using a piston will have a silk touch effect.",
+  "block.rpgworldmod.quartzite_drill_tusk.features": "Mining blocks using a piston will have a Silk Touch effect.",
   "block.rpgworldmod.fire_catcher": "Flame Catcher",
   "block.rpgworldmod.fire_catcher.desc": "You are Venus, I'm earth",
   "block.rpgworldmod.fire_catcher.features": "Installed under the ceiling. Prevents fire griefing within a radius of 5x5 chunks. Also extinguishes fire if switched to hungry mode.",
@@ -883,6 +883,7 @@
   "subtitles.rpgworldmod.spell.destruction_nether_star_start": "Corrupted beacon fully charged",
   "subtitles.rpgworldmod.spell.destruction_nether_star_stop": "Corrupted beacon discharged",
   "subtitles.rpgworldmod.spell.destruction_nether_star_charge": "Corrupted beacon charges",
+  "subtitles.rpgworldmod.spell.necromancy_nether_star_primed": "Hissing",
 
   "subtitles.rpgworldmod.staff.start": "Staff charges",
   "subtitles.rpgworldmod.staff.stop": "Staff discharges",
@@ -918,6 +919,7 @@
   "tooltip.rpgworldmod.cost_per_second": " per second",
   "tooltip.rpgworldmod.plus_cost_per_second": " + %s⭐ per second",
   "tooltip.rpgworldmod.cost_per_second_plus": " per second + %s⭐",
+  "tooltip.rpgworldmod.plus_cost_per_block_destroyed": " + %s⭐/block",
   "tooltip.rpgworldmod.hp_cost_number": "%s❤",
   "tooltip.rpgworldmod.target": "Target:"
 }

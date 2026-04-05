@@ -1,5 +1,6 @@
 package net.dainplay.rpgworldmod.render;
 
+import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderType;
@@ -10,6 +11,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -29,12 +31,12 @@ public class ScrollGlintItemModel implements BakedModel {
     private final BakedModel conjurationModel;
     private final BakedModel alterationModel;
     private final BakedModel necromancyModel;
-    private final BakedModel boundCampFireModel;
+    private final BakedModel summonedObjectModel;
     private final ItemOverrides overrides;
 
     public ScrollGlintItemModel(BakedModel originalModel, BakedModel alterationModel,
                                 BakedModel restorationModel, BakedModel destructionModel, BakedModel illusionModel,
-                                BakedModel conjurationModel, BakedModel necromancyModel, BakedModel boundCampFireModel) {
+                                BakedModel conjurationModel, BakedModel necromancyModel, BakedModel summonedObjectModel) {
 
         this.originalModel = originalModel;
         this.destructionModel = destructionModel;
@@ -43,7 +45,7 @@ public class ScrollGlintItemModel implements BakedModel {
         this.conjurationModel = conjurationModel;
         this.alterationModel = alterationModel;
         this.necromancyModel = necromancyModel;
-        this.boundCampFireModel = boundCampFireModel;
+        this.summonedObjectModel = summonedObjectModel;
 
         this.overrides = new ItemOverrides() {
             @Override
@@ -66,7 +68,7 @@ public class ScrollGlintItemModel implements BakedModel {
                 return illusionModel;
             } else if (stack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0) {
                 if (stack.getTag() != null && stack.getTag().contains("SummonedObject", Tag.TAG_INT)) {
-                    return boundCampFireModel;
+                    return summonedObjectModel;
                 }
                 return conjurationModel;
             } else if (stack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0) {
@@ -147,9 +149,9 @@ public class ScrollGlintItemModel implements BakedModel {
                 renderTypes.add(ModRenderTypes.ILLUSION_GLINT);
             } else if (stack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0) {
                 if (stack.getTag() != null && stack.getTag().contains("SummonedObject", Tag.TAG_INT)) {
-                    renderTypes.add(ModRenderTypes.getItemEntityTranslucentCull(boundCampFireModel.getParticleIcon().atlasLocation()));
-                    renderTypes.add(ModRenderTypes.SUMMONED_GLINT);
-                    renderTypes.add(ModRenderTypes.SUMMONED_GLINT);
+                        renderTypes.add(ModRenderTypes.getItemEntityTranslucentCull(summonedObjectModel.getParticleIcon().atlasLocation()));
+                        renderTypes.add(ModRenderTypes.SUMMONED_GLINT);
+                        renderTypes.add(ModRenderTypes.SUMMONED_GLINT);
                 } else {
                     renderTypes.add(ModRenderTypes.getItemEntityTranslucentCull(conjurationModel.getParticleIcon().atlasLocation()));
                     renderTypes.add(ModRenderTypes.CONJURATION_GLINT);

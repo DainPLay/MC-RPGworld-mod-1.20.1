@@ -62,6 +62,12 @@ public class ModAdvancements {
     public static final SpellNecromancyEnderEyeTrigger SPELL_NECROMANCY_ENDER_EYE_TRIGGER = CriteriaTriggers.register(new SpellNecromancyEnderEyeTrigger());
     public static final UseRainSpellInEndTrigger USE_RAIN_SPELL_IN_END_TRIGGER = CriteriaTriggers.register(new UseRainSpellInEndTrigger());
     public static final ChestStaffsTrigger CHEST_STAFFS_TRIGGER = CriteriaTriggers.register(new ChestStaffsTrigger());
+    public static final SpellDestructionNetherStarTrigger SPELL_DESTRUCTION_NETHER_STAR_TRIGGER = CriteriaTriggers.register(new SpellDestructionNetherStarTrigger());
+    public static final SpellRestorationNetherStarTrigger SPELL_RESTORATION_NETHER_STAR_TRIGGER = CriteriaTriggers.register(new SpellRestorationNetherStarTrigger());
+    public static final SpellAlterationNetherStarTrigger SPELL_ALTERATION_NETHER_STAR_TRIGGER = CriteriaTriggers.register(new SpellAlterationNetherStarTrigger());
+    public static final SpellIllusionNetherStarTrigger SPELL_ILLUSION_NETHER_STAR_TRIGGER = CriteriaTriggers.register(new SpellIllusionNetherStarTrigger());
+    public static final SpellConjurationNetherStarTrigger SPELL_CONJURATION_NETHER_STAR_TRIGGER = CriteriaTriggers.register(new SpellConjurationNetherStarTrigger());
+    public static final SpellNecromancyNetherStarTrigger SPELL_NECROMANCY_NETHER_STAR_TRIGGER = CriteriaTriggers.register(new SpellNecromancyNetherStarTrigger());
 
     public static void init() {}
 }

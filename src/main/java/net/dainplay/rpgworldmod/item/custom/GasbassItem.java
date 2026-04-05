@@ -13,7 +13,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -33,285 +32,283 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class GasbassItem extends Item {
-    private static final ResourceKey<Biome> RIE_WEALD_KEY = ResourceKey.create(Registries.BIOME,
-            new ResourceLocation(RPGworldMod.MOD_ID, "rie_weald"));
-    private static final String USE_DURATION_TAG = "gasbass_use_duration";
+	private static final ResourceKey<Biome> RIE_WEALD_KEY = ResourceKey.create(Registries.BIOME,
+			new ResourceLocation(RPGworldMod.MOD_ID, "rie_weald"));
+	private static final String USE_DURATION_TAG = "gasbass_use_duration";
 
-    public GasbassItem(Item.Properties pProperties) {
-        super(pProperties);
-    }
+	public GasbassItem(Item.Properties pProperties) {
+		super(pProperties);
+	}
 
-    @Override
-    public int getUseDuration(ItemStack stack) {
-        if (stack.hasTag() && stack.getTag().contains(USE_DURATION_TAG)) {
-            return stack.getTag().getInt(USE_DURATION_TAG);
-        }
-        return 32; // значение по умолчанию
-    }
-    @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
+	@Override
+	public int getUseDuration(ItemStack stack) {
+		if (stack.hasTag() && stack.getTag().contains(USE_DURATION_TAG)) {
+			return stack.getTag().getInt(USE_DURATION_TAG);
+		}
+		return 32; // значение по умолчанию
+	}
 
-        // Определяем длительность использования и сохраняем в NBT
-        int duration = calculateUseDuration(player);
-        CompoundTag tag = stack.getOrCreateTag();
-        tag.putInt(USE_DURATION_TAG, duration);
-        stack.setTag(tag);
+	@Override
+	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+		ItemStack stack = player.getItemInHand(hand);
 
-        return super.use(level, player, hand);
-    }
+		// Определяем длительность использования и сохраняем в NBT
+		int duration = calculateUseDuration(player);
+		CompoundTag tag = stack.getOrCreateTag();
+		tag.putInt(USE_DURATION_TAG, duration);
+		stack.setTag(tag);
 
-    private int calculateUseDuration(Player player) {
-        boolean pvpCooldownDisabled = player.level().getGameRules().getBoolean(RPGworldMod.DISABLE_GASBASS_PVP_COOLDOWN);
-        if (pvpCooldownDisabled) {
-            return 32;
-        } else {
-            boolean recentlyHurt = player.getLastDamageSource() != null;
-            return recentlyHurt ? 120 : 32;
-        }
-    }
+		return super.use(level, player, hand);
+	}
 
-    /**
-     * Called when the player finishes using this Item (E.g. finishes eating.). Not called when the player stops using
-     * the Item before the action is complete.
-     */
-    public ItemStack finishUsingItem(ItemStack pStack, Level pLevel, LivingEntity entity) {
-        if (!pLevel.isClientSide()) {
-            double teleportPosX;
-            double teleportPosY;
-            double teleportPosZ;
-            ResourceKey<Level> teleportDimension;
+	private int calculateUseDuration(Player player) {
+		boolean pvpCooldownDisabled = player.level().getGameRules().getBoolean(RPGworldMod.DISABLE_GASBASS_PVP_COOLDOWN);
+		if (pvpCooldownDisabled) {
+			return 32;
+		} else {
+			boolean recentlyHurt = player.getLastDamageSource() != null;
+			return recentlyHurt ? 120 : 32;
+		}
+	}
 
-            if (pStack.hasTag() && pStack.getTag().contains("rpgworldmod.return_pos_x")) {
-                // Используем сохранённые координаты
-                teleportPosX = pStack.getTag().getDouble("rpgworldmod.return_pos_x");
-                teleportPosY = pStack.getTag().getDouble("rpgworldmod.return_pos_y");
-                teleportPosZ = pStack.getTag().getDouble("rpgworldmod.return_pos_z");
-                teleportDimension = DimensionType.parseLegacy(new Dynamic<>(NbtOps.INSTANCE,
-                                pStack.getTag().get("rpgworldmod.return_pos_dimension")))
-                        .resultOrPartial(RPGworldMod.LOGGER::error)
-                        .orElse(entity.getCommandSenderWorld().dimension());
-            } else {
-                // Ищем ближайший биом Rie Weald
-                BlockPos targetPos = findNearestRieWeald(entity, (ServerLevel) pLevel);
+	/**
+	 * Called when the player finishes using this Item (E.g. finishes eating.). Not called when the player stops using
+	 * the Item before the action is complete.
+	 */
+	public ItemStack finishUsingItem(ItemStack pStack, Level pLevel, LivingEntity entity) {
+		if (!pLevel.isClientSide()) {
+			double teleportPosX;
+			double teleportPosY;
+			double teleportPosZ;
+			ResourceKey<Level> teleportDimension;
+			boolean isUnbound = false;
 
-                if (targetPos != null) {
-                    teleportPosX = targetPos.getX() + 0.5;
-                    teleportPosY = targetPos.getY() + 1.0;
-                    teleportPosZ = targetPos.getZ() + 0.5;
-                    teleportDimension = entity.getCommandSenderWorld().dimension();
-                } else {
-                    // Если биом не найден, телепортируем на текущую позицию
-                    teleportPosX = entity.getX();
-                    teleportPosY = entity.getY();
-                    teleportPosZ = entity.getZ();
-                    teleportDimension = entity.getCommandSenderWorld().dimension();
-                }
-            }
+			if (pStack.hasTag() && pStack.getTag().contains("rpgworldmod.return_pos_x")) {
+				teleportPosX = pStack.getTag().getDouble("rpgworldmod.return_pos_x");
+				teleportPosY = pStack.getTag().getDouble("rpgworldmod.return_pos_y");
+				teleportPosZ = pStack.getTag().getDouble("rpgworldmod.return_pos_z");
+				teleportDimension = DimensionType.parseLegacy(new Dynamic<>(NbtOps.INSTANCE,
+								pStack.getTag().get("rpgworldmod.return_pos_dimension")))
+						.resultOrPartial(RPGworldMod.LOGGER::error)
+						.orElse(entity.getCommandSenderWorld().dimension());
+			} else {
+				isUnbound = true;
+				BlockPos targetPos = findNearestRieWeald(entity, (ServerLevel) pLevel);
 
-            ITeleporter teleporter = new ITeleporter() {
-                @Override
-                public PortalInfo getPortalInfo(Entity entity, ServerLevel destWorld,
-                                                Function<ServerLevel, PortalInfo> defaultPortalInfo) {
-                    return new PortalInfo(new Vec3(teleportPosX, teleportPosY, teleportPosZ),
-                            Vec3.ZERO, entity.getYRot(), entity.getXRot());
-                }
-                @Override
-                public Entity placeEntity(Entity entity, ServerLevel currentWorld, ServerLevel destWorld, float yaw,
-                                          Function<Boolean, Entity> repositionEntity) {
-                    // Всегда отключаем создание портала/платформы
-                    return repositionEntity.apply(false);
-                }
-                @Override
-                public boolean playTeleportSound(ServerPlayer player, ServerLevel sourceWorld, ServerLevel destWorld)
-                {
-                    return false;
-                }
-            };
+				if (targetPos != null) {
+					teleportPosX = targetPos.getX() + 0.5;
+					teleportPosY = targetPos.getY() + 1.0;
+					teleportPosZ = targetPos.getZ() + 0.5;
+					teleportDimension = entity.getCommandSenderWorld().dimension();
+				} else {
+					teleportPosX = entity.getX();
+					teleportPosY = entity.getY();
+					teleportPosZ = entity.getZ();
+					teleportDimension = entity.getCommandSenderWorld().dimension();
+				}
+			}
 
-            if (entity instanceof ServerPlayer serverplayer) {
-                if (serverplayer.connection.isAcceptingMessages() &&
-                        serverplayer.level() == pLevel && !serverplayer.isSleeping()) {
+			ITeleporter teleporter = new ITeleporter() {
+				@Override
+				public PortalInfo getPortalInfo(Entity entity, ServerLevel destWorld,
+												Function<ServerLevel, PortalInfo> defaultPortalInfo) {
+					return new PortalInfo(new Vec3(teleportPosX, teleportPosY, teleportPosZ),
+							Vec3.ZERO, entity.getYRot(), entity.getXRot());
+				}
 
-                    if (serverplayer.isPassenger()) {
-                        serverplayer.dismountTo(serverplayer.getX(), serverplayer.getY(), serverplayer.getZ());
-                    }
+				@Override
+				public Entity placeEntity(Entity entity, ServerLevel currentWorld, ServerLevel destWorld, float yaw,
+										  Function<Boolean, Entity> repositionEntity) {
+					return repositionEntity.apply(false);
+				}
 
-                    if (!serverplayer.level().dimension().equals(teleportDimension)) {
-                        ServerLevel targetLevel = serverplayer.getServer().getLevel(teleportDimension);
-                        if (targetLevel != null) {
-                            serverplayer.changeDimension(targetLevel, teleporter);
-                        }
-                    } else {
-                        serverplayer.teleportTo(teleportPosX, teleportPosY, teleportPosZ);
-                    }
-                    serverplayer.resetFallDistance();
-                }
-            } else if (entity != null) {
-                if (entity.canChangeDimensions()) {
-                    if (!entity.level().dimension().equals(teleportDimension)) {
-                        ServerLevel targetLevel = entity.getServer().getLevel(teleportDimension);
-                        if (targetLevel != null) {
-                            entity.changeDimension(targetLevel, teleporter);
-                        }
-                    } else {
-                        entity.teleportTo(teleportPosX, teleportPosY, teleportPosZ);
-                    }
-                    entity.resetFallDistance();
-                }
-            }
-        }
+				@Override
+				public boolean playTeleportSound(ServerPlayer player, ServerLevel sourceWorld, ServerLevel destWorld) {
+					return false;
+				}
+			};
 
-        ItemStack itemstack = super.finishUsingItem(pStack, pLevel, entity);
-        emitSmokeParticles(entity);
-        return itemstack;
-    }
+			if (entity instanceof ServerPlayer serverplayer) {
+				if (serverplayer.connection.isAcceptingMessages() &&
+						serverplayer.level() == pLevel && !serverplayer.isSleeping()) {
 
-    /**
-     * Ищет ближайший биом Rie Weald
-     */
-    private BlockPos findNearestRieWeald(LivingEntity entity, ServerLevel level) {
-        BlockPos entityPos = new BlockPos(entity.blockPosition().getX(), 64, entity.blockPosition().getZ());
+					if (serverplayer.isPassenger()) {
+						serverplayer.dismountTo(serverplayer.getX(), serverplayer.getY(), serverplayer.getZ());
+					}
 
-        Predicate<Holder<Biome>> biomePredicate = holder -> holder.unwrapKey()
-                .map(key -> key.equals(RIE_WEALD_KEY))
-                .orElse(false);
+					if (!serverplayer.level().dimension().equals(teleportDimension)) {
+						ServerLevel targetLevel = serverplayer.getServer().getLevel(teleportDimension);
+						if (targetLevel != null) {
+							serverplayer.changeDimension(targetLevel, teleporter);
+						}
+					} else {
+						serverplayer.teleportTo(teleportPosX, teleportPosY, teleportPosZ);
+					}
+					serverplayer.resetFallDistance();
+				}
+			} else if (entity != null) {
+				if (entity.canChangeDimensions()) {
+					if (!entity.level().dimension().equals(teleportDimension)) {
+						ServerLevel targetLevel = entity.getServer().getLevel(teleportDimension);
+						if (targetLevel != null) {
+							entity.changeDimension(targetLevel, teleporter);
+						}
+					} else {
+						entity.teleportTo(teleportPosX, teleportPosY, teleportPosZ);
+					}
+					entity.resetFallDistance();
+				}
+			}
+			if (isUnbound) {
+				if (!pLevel.isClientSide() && entity != null) {
+					Level currentLevel = entity.level();
+					if (currentLevel instanceof ServerLevel serverLevel) {
+						BlockPos currentPos = entity.blockPosition();
+						int highestY = findHighestSolidBlockY(serverLevel, currentPos.getX(), currentPos.getZ());
+						if (highestY > serverLevel.getMinBuildHeight()) {
+							double newY = highestY + 1.0; // встать на блок
+							entity.teleportTo(currentPos.getX() + 0.5, newY, currentPos.getZ() + 0.5);
+							entity.resetFallDistance();
+						}
+					}
+				}
+			}
 
-        // Сначала пробуем поискать ближе к игроку
-        int horizontalRadius = 1000; // Уменьшили радиус для первого поиска
-        int verticalRadius = 100;
-        int resolution = 4; // Увеличили разрешение для более точного поиска
+		}
 
-        Pair<BlockPos, Holder<Biome>> result = level.findClosestBiome3d(
-                biomePredicate,
-                entityPos,
-                horizontalRadius,
-                verticalRadius,
-                resolution
-        );
+		ItemStack itemstack = super.finishUsingItem(pStack, pLevel, entity);
+		emitSmokeParticles(entity);
+		return itemstack;
+	}
 
-        // Если не нашли в ближайшем радиусе, ищем дальше, но с другой стратегией
-        if (result == null) {
-            horizontalRadius = 10000;
-            resolution = 16; // Уменьшаем разрешение для дальнего поиска
-            result = level.findClosestBiome3d(
-                    biomePredicate,
-                    entityPos,
-                    horizontalRadius,
-                    verticalRadius,
-                    resolution
-            );
-        }
+	private int findHighestSolidBlockY(ServerLevel level, int x, int z) {
+		for (int y = level.getMaxBuildHeight() - 1; y > level.getMinBuildHeight(); y--) {
+			BlockPos pos = new BlockPos(x, y, z);
+			if (level.getBlockState(pos).isSolid()) {
+				return y;
+			}
+		}
+		return level.getMinBuildHeight();
+	}
 
-        if (result != null) {
-            BlockPos biomePos = result.getFirst();
+	private BlockPos findNearestRieWeald(LivingEntity entity, ServerLevel level) {
+		BlockPos entityPos = new BlockPos(entity.blockPosition().getX(), 64, entity.blockPosition().getZ());
 
-            // Для дальних биомов делаем дополнительную проверку высоты
-            if (Math.abs(entityPos.getX() - biomePos.getX()) > 500 ||
-                    Math.abs(entityPos.getZ() - biomePos.getZ()) > 500) {
+		Predicate<Holder<Biome>> biomePredicate = holder -> holder.unwrapKey()
+				.map(key -> key.equals(RIE_WEALD_KEY))
+				.orElse(false);
 
-                // Для дальних биомов используем более надежный способ получения высоты
-                return findSafeSurfacePosition(level, biomePos);
-            } else {
-                // Для близких биомов используем обычный способ
-                int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, biomePos.getX(), biomePos.getZ());
+		int horizontalRadius = 1000;
+		int verticalRadius = 100;
+		int resolution = 4;
 
-                if (surfaceY > level.getMinBuildHeight() && surfaceY < level.getMaxBuildHeight()) {
-                    return new BlockPos(biomePos.getX(), surfaceY, biomePos.getZ());
-                } else {
-                    // Если не получили корректную высоту, ищем безопасную позицию
-                    return findSafeSurfacePosition(level, biomePos);
-                }
-            }
-        }
+		Pair<BlockPos, Holder<Biome>> result = level.findClosestBiome3d(
+				biomePredicate,
+				entityPos,
+				horizontalRadius,
+				verticalRadius,
+				resolution
+		);
 
-        return null;
-    }
+		if (result == null) {
+			horizontalRadius = 10000;
+			resolution = 16;
+			result = level.findClosestBiome3d(
+					biomePredicate,
+					entityPos,
+					horizontalRadius,
+					verticalRadius,
+					resolution
+			);
+		}
 
-    /**
-     * Находит безопасную поверхностную позицию для телепортации
-     */
-    private BlockPos findSafeSurfacePosition(ServerLevel level, BlockPos targetPos) {
-        // Получаем высоту поверхности с использованием нескольких методов для надежности
-        int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, targetPos.getX(), targetPos.getZ());
+		if (result != null) {
+			BlockPos biomePos = result.getFirst();
 
-        // Проверяем, является ли поверхность безопасной
-        if (surfaceY <= level.getMinBuildHeight() + 1) {
-            // Если поверхность слишком низкая, пробуем MOTION_BLOCKING
-            surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, targetPos.getX(), targetPos.getZ());
-        }
+			if (Math.abs(entityPos.getX() - biomePos.getX()) > 500 ||
+					Math.abs(entityPos.getZ() - biomePos.getZ()) > 500) {
 
-        // Проверяем, что позиция безопасна для появления
-        if (surfaceY <= level.getMinBuildHeight() + 1) {
-            // Если все еще низко, ищем безопасную позицию вручную
-            return findManualSurfacePosition(level, targetPos);
-        }
+				return findSafeSurfacePosition(level, biomePos);
+			} else {
+				int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, biomePos.getX(), biomePos.getZ());
 
-        // Убедимся, что игрок появится на безопасной высоте
-        BlockPos spawnPos = new BlockPos(targetPos.getX(), surfaceY, targetPos.getZ());
+				if (surfaceY > level.getMinBuildHeight() && surfaceY < level.getMaxBuildHeight()) {
+					return new BlockPos(biomePos.getX(), surfaceY, biomePos.getZ());
+				} else {
+					return findSafeSurfacePosition(level, biomePos);
+				}
+			}
+		}
 
-        // Проверяем, что блок под ногами твердый
-        if (!level.getBlockState(spawnPos.below()).isSolid()) {
-            // Если нет, ищем ближайший твердый блок сверху
-            for (int y = spawnPos.getY(); y > level.getMinBuildHeight(); y--) {
-                BlockPos checkPos = new BlockPos(targetPos.getX(), y, targetPos.getZ());
-                if (level.getBlockState(checkPos).isSolid() &&
-                        level.isEmptyBlock(checkPos.above()) &&
-                        level.isEmptyBlock(checkPos.above(2))) {
-                    return checkPos.above();
-                }
-            }
-        }
+		return null;
+	}
 
-        return spawnPos;
-    }
+	private BlockPos findSafeSurfacePosition(ServerLevel level, BlockPos targetPos) {
+		int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, targetPos.getX(), targetPos.getZ());
 
-    /**
-     * Ручной поиск безопасной поверхности
-     */
-    private BlockPos findManualSurfacePosition(ServerLevel level, BlockPos targetPos) {
-        // Начинаем с максимальной высоты и идем вниз, пока не найдем безопасное место
-        for (int y = level.getMaxBuildHeight() - 1; y > level.getMinBuildHeight(); y--) {
-            BlockPos checkPos = new BlockPos(targetPos.getX(), y, targetPos.getZ());
-            BlockPos belowPos = checkPos.below();
+		if (surfaceY <= level.getMinBuildHeight() + 1) {
+			surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, targetPos.getX(), targetPos.getZ());
+		}
 
-            // Проверяем условия для безопасного появления:
-            // 1. Блок под ногами должен быть твердым
-            // 2. Место появления должно быть пустым
-            // 3. Над головой должно быть свободное пространство
-            if (level.getBlockState(belowPos).isSolid() &&
-                    level.isEmptyBlock(checkPos) &&
-                    level.isEmptyBlock(checkPos.above())) {
-                return checkPos;
-            }
-        }
+		if (surfaceY <= level.getMinBuildHeight() + 1) {
+			return findManualSurfacePosition(level, targetPos);
+		}
 
-        // Если ничего не нашли, возвращаем позицию на Y=64 (средняя безопасная высота)
-        return new BlockPos(targetPos.getX(), Math.max(64, level.getMinBuildHeight() + 1), targetPos.getZ());
-    }
+		BlockPos spawnPos = new BlockPos(targetPos.getX(), surfaceY, targetPos.getZ());
 
-    private static void emitSmokeParticles(LivingEntity entity) {
-        double x = entity.getX();
-        double y = entity.getY() + entity.getEyeHeight() / 2.0;
-        double z = entity.getZ();
+		if (!level.getBlockState(spawnPos.below()).isSolid()) {
+			for (int y = spawnPos.getY(); y > level.getMinBuildHeight(); y--) {
+				BlockPos checkPos = new BlockPos(targetPos.getX(), y, targetPos.getZ());
+				if (level.getBlockState(checkPos).isSolid() &&
+						level.isEmptyBlock(checkPos.above()) &&
+						level.isEmptyBlock(checkPos.above(2))) {
+					return checkPos.above();
+				}
+			}
+		}
 
-        for (int i = 0; i < 10; i++) {
-            double offsetX = (entity.getRandom().nextDouble() - 0.5) * 0.8;
-            double offsetY = (entity.getRandom().nextDouble() - 0.5) * 0.4;
-            double offsetZ = (entity.getRandom().nextDouble() - 0.5) * 0.8;
+		return spawnPos;
+	}
 
-            entity.level().addParticle(
-                    ParticleTypes.LARGE_SMOKE,
-                    x + offsetX,
-                    y + offsetY,
-                    z + offsetZ,
-                    0.0, 0.02, 0.0
-            );
-        }
-    }
+	/**
+	 * Ручной поиск безопасной поверхности
+	 */
+	private BlockPos findManualSurfacePosition(ServerLevel level, BlockPos targetPos) {
+		for (int y = level.getMaxBuildHeight() - 1; y > level.getMinBuildHeight(); y--) {
+			BlockPos checkPos = new BlockPos(targetPos.getX(), y, targetPos.getZ());
+			BlockPos belowPos = checkPos.below();
+			if (level.getBlockState(belowPos).isSolid() &&
+					level.isEmptyBlock(checkPos) &&
+					level.isEmptyBlock(checkPos.above())) {
+				return checkPos;
+			}
+		}
 
-    @Override
-    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-        return !ItemStack.isSameItem(oldStack, newStack);
-    }
+		return new BlockPos(targetPos.getX(), Math.max(64, level.getMinBuildHeight() + 1), targetPos.getZ());
+	}
+
+	private static void emitSmokeParticles(LivingEntity entity) {
+		double x = entity.getX();
+		double y = entity.getY() + entity.getEyeHeight() / 2.0;
+		double z = entity.getZ();
+
+		for (int i = 0; i < 10; i++) {
+			double offsetX = (entity.getRandom().nextDouble() - 0.5) * 0.8;
+			double offsetY = (entity.getRandom().nextDouble() - 0.5) * 0.4;
+			double offsetZ = (entity.getRandom().nextDouble() - 0.5) * 0.8;
+
+			entity.level().addParticle(
+					ParticleTypes.LARGE_SMOKE,
+					x + offsetX,
+					y + offsetY,
+					z + offsetZ,
+					0.0, 0.02, 0.0
+			);
+		}
+	}
+
+	@Override
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+		return !ItemStack.isSameItem(oldStack, newStack);
+	}
 }
