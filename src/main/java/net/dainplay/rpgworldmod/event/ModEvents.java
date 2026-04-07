@@ -17,7 +17,9 @@ import net.dainplay.rpgworldmod.item.custom.GasbassItem;
 import net.dainplay.rpgworldmod.item.custom.HornCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
 import net.dainplay.rpgworldmod.item.custom.ScrollItem;
+import net.dainplay.rpgworldmod.item.custom.SculkStaffItem;
 import net.dainplay.rpgworldmod.network.BoundEntitySyncPacket;
+import net.dainplay.rpgworldmod.network.ClientSculkStaffCDData;
 import net.dainplay.rpgworldmod.network.IllusionForceDataSyncS2CPacket;
 import net.dainplay.rpgworldmod.network.IsManaRegenBlockedDataSyncS2CPacket;
 import net.dainplay.rpgworldmod.network.ManaDataSyncS2CPacket;
@@ -27,12 +29,16 @@ import net.dainplay.rpgworldmod.network.PlayerIllusionForce;
 import net.dainplay.rpgworldmod.network.PlayerIllusionForceProvider;
 import net.dainplay.rpgworldmod.network.PlayerMana;
 import net.dainplay.rpgworldmod.network.PlayerManaProvider;
+import net.dainplay.rpgworldmod.network.PlayerSculkStaffCD;
+import net.dainplay.rpgworldmod.network.PlayerSculkStaffCDProvider;
+import net.dainplay.rpgworldmod.network.SculkStaffCDDataSyncS2CPacket;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.dainplay.rpgworldmod.util.BoundEntityHelper;
 import net.dainplay.rpgworldmod.util.ModTags;
 import net.dainplay.rpgworldmod.util.RemoteOpenContainerRegistry;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -58,6 +64,8 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.PlayerEnderChestContainer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -137,6 +145,9 @@ public class ModEvents {
 			if (!event.getObject().getCapability(PlayerIllusionForceProvider.PLAYER_ILLUSION_FORCE).isPresent()) {
 				event.addCapability(new ResourceLocation(RPGworldMod.MOD_ID, "illusion_force"), new PlayerIllusionForceProvider());
 			}
+			if (!event.getObject().getCapability(PlayerSculkStaffCDProvider.PLAYER_SCULK_STAFF_COOLDOWN).isPresent()) {
+				event.addCapability(new ResourceLocation(RPGworldMod.MOD_ID, "sculk_staff_cooldown"), new PlayerSculkStaffCDProvider());
+			}
 		}
 	}
 
@@ -153,6 +164,11 @@ public class ModEvents {
 					newStore.copyFrom(oldStore);
 				});
 			});
+			event.getOriginal().getCapability(PlayerSculkStaffCDProvider.PLAYER_SCULK_STAFF_COOLDOWN).ifPresent(oldStore -> {
+				event.getOriginal().getCapability(PlayerSculkStaffCDProvider.PLAYER_SCULK_STAFF_COOLDOWN).ifPresent(newStore -> {
+					newStore.copyFrom(oldStore);
+				});
+			});
 		}
 	}
 
@@ -160,16 +176,32 @@ public class ModEvents {
 	public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
 		event.register(PlayerMana.class);
 		event.register(PlayerIllusionForce.class);
+		event.register(PlayerSculkStaffCD.class);
 	}
 
 	@SubscribeEvent
 	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
 		if (event.player instanceof ServerPlayer serverPlayer) {
+			/*event.player.getCapability(PlayerSculkStaffCDProvider.PLAYER_SCULK_STAFF_COOLDOWN).ifPresent(cooldown -> {
+						Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = event.player.getCooldowns().cooldowns;
+						int currentTick = event.player.getCooldowns().tickCount;
+						ItemCooldowns.CooldownInstance instance = cooldownsMap.get(ModItems.SCULK_STAFF.get());
+						int endTick = currentTick;
+						if (instance != null) endTick = instance.endTime;
+						event.player.displayClientMessage(Component.literal("Server: s:" + (endTick - currentTick) + " c: " + cooldown.getCooldown()), true);
+					});*/
 			serverPlayer.getCapability(PlayerIllusionForceProvider.PLAYER_ILLUSION_FORCE).ifPresent(illusionForce -> {
 				if (illusionForce.getIllusionForce() >= 0) {
-					illusionForce.setIllusionForce(serverPlayer, Math.max(0, illusionForce.getIllusionForce() - 1), illusionForce.getIllusionForce()>0, illusionForce.getIsEnt());
+					illusionForce.setIllusionForce(serverPlayer, Math.max(0, illusionForce.getIllusionForce() - 1), illusionForce.getIllusionForce() > 0, illusionForce.getIsEnt());
 					if (illusionForce.getIllusionForce() == 0)
 						illusionForce.clearEntPosition(serverPlayer);
+				}
+			});
+			serverPlayer.getCapability(PlayerSculkStaffCDProvider.PLAYER_SCULK_STAFF_COOLDOWN).ifPresent(sculkStaffCD -> {
+				if (sculkStaffCD.getCooldown() > 0 && !(serverPlayer.isUsingItem() && serverPlayer.getUseItem().getItem() instanceof SculkStaffItem)) {
+					serverPlayer.getCooldowns().addCooldown(ModItems.SCULK_STAFF.get(), sculkStaffCD.getCooldown());
+					sculkStaffCD.setCooldown(serverPlayer, 0);
+					ModMessages.sendToPlayer(new SculkStaffCDDataSyncS2CPacket(0), serverPlayer);
 				}
 			});
 			/*if (serverPlayer.getAdvancements().getOrStartProgress(serverPlayer.getServer().getAdvancements().getAdvancement(DepressionDeathCheck.ID)).isDone() && !serverPlayer.isDeadOrDying()) {
@@ -234,6 +266,9 @@ public class ModEvents {
 						illusionForce.getIsEnt()
 				), player);
 			});
+			player.getCapability(PlayerSculkStaffCDProvider.PLAYER_SCULK_STAFF_COOLDOWN).ifPresent(cooldown -> {
+				ModMessages.sendToPlayer(new SculkStaffCDDataSyncS2CPacket(cooldown.getCooldown()), player);
+			});
 		}
 	}
 
@@ -255,6 +290,9 @@ public class ModEvents {
 						false,
 						illusionForce.getIsEnt()
 				), player);
+			});
+			player.getCapability(PlayerSculkStaffCDProvider.PLAYER_SCULK_STAFF_COOLDOWN).ifPresent(cooldown -> {
+				ModMessages.sendToPlayer(new SculkStaffCDDataSyncS2CPacket(cooldown.getCooldown()), player);
 			});
 		}
 	}
@@ -293,6 +331,10 @@ public class ModEvents {
 					illusionForce.setIllusionForce(player, 0, false, false);
 					illusionForce.clearEntPosition(player);
 					ModMessages.sendToPlayer(new IllusionForceDataSyncS2CPacket(0, 0.0f, 0.0f, 0.0f, false, false), player);
+				});
+				player.getCapability(PlayerSculkStaffCDProvider.PLAYER_SCULK_STAFF_COOLDOWN).ifPresent(sculkStaffCD -> {
+					sculkStaffCD.setCooldown(player, 0);
+					ModMessages.sendToPlayer(new SculkStaffCDDataSyncS2CPacket(0), player);
 				});
 			});
 
@@ -444,9 +486,9 @@ public class ModEvents {
 				}
 			}
 			if (player.isUsingItem() && player.getUseItem().getItem() instanceof NetherStarScrollItem
-			&& player.getUseItem().getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0) {
-					player.stopUsingItem();
-					player.getCooldowns().addCooldown(ModItems.NETHER_STAR_SCROLL.get(), 15);
+					&& player.getUseItem().getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0) {
+				player.stopUsingItem();
+				player.getCooldowns().addCooldown(ModItems.NETHER_STAR_SCROLL.get(), 15);
 			}
 		}
 	}
@@ -753,8 +795,7 @@ public class ModEvents {
 
 		if (mainHand.getItem() instanceof NetherStarScrollItem scroll) {
 			usingStack = mainHand;
-		}
-		else return;
+		} else return;
 
 		if (scroll.isPickaxeMode(usingStack) && !player.isShiftKeyDown()) {
 			event.setExpToDrop(0);

@@ -53,7 +53,10 @@ public class PistonStructureResolverMixin {
 
             blockstate = this.level.getBlockState(blockpos1);
 
-            if (blockstate.getBlock() instanceof DrillTuskBlock && DrillTuskBlock.getConnectedDirection(blockstate) == this.pushDirection && this.level.getBlockState(blockpos1.relative(this.pushDirection)).getBlock().getExplosionResistance(this.level.getBlockState(blockpos1.relative(this.pushDirection)), this.level,blockpos1.relative(this.pushDirection),null) < 20F) {
+            if (blockstate.getBlock() instanceof DrillTuskBlock
+                    && DrillTuskBlock.getConnectedDirection(blockstate) == this.pushDirection
+                    && this.level.getBlockState(blockpos1.relative(this.pushDirection)).getBlock().getExplosionResistance(this.level.getBlockState(blockpos1.relative(this.pushDirection)), this.level,blockpos1.relative(this.pushDirection),null) < 20F
+            && !(this.level.getBlockEntity(blockpos1.relative(this.pushDirection)) != null && this.level.getBlockState(blockpos1.relative(this.pushDirection)).getPistonPushReaction() == PushReaction.DESTROY)) {
                 map.put(blockpos1.relative(this.pushDirection), this.level.getBlockState(blockpos1.relative(this.pushDirection)));
                 this.level.setBlock(blockpos1.relative(this.pushDirection), Blocks.AIR.defaultBlockState(), 18);
             }
@@ -80,7 +83,9 @@ public class PistonStructureResolverMixin {
         BlockState blockstate = this.level.getBlockState(this.startPos);
         BlockPos blockpos1 = this.startPos.relative(this.pushDirection);
 
-            if (blockstate.getBlock() instanceof DrillTuskBlock && DrillTuskBlock.getConnectedDirection(blockstate) == this.pushDirection && this.level.getBlockState(blockpos1).getBlock().getExplosionResistance(this.level.getBlockState(blockpos1), this.level,blockpos1,null) < 20F) {
+            if (blockstate.getBlock() instanceof DrillTuskBlock
+                    && DrillTuskBlock.getConnectedDirection(blockstate) == this.pushDirection && this.level.getBlockState(blockpos1).getBlock().getExplosionResistance(this.level.getBlockState(blockpos1), this.level,blockpos1,null) < 20F
+            && !(this.level.getBlockEntity(blockpos1) != null && this.level.getBlockState(blockpos1).getPistonPushReaction() == PushReaction.DESTROY)) {
                 map1.put(blockpos1, this.level.getBlockState(blockpos1));
                 this.level.setBlock(blockpos1, Blocks.AIR.defaultBlockState(), 18);
             }

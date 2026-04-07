@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " SG",
+    " LS",
+    "C  "
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:sculk"
+    },
+    "L": {
+      "item": "minecraft:sculk_sensor"
+    },
+    "C": {
+      "item": "minecraft:sculk_catalyst"
+    },
+    "G": {
+      "item": "minecraft:nether_star"
+    }
+  },
+  "result": {
+    "item": "rpgworldmod:sculk_staff",
+    "nbt": "{Gem:\"nether_star\"}"
+  }
+}

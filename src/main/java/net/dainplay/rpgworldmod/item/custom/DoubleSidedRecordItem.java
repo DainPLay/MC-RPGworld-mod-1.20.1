@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -79,16 +80,12 @@ public class DoubleSidedRecordItem extends RecordItem implements RPGtooltip {
 
 		if (remaining <= 0) {
 			if (stage < 7) {
-				// Переход на следующую стадию
 				stage++;
 				remaining = 1;
 			} else if (stage == 7) {
-				// Замена на другую сторону
 				if (entity instanceof Player player) {
-					// Создаём новый стек с предметом otherSide
 					ItemStack newStack = new ItemStack(getOtherSide(stack.getItem()), stack.getCount());
 
-					// Копируем все NBT, кроме тегов flip
 					CompoundTag oldTag = stack.getTag();
 					if (oldTag != null) {
 						CompoundTag newTag = oldTag.copy();
@@ -98,18 +95,17 @@ public class DoubleSidedRecordItem extends RecordItem implements RPGtooltip {
 							newStack.setTag(newTag);
 						}
 					}
-
-					// Заменяем предмет в инвентаре
-					player.getInventory().setItem(slotId, newStack);
+					if (player.getOffhandItem() == stack)
+						player.setItemSlot(EquipmentSlot.OFFHAND, newStack);
+					else
+						player.getInventory().setItem(slotId, newStack);
 				} else {
-					// Если владелец не игрок (например, моб) – просто удаляем flip-теги
 					removeFlip(stack);
 				}
-				return; // не обновляем теги, так как предмет либо заменён, либо теги удалены
+				return;
 			}
 		}
 
-		// Сохраняем обновлённые значения
 		tag.putInt(TAG_FLIP_STAGE, stage);
 		tag.putInt(TAG_FLIP_REMAINING, remaining);
 	}
@@ -119,14 +115,12 @@ public class DoubleSidedRecordItem extends RecordItem implements RPGtooltip {
 		ItemStack stack = player.getItemInHand(hand);
 
 		if (!level.isClientSide) {
-			// Запускаем процесс переворота, если он ещё не активен
 			if (!stack.hasTag() || !stack.getTag().contains(TAG_FLIP_STAGE)) {
-				setFlip(stack, 1, 1); // старт: стадия 1, 20 тиков до следующей
+				setFlip(stack, 1, 1);
 				return InteractionResultHolder.success(stack);
 			}
 		}
 
-		// В остальных случаях передаём управление родительскому методу
 		return super.use(level, player, hand);
 	}
 

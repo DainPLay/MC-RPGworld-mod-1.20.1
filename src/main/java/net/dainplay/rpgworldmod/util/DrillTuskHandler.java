@@ -19,6 +19,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.piston.PistonBaseBlock;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
@@ -202,39 +203,47 @@ public class DrillTuskHandler {
 
 						if (blockstate1.getBlock().getExplosionResistance(blockstate1, level, pos1, null) < 20F) {
 							// Серверная часть
-							if (!level.isClientSide() && level instanceof ServerLevel serverLevel) {
-								if (blockstate1.is(Tags.Blocks.ORES)) {
-									for (ServerPlayer serverplayer : level.getEntitiesOfClass(ServerPlayer.class, new AABB(pos1).inflate(10.0D, 5.0D, 10.0D))) {
-										ModAdvancements.DRILL_TUSK_ORE.trigger(serverplayer);
+							if(!(level.getBlockEntity(pos1) != null && blockstate1.getPistonPushReaction() == PushReaction.DESTROY)) {
+								if (!level.isClientSide() && level instanceof ServerLevel serverLevel) {
+									if (blockstate1.is(Tags.Blocks.ORES)) {
+										for (ServerPlayer serverplayer : level.getEntitiesOfClass(ServerPlayer.class, new AABB(pos1).inflate(10.0D, 5.0D, 10.0D))) {
+											ModAdvancements.DRILL_TUSK_ORE.trigger(serverplayer);
+										}
+									}
+									if (blockstate.getBlock() instanceof QuartziteDrillTuskBlock) {
+										ItemStack silkTouchTool = new ItemStack(Items.DIAMOND_PICKAXE);
+										silkTouchTool.enchant(Enchantments.SILK_TOUCH, 1);
+
+										LootParams.Builder lootparams$builder = (new LootParams.Builder(serverLevel))
+												.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos1))
+												.withParameter(LootContextParams.TOOL, silkTouchTool);
+
+										BlockEntity blockEntity = serverLevel.getBlockEntity(pos1);
+										if (blockEntity != null) {
+											lootparams$builder.withParameter(LootContextParams.BLOCK_ENTITY, blockEntity);
+										}
+
+										List<ItemStack> drops = blockstate1.getDrops(lootparams$builder);
+
+										for (ItemStack itemStack : drops) {
+											Block.popResource(serverLevel, pos1, itemStack);
+										}
+									} else {
+										BlockEntity blockEntity = serverLevel.getBlockEntity(pos1);
+										Block.dropResources(blockstate1, level, pos1, blockEntity);
 									}
 								}
 
-								if (blockstate.getBlock() instanceof QuartziteDrillTuskBlock) {
-									ItemStack silkTouchTool = new ItemStack(Items.DIAMOND_PICKAXE);
-									silkTouchTool.enchant(Enchantments.SILK_TOUCH, 1);
-
-									LootParams.Builder lootparams$builder = (new LootParams.Builder(serverLevel))
-											.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos1))
-											.withParameter(LootContextParams.TOOL, silkTouchTool);
-									List<ItemStack> drops = blockstate1.getDrops(lootparams$builder);
-
-									for (ItemStack itemStack : drops) {
-										Block.popResource(serverLevel, pos1, itemStack);
-									}
-								} else {
-									Block.dropResources(blockstate1, level, pos1, null);
+								// Клиентская часть (звук и эффект разрушения)
+								if (level.isClientSide()) {
+									((ClientLevel) level).addDestroyBlockEffect(pos1, blockstate1);
 								}
-							}
-
-							// Клиентская часть (звук и эффект разрушения)
-							if (level.isClientSide()) {
-								((ClientLevel) level).addDestroyBlockEffect(pos1, blockstate1);
+								level.setBlock(pos1, Blocks.AIR.defaultBlockState(), 18);
+								level.gameEvent(GameEvent.BLOCK_DESTROY, pos1, GameEvent.Context.of(blockstate1));
 							}
 
 							level.playSound(null, pos1, RPGSounds.DRILL.get(), SoundSource.BLOCKS, 0.5F,
 									(level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2F + 1.0F);
-							level.setBlock(pos1, Blocks.AIR.defaultBlockState(), 18);
-							level.gameEvent(GameEvent.BLOCK_DESTROY, pos1, GameEvent.Context.of(blockstate1));
 						}
 					}
 				}

@@ -82,6 +82,8 @@ public class ModItems {
             () -> new TubeCoralStaffItem(new Item.Properties().durability(256).rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> BUBBLE_CORAL_STAFF = ITEMS.register("bubble_coral_staff",
             () -> new BubbleCoralStaffItem(new Item.Properties().durability(256).rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> SCULK_STAFF = ITEMS.register("sculk_staff",
+            () -> new SculkStaffItem(new Item.Properties().durability(128).rarity(Rarity.UNCOMMON)));
 
     public static final RegistryObject<Item> DRIED_WIDOWEED = ITEMS.register("dried_widoweed",
             () -> new DriedWidoweedItem(new Item.Properties()));

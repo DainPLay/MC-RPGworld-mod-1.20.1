@@ -1,0 +1,6 @@
+{
+	"parent": "rpgworldmod:item/sculk_staff_ember_gem_3d",
+	"textures": {
+		"gem": "rpgworldmod:item/nether_star_3d"
+	}
+}

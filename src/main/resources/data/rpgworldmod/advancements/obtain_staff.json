@@ -25,6 +25,18 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
+    "sculk_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:sculk_staff"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
     "tube_coral_staff": {
       "conditions": {
         "items": [
@@ -106,6 +118,7 @@
     [
       "living_wood_staff",
       "blaze_staff",
+      "sculk_staff",
       "tube_coral_staff",
       "brain_coral_staff",
       "bubble_coral_staff",

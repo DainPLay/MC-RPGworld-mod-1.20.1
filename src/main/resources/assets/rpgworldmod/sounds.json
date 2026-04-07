@@ -1338,5 +1338,21 @@
       }
     ],
     "subtitle": "subtitles.rpgworldmod.spell.necromancy_nether_star_primed"
+  },
+  "rpgworldmod.staff_nether_star.sculk": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.wither_skeleton.ambient"
+      }
+    ]
+  },
+  "rpgworldmod.staff_heart_of_the_sea.sculk": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.bubble_column.whirlpool_inside"
+      }
+    ]
   }
 }

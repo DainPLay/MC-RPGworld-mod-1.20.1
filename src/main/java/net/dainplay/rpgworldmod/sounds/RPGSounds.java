@@ -164,6 +164,8 @@ public class RPGSounds {
     public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_HEART_OF_THE_SEA_CAST;
     public static RegistryObject<SoundEvent> STAFF_HEART_OF_THE_SEA_ITEM;
     public static RegistryObject<SoundEvent> STAFF_NETHER_STAR_ITEM;
+    public static RegistryObject<SoundEvent> STAFF_HEART_OF_THE_SEA_SCULK;
+    public static RegistryObject<SoundEvent> STAFF_NETHER_STAR_SCULK;
     public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_ENDER_EYE_START;
     public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_ENDER_EYE_LOOP;
     public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_ENDER_EYE_STOP;

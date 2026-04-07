@@ -5,21 +5,26 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
+import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.ChooseTargetItem;
 import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
 import net.dainplay.rpgworldmod.network.ClientAnimateTargetData;
 import net.dainplay.rpgworldmod.network.C2SRequestTargetValidationPacket;
 import net.dainplay.rpgworldmod.network.ClientItemTargetData;
+import net.dainplay.rpgworldmod.network.ClientSculkStaffCDData;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
@@ -29,6 +34,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
+import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = RPGworldMod.MOD_ID, value = Dist.CLIENT)
 public class ClientModEvents {
@@ -36,6 +42,13 @@ public class ClientModEvents {
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.player instanceof LocalPlayer player) {
+
+            /*Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = event.player.getCooldowns().cooldowns;
+            int currentTick = event.player.getCooldowns().tickCount;
+            ItemCooldowns.CooldownInstance instance = cooldownsMap.get(ModItems.SCULK_STAFF.get());
+            int endTick = currentTick;
+            if (instance != null) endTick = instance.endTime;
+            event.player.sendSystemMessage(Component.literal("Client: s: " + (endTick - currentTick) + " c: " + ClientSculkStaffCDData.get()));*/
             boolean usingNetherWarpSpell = player.isUsingItem() && player.getUseItem().getItem() instanceof NetherStarScrollItem &&
                     player.getUseItem().getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0;
             if (player.hasEffect(ModEffects.NETHER_PORTAL_ILLUSION.get()) || usingNetherWarpSpell) {

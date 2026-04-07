@@ -1,6 +1,7 @@
 package net.dainplay.rpgworldmod.network;
 
 import net.dainplay.rpgworldmod.item.ModItems;
+import net.dainplay.rpgworldmod.item.custom.DoubleSidedRecordItem;
 import net.dainplay.rpgworldmod.item.custom.MintalTriangleItem;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.nbt.CompoundTag;
@@ -40,16 +41,20 @@ public class C2SCheckItemForTempNBTPacket {
             ItemStack stackInSlot = menu.slots.get(slotId).getItem();
             if (stackInSlot.isEmpty()) return;
 
-            // Обработка MintalTriangleItem
             if (stackInSlot.getItem() == ModItems.MINTAL_TRIANGLE.get()) {
                 MintalTriangleItem.setVibes(stackInSlot, 0);
-                // Обновляем слот после изменения
                 menu.setItem(slotId, menu.getStateId(), stackInSlot);
                 menu.broadcastChanges();
                 return;
             }
 
-            // Обработка NetherStarScrollItem с тегом isPickaxe
+            if (stackInSlot.getItem() instanceof DoubleSidedRecordItem) {
+                DoubleSidedRecordItem.removeFlip(stackInSlot);
+                menu.setItem(slotId, menu.getStateId(), stackInSlot);
+                menu.broadcastChanges();
+                return;
+            }
+
             if (stackInSlot.getItem() == ModItems.NETHER_STAR_SCROLL.get()
                     && stackInSlot.getTag() != null && stackInSlot.getTag().contains("isPickaxe", Tag.TAG_INT)) {
                 CompoundTag nbtData = stackInSlot.getOrCreateTag();
@@ -58,7 +63,6 @@ public class C2SCheckItemForTempNBTPacket {
                 menu.setItem(slotId, menu.getStateId(), stackInSlot);
                 menu.broadcastChanges();
 
-                // Звук
                 sender.level().playSound(null, sender.blockPosition(),
                         RPGSounds.SPELL_CONJURATION_STOP.get(),
                         SoundSource.PLAYERS, 1F,

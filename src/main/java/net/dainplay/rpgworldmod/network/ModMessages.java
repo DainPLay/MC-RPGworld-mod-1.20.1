@@ -95,6 +95,12 @@ public class ModMessages {
 				.consumerMainThread(PullPlayerPacket::handle)
 				.add();
 
+		net.messageBuilder(PullDownPlayerPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(PullDownPlayerPacket::new)
+				.encoder(PullDownPlayerPacket::toBytes)
+				.consumerMainThread(PullDownPlayerPacket::handle)
+				.add();
+
 		net.messageBuilder(SwingPlayerPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
 				.decoder(SwingPlayerPacket::new)
 				.encoder(SwingPlayerPacket::toBytes)
@@ -237,6 +243,12 @@ public class ModMessages {
 				.decoder(PortalEffectPacket::new)
 				.encoder(PortalEffectPacket::toBytes)
 				.consumerMainThread(PortalEffectPacket::handle)
+				.add();
+
+		net.messageBuilder(SculkStaffCDDataSyncS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(SculkStaffCDDataSyncS2CPacket::new)
+				.encoder(SculkStaffCDDataSyncS2CPacket::toBytes)
+				.consumerMainThread(SculkStaffCDDataSyncS2CPacket::handle)
 				.add();
 	}
 

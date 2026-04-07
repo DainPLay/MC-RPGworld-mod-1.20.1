@@ -1,5 +1,6 @@
 package net.dainplay.rpgworldmod.mixin;
 
+import net.dainplay.rpgworldmod.item.custom.DoubleSidedRecordItem;
 import net.dainplay.rpgworldmod.item.custom.MintalTriangleItem;
 import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
@@ -58,6 +59,9 @@ public abstract class MixinAbstractContainerMenuClient implements ITriggerChestS
 		if (stack.getItem() instanceof MintalTriangleItem) {
 			this.CheckItemForTempNBTPacket(slotId);
 		}
+		if (stack.getItem() instanceof DoubleSidedRecordItem) {
+			this.CheckItemForTempNBTPacket(slotId);
+		}
 	}
 
 	// При полной инициализации всех слотов (открытие контейнера, полный ресет)
@@ -80,6 +84,9 @@ public abstract class MixinAbstractContainerMenuClient implements ITriggerChestS
 		if (stack.getItem() instanceof MintalTriangleItem) {
 			this.CheckItemForTempNBTPacket(slot);
 		}
+		if (stack.getItem() instanceof DoubleSidedRecordItem) {
+			this.CheckItemForTempNBTPacket(slot);
+		}
 	}
 
 	// Без копирования (редко, но тоже нужно)
@@ -94,6 +101,9 @@ public abstract class MixinAbstractContainerMenuClient implements ITriggerChestS
 			}
 		}
 		if (stack.getItem() instanceof MintalTriangleItem) {
+			this.CheckItemForTempNBTPacket(slot);
+		}
+		if (stack.getItem() instanceof DoubleSidedRecordItem) {
 			this.CheckItemForTempNBTPacket(slot);
 		}
 	}

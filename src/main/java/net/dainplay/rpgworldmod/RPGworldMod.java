@@ -77,14 +77,12 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.FlowerPotBlock;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.ItemFishedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -105,561 +103,567 @@ import java.util.stream.Collectors;
 
 
 @Mod(RPGworldMod.MOD_ID)
-public class RPGworldMod
-{
-    public static final String MOD_ID = "rpgworldmod";
-    public static final DeferredRegister<SoundEvent> SOUND_EVENT_REGISTER = DeferredRegister.create(Registries.SOUND_EVENT, MOD_ID);
-    public static final Logger LOGGER = LogManager.getLogger();
+public class RPGworldMod {
+	public static final String MOD_ID = "rpgworldmod";
+	public static final DeferredRegister<SoundEvent> SOUND_EVENT_REGISTER = DeferredRegister.create(Registries.SOUND_EVENT, MOD_ID);
+	public static final Logger LOGGER = LogManager.getLogger();
 
-    public static final GameRules.Key<GameRules.BooleanValue> DISABLE_GASBASS_PVP_COOLDOWN =
-            GameRules.register("disableGasbassPvpCooldown", GameRules.Category.PLAYER,
-                    GameRules.BooleanValue.create(false));
+	public static final GameRules.Key<GameRules.BooleanValue> DISABLE_GASBASS_PVP_COOLDOWN =
+			GameRules.register("disableGasbassPvpCooldown", GameRules.Category.PLAYER,
+					GameRules.BooleanValue.create(false));
 
-    public RPGworldMod() {
+	public RPGworldMod() {
 
-        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        ModMessages.register();
+		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		ModMessages.register();
 
-        ModEntities.ENTITY_TYPES.register(eventBus);
+		ModEntities.ENTITY_TYPES.register(eventBus);
 
-        ModCreativeModeTab.register(eventBus);
-        ModEffects.register(eventBus);
-        ModPotions.register(eventBus);
-        ModItems.register(eventBus);
-        ModEnchantments.register(eventBus);
-        ModBlocks.register(eventBus);
-        ModLootModifiers.register(eventBus);
-        ModBlockEntities.register(eventBus);
-        ModFluids.register(eventBus);
-        ModFluidTypes.register(eventBus);
-        ModParticles.PARTICLE_TYPES.register(eventBus);
-        RPGFeatures.FEATURES.register(eventBus);
-        RPGFeatureModifiers.TREE_DECORATORS.register(eventBus);
-        ModBannerPatterns.BANNER_PATTERNS.register(eventBus);
-        ModSounds.setup();
-        ModAdvancements.init();
-        eventBus.addListener(this::setup);
-        eventBus.addListener(this::processIMC);
-        eventBus.addListener(this::enqueueIMC);
-        eventBus.addListener(this::addCreative);
-        eventBus.addListener(this::loadComplete);
-        MinecraftForge.EVENT_BUS.addListener(this::onLivingHurt);
-        MinecraftForge.EVENT_BUS.addListener(this::onItemFished);
-        ModRecipeSerializers.RECIPE_SERIALIZERS.register(eventBus);
+		ModCreativeModeTab.register(eventBus);
+		ModEffects.register(eventBus);
+		ModPotions.register(eventBus);
+		ModItems.register(eventBus);
+		ModEnchantments.register(eventBus);
+		ModBlocks.register(eventBus);
+		ModLootModifiers.register(eventBus);
+		ModBlockEntities.register(eventBus);
+		ModFluids.register(eventBus);
+		ModFluidTypes.register(eventBus);
+		ModParticles.PARTICLE_TYPES.register(eventBus);
+		RPGFeatures.FEATURES.register(eventBus);
+		RPGFeatureModifiers.TREE_DECORATORS.register(eventBus);
+		ModBannerPatterns.BANNER_PATTERNS.register(eventBus);
+		ModSounds.setup();
+		ModAdvancements.init();
+		eventBus.addListener(this::setup);
+		eventBus.addListener(this::processIMC);
+		eventBus.addListener(this::enqueueIMC);
+		eventBus.addListener(this::addCreative);
+		eventBus.addListener(this::loadComplete);
+		MinecraftForge.EVENT_BUS.addListener(this::onLivingHurt);
+		MinecraftForge.EVENT_BUS.addListener(this::onItemFished);
+		ModRecipeSerializers.RECIPE_SERIALIZERS.register(eventBus);
 
-        SOUND_EVENT_REGISTER.register(eventBus);
+		SOUND_EVENT_REGISTER.register(eventBus);
 
-        MinecraftForge.EVENT_BUS.register(new TweakReloadManager());
-        MinecraftForge.EVENT_BUS.register(new AIHandler());
-        MinecraftForge.EVENT_BUS.register(ActionRewardHandler.class);
-        MinecraftForge.EVENT_BUS.register(FuelingHandler.class);
-        MinecraftForge.EVENT_BUS.register(BurnoutHandler.class);
-        MinecraftForge.EVENT_BUS.register(TriangleAnimationHandler.class);
-        MinecraftForge.EVENT_BUS.register(CauldronInteractionHandler.class);
-        MinecraftForge.EVENT_BUS.register(WaterBucketInteractionHandler.class);
-        MinecraftForge.EVENT_BUS.register(KillEntityHandler.class);
-        MinecraftForge.EVENT_BUS.register(FoodSmokeParticlesHandler.class);
-        MinecraftForge.EVENT_BUS.register(DrillTuskHandler.class);
-        MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.register(new ModEvents());
+		MinecraftForge.EVENT_BUS.register(new TweakReloadManager());
+		MinecraftForge.EVENT_BUS.register(new AIHandler());
+		MinecraftForge.EVENT_BUS.register(ActionRewardHandler.class);
+		MinecraftForge.EVENT_BUS.register(FuelingHandler.class);
+		MinecraftForge.EVENT_BUS.register(BurnoutHandler.class);
+		MinecraftForge.EVENT_BUS.register(TriangleAnimationHandler.class);
+		MinecraftForge.EVENT_BUS.register(CauldronInteractionHandler.class);
+		MinecraftForge.EVENT_BUS.register(WaterBucketInteractionHandler.class);
+		MinecraftForge.EVENT_BUS.register(KillEntityHandler.class);
+		MinecraftForge.EVENT_BUS.register(FoodSmokeParticlesHandler.class);
+		MinecraftForge.EVENT_BUS.register(DrillTuskHandler.class);
+		MinecraftForge.EVENT_BUS.register(this);
+		MinecraftForge.EVENT_BUS.register(new ModEvents());
 
-    }
-    public void onItemFished(ItemFishedEvent event) {
-        FishingHook hook = event.getHookEntity();
-        if (!(hook.getPlayerOwner() instanceof ServerPlayer player)) {
-            return;
-        }
+	}
 
-        if (event.getDrops().isEmpty()) {
-            return; // No items were fished up, so we shouldn't trigger the advancement.
-        }
+	public void onItemFished(ItemFishedEvent event) {
+		FishingHook hook = event.getHookEntity();
+		if (!(hook.getPlayerOwner() instanceof ServerPlayer player)) {
+			return;
+		}
 
-        for(ItemStack itemStack : event.getDrops()){
+		if (event.getDrops().isEmpty()) {
+			return; // No items were fished up, so we shouldn't trigger the advancement.
+		}
 
-            if (itemStack.getItem() == ModItems.MOSSFRONT.get()
-            || itemStack.getItem() == ModItems.PLATINUMFISH.get()
-            || itemStack.getItem() == ModItems.GASBASS.get()
-            || itemStack.getItem() == ModItems.SHEENTROUT.get()
-            || itemStack.getItem() == ModItems.BHLEE.get()) {
+		for (ItemStack itemStack : event.getDrops()) {
 
-                ResourceLocation vanillaAdvancementId = new ResourceLocation("husbandry/fishy_business");
+			if (itemStack.getItem() == ModItems.MOSSFRONT.get()
+					|| itemStack.getItem() == ModItems.PLATINUMFISH.get()
+					|| itemStack.getItem() == ModItems.GASBASS.get()
+					|| itemStack.getItem() == ModItems.SHEENTROUT.get()
+					|| itemStack.getItem() == ModItems.BHLEE.get()) {
 
-                Advancement vanillaAdvancement = player.server.getAdvancements().getAdvancement(vanillaAdvancementId);
+				ResourceLocation vanillaAdvancementId = new ResourceLocation("husbandry/fishy_business");
 
-                if (vanillaAdvancement == null) {
-                    return;
-                }
-                AdvancementProgress advancementprogress = player.getAdvancements().getOrStartProgress(vanillaAdvancement);
-                if (!advancementprogress.isDone()) {
-                    for (String s : advancementprogress.getRemainingCriteria()) {
-                        player.getAdvancements().award(vanillaAdvancement, s);
-                    }
+				Advancement vanillaAdvancement = player.server.getAdvancements().getAdvancement(vanillaAdvancementId);
 
-                }
-            }
-        }
-    }
-    private void onLivingHurt(LivingHurtEvent event) {
-        if (event.getSource() == null || event.getSource().getEntity() == null || !(event.getSource().getEntity() instanceof LivingEntity)) return;
-        LivingEntity entity = event.getEntity();
-        Entity attacker = event.getSource().getEntity();
-        if (entity == null) return;
+				if (vanillaAdvancement == null) {
+					return;
+				}
+				AdvancementProgress advancementprogress = player.getAdvancements().getOrStartProgress(vanillaAdvancement);
+				if (!advancementprogress.isDone()) {
+					for (String s : advancementprogress.getRemainingCriteria()) {
+						player.getAdvancements().award(vanillaAdvancement, s);
+					}
 
-        ItemStack itemStack = entity.getUseItem();
-        if (itemStack.getItem() instanceof WealdBladeItem blade) {
-            entity.playSound(SoundEvents.THORNS_HIT, 1.0F, (entity.getRandom().nextFloat() - entity.getRandom().nextFloat()) * 0.2F + 1.0F);
-            attacker.hurt(entity.damageSources().thorns(entity), blade.getDamage()/3);
-        }
-    }
-    public void loadComplete(FMLLoadCompleteEvent event) {
-        event.enqueueWork(RPGFluidRegistry::postInit);
-    }
-    private void addCreative(BuildCreativeModeTabContentsEvent event)
-    {
-        if(event.getTab() == ModCreativeModeTab.RPGWORLD_BLOCKS_TAB.get()) {
-            event.accept(ModBlocks.RIE_LEAVES);
-            event.accept(ModBlocks.RIE_LOG);
-            event.accept(ModBlocks.RIE_WOOD);
-            event.accept(ModBlocks.STRIPPED_RIE_LOG);
-            event.accept(ModBlocks.STRIPPED_RIE_WOOD);
-            event.accept(ModBlocks.RIE_PLANKS);
-            event.accept(ModBlocks.RIE_STAIRS);
-            event.accept(ModBlocks.RIE_SLAB);
-            event.accept(ModBlocks.RIE_FENCE);
-            event.accept(ModBlocks.RIE_FENCE_GATE);
-            event.accept(ModBlocks.RIE_DOOR);
-            event.accept(ModBlocks.RIE_TRAPDOOR);
-            event.accept(ModBlocks.RIE_PRESSURE_PLATE);
-            event.accept(ModBlocks.RIE_BUTTON);
-            event.accept(ModBlocks.LIVING_WOOD_LOG);
-            event.accept(ModBlocks.LIVING_WOOD_WOOD);
-            event.accept(ModBlocks.STRIPPED_LIVING_WOOD_LOG);
-            event.accept(ModBlocks.STRIPPED_LIVING_WOOD_WOOD);
-            event.accept(ModBlocks.CHISELED_MASKONITE_BLOCK);
-            event.accept(ModBlocks.MASKONITE_BLOCK);
-            event.accept(ModBlocks.MASKONITE_STAIRS);
-            event.accept(ModBlocks.MASKONITE_SLAB);
-            event.accept(ModBlocks.MASKONITE_WALL);
-            event.accept(ModBlocks.MASKONITE_PRESSURE_PLATE);
-            event.accept(ModBlocks.MASKONITE_BUTTON);
-            event.accept(ModBlocks.MASKONITE_BRICKS);
-            event.accept(ModBlocks.CRACKED_MASKONITE_BRICKS);
-            event.accept(ModBlocks.MASKONITE_BRICK_STAIRS);
-            event.accept(ModBlocks.MASKONITE_BRICK_SLAB);
-            event.accept(ModBlocks.MASKONITE_BRICK_WALL);
-            event.accept(ModBlocks.QUARTZITE);
-            event.accept(ModBlocks.QUARTZITE_STAIRS);
-            event.accept(ModBlocks.QUARTZITE_SLAB);
-            event.accept(ModBlocks.QUARTZITE_WALL);
-            event.accept(ModBlocks.POLISHED_QUARTZITE);
-            event.accept(ModBlocks.POLISHED_QUARTZITE_STAIRS);
-            event.accept(ModBlocks.POLISHED_QUARTZITE_SLAB);
-            event.accept(ModBlocks.QUARTZITE_BRICKS);
-            event.accept(ModBlocks.QUARTZITE_BRICK_STAIRS);
-            event.accept(ModBlocks.QUARTZITE_BRICK_SLAB);
-            event.accept(ModBlocks.JASPER);
-            event.accept(ModBlocks.EMULSION_BLOCK);
-            event.accept(ModBlocks.MINTAL_BLOCK);
-            event.accept(ModBlocks.WINGOLD_BLOCK);
-            event.accept(ModBlocks.MASKONITE_GLASS);
-            event.accept(ModBlocks.MASKONITE_GLASS_PANE);
-            event.accept(ModItems.RIE_SIGN);
-            event.accept(ModItems.RIE_HANGING_SIGN);
-            event.accept(ModBlocks.RIE_HOLLOW);
-            event.accept(ModBlocks.BLOWER);
-            event.accept(ModBlocks.DRILL_TUSK);
-            event.accept(ModBlocks.QUARTZITE_DRILL_TUSK);
-            event.accept(ModItems.FIRE_CATCHER_ITEM);
-            event.accept(ModBlocks.ENT_FACE);
-            event.accept(ModBlocks.TIRE);
-        }
+				}
+			}
+		}
+	}
 
-        if(event.getTab() == ModCreativeModeTab.RPGWORLD_FLORA_TAB.get()) {
-            event.accept(ModBlocks.RIE_SAPLING);
-            event.accept(ModBlocks.PROJECTRUFFLE);
-            event.accept(ModBlocks.SILICINA);
-            event.accept(ModBlocks.MOSSHROOM);
-            event.accept(ModBlocks.WILD_FAIRAPIER);
-            event.accept(ModItems.RPGIROLLE_ITEM);
-            event.accept(ModItems.CHEESE_CAP);
-            event.accept(ModBlocks.WIDOWEED);
-            event.accept(ModBlocks.TRIPLOVER);
-            event.accept(ModBlocks.SPIKY_IVY);
-            event.accept(ModItems.PARALILY);
-            event.accept(ModBlocks.HOLTS_REFLECTION);
-            event.accept(ModBlocks.GLOSSOM);
-            event.accept(ModBlocks.MIMOSSA);
-            event.accept(ModBlocks.TYPHON);
-            event.accept(ModBlocks.STAREBLOSSOM);
-            event.accept(ModBlocks.RAZORLEAF_BUD);
-            event.accept(ModBlocks.YOUNG_RAZORLEAF);
-            event.accept(ModItems.FAIRAPIER_SEED);
-            event.accept(ModItems.RIE_FRUIT);
-            event.accept(ModItems.BRAMBLEFOX_BERRIES);
-            event.accept(ModItems.SHIVERALIS_BERRIES);
-            event.accept(ModItems.PARALILY_BERRY);
-            event.accept(ModItems.PROJECTRUFFLE_ITEM);
-        }
+	private void onLivingHurt(LivingHurtEvent event) {
+		if (event.getSource() == null || event.getSource().getEntity() == null || !(event.getSource().getEntity() instanceof LivingEntity))
+			return;
+		LivingEntity entity = event.getEntity();
+		Entity attacker = event.getSource().getEntity();
+		if (entity == null) return;
 
-        if(event.getTab() == ModCreativeModeTab.RPGWORLD_FAUNA_TAB.get()) {
-            event.accept(ModItems.PLATINUMFISH);
-            event.accept(ModItems.BHLEE);
-            event.accept(ModItems.MOSSFRONT);
-            event.accept(ModItems.SHEENTROUT);
-            event.accept(ModItems.GASBASS);
-            event.accept(ModItems.MOSQUITO_BOTTLE);
-        }
+		ItemStack itemStack = entity.getUseItem();
+		if (itemStack.getItem() instanceof WealdBladeItem blade) {
+			entity.playSound(SoundEvents.THORNS_HIT, 1.0F, (entity.getRandom().nextFloat() - entity.getRandom().nextFloat()) * 0.2F + 1.0F);
+			attacker.hurt(entity.damageSources().thorns(entity), blade.getDamage() / 3);
+		}
+	}
 
-        if(event.getTab() == ModCreativeModeTab.RPGWORLD_EQUIPMENT_TAB.get()) {
-            event.accept(ModItems.RIE_BOAT);
-            event.accept(ModItems.RIE_CHEST_BOAT);
-            event.accept(ModItems.MASKONITE_SHOVEL);
-            event.accept(ModItems.MASKONITE_PICKAXE);
-            event.accept(ModItems.MASKONITE_AXE);
-            event.accept(ModItems.MASKONITE_HOE);
-            event.accept(ModItems.MASKONITE_SWORD);
-            event.accept(ModItems.FLINT_SHOVEL);
-            event.accept(ModItems.FLINT_PICKAXE);
-            event.accept(ModItems.FLINT_AXE);
-            event.accept(ModItems.FLINT_HOE);
-            event.accept(ModItems.FLINT_SWORD);
-            event.accept(ModItems.GUITAR_AX);
-            event.accept(ModItems.WEALD_BLADE);
-            event.accept(ModItems.FAIRAPIER_SWORD);
-            event.accept(ModItems.FAIRAPIER_SEED);
-            event.accept(ModItems.PROJECTRUFFLE_ITEM);
-            event.accept(ModItems.MINTAL_TRIANGLE);
-            event.accept(ModItems.DRILL_SPEAR);
-            event.accept(ModItems.PLATINUMFISH_BUCKET);
-            event.accept(ModItems.BHLEE_BUCKET);
-            event.accept(ModItems.MOSSFRONT_BUCKET);
-            event.accept(ModItems.SHEENTROUT_BUCKET);
-            event.accept(ModItems.GASBASS_BUCKET);
-            event.accept(ModItems.ARBOR_FUEL_BUCKET);
-            event.accept(ModItems.FIREPROOF_SKIRT);
-            event.accept(ModItems.EMBER_GEM);
-            event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.RESTORATION.get(), ModEnchantments.RESTORATION.get().getMaxLevel())));
-            event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
-            event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ILLUSION.get(), ModEnchantments.ILLUSION.get().getMaxLevel())));
-            event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
-            event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
-            event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
-            event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.RESTORATION.get(), ModEnchantments.RESTORATION.get().getMaxLevel())));
-            event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
-            event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ILLUSION.get(), ModEnchantments.ILLUSION.get().getMaxLevel())));
-            event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
-            event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
-            event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
-            event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.RESTORATION.get(), ModEnchantments.RESTORATION.get().getMaxLevel())));
-            event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
-            event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ILLUSION.get(), ModEnchantments.ILLUSION.get().getMaxLevel())));
-            event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
-            event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
-            event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
-            event.accept(NetherStarScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.RESTORATION.get(), ModEnchantments.RESTORATION.get().getMaxLevel())));
-            event.accept(NetherStarScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
-            event.accept(NetherStarScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ILLUSION.get(), ModEnchantments.ILLUSION.get().getMaxLevel())));
-            event.accept(NetherStarScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
-            event.accept(NetherStarScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
-            event.accept(NetherStarScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
-            event.accept(ModItems.LIVING_WOOD_HELMET);
-            event.accept(ModItems.LIVING_WOOD_CHESTPLATE);
-            event.accept(ModItems.LIVING_WOOD_LEGGINGS);
-            event.accept(ModItems.LIVING_WOOD_BOOTS);
-            event.accept(ModItems.LAPIS_CHARM);
-            event.accept(ModItems.LIVING_WOOD_BOW);
-            event.accept(StaffItem.createForGemType(ModItems.LIVING_WOOD_STAFF.get().getDefaultInstance(),StaffItem.GemType.EMBER_GEM));
-            event.accept(StaffItem.createForGemType(ModItems.LIVING_WOOD_STAFF.get().getDefaultInstance(),StaffItem.GemType.ENDER_EYE));
-            event.accept(StaffItem.createForGemType(ModItems.LIVING_WOOD_STAFF.get().getDefaultInstance(),StaffItem.GemType.HEART_OF_THE_SEA));
-            event.accept(StaffItem.createForGemType(ModItems.LIVING_WOOD_STAFF.get().getDefaultInstance(),StaffItem.GemType.NETHER_STAR));
-            event.accept(StaffItem.createForGemType(ModItems.BLAZE_STAFF.get().getDefaultInstance(),StaffItem.GemType.EMBER_GEM));
-            event.accept(StaffItem.createForGemType(ModItems.BLAZE_STAFF.get().getDefaultInstance(),StaffItem.GemType.ENDER_EYE));
-            event.accept(StaffItem.createForGemType(ModItems.BLAZE_STAFF.get().getDefaultInstance(),StaffItem.GemType.HEART_OF_THE_SEA));
-            event.accept(StaffItem.createForGemType(ModItems.BLAZE_STAFF.get().getDefaultInstance(),StaffItem.GemType.NETHER_STAR));
-            event.accept(StaffItem.createForGemType(ModItems.TUBE_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.EMBER_GEM));
-            event.accept(StaffItem.createForGemType(ModItems.TUBE_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.ENDER_EYE));
-            event.accept(StaffItem.createForGemType(ModItems.TUBE_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.HEART_OF_THE_SEA));
-            event.accept(StaffItem.createForGemType(ModItems.TUBE_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.NETHER_STAR));
-            event.accept(StaffItem.createForGemType(ModItems.BRAIN_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.EMBER_GEM));
-            event.accept(StaffItem.createForGemType(ModItems.BRAIN_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.ENDER_EYE));
-            event.accept(StaffItem.createForGemType(ModItems.BRAIN_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.HEART_OF_THE_SEA));
-            event.accept(StaffItem.createForGemType(ModItems.BRAIN_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.NETHER_STAR));
-            event.accept(StaffItem.createForGemType(ModItems.BUBBLE_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.EMBER_GEM));
-            event.accept(StaffItem.createForGemType(ModItems.BUBBLE_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.ENDER_EYE));
-            event.accept(StaffItem.createForGemType(ModItems.BUBBLE_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.HEART_OF_THE_SEA));
-            event.accept(StaffItem.createForGemType(ModItems.BUBBLE_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.NETHER_STAR));
-            event.accept(StaffItem.createForGemType(ModItems.FIRE_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.EMBER_GEM));
-            event.accept(StaffItem.createForGemType(ModItems.FIRE_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.ENDER_EYE));
-            event.accept(StaffItem.createForGemType(ModItems.FIRE_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.HEART_OF_THE_SEA));
-            event.accept(StaffItem.createForGemType(ModItems.FIRE_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.NETHER_STAR));
-            event.accept(StaffItem.createForGemType(ModItems.HORN_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.EMBER_GEM));
-            event.accept(StaffItem.createForGemType(ModItems.HORN_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.ENDER_EYE));
-            event.accept(StaffItem.createForGemType(ModItems.HORN_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.HEART_OF_THE_SEA));
-            event.accept(StaffItem.createForGemType(ModItems.HORN_CORAL_STAFF.get().getDefaultInstance(),StaffItem.GemType.NETHER_STAR));
-            event.accept(ModItems.MOSQUITO_BOTTLE);
-            event.accept(ModItems.CHITIN_THIMBLE);
-            event.accept(ModItems.CHITIN_POWDER);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.LONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.STRONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.LONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.STRONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.LONG_ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.LONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.STRONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+	public void loadComplete(FMLLoadCompleteEvent event) {
+		event.enqueueWork(RPGFluidRegistry::postInit);
+	}
 
-            event.accept(ModItems.BRAMBLEFOX_SCARF);
-            event.accept(ModItems.FIG_LEAF);
-            event.accept(ModItems.MUSIC_DISC_HOWLING);
-            event.accept(ModItems.MUSIC_DISC_TIRE);
-            event.accept(ModItems.MUSIC_DISC_RAIN_A_SIDE);
-            event.accept(ModItems.RIE_WEALD_BANNER_PATTERN);
-            event.accept(ModItems.PORTABLE_TURRET);
-        }
+	private void addCreative(BuildCreativeModeTabContentsEvent event) {
+		if (event.getTab() == ModCreativeModeTab.RPGWORLD_BLOCKS_TAB.get()) {
+			event.accept(ModBlocks.RIE_LEAVES);
+			event.accept(ModBlocks.RIE_LOG);
+			event.accept(ModBlocks.RIE_WOOD);
+			event.accept(ModBlocks.STRIPPED_RIE_LOG);
+			event.accept(ModBlocks.STRIPPED_RIE_WOOD);
+			event.accept(ModBlocks.RIE_PLANKS);
+			event.accept(ModBlocks.RIE_STAIRS);
+			event.accept(ModBlocks.RIE_SLAB);
+			event.accept(ModBlocks.RIE_FENCE);
+			event.accept(ModBlocks.RIE_FENCE_GATE);
+			event.accept(ModBlocks.RIE_DOOR);
+			event.accept(ModBlocks.RIE_TRAPDOOR);
+			event.accept(ModBlocks.RIE_PRESSURE_PLATE);
+			event.accept(ModBlocks.RIE_BUTTON);
+			event.accept(ModBlocks.LIVING_WOOD_LOG);
+			event.accept(ModBlocks.LIVING_WOOD_WOOD);
+			event.accept(ModBlocks.STRIPPED_LIVING_WOOD_LOG);
+			event.accept(ModBlocks.STRIPPED_LIVING_WOOD_WOOD);
+			event.accept(ModBlocks.CHISELED_MASKONITE_BLOCK);
+			event.accept(ModBlocks.MASKONITE_BLOCK);
+			event.accept(ModBlocks.MASKONITE_STAIRS);
+			event.accept(ModBlocks.MASKONITE_SLAB);
+			event.accept(ModBlocks.MASKONITE_WALL);
+			event.accept(ModBlocks.MASKONITE_PRESSURE_PLATE);
+			event.accept(ModBlocks.MASKONITE_BUTTON);
+			event.accept(ModBlocks.MASKONITE_BRICKS);
+			event.accept(ModBlocks.CRACKED_MASKONITE_BRICKS);
+			event.accept(ModBlocks.MASKONITE_BRICK_STAIRS);
+			event.accept(ModBlocks.MASKONITE_BRICK_SLAB);
+			event.accept(ModBlocks.MASKONITE_BRICK_WALL);
+			event.accept(ModBlocks.QUARTZITE);
+			event.accept(ModBlocks.QUARTZITE_STAIRS);
+			event.accept(ModBlocks.QUARTZITE_SLAB);
+			event.accept(ModBlocks.QUARTZITE_WALL);
+			event.accept(ModBlocks.POLISHED_QUARTZITE);
+			event.accept(ModBlocks.POLISHED_QUARTZITE_STAIRS);
+			event.accept(ModBlocks.POLISHED_QUARTZITE_SLAB);
+			event.accept(ModBlocks.QUARTZITE_BRICKS);
+			event.accept(ModBlocks.QUARTZITE_BRICK_STAIRS);
+			event.accept(ModBlocks.QUARTZITE_BRICK_SLAB);
+			event.accept(ModBlocks.JASPER);
+			event.accept(ModBlocks.EMULSION_BLOCK);
+			event.accept(ModBlocks.MINTAL_BLOCK);
+			event.accept(ModBlocks.WINGOLD_BLOCK);
+			event.accept(ModBlocks.MASKONITE_GLASS);
+			event.accept(ModBlocks.MASKONITE_GLASS_PANE);
+			event.accept(ModItems.RIE_SIGN);
+			event.accept(ModItems.RIE_HANGING_SIGN);
+			event.accept(ModBlocks.RIE_HOLLOW);
+			event.accept(ModBlocks.BLOWER);
+			event.accept(ModBlocks.DRILL_TUSK);
+			event.accept(ModBlocks.QUARTZITE_DRILL_TUSK);
+			event.accept(ModItems.FIRE_CATCHER_ITEM);
+			event.accept(ModBlocks.ENT_FACE);
+			event.accept(ModBlocks.TIRE);
+		}
 
-        if(event.getTab() == ModCreativeModeTab.RPGWORLD_FOODS_AND_DRINKS_TAB.get()) {
-            event.accept(ModItems.RIE_FRUIT);
-            event.accept(ModItems.MINT_RIE_FRUIT);
-            event.accept(ModItems.BRAMBLEFOX_BERRIES);
-            event.accept(ModItems.SHIVERALIS_BERRIES);
-            event.accept(ModItems.PARALILY_BERRY);
-            event.accept(ModItems.RPGIROLLE_ITEM);
-            event.accept(ModItems.CHEESE_CAP);
-            event.accept(ModItems.STEELPORK);
-            event.accept(ModItems.COOKED_STEELPORK);
-            event.accept(ModItems.BHLEE);
-            event.accept(ModItems.COOKED_BHLEE);
-            event.accept(ModItems.MOSSFRONT);
-            event.accept(ModItems.GASBASS);
-            ItemStack itemstack = new ItemStack(Items.SUSPICIOUS_STEW);
-            SuspiciousStewItem.saveMobEffect(itemstack, MobEffects.INVISIBILITY, 9*20);
-            event.accept(itemstack, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            ItemStack itemstack1 = new ItemStack(Items.SUSPICIOUS_STEW);
-            SuspiciousStewItem.saveMobEffect(itemstack1, MobEffects.DAMAGE_BOOST, 8*20);
-            event.accept(itemstack1, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            ItemStack itemstack2 = new ItemStack(Items.SUSPICIOUS_STEW);
-            SuspiciousStewItem.saveMobEffect(itemstack2, ModEffects.PARALYSIS.get(), 12*20);
-            event.accept(itemstack2, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            ItemStack itemstack3 = new ItemStack(Items.SUSPICIOUS_STEW);
-            SuspiciousStewItem.saveMobEffect(itemstack3, ModEffects.HAPPINESS.get(), 12*20);
-            event.accept(itemstack3, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            ItemStack itemstack4 = new ItemStack(Items.SUSPICIOUS_STEW);
-            SuspiciousStewItem.saveMobEffect(itemstack4, MobEffects.GLOWING, 8*20);
-            event.accept(itemstack4, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            ItemStack itemstack5 = new ItemStack(Items.SUSPICIOUS_STEW);
-            SuspiciousStewItem.saveMobEffect(itemstack5, ModEffects.MOSSIOSIS.get(), 320);
-            event.accept(itemstack5, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            ItemStack itemstack6 = new ItemStack(Items.SUSPICIOUS_STEW);
-            SuspiciousStewItem.saveMobEffect(itemstack6, MobEffects.DARKNESS, 5*20);
-            event.accept(itemstack6, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            ItemStack itemstack7 = new ItemStack(Items.SUSPICIOUS_STEW);
-            SuspiciousStewItem.saveMobEffect(itemstack7, ModEffects.PARANOIA.get(), 16*20);
-            event.accept(itemstack7, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            ItemStack itemstack8 = new ItemStack(Items.SUSPICIOUS_STEW);
-            SuspiciousStewItem.saveMobEffect(itemstack8, MobEffects.FIRE_RESISTANCE, 9*20);
-            event.accept(itemstack8, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.LONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.STRONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.LONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.STRONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.LONG_ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.LONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.STRONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.LONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.STRONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.LONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.STRONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.LONG_ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.LONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.STRONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.LONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.STRONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.LONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.STRONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.LONG_ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.LONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.STRONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+		if (event.getTab() == ModCreativeModeTab.RPGWORLD_FLORA_TAB.get()) {
+			event.accept(ModBlocks.RIE_SAPLING);
+			event.accept(ModBlocks.PROJECTRUFFLE);
+			event.accept(ModBlocks.SILICINA);
+			event.accept(ModBlocks.MOSSHROOM);
+			event.accept(ModBlocks.WILD_FAIRAPIER);
+			event.accept(ModItems.RPGIROLLE_ITEM);
+			event.accept(ModItems.CHEESE_CAP);
+			event.accept(ModBlocks.WIDOWEED);
+			event.accept(ModBlocks.TRIPLOVER);
+			event.accept(ModBlocks.SPIKY_IVY);
+			event.accept(ModItems.PARALILY);
+			event.accept(ModBlocks.HOLTS_REFLECTION);
+			event.accept(ModBlocks.GLOSSOM);
+			event.accept(ModBlocks.MIMOSSA);
+			event.accept(ModBlocks.TYPHON);
+			event.accept(ModBlocks.STAREBLOSSOM);
+			event.accept(ModBlocks.RAZORLEAF_BUD);
+			event.accept(ModBlocks.YOUNG_RAZORLEAF);
+			event.accept(ModItems.FAIRAPIER_SEED);
+			event.accept(ModItems.RIE_FRUIT);
+			event.accept(ModItems.BRAMBLEFOX_BERRIES);
+			event.accept(ModItems.SHIVERALIS_BERRIES);
+			event.accept(ModItems.PARALILY_BERRY);
+			event.accept(ModItems.PROJECTRUFFLE_ITEM);
+		}
 
-        }
+		if (event.getTab() == ModCreativeModeTab.RPGWORLD_FAUNA_TAB.get()) {
+			event.accept(ModItems.PLATINUMFISH);
+			event.accept(ModItems.BHLEE);
+			event.accept(ModItems.MOSSFRONT);
+			event.accept(ModItems.SHEENTROUT);
+			event.accept(ModItems.GASBASS);
+			event.accept(ModItems.MOSQUITO_BOTTLE);
+		}
 
-        if(event.getTab() == ModCreativeModeTab.RPGWORLD_MATERIALS_TAB.get()) {
-            event.accept(ModBlocks.MASKONITE_BLOCK);
-            event.accept(ModItems.DRIED_WIDOWEED);
-            event.accept(ModItems.TYPHON_DYE);
-            event.accept(ModItems.MINTAL_NUGGET);
-            event.accept(ModItems.MINTAL_INGOT);
-            event.accept(ModItems.SAMARAGUARD);
-            event.accept(ModItems.BURR_SPIKE);
-            event.accept(ModBlocks.DRILL_TUSK);
-            event.accept(ModItems.CHITIN_POWDER);
-            event.accept(ModItems.MOSQUITO_BOTTLE);
-            event.accept(ModItems.FIREPROOF_PETALS);
-            event.accept(ModItems.EMBER_GEM);
-            event.accept(ModBlocks.LIVING_WOOD_LOG);
-            event.accept(ModBlocks.MOSSHROOM);
-            event.accept(ModItems.PARALILY_BERRY);
-            event.accept(ModItems.MASKONITE_UPGRADE_SMITHING_TEMPLATE);
-            event.accept(ModItems.LEAVES_ARMOR_TRIM_SMITHING_TEMPLATE);
-            event.accept(ModItems.RIE_WEALD_BANNER_PATTERN);
-            event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.PITCH.get(), ModEnchantments.PITCH.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CRESCENDO.get(), ModEnchantments.CRESCENDO.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.STEREO.get(), ModEnchantments.STEREO.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.TEMPO.get(), ModEnchantments.TEMPO.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.SOUNDPROOF.get(), ModEnchantments.SOUNDPROOF.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.COLLECTION.get(), ModEnchantments.COLLECTION.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.BLOWING.get(), ModEnchantments.BLOWING.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.STRETCH.get(), ModEnchantments.STRETCH.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ACTIVE_RECHARGE.get(), ModEnchantments.ACTIVE_RECHARGE.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DOUBLE_EXPOSURE.get(), ModEnchantments.DOUBLE_EXPOSURE.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(ModItems.EMPTY_SCROLL);
-            event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.RESTORATION.get(), ModEnchantments.RESTORATION.get().getMaxLevel())));
-            event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
-            event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ILLUSION.get(), ModEnchantments.ILLUSION.get().getMaxLevel())));
-            event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
-            event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
-            event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
-            event.accept(ModItems.EMBER_SCROLL);
-            event.accept(ModItems.HEART_OF_THE_SEA_SCROLL);
-            event.accept(ModItems.ENDER_EYE_SCROLL);
-            event.accept(ModItems.NETHER_STAR_SCROLL);
-        }
+		if (event.getTab() == ModCreativeModeTab.RPGWORLD_EQUIPMENT_TAB.get()) {
+			event.accept(ModItems.RIE_BOAT);
+			event.accept(ModItems.RIE_CHEST_BOAT);
+			event.accept(ModItems.MASKONITE_SHOVEL);
+			event.accept(ModItems.MASKONITE_PICKAXE);
+			event.accept(ModItems.MASKONITE_AXE);
+			event.accept(ModItems.MASKONITE_HOE);
+			event.accept(ModItems.MASKONITE_SWORD);
+			event.accept(ModItems.FLINT_SHOVEL);
+			event.accept(ModItems.FLINT_PICKAXE);
+			event.accept(ModItems.FLINT_AXE);
+			event.accept(ModItems.FLINT_HOE);
+			event.accept(ModItems.FLINT_SWORD);
+			event.accept(ModItems.GUITAR_AX);
+			event.accept(ModItems.WEALD_BLADE);
+			event.accept(ModItems.FAIRAPIER_SWORD);
+			event.accept(ModItems.FAIRAPIER_SEED);
+			event.accept(ModItems.PROJECTRUFFLE_ITEM);
+			event.accept(ModItems.MINTAL_TRIANGLE);
+			event.accept(ModItems.DRILL_SPEAR);
+			event.accept(ModItems.PLATINUMFISH_BUCKET);
+			event.accept(ModItems.BHLEE_BUCKET);
+			event.accept(ModItems.MOSSFRONT_BUCKET);
+			event.accept(ModItems.SHEENTROUT_BUCKET);
+			event.accept(ModItems.GASBASS_BUCKET);
+			event.accept(ModItems.ARBOR_FUEL_BUCKET);
+			event.accept(ModItems.FIREPROOF_SKIRT);
+			event.accept(ModItems.EMBER_GEM);
+			event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.RESTORATION.get(), ModEnchantments.RESTORATION.get().getMaxLevel())));
+			event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
+			event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ILLUSION.get(), ModEnchantments.ILLUSION.get().getMaxLevel())));
+			event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
+			event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
+			event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
+			event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.RESTORATION.get(), ModEnchantments.RESTORATION.get().getMaxLevel())));
+			event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
+			event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ILLUSION.get(), ModEnchantments.ILLUSION.get().getMaxLevel())));
+			event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
+			event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
+			event.accept(HeartOfTheSeaScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
+			event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.RESTORATION.get(), ModEnchantments.RESTORATION.get().getMaxLevel())));
+			event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
+			event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ILLUSION.get(), ModEnchantments.ILLUSION.get().getMaxLevel())));
+			event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
+			event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
+			event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
+			event.accept(NetherStarScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.RESTORATION.get(), ModEnchantments.RESTORATION.get().getMaxLevel())));
+			event.accept(NetherStarScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
+			event.accept(NetherStarScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ILLUSION.get(), ModEnchantments.ILLUSION.get().getMaxLevel())));
+			event.accept(NetherStarScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
+			event.accept(NetherStarScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
+			event.accept(NetherStarScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
+			event.accept(ModItems.LIVING_WOOD_HELMET);
+			event.accept(ModItems.LIVING_WOOD_CHESTPLATE);
+			event.accept(ModItems.LIVING_WOOD_LEGGINGS);
+			event.accept(ModItems.LIVING_WOOD_BOOTS);
+			event.accept(ModItems.LAPIS_CHARM);
+			event.accept(ModItems.LIVING_WOOD_BOW);
+			event.accept(StaffItem.createForGemType(ModItems.LIVING_WOOD_STAFF.get().getDefaultInstance(), StaffItem.GemType.EMBER_GEM));
+			event.accept(StaffItem.createForGemType(ModItems.LIVING_WOOD_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
+			event.accept(StaffItem.createForGemType(ModItems.LIVING_WOOD_STAFF.get().getDefaultInstance(), StaffItem.GemType.HEART_OF_THE_SEA));
+			event.accept(StaffItem.createForGemType(ModItems.LIVING_WOOD_STAFF.get().getDefaultInstance(), StaffItem.GemType.NETHER_STAR));
+			event.accept(StaffItem.createForGemType(ModItems.BLAZE_STAFF.get().getDefaultInstance(), StaffItem.GemType.EMBER_GEM));
+			event.accept(StaffItem.createForGemType(ModItems.BLAZE_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
+			event.accept(StaffItem.createForGemType(ModItems.BLAZE_STAFF.get().getDefaultInstance(), StaffItem.GemType.HEART_OF_THE_SEA));
+			event.accept(StaffItem.createForGemType(ModItems.BLAZE_STAFF.get().getDefaultInstance(), StaffItem.GemType.NETHER_STAR));
+			event.accept(StaffItem.createForGemType(ModItems.TUBE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.EMBER_GEM));
+			event.accept(StaffItem.createForGemType(ModItems.TUBE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
+			event.accept(StaffItem.createForGemType(ModItems.TUBE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.HEART_OF_THE_SEA));
+			event.accept(StaffItem.createForGemType(ModItems.TUBE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.NETHER_STAR));
+			event.accept(StaffItem.createForGemType(ModItems.BRAIN_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.EMBER_GEM));
+			event.accept(StaffItem.createForGemType(ModItems.BRAIN_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
+			event.accept(StaffItem.createForGemType(ModItems.BRAIN_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.HEART_OF_THE_SEA));
+			event.accept(StaffItem.createForGemType(ModItems.BRAIN_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.NETHER_STAR));
+			event.accept(StaffItem.createForGemType(ModItems.BUBBLE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.EMBER_GEM));
+			event.accept(StaffItem.createForGemType(ModItems.BUBBLE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
+			event.accept(StaffItem.createForGemType(ModItems.BUBBLE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.HEART_OF_THE_SEA));
+			event.accept(StaffItem.createForGemType(ModItems.BUBBLE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.NETHER_STAR));
+			event.accept(StaffItem.createForGemType(ModItems.FIRE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.EMBER_GEM));
+			event.accept(StaffItem.createForGemType(ModItems.FIRE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
+			event.accept(StaffItem.createForGemType(ModItems.FIRE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.HEART_OF_THE_SEA));
+			event.accept(StaffItem.createForGemType(ModItems.FIRE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.NETHER_STAR));
+			event.accept(StaffItem.createForGemType(ModItems.HORN_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.EMBER_GEM));
+			event.accept(StaffItem.createForGemType(ModItems.HORN_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
+			event.accept(StaffItem.createForGemType(ModItems.HORN_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.HEART_OF_THE_SEA));
+			event.accept(StaffItem.createForGemType(ModItems.HORN_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.NETHER_STAR));
+			event.accept(StaffItem.createForGemType(ModItems.SCULK_STAFF.get().getDefaultInstance(), StaffItem.GemType.EMBER_GEM));
+			event.accept(StaffItem.createForGemType(ModItems.SCULK_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
+			event.accept(StaffItem.createForGemType(ModItems.SCULK_STAFF.get().getDefaultInstance(), StaffItem.GemType.HEART_OF_THE_SEA));
+			event.accept(StaffItem.createForGemType(ModItems.SCULK_STAFF.get().getDefaultInstance(), StaffItem.GemType.NETHER_STAR));
+			event.accept(ModItems.MOSQUITO_BOTTLE);
+			event.accept(ModItems.CHITIN_THIMBLE);
+			event.accept(ModItems.CHITIN_POWDER);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.LONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.STRONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.LONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.STRONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.LONG_ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.LONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.STRONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
 
-        if(event.getTab() == ModCreativeModeTab.RPGWORLD_SPAWN_EGGS_TAB.get()) {
-            event.accept(ModItems.BIBBIT_SPAWN_EGG);
-            event.accept(ModItems.BRAMBLEFOX_SPAWN_EGG);
-            event.accept(ModItems.MINTOBAT_SPAWN_EGG);
-            event.accept(ModItems.FIREFLANTERN_SPAWN_EGG);
-            event.accept(ModItems.BURR_PURR_SPAWN_EGG);
-            event.accept(ModItems.DRILLHOG_SPAWN_EGG);
-            event.accept(ModItems.MOSQUITO_SWARM_SPAWN_EGG);
-            event.accept(ModItems.RAZORLEAF_SPAWN_EGG);
-            event.accept(ModItems.ENT_SPAWN_EGG);
-            event.accept(ModItems.PLATINUMFISH_SPAWN_EGG);
-            event.accept(ModItems.BHLEE_SPAWN_EGG);
-            event.accept(ModItems.MOSSFRONT_SPAWN_EGG);
-            event.accept(ModItems.SHEENTROUT_SPAWN_EGG);
-            event.accept(ModItems.GASBASS_SPAWN_EGG);
-        }
-    }
+			event.accept(ModItems.BRAMBLEFOX_SCARF);
+			event.accept(ModItems.FIG_LEAF);
+			event.accept(ModItems.MUSIC_DISC_HOWLING);
+			event.accept(ModItems.MUSIC_DISC_TIRE);
+			event.accept(ModItems.MUSIC_DISC_RAIN_A_SIDE);
+			event.accept(ModItems.RIE_WEALD_BANNER_PATTERN);
+			event.accept(ModItems.PORTABLE_TURRET);
+		}
 
-    private void setup(final FMLCommonSetupEvent event)
-    {
-        event.enqueueWork(() -> {
-            // Given we only add two biomes, we should keep our weight relatively low.
-            Regions.register(new RPGworldRegionProvider(new ResourceLocation(MOD_ID, "overworld_1"),1));
+		if (event.getTab() == ModCreativeModeTab.RPGWORLD_FOODS_AND_DRINKS_TAB.get()) {
+			event.accept(ModItems.RIE_FRUIT);
+			event.accept(ModItems.MINT_RIE_FRUIT);
+			event.accept(ModItems.BRAMBLEFOX_BERRIES);
+			event.accept(ModItems.SHIVERALIS_BERRIES);
+			event.accept(ModItems.PARALILY_BERRY);
+			event.accept(ModItems.RPGIROLLE_ITEM);
+			event.accept(ModItems.CHEESE_CAP);
+			event.accept(ModItems.STEELPORK);
+			event.accept(ModItems.COOKED_STEELPORK);
+			event.accept(ModItems.BHLEE);
+			event.accept(ModItems.COOKED_BHLEE);
+			event.accept(ModItems.MOSSFRONT);
+			event.accept(ModItems.GASBASS);
+			ItemStack itemstack = new ItemStack(Items.SUSPICIOUS_STEW);
+			SuspiciousStewItem.saveMobEffect(itemstack, MobEffects.INVISIBILITY, 9 * 20);
+			event.accept(itemstack, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			ItemStack itemstack1 = new ItemStack(Items.SUSPICIOUS_STEW);
+			SuspiciousStewItem.saveMobEffect(itemstack1, MobEffects.DAMAGE_BOOST, 8 * 20);
+			event.accept(itemstack1, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			ItemStack itemstack2 = new ItemStack(Items.SUSPICIOUS_STEW);
+			SuspiciousStewItem.saveMobEffect(itemstack2, ModEffects.PARALYSIS.get(), 12 * 20);
+			event.accept(itemstack2, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			ItemStack itemstack3 = new ItemStack(Items.SUSPICIOUS_STEW);
+			SuspiciousStewItem.saveMobEffect(itemstack3, ModEffects.HAPPINESS.get(), 12 * 20);
+			event.accept(itemstack3, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			ItemStack itemstack4 = new ItemStack(Items.SUSPICIOUS_STEW);
+			SuspiciousStewItem.saveMobEffect(itemstack4, MobEffects.GLOWING, 8 * 20);
+			event.accept(itemstack4, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			ItemStack itemstack5 = new ItemStack(Items.SUSPICIOUS_STEW);
+			SuspiciousStewItem.saveMobEffect(itemstack5, ModEffects.MOSSIOSIS.get(), 320);
+			event.accept(itemstack5, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			ItemStack itemstack6 = new ItemStack(Items.SUSPICIOUS_STEW);
+			SuspiciousStewItem.saveMobEffect(itemstack6, MobEffects.DARKNESS, 5 * 20);
+			event.accept(itemstack6, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			ItemStack itemstack7 = new ItemStack(Items.SUSPICIOUS_STEW);
+			SuspiciousStewItem.saveMobEffect(itemstack7, ModEffects.PARANOIA.get(), 16 * 20);
+			event.accept(itemstack7, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			ItemStack itemstack8 = new ItemStack(Items.SUSPICIOUS_STEW);
+			SuspiciousStewItem.saveMobEffect(itemstack8, MobEffects.FIRE_RESISTANCE, 9 * 20);
+			event.accept(itemstack8, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.LONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.STRONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.LONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.STRONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.LONG_ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.LONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.STRONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.LONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.STRONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.LONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.STRONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.LONG_ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.LONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.STRONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.LONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.STRONG_PARALYSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.LONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.STRONG_MOSSIOSIS_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.LONG_ARBOR_FUEL_BOTTLE.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.LONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.STRONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
 
-            ComposterBlock.COMPOSTABLES.put(ModBlocks.RIE_LEAVES.get().asItem(), 0.3F);
-            ComposterBlock.COMPOSTABLES.put(ModItems.FAIRAPIER_SEED.get().asItem(), 0.3F);
-            ComposterBlock.COMPOSTABLES.put(ModItems.RIE_FRUIT.get().asItem(), 0.5F);
-            ComposterBlock.COMPOSTABLES.put(ModItems.SHIVERALIS_BERRIES.get().asItem(), 0.3F);
-            ComposterBlock.COMPOSTABLES.put(ModItems.PARALILY_BERRY.get().asItem(), 0.3F);
-            ComposterBlock.COMPOSTABLES.put(ModItems.RPGIROLLE_ITEM.get().asItem(), 0.65F);
-            ComposterBlock.COMPOSTABLES.put(ModBlocks.HOLTS_REFLECTION.get().asItem(), 0.65F);
-            ComposterBlock.COMPOSTABLES.put(ModBlocks.GLOSSOM.get().asItem(), 0.65F);
-            ComposterBlock.COMPOSTABLES.put(ModBlocks.SILICINA.get().asItem(), 0.65F);
-            ComposterBlock.COMPOSTABLES.put(ModBlocks.RAZORLEAF_BUD.get().asItem(), 0.65F);
-            ComposterBlock.COMPOSTABLES.put(ModBlocks.TRIPLOVER.get().asItem(), 0.3F);
-            ComposterBlock.COMPOSTABLES.put(ModBlocks.WILD_FAIRAPIER.get().asItem(), 0.65F);
-            ComposterBlock.COMPOSTABLES.put(ModBlocks.MIMOSSA.get().asItem(), 0.65F);
-            ComposterBlock.COMPOSTABLES.put(ModBlocks.STAREBLOSSOM.get().asItem(), 0.65F);
-            ComposterBlock.COMPOSTABLES.put(ModBlocks.TYPHON.get().asItem(), 0.65F);
-            ComposterBlock.COMPOSTABLES.put(ModBlocks.PARALILY.get().asItem(), 0.65F);
-            ComposterBlock.COMPOSTABLES.put(ModBlocks.SPIKY_IVY.get().asItem(), 0.5F);
-            ComposterBlock.COMPOSTABLES.put(ModBlocks.RIE_SAPLING.get().asItem(), 0.3F);
-            ComposterBlock.COMPOSTABLES.put(ModItems.BRAMBLEFOX_BERRIES.get().asItem(), 0.3F);
-            ComposterBlock.COMPOSTABLES.put(ModBlocks.MOSSHROOM.get().asItem(), 0.65F);
-            ComposterBlock.COMPOSTABLES.put(ModItems.CHEESE_CAP.get().asItem(), 0.65F);
-            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.SHIVERALIS.getId(), ModBlocks.POTTED_SHIVERALIS);
-            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.RPGIROLLE.getId(), ModBlocks.POTTED_RPGIROLLE);
-            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.PROJECTRUFFLE.getId(), ModBlocks.POTTED_PROJECTRUFFLE);
-            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.RIE_SAPLING.getId(), ModBlocks.POTTED_RIE_SAPLING);
-            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.SPIKY_IVY.getId(), ModBlocks.POTTED_SPIKY_IVY);
-            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.WILD_FAIRAPIER.getId(), ModBlocks.POTTED_WILD_FAIRAPIER);
-            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.MIMOSSA.getId(), ModBlocks.POTTED_MIMOSSA);
-            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.TYPHON.getId(), ModBlocks.POTTED_TYPHON);
-            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.SILICINA.getId(), ModBlocks.POTTED_SILICINA);
-            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.HOLTS_REFLECTION.getId(), ModBlocks.POTTED_HOLTS_REFLECTION);
-            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.GLOSSOM.getId(), ModBlocks.POTTED_GLOSSOM);
-            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.MOSSHROOM.getId(), ModBlocks.POTTED_MOSSHROOM);
-            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.CHEESE_CAP.getId(), ModBlocks.POTTED_CHEESE_CAP);
-            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.STAREBLOSSOM.getId(), ModBlocks.POTTED_STAREBLOSSOM);
-            DispenserBlock.registerBehavior(ModItems.PROJECTRUFFLE_ITEM.get(), new AbstractProjectileDispenseBehavior() {
-                protected Projectile getProjectile(Level p_123407_, Position p_123408_, ItemStack p_123409_) {
-                    ProjectruffleArrowEntity arrow = new ProjectruffleArrowEntity(ModEntities.PROJECTRUFFLE_ARROW.get(), p_123408_.x(), p_123408_.y(), p_123408_.z(), p_123407_);
-                    arrow.pickup = AbstractArrow.Pickup.ALLOWED;
-                    return arrow;
-                }
-            });
-            DispenserBlock.registerBehavior(ModItems.FAIRAPIER_SEED.get(), new AbstractProjectileDispenseBehavior() {
-                protected Projectile getProjectile(Level p_123407_, Position p_123408_, ItemStack p_123409_) {
-                    FairapierSeedEntity arrow = new FairapierSeedEntity(ModEntities.FAIRAPIER_SEED_PROJECTILE.get(), p_123408_.x(), p_123408_.y(), p_123408_.z(), p_123407_);
-                    arrow.pickup = AbstractArrow.Pickup.DISALLOWED;
-                    return arrow;
-                }
-            });
-            DispenserBlock.registerBehavior(ModItems.BURR_SPIKE.get(), new AbstractProjectileDispenseBehavior() {
-                protected Projectile getProjectile(Level p_123407_, Position p_123408_, ItemStack p_123409_) {
-                    BurrSpikeEntity arrow = new BurrSpikeEntity(ModEntities.BURR_SPIKE_PROJECTILE.get(), p_123408_.x(), p_123408_.y(), p_123408_.z(), p_123407_);
-                    arrow.pickup = AbstractArrow.Pickup.DISALLOWED;
-                    return arrow;
-                }
-            });
-            DispenserBlock.registerBehavior(ModItems.RIE_BOAT.get(), new ModBoatDispenseItemBehavior(ModBoat.Type.RIE, false));
-            DispenserBlock.registerBehavior(ModItems.RIE_CHEST_BOAT.get(), new ModBoatDispenseItemBehavior(ModBoat.Type.RIE, true));
+		}
 
-            BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(Potions.AWKWARD)), Ingredient.of(ModItems.PARALILY_BERRY.get()), PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARALYSIS_POTION.get())));
-            BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.PARALYSIS_POTION.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_PARALYSIS_POTION.get())));
-            BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.PARALYSIS_POTION.get())), Ingredient.of(Items.GLOWSTONE_DUST), createPotion(ModPotions.STRONG_PARALYSIS_POTION.get())));
-            BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(Potions.AWKWARD)), Ingredient.of(ModBlocks.MOSSHROOM.get()), PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.MOSSIOSIS_POTION.get())));
-            BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.MOSSIOSIS_POTION.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_MOSSIOSIS_POTION.get())));
-            BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.MOSSIOSIS_POTION.get())), Ingredient.of(Items.GLOWSTONE_DUST), createPotion(ModPotions.STRONG_MOSSIOSIS_POTION.get())));
-            BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.ARBOR_FUEL_BOTTLE.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_ARBOR_FUEL_BOTTLE.get())));
-            BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(Potions.AWKWARD)), Ingredient.of(Items.ENDER_EYE), PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARANOIA_POTION.get())));
-            BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.PARANOIA_POTION.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_PARANOIA_POTION.get())));
-            BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.PARANOIA_POTION.get())), Ingredient.of(Items.GLOWSTONE_DUST), createPotion(ModPotions.STRONG_PARANOIA_POTION.get())));
-        });
+		if (event.getTab() == ModCreativeModeTab.RPGWORLD_MATERIALS_TAB.get()) {
+			event.accept(ModBlocks.MASKONITE_BLOCK);
+			event.accept(ModItems.DRIED_WIDOWEED);
+			event.accept(ModItems.TYPHON_DYE);
+			event.accept(ModItems.MINTAL_NUGGET);
+			event.accept(ModItems.MINTAL_INGOT);
+			event.accept(ModItems.SAMARAGUARD);
+			event.accept(ModItems.BURR_SPIKE);
+			event.accept(ModBlocks.DRILL_TUSK);
+			event.accept(ModItems.CHITIN_POWDER);
+			event.accept(ModItems.MOSQUITO_BOTTLE);
+			event.accept(ModItems.FIREPROOF_PETALS);
+			event.accept(ModItems.EMBER_GEM);
+			event.accept(ModBlocks.LIVING_WOOD_LOG);
+			event.accept(ModBlocks.MOSSHROOM);
+			event.accept(ModItems.PARALILY_BERRY);
+			event.accept(ModItems.MASKONITE_UPGRADE_SMITHING_TEMPLATE);
+			event.accept(ModItems.LEAVES_ARMOR_TRIM_SMITHING_TEMPLATE);
+			event.accept(ModItems.RIE_WEALD_BANNER_PATTERN);
+			event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.PITCH.get(), ModEnchantments.PITCH.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CRESCENDO.get(), ModEnchantments.CRESCENDO.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.STEREO.get(), ModEnchantments.STEREO.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.TEMPO.get(), ModEnchantments.TEMPO.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.SOUNDPROOF.get(), ModEnchantments.SOUNDPROOF.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.COLLECTION.get(), ModEnchantments.COLLECTION.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.BLOWING.get(), ModEnchantments.BLOWING.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.STRETCH.get(), ModEnchantments.STRETCH.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ACTIVE_RECHARGE.get(), ModEnchantments.ACTIVE_RECHARGE.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DOUBLE_EXPOSURE.get(), ModEnchantments.DOUBLE_EXPOSURE.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(ModItems.EMPTY_SCROLL);
+			event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.RESTORATION.get(), ModEnchantments.RESTORATION.get().getMaxLevel())));
+			event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
+			event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ILLUSION.get(), ModEnchantments.ILLUSION.get().getMaxLevel())));
+			event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
+			event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
+			event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
+			event.accept(ModItems.EMBER_SCROLL);
+			event.accept(ModItems.HEART_OF_THE_SEA_SCROLL);
+			event.accept(ModItems.ENDER_EYE_SCROLL);
+			event.accept(ModItems.NETHER_STAR_SCROLL);
+		}
+
+		if (event.getTab() == ModCreativeModeTab.RPGWORLD_SPAWN_EGGS_TAB.get()) {
+			event.accept(ModItems.BIBBIT_SPAWN_EGG);
+			event.accept(ModItems.BRAMBLEFOX_SPAWN_EGG);
+			event.accept(ModItems.MINTOBAT_SPAWN_EGG);
+			event.accept(ModItems.FIREFLANTERN_SPAWN_EGG);
+			event.accept(ModItems.BURR_PURR_SPAWN_EGG);
+			event.accept(ModItems.DRILLHOG_SPAWN_EGG);
+			event.accept(ModItems.MOSQUITO_SWARM_SPAWN_EGG);
+			event.accept(ModItems.RAZORLEAF_SPAWN_EGG);
+			event.accept(ModItems.ENT_SPAWN_EGG);
+			event.accept(ModItems.PLATINUMFISH_SPAWN_EGG);
+			event.accept(ModItems.BHLEE_SPAWN_EGG);
+			event.accept(ModItems.MOSSFRONT_SPAWN_EGG);
+			event.accept(ModItems.SHEENTROUT_SPAWN_EGG);
+			event.accept(ModItems.GASBASS_SPAWN_EGG);
+		}
+	}
+
+	private void setup(final FMLCommonSetupEvent event) {
+		event.enqueueWork(() -> {
+			// Given we only add two biomes, we should keep our weight relatively low.
+			Regions.register(new RPGworldRegionProvider(new ResourceLocation(MOD_ID, "overworld_1"), 1));
+
+			ComposterBlock.COMPOSTABLES.put(ModBlocks.RIE_LEAVES.get().asItem(), 0.3F);
+			ComposterBlock.COMPOSTABLES.put(ModItems.FAIRAPIER_SEED.get().asItem(), 0.3F);
+			ComposterBlock.COMPOSTABLES.put(ModItems.RIE_FRUIT.get().asItem(), 0.5F);
+			ComposterBlock.COMPOSTABLES.put(ModItems.SHIVERALIS_BERRIES.get().asItem(), 0.3F);
+			ComposterBlock.COMPOSTABLES.put(ModItems.PARALILY_BERRY.get().asItem(), 0.3F);
+			ComposterBlock.COMPOSTABLES.put(ModItems.RPGIROLLE_ITEM.get().asItem(), 0.65F);
+			ComposterBlock.COMPOSTABLES.put(ModBlocks.HOLTS_REFLECTION.get().asItem(), 0.65F);
+			ComposterBlock.COMPOSTABLES.put(ModBlocks.GLOSSOM.get().asItem(), 0.65F);
+			ComposterBlock.COMPOSTABLES.put(ModBlocks.SILICINA.get().asItem(), 0.65F);
+			ComposterBlock.COMPOSTABLES.put(ModBlocks.RAZORLEAF_BUD.get().asItem(), 0.65F);
+			ComposterBlock.COMPOSTABLES.put(ModBlocks.TRIPLOVER.get().asItem(), 0.3F);
+			ComposterBlock.COMPOSTABLES.put(ModBlocks.WILD_FAIRAPIER.get().asItem(), 0.65F);
+			ComposterBlock.COMPOSTABLES.put(ModBlocks.MIMOSSA.get().asItem(), 0.65F);
+			ComposterBlock.COMPOSTABLES.put(ModBlocks.STAREBLOSSOM.get().asItem(), 0.65F);
+			ComposterBlock.COMPOSTABLES.put(ModBlocks.TYPHON.get().asItem(), 0.65F);
+			ComposterBlock.COMPOSTABLES.put(ModBlocks.PARALILY.get().asItem(), 0.65F);
+			ComposterBlock.COMPOSTABLES.put(ModBlocks.SPIKY_IVY.get().asItem(), 0.5F);
+			ComposterBlock.COMPOSTABLES.put(ModBlocks.RIE_SAPLING.get().asItem(), 0.3F);
+			ComposterBlock.COMPOSTABLES.put(ModItems.BRAMBLEFOX_BERRIES.get().asItem(), 0.3F);
+			ComposterBlock.COMPOSTABLES.put(ModBlocks.MOSSHROOM.get().asItem(), 0.65F);
+			ComposterBlock.COMPOSTABLES.put(ModItems.CHEESE_CAP.get().asItem(), 0.65F);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.SHIVERALIS.getId(), ModBlocks.POTTED_SHIVERALIS);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.RPGIROLLE.getId(), ModBlocks.POTTED_RPGIROLLE);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.PROJECTRUFFLE.getId(), ModBlocks.POTTED_PROJECTRUFFLE);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.RIE_SAPLING.getId(), ModBlocks.POTTED_RIE_SAPLING);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.SPIKY_IVY.getId(), ModBlocks.POTTED_SPIKY_IVY);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.WILD_FAIRAPIER.getId(), ModBlocks.POTTED_WILD_FAIRAPIER);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.MIMOSSA.getId(), ModBlocks.POTTED_MIMOSSA);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.TYPHON.getId(), ModBlocks.POTTED_TYPHON);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.SILICINA.getId(), ModBlocks.POTTED_SILICINA);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.HOLTS_REFLECTION.getId(), ModBlocks.POTTED_HOLTS_REFLECTION);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.GLOSSOM.getId(), ModBlocks.POTTED_GLOSSOM);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.MOSSHROOM.getId(), ModBlocks.POTTED_MOSSHROOM);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.CHEESE_CAP.getId(), ModBlocks.POTTED_CHEESE_CAP);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.STAREBLOSSOM.getId(), ModBlocks.POTTED_STAREBLOSSOM);
+			DispenserBlock.registerBehavior(ModItems.PROJECTRUFFLE_ITEM.get(), new AbstractProjectileDispenseBehavior() {
+				protected Projectile getProjectile(Level p_123407_, Position p_123408_, ItemStack p_123409_) {
+					ProjectruffleArrowEntity arrow = new ProjectruffleArrowEntity(ModEntities.PROJECTRUFFLE_ARROW.get(), p_123408_.x(), p_123408_.y(), p_123408_.z(), p_123407_);
+					arrow.pickup = AbstractArrow.Pickup.ALLOWED;
+					return arrow;
+				}
+			});
+			DispenserBlock.registerBehavior(ModItems.FAIRAPIER_SEED.get(), new AbstractProjectileDispenseBehavior() {
+				protected Projectile getProjectile(Level p_123407_, Position p_123408_, ItemStack p_123409_) {
+					FairapierSeedEntity arrow = new FairapierSeedEntity(ModEntities.FAIRAPIER_SEED_PROJECTILE.get(), p_123408_.x(), p_123408_.y(), p_123408_.z(), p_123407_);
+					arrow.pickup = AbstractArrow.Pickup.DISALLOWED;
+					return arrow;
+				}
+			});
+			DispenserBlock.registerBehavior(ModItems.BURR_SPIKE.get(), new AbstractProjectileDispenseBehavior() {
+				protected Projectile getProjectile(Level p_123407_, Position p_123408_, ItemStack p_123409_) {
+					BurrSpikeEntity arrow = new BurrSpikeEntity(ModEntities.BURR_SPIKE_PROJECTILE.get(), p_123408_.x(), p_123408_.y(), p_123408_.z(), p_123407_);
+					arrow.pickup = AbstractArrow.Pickup.DISALLOWED;
+					return arrow;
+				}
+			});
+			DispenserBlock.registerBehavior(ModItems.RIE_BOAT.get(), new ModBoatDispenseItemBehavior(ModBoat.Type.RIE, false));
+			DispenserBlock.registerBehavior(ModItems.RIE_CHEST_BOAT.get(), new ModBoatDispenseItemBehavior(ModBoat.Type.RIE, true));
+
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(Potions.AWKWARD)), Ingredient.of(ModItems.PARALILY_BERRY.get()), PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARALYSIS_POTION.get())));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.PARALYSIS_POTION.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_PARALYSIS_POTION.get())));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.PARALYSIS_POTION.get())), Ingredient.of(Items.GLOWSTONE_DUST), createPotion(ModPotions.STRONG_PARALYSIS_POTION.get())));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(Potions.AWKWARD)), Ingredient.of(ModBlocks.MOSSHROOM.get()), PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.MOSSIOSIS_POTION.get())));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.MOSSIOSIS_POTION.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_MOSSIOSIS_POTION.get())));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.MOSSIOSIS_POTION.get())), Ingredient.of(Items.GLOWSTONE_DUST), createPotion(ModPotions.STRONG_MOSSIOSIS_POTION.get())));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.ARBOR_FUEL_BOTTLE.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_ARBOR_FUEL_BOTTLE.get())));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(Potions.AWKWARD)), Ingredient.of(Items.ENDER_EYE), PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARANOIA_POTION.get())));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.PARANOIA_POTION.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_PARANOIA_POTION.get())));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.PARANOIA_POTION.get())), Ingredient.of(Items.GLOWSTONE_DUST), createPotion(ModPotions.STRONG_PARANOIA_POTION.get())));
+		});
 
 
-    }
-    public static ItemStack createPotion(Potion potion) {
-        return PotionUtils.setPotion(new ItemStack(Items.POTION), potion);
-    }
+	}
 
-    private void processIMC(final InterModProcessEvent event)
-    {
-        LOGGER.info("Got IMC {}", event.getIMCStream().
-                map(m->m.getMessageSupplier().get()).
-                collect(Collectors.toList()));
-    }
+	public static ItemStack createPotion(Potion potion) {
+		return PotionUtils.setPotion(new ItemStack(Items.POTION), potion);
+	}
 
-    public static ResourceLocation prefix(String name) {
-        return new ResourceLocation(MOD_ID, name.toLowerCase(Locale.ROOT));
-    }
+	private void processIMC(final InterModProcessEvent event) {
+		LOGGER.info("Got IMC {}", event.getIMCStream().
+				map(m -> m.getMessageSupplier().get()).
+				collect(Collectors.toList()));
+	}
 
-    public void enqueueIMC(final InterModEnqueueEvent event) {
-        SlotTypePreset[] types = {SlotTypePreset.NECKLACE, SlotTypePreset.BELT, SlotTypePreset.BACK, SlotTypePreset.RING};
-        SlotTypePreset[] cosmeticTypes = {SlotTypePreset.NECKLACE, SlotTypePreset.BELT, SlotTypePreset.BACK};
-        for (SlotTypePreset type : types) {
-                InterModComms.sendTo(CuriosApi.MODID, SlotTypeMessage.REGISTER_TYPE, () -> type.getMessageBuilder().build());
-            }
-        for (SlotTypePreset type : cosmeticTypes) {
-            InterModComms.sendTo(CuriosApi.MODID, SlotTypeMessage.REGISTER_TYPE, () -> type.getMessageBuilder().cosmetic().build());
-        }
-    }
+	public static ResourceLocation prefix(String name) {
+		return new ResourceLocation(MOD_ID, name.toLowerCase(Locale.ROOT));
+	}
+
+	public void enqueueIMC(final InterModEnqueueEvent event) {
+		SlotTypePreset[] types = {SlotTypePreset.NECKLACE, SlotTypePreset.BELT, SlotTypePreset.BACK, SlotTypePreset.RING};
+		SlotTypePreset[] cosmeticTypes = {SlotTypePreset.NECKLACE, SlotTypePreset.BELT, SlotTypePreset.BACK};
+		for (SlotTypePreset type : types) {
+			InterModComms.sendTo(CuriosApi.MODID, SlotTypeMessage.REGISTER_TYPE, () -> type.getMessageBuilder().build());
+		}
+		for (SlotTypePreset type : cosmeticTypes) {
+			InterModComms.sendTo(CuriosApi.MODID, SlotTypeMessage.REGISTER_TYPE, () -> type.getMessageBuilder().cosmetic().build());
+		}
+	}
 
 }

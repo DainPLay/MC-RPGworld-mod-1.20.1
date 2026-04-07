@@ -218,6 +218,8 @@ public class ModSounds
         SPELL_DESTRUCTION_NETHER_STAR_HIT_ENTITY = registerSound("rpgworldmod.spell.destruction_nether_star_hit_entity");
         SPELL_DESTRUCTION_NETHER_STAR_HIT_BLOCK = registerSound("rpgworldmod.spell.destruction_nether_star_hit_block");
         SPELL_NECROMANCY_NETHER_STAR_PRIMED = registerSound("rpgworldmod.spell.necromancy_nether_star_primed");
+        STAFF_HEART_OF_THE_SEA_SCULK = registerSound("rpgworldmod.staff_heart_of_the_sea.sculk");
+        STAFF_NETHER_STAR_SCULK = registerSound("rpgworldmod.staff_nether_star.sculk");
     }
 
     private static RegistryObject<SoundEvent> registerSound(String name)

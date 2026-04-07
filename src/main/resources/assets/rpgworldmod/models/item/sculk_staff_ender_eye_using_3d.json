@@ -1,0 +1,7 @@
+{
+	"parent": "rpgworldmod:item/sculk_staff_ember_gem_3d",
+	"textures": {
+		"sensor": "rpgworldmod:item/sculk_staff_sensor_using_3d",
+		"gem": "rpgworldmod:item/ender_eye_3d"
+	}
+}

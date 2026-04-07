@@ -1,0 +1,21 @@
+{
+	"parent": "minecraft:item/handheld",
+	"loader": "forge:separate_transforms",
+	"base": {
+		"parent": "rpgworldmod:item/sculk_staff_ender_eye_3d"
+	},
+	"textures": {
+		"particle": "minecraft:block/sculk_catalyst_side"
+	},
+	"perspectives": {
+		"gui": {
+			"parent": "rpgworldmod:item/sculk_staff_ender_eye_2d"
+		},
+		"ground": {
+			"parent": "rpgworldmod:item/sculk_staff_ender_eye_2d"
+		},
+		"fixed": {
+			"parent": "rpgworldmod:item/sculk_staff_ender_eye_2d"
+		}
+	}
+}

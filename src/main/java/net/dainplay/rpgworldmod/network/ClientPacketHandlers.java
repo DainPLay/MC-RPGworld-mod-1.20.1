@@ -45,6 +45,10 @@ public class ClientPacketHandlers {
 		ClientManaData.set(mana);
 	}
 
+	public static void handleSculkStaffCDSync(int cooldown) {
+		ClientSculkStaffCDData.set(cooldown);
+	}
+
 	public static void handleMaxManaSync(int maxMana) {
 		ClientMaxManaData.set(maxMana);
 	}
@@ -136,6 +140,16 @@ public class ClientPacketHandlers {
 			mc.player.fallDistance = 0;
 		}
 	}
+	public static void handlePullDownPlayer() {
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.level == null || mc.player == null) return;
+
+		if (!mc.player.isPassenger()) {
+			Vec3 vec3 = mc.player.getDeltaMovement();
+			mc.player.setDeltaMovement(vec3.x, vec3.y - 10D, vec3.z);
+		}
+	}
+
 	public static void handleSwingPlayer(Vec3 motion, int playerId) {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null || mc.player == null || mc.player.getId() != playerId) return;

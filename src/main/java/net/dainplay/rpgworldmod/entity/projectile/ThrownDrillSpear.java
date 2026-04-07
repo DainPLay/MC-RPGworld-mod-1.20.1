@@ -122,7 +122,17 @@ public class ThrownDrillSpear extends AbstractArrow {
 						if (EnchantmentHelper.getEnchantments(drillSpearItem).containsKey(Enchantments.BLOCK_FORTUNE))
 							silkTouchTool.enchant(Enchantments.BLOCK_FORTUNE, EnchantmentHelper.getEnchantments(drillSpearItem).get(Enchantments.BLOCK_FORTUNE));
 
-						LootParams.Builder lootparams$builder = (new LootParams.Builder((ServerLevel) level)).withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos)).withParameter(LootContextParams.TOOL, silkTouchTool);
+
+						BlockEntity blockEntity = level.getBlockEntity(pos);
+
+						LootParams.Builder lootparams$builder = (new LootParams.Builder((ServerLevel) level))
+								.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
+								.withParameter(LootContextParams.TOOL, silkTouchTool);
+
+						if (blockEntity != null) {
+							lootparams$builder.withParameter(LootContextParams.BLOCK_ENTITY, blockEntity);
+						}
+
 						List<ItemStack> drops = blockstate.getDrops(lootparams$builder);
 						int fortuneLevel = 0;
 						if (EnchantmentHelper.getEnchantments(drillSpearItem).containsKey(Enchantments.BLOCK_FORTUNE))
