@@ -1,13 +1,11 @@
 package net.dainplay.rpgworldmod.item.custom;
 
-import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.network.ClientSculkStaffCDData;
 import net.dainplay.rpgworldmod.network.LoopSoundPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.PlayerSculkStaffCDProvider;
 import net.dainplay.rpgworldmod.network.PullDownPlayerPacket;
-import net.dainplay.rpgworldmod.network.PullPlayerPacket;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -43,7 +41,7 @@ import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-public class SculkStaffItem extends StaffItem implements ChooseTargetItem {
+public class SculkStaffItem extends StaffItem {
 
 	private static final Map<Player, SculkStaffVibrationSystem> ACTIVE_SYSTEMS = new WeakHashMap<>();
 
@@ -194,7 +192,6 @@ public class SculkStaffItem extends StaffItem implements ChooseTargetItem {
 		nbtData.putInt("startingCooldown", startCooldown);
 
 
-
 		nbtData.putInt("caughtVibration", 0);
 		itemstack.setTag(nbtData);
 
@@ -265,7 +262,7 @@ public class SculkStaffItem extends StaffItem implements ChooseTargetItem {
 	}
 
 	public float getY(ItemStack stack, Entity entity, boolean rightHand) {
-		return 0.525F;
+		return 0.55F;
 	}
 
 	private void registerListener(ServerLevel level, SculkStaffVibrationSystem system) {
@@ -372,7 +369,7 @@ public class SculkStaffItem extends StaffItem implements ChooseTargetItem {
 					target = living;
 				}
 
-				if (target != null && !target.isRemoved() && target.isAlive()) {
+				if (target != null && !target.isRemoved() && target.isAlive() && !(target instanceof Player player && player.getAbilities().instabuild)) {
 					switch (getGemType(staffStack)) {
 						case EMBER_GEM: {
 							target.level().playSound(null,
@@ -398,8 +395,8 @@ public class SculkStaffItem extends StaffItem implements ChooseTargetItem {
 									RPGSounds.STAFF_HEART_OF_THE_SEA_SCULK.get(),
 									SoundSource.PLAYERS, 1.0F, 1.0F
 							);
-							if(target instanceof ServerPlayer player)
-							ModMessages.sendToPlayer(new PullDownPlayerPacket(), player);
+							if (target instanceof ServerPlayer player)
+								ModMessages.sendToPlayer(new PullDownPlayerPacket(), player);
 							else {
 								if (!target.isPassenger()) {
 									Vec3 vec3 = target.getDeltaMovement();
@@ -433,5 +430,19 @@ public class SculkStaffItem extends StaffItem implements ChooseTargetItem {
 				return false;
 			}
 		}
+	}
+
+	@Override
+	public float getZ(ItemStack stack, Entity entity, boolean rightHand) {
+		if (getGemType(stack) == GemType.EMBER_GEM)
+			return -1.025F;
+		else if (getGemType(stack) == GemType.HEART_OF_THE_SEA)
+			return -0.925F;
+		else if (getGemType(stack) == GemType.NETHER_STAR)
+			return -0.925F;
+		else if (getGemType(stack) == GemType.ENDER_EYE)
+			return -0.925F;
+		else
+			return -0.925F;
 	}
 }
