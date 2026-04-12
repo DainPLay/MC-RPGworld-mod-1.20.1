@@ -20,6 +20,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.UUID;
@@ -57,6 +58,7 @@ public class MosquitoingEffect extends MobEffect {
 
             if (duration % 60 == 0) {
                 level.playSound(entity, entity.blockPosition(), RPGSounds.MOSQUITO_SWARM_AMBIENT.get(), SoundSource.PLAYERS, 1F, (entity.getRandom().nextFloat() - entity.getRandom().nextFloat()) * 0.05F + 1.0F);
+                entity.gameEvent(GameEvent.ENTITY_SHAKE);
             }
             if (duration % 5 == 0) {
                 spawnParticles(entity);

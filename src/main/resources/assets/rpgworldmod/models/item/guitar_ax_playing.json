@@ -2,7 +2,7 @@
 	"parent": "minecraft:item/handheld",
 	"loader": "forge:separate_transforms",
 	"base": {
-		"parent": "rpgworldmod:item/guitar_ax_3d"
+		"parent": "rpgworldmod:item/guitar_ax_3d_playing"
 	},
 	"textures": {
 		"particle": "rpgworldmod:item/guitar_ax_item"
@@ -17,19 +17,8 @@
 		"fixed": {
 			"parent": "rpgworldmod:item/guitar_ax_2d"
 		},
-		"firstperson_lefthand": {
-			"parent": "rpgworldmod:item/guitar_ax_3d_leftie"
-		},
-		"thirdperson_lefthand": {
-			"parent": "rpgworldmod:item/guitar_ax_3d_leftie"
+		"firstperson_righthand": {
+			"parent": "rpgworldmod:item/guitar_ax_3d_leftie_playing"
 		}
-	},
-	"overrides": [
-		{
-			"predicate": {
-				"playing": 1
-			},
-			"model": "rpgworldmod:item/guitar_ax_playing"
-		}
-	]
+	}
 }

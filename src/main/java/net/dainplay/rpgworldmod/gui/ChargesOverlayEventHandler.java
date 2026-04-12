@@ -39,6 +39,10 @@ public class ChargesOverlayEventHandler implements IGuiOverlay {
 			active = false;
 			return;
 		}
+		if (mc.player.isSpectator()) {
+			active = false;
+			return;
+		}
 
 		ItemStack stack = mc.player.getMainHandItem();
 		if (!(stack.getItem() instanceof StaffItem)) {
@@ -135,6 +139,12 @@ public class ChargesOverlayEventHandler implements IGuiOverlay {
 		}
 		if(temp2.hasTag()  && temp2.getTag().contains("caughtVibration") && temp2.getTag().getInt("caughtVibration") > 0) {
 			temp2.getTag().remove("caughtVibration");
+		}
+		if(temp1.hasTag()  && temp1.getTag().contains("startingCooldown") && temp1.getTag().getInt("startingCooldown") > 0) {
+			temp1.getTag().remove("startingCooldown");
+		}
+		if(temp2.hasTag()  && temp2.getTag().contains("startingCooldown") && temp2.getTag().getInt("startingCooldown") > 0) {
+			temp2.getTag().remove("startingCooldown");
 		}
 		if (mc.player.isUsingItem() && ItemStack.isSameItemSameTags(temp1, temp2) && staff.isOffCooldown(stack, mc.player)) {
 			currentTicks = mc.player.getTicksUsingItem();

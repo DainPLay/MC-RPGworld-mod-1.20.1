@@ -448,6 +448,7 @@ public class EmberScrollItem extends ScrollItem {
 						RPGSounds.SPELL_DESTRUCTION_EMBER_START.get(),
 						SoundSource.PLAYERS, 1.0F, 1.0F
 				);
+				player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 
 				// Отправляем пакет для запуска зацикленного звука на клиентах
 				ModMessages.sendToNearbyPlayers(
@@ -465,6 +466,7 @@ public class EmberScrollItem extends ScrollItem {
 						RPGSounds.SPELL_RESTORATION_START.get(),
 						SoundSource.PLAYERS, 1.0F, 1.0F
 				);
+				player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 
 				// Отправляем пакет для запуска зацикленного звука на клиентах
 				ModMessages.sendToNearbyPlayers(
@@ -482,6 +484,7 @@ public class EmberScrollItem extends ScrollItem {
 						RPGSounds.SPELL_ALTERATION_START.get(),
 						SoundSource.PLAYERS, 1.0F, 1.0F
 				);
+				player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 
 				// Отправляем пакет для запуска зацикленного звука на клиентах
 				ModMessages.sendToNearbyPlayers(
@@ -516,6 +519,7 @@ public class EmberScrollItem extends ScrollItem {
 						RPGSounds.SPELL_NECROMANCY_START.get(),
 						SoundSource.PLAYERS, 1.0F, 1.0F
 				);
+				player.gameEvent(GameEvent.ENTITY_DAMAGE, player);
 
 				// Отправляем пакет для запуска зацикленного звука на клиентах
 				ModMessages.sendToNearbyPlayers(
@@ -579,6 +583,7 @@ public class EmberScrollItem extends ScrollItem {
 						RPGSounds.SPELL_CONJURATION_START.get(),
 						SoundSource.BLOCKS, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F
 				);
+				player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 			}
 
 			return interactionresult;

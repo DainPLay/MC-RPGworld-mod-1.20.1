@@ -32,16 +32,14 @@ import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.TntBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nullable;
@@ -53,7 +51,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, OrbitingItem {
 
-	// Хранилище активных снарядов с привязкой к уровню
 	private static final Map<Level, Map<UUID, EmberProjectileData>> activeProjectiles = new HashMap<>();
 	private final int manacost;
 	private final int color;
@@ -137,10 +134,8 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 			if (cir.get()) {
 				return InteractionResultHolder.fail(itemstack);
 			}
-			// КД на предмет (20 тиков = 1 секунда)
 			player.getCooldowns().addCooldown(this, 20);
 
-			// Создаем снаряд
 			Vec3 lookAngle = player.getLookAngle();
 			Vec3 startPos = player.getEyePosition().add(lookAngle.scale(0.5));
 
@@ -153,7 +148,6 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 
 			getActiveProjectiles(level).put(UUID.randomUUID(), projectile);
 
-			// Звук использования
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.EMBER_GEM_SNAP.get(), SoundSource.PLAYERS,
 					0.5F, 0.8F + level.random.nextFloat() * 0.4F);
@@ -164,15 +158,14 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 			}
 		}
 
+		player.gameEvent(GameEvent.PROJECTILE_SHOOT);
 		return InteractionResultHolder.sidedSuccess(itemstack, level.isClientSide());
 	}
 
-	// Вспомогательные методы для работы с данными
 	private static Map<UUID, EmberProjectileData> getActiveProjectiles(Level level) {
 		return activeProjectiles.computeIfAbsent(level, k -> new HashMap<>());
 	}
 
-	// Класс для хранения данных снаряда
 	private static class EmberProjectileData {
 		private final UUID ownerId;
 		private Vec3 position;
@@ -188,32 +181,26 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 	}
 
 	public static void processProjectilesStatic(ServerLevel level) {
-		// Получаем снаряды для этого уровня
 		Map<UUID, EmberProjectileData> levelActiveProjectiles = getActiveProjectiles(level);
 
 		if (levelActiveProjectiles.isEmpty()) return;
 
-		// Копируем для безопасного удаления
 		Map<UUID, EmberProjectileData> copy = new HashMap<>(levelActiveProjectiles);
 
 		for (Map.Entry<UUID, EmberProjectileData> entry : copy.entrySet()) {
 			UUID projectileId = entry.getKey();
 			EmberProjectileData projectile = entry.getValue();
 
-			// Уменьшаем время жизни в 2 раза (10 тиков вместо 20)
 			if (level.getGameTime() - projectile.spawnTime >= 10) {
 				levelActiveProjectiles.remove(projectileId);
 
-				// Эффект исчезновения
 				level.sendParticles(ParticleTypes.SMOKE,
 						projectile.position.x, projectile.position.y, projectile.position.z,
 						3, 0.2, 0.2, 0.2, 0.02);
 				continue;
 			}
 
-			// Проверяем контакт с жидкостью перед обновлением позиции
 			if (checkWaterContact(level, projectile.position)) {
-				// Эффект шипения в воде
 				level.sendParticles(ParticleTypes.SMOKE,
 						projectile.position.x, projectile.position.y, projectile.position.z,
 						5, 0.2, 0.2, 0.2, 0.05);
@@ -229,26 +216,21 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 				continue;
 			}
 
-			// Обновляем позицию
 			projectile.position = projectile.position.add(projectile.velocity);
 
-			// Проверяем столкновения
 			if (checkCollisions(level, projectile, projectileId)) {
 				levelActiveProjectiles.remove(projectileId);
 			}
 
-			// Спавним частицы
 			level.sendParticles(ParticleTypes.FLAME,
 					projectile.position.x, projectile.position.y, projectile.position.z,
 					1, 0.1, 0.1, 0.1, 0.01);
-			// Добавляем больше частиц для эффекта скорости
 			level.sendParticles(ParticleTypes.SMOKE,
 					projectile.position.x, projectile.position.y, projectile.position.z,
 					1, 0.05, 0.05, 0.05, 0.005);
 		}
 	}
 
-	// Проверка контакта с водой
 	private static boolean checkWaterContact(Level level, Vec3 position) {
 		BlockPos pos = new BlockPos(
 				(int) Math.floor(position.x),
@@ -256,13 +238,11 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 				(int) Math.floor(position.z)
 		);
 
-		// Проверяем блок жидкости
 		FluidState fluidState = level.getFluidState(pos);
 		if (fluidState.is(FluidTags.WATER)) {
 			return true;
 		}
 
-		// Проверяем соседние блоки для точности
 		for (int dx = -1; dx <= 1; dx++) {
 			for (int dy = -1; dy <= 1; dy++) {
 				for (int dz = -1; dz <= 1; dz++) {
@@ -283,16 +263,14 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 		return false;
 	}
 
-	// Проверка столкновений
 	private static boolean checkCollisions(Level level, EmberProjectileData projectile, UUID projectileId) {
-		// Проверка столкновения с блоками
 		Vec3 startPos = projectile.position.subtract(projectile.velocity);
 		Vec3 endPos = projectile.position.add(projectile.velocity);
 
 		BlockHitResult blockHit = level.clip(new ClipContext(
 				startPos, endPos,
 				ClipContext.Block.COLLIDER,
-				ClipContext.Fluid.ANY, // Учитываем жидкости для лучшей детекции
+				ClipContext.Fluid.ANY,
 				null
 		));
 
@@ -300,9 +278,7 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 			BlockPos hitPos = blockHit.getBlockPos();
 			BlockState hitState = level.getBlockState(hitPos);
 
-			// Проверяем, не попали ли в воду (на всякий случай)
 			if (level.getFluidState(hitPos).is(FluidTags.WATER)) {
-				// Эффект шипения
 				level.playSound(null, hitPos, RPGSounds.EMBER_GEM_EXTINGUISH.get(),
 						SoundSource.BLOCKS, 0.5F, 1.0F);
 
@@ -314,21 +290,17 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 				return true;
 			}
 
-			// Проверяем, является ли блок горючим
 			if (hitState.is(ModBlocks.ARBOR_FUEL_BLOCK.get())) {
 
-				// Заменяем блок земли на огонь
 				BlockState fireState = BaseFireBlock.getState(level, hitPos);
 				if (BaseFireBlock.canBePlacedAt(level, hitPos, Direction.UP)) {
 					level.setBlockAndUpdate(hitPos, fireState);
 				} else level.setBlockAndUpdate(hitPos, Blocks.AIR.defaultBlockState());
 
-				// Звук и частицы для земли
 				level.playSound(null, hitPos, RPGSounds.EMBER_GEM_IGNITE_BLOCK.get(),
 						SoundSource.BLOCKS, 1.0F, level.random.nextFloat() * 0.4F + 0.8F);
 
 				if (level instanceof ServerLevel serverLevel) {
-					// Частицы превращения
 					serverLevel.sendParticles(ParticleTypes.FLAME,
 							hitPos.getX() + 0.5, hitPos.getY() + 0.5, hitPos.getZ() + 0.5,
 							15, 0.5, 0.5, 0.5, 0.05);
@@ -340,9 +312,7 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 			}
 
 			if (hitState.getBlock() instanceof TntBlock tnt) {
-				// Создаём мнимый горящий снаряд для взаимодействия с TNT
 				if (level instanceof ServerLevel serverLevel) {
-					// Создаём фейковый SmallFireball (или другой Projectile, который горит)
 					SmallFireball fireProjectile = new SmallFireball(
 							serverLevel,
 							projectile.position.x,
@@ -353,7 +323,6 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 							projectile.velocity.z
 					);
 
-					// Устанавливаем владельца снаряда, если есть
 					if (projectile.ownerId != null) {
 						Entity owner = serverLevel.getEntity(projectile.ownerId);
 						if (owner != null) {
@@ -361,13 +330,10 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 						}
 					}
 
-					// Устанавливаем, что снаряд горит
 					fireProjectile.setSecondsOnFire(100);
 
-					// Вызываем метод взаимодействия TNT со снарядом
 					tnt.onProjectileHit(level, hitState, blockHit, fireProjectile);
 
-					// Звук и частицы для TNT
 					level.playSound(null, hitPos, RPGSounds.EMBER_GEM_IGNITE_BLOCK.get(),
 							SoundSource.BLOCKS, 1.0F, level.random.nextFloat() * 0.4F + 0.8F);
 
@@ -381,42 +347,28 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 				return true;
 			}
 
-			// Для остальных блоков - проверяем, можно ли использовать зажигалку
-			// Создаём мнимую зажигалку для проверки
 			ItemStack flintAndSteel = new ItemStack(Items.FLINT_AND_STEEL);
 
-			// Проверяем, может ли зажигалка быть использована на этом блоке
-			// Создаём контекст для использования предмета
 			if (level instanceof ServerLevel serverLevel) {
-				// Создаём фейкового игрока
 				FakePlayer fakePlayer = FakePlayerFactory.get(serverLevel, new GameProfile(UUID.randomUUID(), "FakePlayer"));
 
-				// Устанавливаем позицию фейкового игрока в точку удара
 				fakePlayer.setPos(hitPos.getX(), hitPos.getY(), hitPos.getZ());
 
-				// Устанавливаем правильное вращение для контекста
 				fakePlayer.setYRot(blockHit.getDirection().toYRot());
 				fakePlayer.setXRot((float) Math.toDegrees(blockHit.getDirection().toYRot()));
 
-				// Даём фейковому игроку зажигалку в руку
 				fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, flintAndSteel.copy());
 
-				// Создаём UseOnContext для проверки использования зажигалки
 				UseOnContext context = new UseOnContext(fakePlayer, InteractionHand.MAIN_HAND, blockHit);
 
-				// Проверяем, можно ли использовать зажигалку на блоке
 				InteractionResult useResult = InteractionResult.PASS;
 				if (flintAndSteel.getItem() instanceof FlintAndSteelItem flintAndSteelItem) {
 					useResult = flintAndSteelItem.useOn(context);
 				}
 
-				// Очищаем руку фейкового игрока
 				fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 
-				// Если зажигалка может быть использована (вернула SUCCESS или CONSUME),
-				// то не спавним огонь на соседнем блоке
 				if (useResult.consumesAction()) {
-					// Звук и частицы для зажигания блока
 					level.playSound(null, hitPos, RPGSounds.EMBER_GEM_IGNITE_BLOCK.get(),
 							SoundSource.BLOCKS, 1.0F, level.random.nextFloat() * 0.4F + 0.8F);
 
@@ -427,13 +379,11 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 				}
 			}
 
-			// Если зажигалка не может быть использована, пробуем поставить огонь на соседнем блоке
 			BlockPos firePos = hitPos.relative(blockHit.getDirection());
 
 			if (BaseFireBlock.canBePlacedAt(level, firePos, Direction.UP)) {
 				level.setBlockAndUpdate(firePos, BaseFireBlock.getState(level, firePos));
 
-				// Звук и частицы
 				level.playSound(null, hitPos, RPGSounds.EMBER_GEM_IGNITE_BLOCK.get(),
 						SoundSource.BLOCKS, 1.0F, level.random.nextFloat() * 0.4F + 0.8F);
 
@@ -446,7 +396,6 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 			return true;
 		}
 
-		// Проверка столкновения с существами
 		List<Entity> entities = level.getEntities(null,
 				new net.minecraft.world.phys.AABB(startPos, endPos).inflate(0.3));
 
@@ -467,12 +416,10 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 				if (entity instanceof LivingEntity livingEntity &&
 						!entity.getUUID().equals(projectile.ownerId) && !entity.fireImmune()) {
 
-					// Поджигаем существо на 5 секунд (100 тиков)
 					livingEntity.setSecondsOnFire(5);
-					if(owner != null)
+					if (owner != null)
 						entity.hurt(owner.damageSources().fireball(fakeFireball, owner), 1F);
 
-					// Звук и частицы
 					level.playSound(null, entity.getX(), entity.getY(), entity.getZ(),
 							RPGSounds.EMBER_GEM_IGNITE_ENTITY.get(), SoundSource.NEUTRAL,
 							1.0F, 1.0F);

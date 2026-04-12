@@ -487,6 +487,7 @@ public class RPGworldClient {
 				}
 				return 0.0F;
 			});
+			ItemProperties.register(ModItems.GUITAR_AX.get().asItem(), new ResourceLocation("playing"), (stack, world, entity, seed) -> entity != null && entity.getOffhandItem() == stack ? 1.0F : 0.0F);
 			ItemProperties.register(ModItems.WEALD_BLADE.get().asItem(), new ResourceLocation("blocking"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
 			ItemProperties.register(ModItems.DRILL_SPEAR.get().asItem(), new ResourceLocation("throwing"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
 			ItemProperties.register(ModItems.FIREPROOF_SKIRT.get().asItem(), new ResourceLocation("broken"), (stack, world, entity, seed) -> FireproofSkirtItem.isFireproof(stack) ? 0.0F : 1.0F);

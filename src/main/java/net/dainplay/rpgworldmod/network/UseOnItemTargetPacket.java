@@ -48,7 +48,6 @@ public class UseOnItemTargetPacket {
 			ServerPlayer player = ctx.get().getSender();
 			if (player == null) return;
 
-			// Получаем все сущности по ID
 			List<ItemEntity> targets = new ArrayList<>();
 			for (int id : msg.targetIds) {
 				Entity entity = player.level().getEntity(id);
@@ -56,32 +55,37 @@ public class UseOnItemTargetPacket {
 					targets.add(itemEntity);
 				}
 			}
+			if(!targets.isEmpty()) {
+				ItemStack itemInHand = player.getItemInHand(player.getUsedItemHand());
 
-			ItemStack itemInHand = player.getItemInHand(player.getUsedItemHand());
+				if (itemInHand.getItem() instanceof BrainCoralStaffItem
+						|| itemInHand.getItem() instanceof TubeCoralStaffItem
+						|| itemInHand.getItem() instanceof BubbleCoralStaffItem
+						|| itemInHand.getItem() instanceof FireCoralStaffItem) {
+					player.stopUsingItem();
 
-			if (itemInHand.getItem() instanceof BrainCoralStaffItem
-					|| itemInHand.getItem() instanceof TubeCoralStaffItem
-					|| itemInHand.getItem() instanceof BubbleCoralStaffItem
-					|| itemInHand.getItem() instanceof FireCoralStaffItem) {
-				player.stopUsingItem();
+					player.level().playSound(null,
+							player.getX(), player.getY(), player.getZ(),
+							RPGSounds.STAFF_STOP.get(),
+							SoundSource.PLAYERS, 1.0F, 1.0F
+					);
 
-				player.level().playSound(null,
-						player.getX(), player.getY(), player.getZ(),
-						RPGSounds.STAFF_STOP.get(),
-						SoundSource.PLAYERS, 1.0F, 1.0F
-				);
+					ModMessages.sendToNearbyPlayers(
+							new LoopSoundPacket(player.getId(), false, itemInHand),
+							player.serverLevel(),
+							player.blockPosition(),
+							64.0
+					);
+					if (itemInHand.getItem() instanceof BrainCoralStaffItem staff)
+						staff.cast(player, targets, itemInHand);
+					if (itemInHand.getItem() instanceof TubeCoralStaffItem staff)
+						staff.cast(player, targets, itemInHand);
+					if (itemInHand.getItem() instanceof BubbleCoralStaffItem staff)
+						staff.cast(player, targets, itemInHand);
+					if (itemInHand.getItem() instanceof FireCoralStaffItem staff)
+						staff.cast(player, targets, itemInHand);
 
-				ModMessages.sendToNearbyPlayers(
-						new LoopSoundPacket(player.getId(), false, itemInHand),
-						player.serverLevel(),
-						player.blockPosition(),
-						64.0
-				);
-				if (itemInHand.getItem() instanceof BrainCoralStaffItem staff) staff.cast(player, targets, itemInHand);
-				if (itemInHand.getItem() instanceof TubeCoralStaffItem staff) staff.cast(player, targets, itemInHand);
-				if (itemInHand.getItem() instanceof BubbleCoralStaffItem staff) staff.cast(player, targets, itemInHand);
-				if (itemInHand.getItem() instanceof FireCoralStaffItem staff) staff.cast(player, targets, itemInHand);
-
+				}
 			}
 		});
 		ctx.get().setPacketHandled(true);

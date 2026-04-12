@@ -331,7 +331,6 @@ public class ItemInHandLayerMixin {
 			((ArmedModel) iihl.getParentModel()).translateToHand(arm, poseStack);
 			boolean flag = arm == HumanoidArm.LEFT;
 			poseStack.translate((float) (flag ? staffItem.getX(itemStack, entity, false) * -1 : staffItem.getX(itemStack, entity, true)), staffItem.getY(itemStack, entity, !flag), staffItem.getZ(itemStack, entity, !flag));
-			poseStack.translate((float) player.getX(), (float) player.getY(), (float) player.getZ());
 
 			Matrix4f originalMatrix = poseStack.last().pose();
 			Vector3f handPosition = originalMatrix.getTranslation(new Vector3f());

@@ -54,6 +54,7 @@ import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.WaterFluid;
@@ -443,6 +444,7 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 				SoundSource.PLAYERS, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F
 		);
 		player.addEffect(new MobEffectInstance(MobEffects.CONDUIT_POWER, 1200, 0));
+		player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 		if (player instanceof ServerPlayer serverPlayer) {
 			ModAdvancements.SPELL_RESTORATION_HEART_OF_THE_SEA_TRIGGER.trigger(serverPlayer);
 		}
@@ -471,6 +473,7 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 				RPGSounds.SPELL_NECROMANCY_CAST.get(),
 				SoundSource.PLAYERS, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F
 		);
+		player.gameEvent(GameEvent.ENTITY_DAMAGE, player);
 		if (player instanceof ServerPlayer serverPlayer) {
 			ModAdvancements.SPELL_NECROMANCY_HEART_OF_THE_SEA_TRIGGER.trigger(serverPlayer);
 			if(serverPlayer.level().dimension() == Level.END)
@@ -524,12 +527,14 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_DESTRUCTION_HEART_OF_THE_SEA_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack),
 					(ServerLevel) level, player.blockPosition(), 64.0);
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_ALTERATION_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack),
 					(ServerLevel) level, player.blockPosition(), 64.0);
 		}
@@ -592,6 +597,7 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 				RPGSounds.SPELL_CONJURATION_START.get(),
 				SoundSource.NEUTRAL, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F
 		);
+		level.gameEvent(player, GameEvent.ENTITY_PLACE, context.getClickedPos());
 		if (player instanceof ServerPlayer serverPlayer) {
 			ModAdvancements.SPELL_CONJURATION_HEART_OF_THE_SEA_TRIGGER.trigger(serverPlayer);
 		}
@@ -921,6 +927,7 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 						RPGSounds.SPELL_DESTRUCTION_HEART_OF_THE_SEA_CAST.get(),
 						SoundSource.PLAYERS, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F
 				);
+				player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 				stopPlayerUse(level, player, stack, true);
 			}
 			else

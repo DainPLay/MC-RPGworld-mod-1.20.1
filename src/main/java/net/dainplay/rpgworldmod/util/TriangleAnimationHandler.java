@@ -10,6 +10,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -48,6 +49,7 @@ public class TriangleAnimationHandler {
                 nbtData.remove("isPickaxe");
                 itemStack.setTag(nbtData);
                 event.getLevel().playSound(null, event.getEntity().blockPosition(), RPGSounds.SPELL_CONJURATION_STOP.get(), SoundSource.PLAYERS, 1F, (event.getLevel().random.nextFloat() - event.getLevel().random.nextFloat()) * 0.2F + 1.0F);
+                event.getEntity().gameEvent(GameEvent.ENTITY_DIE, event.getEntity());
             }
 
             if (itemStack.getItem() instanceof DoubleSidedRecordItem) {

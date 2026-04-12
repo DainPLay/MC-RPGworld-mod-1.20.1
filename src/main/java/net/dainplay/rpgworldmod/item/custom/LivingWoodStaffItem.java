@@ -21,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -222,6 +223,7 @@ public class LivingWoodStaffItem extends StaffItem implements ChooseTargetItem {
 			}
 			break;
 		}
+		if (target != null) target.gameEvent(GameEvent.ENTITY_INTERACT, player);
 		item.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(player.getUsedItemHand()));
 	}
 

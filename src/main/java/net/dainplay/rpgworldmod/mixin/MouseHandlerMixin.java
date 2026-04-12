@@ -135,8 +135,7 @@ public class MouseHandlerMixin {
 			ItemStack usingItem = player.getUseItem();
 			// Проверяем, что предмет — NetherStarScrollItem и имеет зачарование Destruction
 			if (usingItem.getItem() instanceof NetherStarScrollItem &&
-					EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), usingItem) > 0 &&
-					player.getTicksUsingItem() > 40) {
+					EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), usingItem) > 0) {
 
 				Minecraft mc = Minecraft.getInstance();
 				double d0 = Blaze3D.getTime();

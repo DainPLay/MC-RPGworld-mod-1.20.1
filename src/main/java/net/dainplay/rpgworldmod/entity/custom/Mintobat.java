@@ -39,6 +39,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.vibrations.VibrationSystem;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fluids.FluidType;
@@ -332,6 +333,7 @@ public class Mintobat extends Monster {
 
                             this.mintobat.setCharged(true);
                             ((ServerLevel)this.mintobat.level()).sendParticles(ParticleTypes.SONIC_BOOM, this.mintobat.getX(), this.mintobat.getY(0.5D), this.mintobat.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
+                            this.mintobat.gameEvent(GameEvent.ENTITY_ROAR);
                             this.mintobat.level().getEntities(this.mintobat, this.mintobat.getBoundingBox().inflate(this.getFollowDistance()),
                                             target ->
                                             target instanceof LivingEntity && !(target instanceof Mintobat) && !(target instanceof Bat))

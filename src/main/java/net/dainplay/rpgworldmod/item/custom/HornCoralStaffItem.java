@@ -40,6 +40,7 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
@@ -222,6 +223,7 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 							target.getX(), target.getY(), target.getZ(),
 							RPGSounds.STAFF_EMBER_GEM_CAST.get(),
 							SoundSource.PLAYERS, 1.0F, 1.0F);
+					player.level().gameEvent(player, GameEvent.CONTAINER_OPEN, player.blockPosition());
 					containerEntity.unpackChestVehicleLootTable(player);
 					containerEntity.clearChestVehicleContent();
 					break;
@@ -236,6 +238,7 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 							target.getX(), target.getY(), target.getZ(),
 							RPGSounds.STAFF_ENDER_EYE_CAST.get(),
 							SoundSource.PLAYERS, 1.0F, 1.0F);
+					player.level().gameEvent(player, GameEvent.CONTAINER_OPEN, player.blockPosition());
 					containerEntity.unpackChestVehicleLootTable(player);
 					containerEntity.interactWithContainerVehicle(player);
 					break;
@@ -249,6 +252,7 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 							target.getX(), target.getY(), target.getZ(),
 							RPGSounds.STAFF_HEART_OF_THE_SEA_ITEM.get(),
 							SoundSource.PLAYERS, 1.0F, 1.0F);
+					player.gameEvent(GameEvent.SPLASH);
 					containerEntity.unpackChestVehicleLootTable(player);
 					for (int i = 0; i < containerEntity.getContainerSize(); i++) {
 						ItemStack stack = containerEntity.removeChestVehicleItem(i, Integer.MAX_VALUE);
@@ -270,6 +274,7 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 							target.getX(), target.getY(), target.getZ(),
 							RPGSounds.STAFF_NETHER_STAR_ITEM.get(),
 							SoundSource.PLAYERS, 0.5F, 1.0F);
+					player.level().gameEvent(player, GameEvent.EXPLODE, new Vec3(player.getX(), player.getY(), player.getZ()));
 					containerEntity.unpackChestVehicleLootTable(player);
 					int totalSlots = containerEntity.getContainerSize();
 					int emptySlots = 0;
@@ -330,6 +335,7 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 								pos.getX(), pos.getY(), pos.getZ(),
 								RPGSounds.STAFF_EMBER_GEM_CAST.get(),
 								SoundSource.PLAYERS, 1.0F, 1.0F);
+						player.level().gameEvent(player, GameEvent.CONTAINER_OPEN, player.blockPosition());
 						player.getEnderChestInventory().clearContent();
 						break;
 
@@ -342,6 +348,7 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 								pos.getX(), pos.getY(), pos.getZ(),
 								RPGSounds.STAFF_ENDER_EYE_CAST.get(),
 								SoundSource.PLAYERS, 1.0F, 1.0F);
+						player.level().gameEvent(player, GameEvent.CONTAINER_OPEN, player.blockPosition());
 						addStaffReachModifier(player);
 
 						BlockState state = player.level().getBlockState(pos);
@@ -373,6 +380,7 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 								pos.getX(), pos.getY(), pos.getZ(),
 								RPGSounds.STAFF_HEART_OF_THE_SEA_ITEM.get(),
 								SoundSource.PLAYERS, 1.0F, 1.0F);
+						player.gameEvent(GameEvent.SPLASH);
 						Container enderInv = player.getEnderChestInventory();
 						for (int i = 0; i < enderInv.getContainerSize(); i++) {
 							ItemStack stack = enderInv.getItem(i);
@@ -395,6 +403,7 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 								pos.getX(), pos.getY(), pos.getZ(),
 								RPGSounds.STAFF_NETHER_STAR_ITEM.get(),
 								SoundSource.PLAYERS, 0.5F, 1.0F);
+						player.level().gameEvent(player, GameEvent.EXPLODE, new Vec3(player.getX(), player.getY(), player.getZ()));
 						int totalSlots = player.getEnderChestInventory().getContainerSize();
 						int filledSlots = 0;
 						for (int i = 0; i < totalSlots; i++) {
@@ -440,6 +449,7 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 								pos.getX(), pos.getY(), pos.getZ(),
 								RPGSounds.STAFF_EMBER_GEM_CAST.get(),
 								SoundSource.PLAYERS, 1.0F, 1.0F);
+						player.level().gameEvent(player, GameEvent.CONTAINER_OPEN, player.blockPosition());
 						if (target instanceof RandomizableContainerBlockEntity rndContainer) {
 							rndContainer.unpackLootTable(player);
 						}
@@ -456,6 +466,7 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 								pos.getX(), pos.getY(), pos.getZ(),
 								RPGSounds.STAFF_ENDER_EYE_CAST.get(),
 								SoundSource.PLAYERS, 1.0F, 1.0F);
+						player.level().gameEvent(player, GameEvent.CONTAINER_OPEN, player.blockPosition());
 						addStaffReachModifier(player);
 						BlockState state = player.level().getBlockState(pos);
 						Block block = state.getBlock();
@@ -488,6 +499,7 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 								pos.getX(), pos.getY(), pos.getZ(),
 								RPGSounds.STAFF_HEART_OF_THE_SEA_ITEM.get(),
 								SoundSource.PLAYERS, 1.0F, 1.0F);
+						player.gameEvent(GameEvent.SPLASH);
 						for (int i = 0; i < container.getContainerSize(); i++) {
 							ItemStack stack = container.getItem(i);
 							if (!stack.isEmpty()) {
@@ -510,6 +522,7 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 								pos.getX(), pos.getY(), pos.getZ(),
 								RPGSounds.STAFF_NETHER_STAR_ITEM.get(),
 								SoundSource.PLAYERS, 0.5F, 1.0F);
+						player.level().gameEvent(player, GameEvent.EXPLODE, new Vec3(player.getX(), player.getY(), player.getZ()));
 						int totalSlots = container.getContainerSize();
 						int filledSlots = 0;
 						for (int i = 0; i < totalSlots; i++) {

@@ -24,6 +24,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -159,6 +161,7 @@ public class BrainCoralStaffItem extends StaffItem implements ChooseTargetItem {
 							RPGSounds.STAFF_EMBER_GEM_CAST.get(),
 							SoundSource.PLAYERS, 1.0F, 1.0F
 					);
+					player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 
 					if (target != null) {
 						target.level().playSound(null,
@@ -179,6 +182,7 @@ public class BrainCoralStaffItem extends StaffItem implements ChooseTargetItem {
 							RPGSounds.STAFF_ENDER_EYE_CAST.get(),
 							SoundSource.PLAYERS, 1.0F, 1.0F
 					);
+					player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 
 					if (target != null) {
 						target.level().playSound(null,
@@ -196,6 +200,7 @@ public class BrainCoralStaffItem extends StaffItem implements ChooseTargetItem {
 							RPGSounds.STAFF_HEART_OF_THE_SEA_ITEM.get(),
 							SoundSource.PLAYERS, 1.0F, 1.0F
 					);
+					player.gameEvent(GameEvent.SPLASH);
 
 					if (target != null) {
 						target.level().playSound(null,
@@ -218,6 +223,7 @@ public class BrainCoralStaffItem extends StaffItem implements ChooseTargetItem {
 							RPGSounds.STAFF_NETHER_STAR_ITEM.get(),
 							SoundSource.PLAYERS, 0.5F, 1.0F
 					);
+					player.level().gameEvent(player, GameEvent.EXPLODE, new Vec3(player.getX(), player.getY(), player.getZ()));
 
 					if (target != null) {
 						target.level().playSound(null,

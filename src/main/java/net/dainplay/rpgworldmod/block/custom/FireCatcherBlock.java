@@ -32,6 +32,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -162,10 +163,14 @@ public class FireCatcherBlock extends Block implements EntityBlock {
 				catcher.toggleMode();
 
 				// Звук переключения
-				if (state.getValue(HUNGRY))
+				if (state.getValue(HUNGRY)) {
 					level.playSound(null, pos, RPGSounds.FIRE_CATCHER_NOT_HUNGRY.get(), SoundSource.BLOCKS, 0.3f, 1f);
-				else
+					level.gameEvent(GameEvent.BLOCK_DEACTIVATE, pos, GameEvent.Context.of(state));
+				}
+				else {
 					level.playSound(null, pos, RPGSounds.FIRE_CATCHER_HUNGRY.get(), SoundSource.BLOCKS, 0.3f, 1f);
+					level.gameEvent(GameEvent.BLOCK_ACTIVATE, pos, GameEvent.Context.of(state));
+				}
 
 				// Обновляем соседние блоки для синхронизации клиента
 				level.sendBlockUpdated(mainPos, state, state, 3);

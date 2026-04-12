@@ -18,6 +18,8 @@ import net.dainplay.rpgworldmod.item.custom.HornCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
 import net.dainplay.rpgworldmod.item.custom.ScrollItem;
 import net.dainplay.rpgworldmod.item.custom.SculkStaffItem;
+import net.dainplay.rpgworldmod.item.custom.StaffItem;
+import net.dainplay.rpgworldmod.item.custom.WealdBladeItem;
 import net.dainplay.rpgworldmod.network.BoundEntitySyncPacket;
 import net.dainplay.rpgworldmod.network.ClientSculkStaffCDData;
 import net.dainplay.rpgworldmod.network.IllusionForceDataSyncS2CPacket;
@@ -78,11 +80,13 @@ import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.GrindstoneEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.VanillaGameEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingBreatheEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -800,6 +804,28 @@ public class ModEvents {
 		if (scroll.isPickaxeMode(usingStack) && !player.isShiftKeyDown()) {
 			event.setExpToDrop(0);
 		}
+	}
+
+	@SubscribeEvent
+	public static void onVanillaGameEvent(VanillaGameEvent event) {
+		if (event.getVanillaEvent() == GameEvent.ITEM_INTERACT_FINISH) {
+			if (event.getCause() instanceof Player player) {
+				ItemStack usedItem = player.getUseItem();
+				if (usedItem.getItem() instanceof WealdBladeItem
+						|| usedItem.getItem() instanceof StaffItem
+						|| usedItem.getItem() instanceof ScrollItem) {
+					event.setCanceled(true);
+				}
+			}
+		}
+	}
+
+	private static boolean hasVibrationsEnchant(ItemStack stack) {
+		return EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), stack) > 0 ||
+				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), stack) > 0 ||
+				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) > 0 ||
+				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), stack) > 0 ||
+				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), stack) > 0;
 	}
 
 }

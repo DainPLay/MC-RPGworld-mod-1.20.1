@@ -52,6 +52,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ToolActions;
@@ -243,6 +244,12 @@ public class Drillhog extends Monster {
 
 	protected SoundEvent getAmbientSound() {
 		return RPGSounds.DRILLHOG_AMBIENT.get();
+	}
+
+	@Override
+	public void playAmbientSound() {
+		this.gameEvent(GameEvent.ENTITY_ROAR);
+		super.playAmbientSound();
 	}
 
 	protected SoundEvent getHurtSound(DamageSource pDamageSource) {

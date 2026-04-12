@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -67,6 +68,7 @@ public class C2SCheckItemForTempNBTPacket {
                         RPGSounds.SPELL_CONJURATION_STOP.get(),
                         SoundSource.PLAYERS, 1F,
                         (sender.level().random.nextFloat() - sender.level().random.nextFloat()) * 0.2F + 1.0F);
+                sender.gameEvent(GameEvent.ENTITY_DIE, sender);
             }
         });
         ctx.get().setPacketHandled(true);

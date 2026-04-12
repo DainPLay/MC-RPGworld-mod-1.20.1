@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -32,17 +33,21 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.gameevent.EntityPositionSource;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.gameevent.GameEventListener;
 import net.minecraft.world.level.gameevent.GameEventListenerRegistry;
 import net.minecraft.world.level.gameevent.PositionSource;
+import net.minecraft.world.level.gameevent.vibrations.VibrationInfo;
 import net.minecraft.world.level.gameevent.vibrations.VibrationSystem;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.core.particles.VibrationParticleOption;
 
 import javax.annotation.Nullable;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class SculkStaffItem extends StaffItem {
 
+	// Используем обычную мапу, т.к. системы добавляются и удаляются синхронно
 	private static final Map<Player, SculkStaffVibrationSystem> ACTIVE_SYSTEMS = new WeakHashMap<>();
 
 	public SculkStaffItem(Properties properties) {
@@ -56,6 +61,7 @@ public class SculkStaffItem extends StaffItem {
 
 	@Override
 	public void onUseTick(Level pLevel, LivingEntity pLivingEntity, ItemStack pStack, int pRemainingUseDuration) {
+		// ... Ваш существующий код обработки caughtVibration, кулдаунов и т.д. без изменений ...
 
 		if (pStack.getTag() != null && pStack.getTag().contains("caughtVibration", Tag.TAG_INT) && pStack.getTag().getInt("caughtVibration") > 0) {
 			CompoundTag nbtData = pStack.getTag();
@@ -91,12 +97,15 @@ public class SculkStaffItem extends StaffItem {
 			cooldownsMap.remove(pStack.getItem());
 			cooldownsMap.put(pStack.getItem(), new ItemCooldowns.CooldownInstance(startTick, endTick - activeRechargeLevel));
 		} else {
+			// --- ИЗМЕНЕНИЕ: Тикаем нашу кастомную систему вместо VibrationSystem.Ticker.tick ---
 			if (!pLevel.isClientSide && pLivingEntity instanceof Player player) {
 				SculkStaffVibrationSystem system = ACTIVE_SYSTEMS.get(player);
 				if (system != null && player.isUsingItem() && player.getUseItem() == pStack) {
-					VibrationSystem.Ticker.tick((ServerLevel) pLevel, system.getVibrationData(), system.getVibrationUser());
+					system.tick((ServerLevel) pLevel);
 				}
 			}
+			// Конец изменения
+
 			if (pLivingEntity instanceof Player player) {
 				if (!pLevel.isClientSide) {
 					player.getCapability(PlayerSculkStaffCDProvider.PLAYER_SCULK_STAFF_COOLDOWN).ifPresent(cooldown -> {
@@ -190,8 +199,6 @@ public class SculkStaffItem extends StaffItem {
 
 		CompoundTag nbtData = itemstack.getOrCreateTag();
 		nbtData.putInt("startingCooldown", startCooldown);
-
-
 		nbtData.putInt("caughtVibration", 0);
 		itemstack.setTag(nbtData);
 
@@ -206,6 +213,7 @@ public class SculkStaffItem extends StaffItem {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(), RPGSounds.STAFF_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, itemstack), (ServerLevel) level, player.blockPosition(), 64.0);
 
+			// Создаём и регистрируем новую систему
 			SculkStaffVibrationSystem system = new SculkStaffVibrationSystem(player, itemstack);
 			ACTIVE_SYSTEMS.put(player, system);
 			registerListener((ServerLevel) level, system);
@@ -266,7 +274,7 @@ public class SculkStaffItem extends StaffItem {
 	}
 
 	private void registerListener(ServerLevel level, SculkStaffVibrationSystem system) {
-		BlockPos pos = system.getRegisteredPos(); // позиция, где игрок начал использовать
+		BlockPos pos = system.getRegisteredPos();
 		if (pos == null) {
 			pos = system.getOwner().blockPosition();
 			system.setRegisteredPos(pos);
@@ -286,21 +294,22 @@ public class SculkStaffItem extends StaffItem {
 		registry.unregister(system.getListener());
 	}
 
-
-	private static class SculkStaffVibrationSystem implements VibrationSystem {
+	// -------------------------------------------------------------------------
+	// НОВАЯ РЕАЛИЗАЦИЯ: система, поддерживающая множество параллельных вибраций
+	// -------------------------------------------------------------------------
+	private static class SculkStaffVibrationSystem {
 		private final Player owner;
 		private final ItemStack staffStack;
-		private final VibrationSystem.Data vibrationData;
-		private final VibrationSystem.User vibrationUser;
-		private final VibrationSystem.Listener listener;
+		private final List<ActiveVibration> activeVibrations = new ArrayList<>();
+		private final VibrationUser vibrationUser;
+		private final CustomListener listener;
 		private BlockPos registeredPos;
 
 		public SculkStaffVibrationSystem(Player owner, ItemStack staffStack) {
 			this.owner = owner;
 			this.staffStack = staffStack;
-			this.vibrationData = new VibrationSystem.Data();
 			this.vibrationUser = new VibrationUser();
-			this.listener = new VibrationSystem.Listener(this);
+			this.listener = new CustomListener(this);
 		}
 
 		public Player getOwner() {
@@ -315,30 +324,107 @@ public class SculkStaffItem extends StaffItem {
 			return registeredPos;
 		}
 
-		@Override
-		public VibrationSystem.Data getVibrationData() {
-			return vibrationData;
-		}
-
-		@Override
-		public VibrationSystem.User getVibrationUser() {
-			return vibrationUser;
-		}
-
-		public VibrationSystem.Listener getListener() {
+		public GameEventListener getListener() {
 			return listener;
+		}
+
+		public void tick(ServerLevel level) {
+			Iterator<ActiveVibration> it = activeVibrations.iterator();
+			while (it.hasNext()) {
+				ActiveVibration vib = it.next();
+				// Уменьшаем время и при необходимости отправляем частицу движения
+				vib.decrementTime();
+				if (vib.getTicksLeft() > 0) {
+					sendVibrationParticle(level, vib);
+				}
+				if (vib.isDone()) {
+					// Применяем эффект
+					BlockPos sourcePos = BlockPos.containing(vib.getInfo().pos());
+					vibrationUser.onReceiveVibration(
+							level,
+							sourcePos,
+							vib.getInfo().gameEvent(),
+							vib.getInfo().getEntity(level).orElse(null),
+							vib.getInfo().getProjectileOwner(level).orElse(null),
+							VibrationSystem.Listener.distanceBetweenInBlocks(sourcePos,
+									vibrationUser.getPositionSource().getPosition(level).map(BlockPos::containing).orElse(sourcePos))
+					);
+					it.remove();
+				}
+			}
+		}
+
+		public void addVibration(VibrationInfo info, ServerLevel level) {
+			int travelTime = vibrationUser.calculateTravelTimeInTicks(info.distance());
+			activeVibrations.add(new ActiveVibration(info, travelTime));
+			// Стартовая частица (как в ваниле)
+			level.sendParticles(
+					new VibrationParticleOption(vibrationUser.getPositionSource(), travelTime),
+					info.pos().x, info.pos().y, info.pos().z,
+					1, 0.0, 0.0, 0.0, 0.0
+			);
+		}
+
+		private void sendVibrationParticle(ServerLevel level, ActiveVibration vib) {
+			VibrationInfo info = vib.getInfo();
+			Vec3 start = info.pos();
+			Vec3 end = vibrationUser.getPositionSource().getPosition(level).orElse(start);
+			float progress = 1.0F - (float) vib.getTicksLeft() / vib.getTotalTicks();
+			double x = Mth.lerp(progress, start.x, end.x);
+			double y = Mth.lerp(progress, start.y, end.y);
+			double z = Mth.lerp(progress, start.z, end.z);
+			level.sendParticles(
+					new VibrationParticleOption(vibrationUser.getPositionSource(), vib.getTicksLeft()),
+					x, y, z,
+					1, 0.0, 0.0, 0.0, 0.0
+			);
+		}
+
+		// ---------------------------------------------------------------------
+		// Вспомогательные классы
+		// ---------------------------------------------------------------------
+		private static class ActiveVibration {
+			private final VibrationInfo info;
+			private int ticksLeft;
+			private final int totalTicks;
+
+			public ActiveVibration(VibrationInfo info, int totalTicks) {
+				this.info = info;
+				this.ticksLeft = totalTicks;
+				this.totalTicks = totalTicks;
+			}
+
+			public void decrementTime() {
+				ticksLeft--;
+			}
+
+			public boolean isDone() {
+				return ticksLeft <= 0;
+			}
+
+			public VibrationInfo getInfo() {
+				return info;
+			}
+
+			public int getTicksLeft() {
+				return ticksLeft;
+			}
+
+			public int getTotalTicks() {
+				return totalTicks;
+			}
 		}
 
 		private class VibrationUser implements VibrationSystem.User {
 			private final PositionSource positionSource;
 
 			public VibrationUser() {
-				this.positionSource = new EntityPositionSource(owner, owner.getEyeHeight());
+				this.positionSource = new EntityPositionSource(owner, owner.getBbHeight() / 2);
 			}
 
 			@Override
 			public int getListenerRadius() {
-				return 16;
+				return 24;
 			}
 
 			@Override
@@ -357,11 +443,14 @@ public class SculkStaffItem extends StaffItem {
 				if (context != null && context.sourceEntity() == owner) {
 					return false;
 				}
+				if (context != null && context.sourceEntity() instanceof Player player && player.getAbilities().instabuild)
+					return false;
 				return true;
 			}
 
 			@Override
-			public void onReceiveVibration(ServerLevel level, BlockPos pos, GameEvent event, @Nullable Entity sourceEntity, @Nullable Entity projectileOwner, float distance) {
+			public void onReceiveVibration(ServerLevel level, BlockPos pos, GameEvent event,
+										   @Nullable Entity sourceEntity, @Nullable Entity projectileOwner, float distance) {
 				LivingEntity target = null;
 				if (sourceEntity instanceof LivingEntity living) {
 					target = living;
@@ -416,6 +505,7 @@ public class SculkStaffItem extends StaffItem {
 						break;
 					}
 
+					level.gameEvent(owner, GameEvent.SCULK_SENSOR_TENDRILS_CLICKING, owner.blockPosition());
 					CompoundTag nbtData = staffStack.getOrCreateTag();
 					nbtData.putInt("caughtVibration", 30);
 					staffStack.setTag(nbtData);
@@ -428,6 +518,46 @@ public class SculkStaffItem extends StaffItem {
 			@Override
 			public boolean requiresAdjacentChunksToBeTicking() {
 				return false;
+			}
+		}
+
+		private static class CustomListener implements GameEventListener {
+			private final SculkStaffVibrationSystem system;
+
+			public CustomListener(SculkStaffVibrationSystem system) {
+				this.system = system;
+			}
+
+			@Override
+			public PositionSource getListenerSource() {
+				return system.vibrationUser.getPositionSource();
+			}
+
+			@Override
+			public int getListenerRadius() {
+				return system.vibrationUser.getListenerRadius();
+			}
+
+			@Override
+			public boolean handleGameEvent(ServerLevel level, GameEvent event, GameEvent.Context context, Vec3 pos) {
+				VibrationSystem.User user = system.vibrationUser;
+				if (!user.isValidVibration(event, context)) return false;
+
+				Optional<Vec3> userPosOpt = user.getPositionSource().getPosition(level);
+				if (userPosOpt.isEmpty()) return false;
+				Vec3 userPos = userPosOpt.get();
+
+				if (!user.canReceiveVibration(level, BlockPos.containing(pos), event, context))
+					return false;
+
+				// Проверка на преграду (как в ванильном VibrationSystem.Listener.isOccluded)
+				if (VibrationSystem.Listener.isOccluded(level, pos, userPos))
+					return false;
+
+				float distance = (float) pos.distanceTo(userPos);
+				VibrationInfo info = new VibrationInfo(event, distance, pos, context.sourceEntity());
+				system.addVibration(info, level);
+				return true;
 			}
 		}
 	}

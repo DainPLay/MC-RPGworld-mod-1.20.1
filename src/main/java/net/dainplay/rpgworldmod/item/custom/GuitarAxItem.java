@@ -1,5 +1,7 @@
 package net.dainplay.rpgworldmod.item.custom;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.dainplay.rpgworldmod.damage.ModDamageTypes;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
@@ -7,6 +9,7 @@ import net.dainplay.rpgworldmod.entity.custom.Mintobat;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -14,6 +17,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -25,15 +29,18 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.vibrations.VibrationSystem;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 public class GuitarAxItem extends AxeItem implements RPGtooltip {
     public GuitarAxItem(Tier pTier, int pAttackDamageModifier, float pAttackSpeedModifier, Properties pProperties) {
@@ -58,6 +65,7 @@ public class GuitarAxItem extends AxeItem implements RPGtooltip {
         LivingEntity pPlayer = pAttacker;
         AtomicBoolean skip = new AtomicBoolean(false);
         if(!pLevel.isClientSide) ((ServerLevel) pLevel).sendParticles(ParticleTypes.SONIC_BOOM, pTarget.getX(), pTarget.getY(0.5D), pTarget.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
+        pPlayer.gameEvent(GameEvent.ITEM_INTERACT_START);
         pLevel.getEntities(pPlayer, pPlayer.getBoundingBox().inflate(range(pStack)),
                         target ->
                                 target instanceof LivingEntity && !(target instanceof Mintobat) && !(target instanceof TamableAnimal && ((TamableAnimal)target).getOwner()==pPlayer))
@@ -100,6 +108,8 @@ public class GuitarAxItem extends AxeItem implements RPGtooltip {
             if(!pLevel.isClientSide) ((ServerLevel) pLevel).sendParticles(ParticleTypes.SONIC_BOOM, pPlayer.getX(), pPlayer.getY(0.5D), pPlayer.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
             if(!pLevel.isClientSide) pPlayer.getCooldowns().addCooldown(this, 20);
             pPlayer.swing(InteractionHand.MAIN_HAND);
+            pPlayer.awardStat(Stats.ITEM_USED.get(this));
+            pPlayer.gameEvent(GameEvent.INSTRUMENT_PLAY);
         }
         return InteractionResultHolder.fail(itemstack);
     }

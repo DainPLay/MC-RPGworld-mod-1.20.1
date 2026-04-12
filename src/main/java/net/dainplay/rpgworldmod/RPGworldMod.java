@@ -370,36 +370,36 @@ public class RPGworldMod {
 			event.accept(ModItems.LAPIS_CHARM);
 			event.accept(ModItems.LIVING_WOOD_BOW);
 			event.accept(StaffItem.createForGemType(ModItems.LIVING_WOOD_STAFF.get().getDefaultInstance(), StaffItem.GemType.EMBER_GEM));
-			event.accept(StaffItem.createForGemType(ModItems.LIVING_WOOD_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
 			event.accept(StaffItem.createForGemType(ModItems.LIVING_WOOD_STAFF.get().getDefaultInstance(), StaffItem.GemType.HEART_OF_THE_SEA));
+			event.accept(StaffItem.createForGemType(ModItems.LIVING_WOOD_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
 			event.accept(StaffItem.createForGemType(ModItems.LIVING_WOOD_STAFF.get().getDefaultInstance(), StaffItem.GemType.NETHER_STAR));
 			event.accept(StaffItem.createForGemType(ModItems.BLAZE_STAFF.get().getDefaultInstance(), StaffItem.GemType.EMBER_GEM));
-			event.accept(StaffItem.createForGemType(ModItems.BLAZE_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
 			event.accept(StaffItem.createForGemType(ModItems.BLAZE_STAFF.get().getDefaultInstance(), StaffItem.GemType.HEART_OF_THE_SEA));
+			event.accept(StaffItem.createForGemType(ModItems.BLAZE_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
 			event.accept(StaffItem.createForGemType(ModItems.BLAZE_STAFF.get().getDefaultInstance(), StaffItem.GemType.NETHER_STAR));
 			event.accept(StaffItem.createForGemType(ModItems.TUBE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.EMBER_GEM));
-			event.accept(StaffItem.createForGemType(ModItems.TUBE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
 			event.accept(StaffItem.createForGemType(ModItems.TUBE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.HEART_OF_THE_SEA));
+			event.accept(StaffItem.createForGemType(ModItems.TUBE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
 			event.accept(StaffItem.createForGemType(ModItems.TUBE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.NETHER_STAR));
 			event.accept(StaffItem.createForGemType(ModItems.BRAIN_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.EMBER_GEM));
-			event.accept(StaffItem.createForGemType(ModItems.BRAIN_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
 			event.accept(StaffItem.createForGemType(ModItems.BRAIN_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.HEART_OF_THE_SEA));
+			event.accept(StaffItem.createForGemType(ModItems.BRAIN_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
 			event.accept(StaffItem.createForGemType(ModItems.BRAIN_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.NETHER_STAR));
 			event.accept(StaffItem.createForGemType(ModItems.BUBBLE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.EMBER_GEM));
-			event.accept(StaffItem.createForGemType(ModItems.BUBBLE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
 			event.accept(StaffItem.createForGemType(ModItems.BUBBLE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.HEART_OF_THE_SEA));
+			event.accept(StaffItem.createForGemType(ModItems.BUBBLE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
 			event.accept(StaffItem.createForGemType(ModItems.BUBBLE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.NETHER_STAR));
 			event.accept(StaffItem.createForGemType(ModItems.FIRE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.EMBER_GEM));
-			event.accept(StaffItem.createForGemType(ModItems.FIRE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
 			event.accept(StaffItem.createForGemType(ModItems.FIRE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.HEART_OF_THE_SEA));
+			event.accept(StaffItem.createForGemType(ModItems.FIRE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
 			event.accept(StaffItem.createForGemType(ModItems.FIRE_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.NETHER_STAR));
 			event.accept(StaffItem.createForGemType(ModItems.HORN_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.EMBER_GEM));
-			event.accept(StaffItem.createForGemType(ModItems.HORN_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
 			event.accept(StaffItem.createForGemType(ModItems.HORN_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.HEART_OF_THE_SEA));
+			event.accept(StaffItem.createForGemType(ModItems.HORN_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
 			event.accept(StaffItem.createForGemType(ModItems.HORN_CORAL_STAFF.get().getDefaultInstance(), StaffItem.GemType.NETHER_STAR));
 			event.accept(StaffItem.createForGemType(ModItems.SCULK_STAFF.get().getDefaultInstance(), StaffItem.GemType.EMBER_GEM));
-			event.accept(StaffItem.createForGemType(ModItems.SCULK_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
 			event.accept(StaffItem.createForGemType(ModItems.SCULK_STAFF.get().getDefaultInstance(), StaffItem.GemType.HEART_OF_THE_SEA));
+			event.accept(StaffItem.createForGemType(ModItems.SCULK_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
 			event.accept(StaffItem.createForGemType(ModItems.SCULK_STAFF.get().getDefaultInstance(), StaffItem.GemType.NETHER_STAR));
 			event.accept(ModItems.MOSQUITO_BOTTLE);
 			event.accept(ModItems.CHITIN_THIMBLE);
@@ -626,16 +626,175 @@ public class RPGworldMod {
 			DispenserBlock.registerBehavior(ModItems.RIE_BOAT.get(), new ModBoatDispenseItemBehavior(ModBoat.Type.RIE, false));
 			DispenserBlock.registerBehavior(ModItems.RIE_CHEST_BOAT.get(), new ModBoatDispenseItemBehavior(ModBoat.Type.RIE, true));
 
-			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(Potions.AWKWARD)), Ingredient.of(ModItems.PARALILY_BERRY.get()), PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARALYSIS_POTION.get())));
-			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.PARALYSIS_POTION.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_PARALYSIS_POTION.get())));
-			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.PARALYSIS_POTION.get())), Ingredient.of(Items.GLOWSTONE_DUST), createPotion(ModPotions.STRONG_PARALYSIS_POTION.get())));
-			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(Potions.AWKWARD)), Ingredient.of(ModBlocks.MOSSHROOM.get()), PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.MOSSIOSIS_POTION.get())));
-			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.MOSSIOSIS_POTION.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_MOSSIOSIS_POTION.get())));
-			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.MOSSIOSIS_POTION.get())), Ingredient.of(Items.GLOWSTONE_DUST), createPotion(ModPotions.STRONG_MOSSIOSIS_POTION.get())));
-			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.ARBOR_FUEL_BOTTLE.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_ARBOR_FUEL_BOTTLE.get())));
-			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(Potions.AWKWARD)), Ingredient.of(Items.ENDER_EYE), PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARANOIA_POTION.get())));
-			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.PARANOIA_POTION.get())), Ingredient.of(Items.REDSTONE), createPotion(ModPotions.LONG_PARANOIA_POTION.get())));
-			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(Ingredient.of(createPotion(ModPotions.PARANOIA_POTION.get())), Ingredient.of(Items.GLOWSTONE_DUST), createPotion(ModPotions.STRONG_PARANOIA_POTION.get())));
+			// PARALYSIS
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(createPotion(Potions.AWKWARD)),
+					Ingredient.of(ModItems.PARALILY_BERRY.get()),
+					PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARALYSIS_POTION.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), Potions.AWKWARD)),
+					Ingredient.of(ModItems.PARALILY_BERRY.get()),
+					PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.PARALYSIS_POTION.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), Potions.AWKWARD)),
+					Ingredient.of(ModItems.PARALILY_BERRY.get()),
+					PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.PARALYSIS_POTION.get())
+			));
+
+			// LONG PARALYSIS
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(createPotion(ModPotions.PARALYSIS_POTION.get())),
+					Ingredient.of(Items.REDSTONE),
+					createPotion(ModPotions.LONG_PARALYSIS_POTION.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.PARALYSIS_POTION.get())),
+					Ingredient.of(Items.REDSTONE),
+					PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.LONG_PARALYSIS_POTION.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.PARALYSIS_POTION.get())),
+					Ingredient.of(Items.REDSTONE),
+					PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.LONG_PARALYSIS_POTION.get())
+			));
+
+			// STRONG PARALYSIS
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(createPotion(ModPotions.PARALYSIS_POTION.get())),
+					Ingredient.of(Items.GLOWSTONE_DUST),
+					createPotion(ModPotions.STRONG_PARALYSIS_POTION.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.PARALYSIS_POTION.get())),
+					Ingredient.of(Items.GLOWSTONE_DUST),
+					PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.STRONG_PARALYSIS_POTION.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.PARALYSIS_POTION.get())),
+					Ingredient.of(Items.GLOWSTONE_DUST),
+					PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.STRONG_PARALYSIS_POTION.get())
+			));
+
+			// MOSSIOSIS
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(createPotion(Potions.AWKWARD)),
+					Ingredient.of(ModBlocks.MOSSHROOM.get()),
+					PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.MOSSIOSIS_POTION.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), Potions.AWKWARD)),
+					Ingredient.of(ModBlocks.MOSSHROOM.get()),
+					PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.MOSSIOSIS_POTION.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), Potions.AWKWARD)),
+					Ingredient.of(ModBlocks.MOSSHROOM.get()),
+					PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.MOSSIOSIS_POTION.get())
+			));
+
+			// LONG MOSSIOSIS
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(createPotion(ModPotions.MOSSIOSIS_POTION.get())),
+					Ingredient.of(Items.REDSTONE),
+					createPotion(ModPotions.LONG_MOSSIOSIS_POTION.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.MOSSIOSIS_POTION.get())),
+					Ingredient.of(Items.REDSTONE),
+					PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.LONG_MOSSIOSIS_POTION.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.MOSSIOSIS_POTION.get())),
+					Ingredient.of(Items.REDSTONE),
+					PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.LONG_MOSSIOSIS_POTION.get())
+			));
+
+			// STRONG MOSSIOSIS
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(createPotion(ModPotions.MOSSIOSIS_POTION.get())),
+					Ingredient.of(Items.GLOWSTONE_DUST),
+					createPotion(ModPotions.STRONG_MOSSIOSIS_POTION.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.MOSSIOSIS_POTION.get())),
+					Ingredient.of(Items.GLOWSTONE_DUST),
+					PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.STRONG_MOSSIOSIS_POTION.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.MOSSIOSIS_POTION.get())),
+					Ingredient.of(Items.GLOWSTONE_DUST),
+					PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.STRONG_MOSSIOSIS_POTION.get())
+			));
+
+			// LONG ARBOR FUEL (обрати внимание, базового варианта с AWKWARD здесь нет)
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(createPotion(ModPotions.ARBOR_FUEL_BOTTLE.get())),
+					Ingredient.of(Items.REDSTONE),
+					createPotion(ModPotions.LONG_ARBOR_FUEL_BOTTLE.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.ARBOR_FUEL_BOTTLE.get())),
+					Ingredient.of(Items.REDSTONE),
+					PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.LONG_ARBOR_FUEL_BOTTLE.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.ARBOR_FUEL_BOTTLE.get())),
+					Ingredient.of(Items.REDSTONE),
+					PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.LONG_ARBOR_FUEL_BOTTLE.get())
+			));
+
+			// PARANOIA
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(createPotion(Potions.AWKWARD)),
+					Ingredient.of(Items.ENDER_EYE),
+					PotionUtils.setPotion(new ItemStack(Items.POTION), ModPotions.PARANOIA_POTION.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), Potions.AWKWARD)),
+					Ingredient.of(Items.ENDER_EYE),
+					PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.PARANOIA_POTION.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), Potions.AWKWARD)),
+					Ingredient.of(Items.ENDER_EYE),
+					PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.PARANOIA_POTION.get())
+			));
+
+			// LONG PARANOIA
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(createPotion(ModPotions.PARANOIA_POTION.get())),
+					Ingredient.of(Items.REDSTONE),
+					createPotion(ModPotions.LONG_PARANOIA_POTION.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.PARANOIA_POTION.get())),
+					Ingredient.of(Items.REDSTONE),
+					PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.LONG_PARANOIA_POTION.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.PARANOIA_POTION.get())),
+					Ingredient.of(Items.REDSTONE),
+					PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.LONG_PARANOIA_POTION.get())
+			));
+
+			// STRONG PARANOIA
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(createPotion(ModPotions.PARANOIA_POTION.get())),
+					Ingredient.of(Items.GLOWSTONE_DUST),
+					createPotion(ModPotions.STRONG_PARANOIA_POTION.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.PARANOIA_POTION.get())),
+					Ingredient.of(Items.GLOWSTONE_DUST),
+					PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), ModPotions.STRONG_PARANOIA_POTION.get())
+			));
+			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
+					Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.PARANOIA_POTION.get())),
+					Ingredient.of(Items.GLOWSTONE_DUST),
+					PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.STRONG_PARANOIA_POTION.get())
+			));
 		});
 
 

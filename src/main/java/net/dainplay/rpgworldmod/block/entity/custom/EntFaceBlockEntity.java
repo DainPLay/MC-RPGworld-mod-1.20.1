@@ -34,6 +34,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -463,6 +464,7 @@ public class EntFaceBlockEntity extends BlockEntity {
 		if (level == null) return;
 
 		level.playSound(null, worldPosition, RPGSounds.ENT_CLOSE_HOLLOW.get(), SoundSource.HOSTILE, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F);
+		level.gameEvent(null, GameEvent.BLOCK_CLOSE, worldPosition);
 		// Находим всех игроков в радиусе
 		AABB attackArea = new AABB(worldPosition)
 				.inflate(MELEE_ATTACK_RADIUS)
@@ -571,6 +573,7 @@ public class EntFaceBlockEntity extends BlockEntity {
 
 		if(level.getDifficulty() == Difficulty.PEACEFUL) {
 			level.playSound(null, worldPosition, RPGSounds.ENT_ATTACK.get(), SoundSource.HOSTILE, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F);
+			level.gameEvent(null, GameEvent.ENTITY_ROAR, worldPosition);
 			attackCooldown = getRandomAttackCooldown();
 			return;
 		}
@@ -588,6 +591,7 @@ public class EntFaceBlockEntity extends BlockEntity {
 		// 1) Ближняя атака
 		if (distance < 5) { // 3 блока в радиусе
 			level.playSound(null, worldPosition, RPGSounds.ENT_ATTACK.get(), SoundSource.HOSTILE, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F);
+			level.gameEvent(null, GameEvent.ENTITY_ROAR, worldPosition);
 			startMeleeAttack();
 			attackCooldown = getRandomAttackCooldown() / 2; // Случайный кулдаун
 			return;
@@ -596,6 +600,7 @@ public class EntFaceBlockEntity extends BlockEntity {
 		// 3) Атака листьями или корнями
 		if (distance <= LEAF_ATTACK_RANGE * LEAF_ATTACK_RANGE) {
 			level.playSound(null, worldPosition, RPGSounds.ENT_ATTACK.get(), SoundSource.HOSTILE, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F);
+			level.gameEvent(null, GameEvent.ENTITY_ROAR, worldPosition);
 			// Проверяем, есть ли игрок под листвой энта
 			if (isPlayerUnderLeaves(nearestPlayer)) {
 				startLeafAttack();
@@ -610,6 +615,7 @@ public class EntFaceBlockEntity extends BlockEntity {
 		boolean canForceLook = ignoreVisionTimer > 0 || isInViewCone(nearestPlayer, 180);
 		if (distance <= FORCE_LOOK_RANGE * FORCE_LOOK_RANGE && canForceLook && forceLookCooldown == 0) {
 			level.playSound(null, worldPosition, RPGSounds.ENT_ATTACK.get(), SoundSource.HOSTILE, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F);
+			level.gameEvent(null, GameEvent.ENTITY_ROAR, worldPosition);
 			startForceLookAttack(nearestPlayer);
 			attackCooldown = getRandomAttackCooldown();
 			return;
@@ -642,11 +648,13 @@ public class EntFaceBlockEntity extends BlockEntity {
 		leafAttackTimer = LEAF_ATTACK_DURATION;
 		leafSpawnTimer = 0;
 		level.playSound(null, new BlockPos(worldPosition.getX(), worldPosition.getY() + 5, worldPosition.getZ()), RPGSounds.ENT_SHAKE.get(), SoundSource.HOSTILE, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F);
+		level.gameEvent(null, GameEvent.ENTITY_SHAKE, worldPosition);
 	}
 
 	private void startMeleeAttack() {
 		meleeAttackTimer = MELEE_ATTACK_WINDUP;
 		level.playSound(null, worldPosition, RPGSounds.ENT_OPEN_HOLLOW.get(), SoundSource.HOSTILE, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F);
+		level.gameEvent(null, GameEvent.BLOCK_OPEN, worldPosition);
 
 		// Устанавливаем состояние атаки в блоке
 		BlockState state = getBlockState();
@@ -1131,6 +1139,7 @@ public class EntFaceBlockEntity extends BlockEntity {
 		if (state.getValue(EntFaceBlock.ASLEEP)) {
 			level.setBlockAndUpdate(worldPosition, state.setValue(EntFaceBlock.ASLEEP, false));
 			level.playSound(null, worldPosition, RPGSounds.ENT_WAKE_UP.get(), SoundSource.HOSTILE, 2.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F);
+			level.gameEvent(null, GameEvent.ENTITY_ROAR, worldPosition);
 		}
 		noPlayerTimer = 0;
 		setChanged();
@@ -1187,6 +1196,7 @@ public class EntFaceBlockEntity extends BlockEntity {
 		if (!state.getValue(EntFaceBlock.ASLEEP)) {
 			level.setBlockAndUpdate(worldPosition, state.setValue(EntFaceBlock.ASLEEP, true));
 			level.playSound(null, worldPosition, RPGSounds.ENT_SLEEP.get(), SoundSource.HOSTILE, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F);
+			level.gameEvent(null, GameEvent.BLOCK_CLOSE, worldPosition);
 		}
 
 		// Сбрасываем прогресс разрушения при засыпании
@@ -1217,6 +1227,7 @@ public class EntFaceBlockEntity extends BlockEntity {
 		// Если прогресс достиг максимума - разрушаем блок
 		if (destroyProgress >= 2.0f && !level.isClientSide) {
 			level.playSound(null, worldPosition, RPGSounds.ENT_DEATH.get(), SoundSource.HOSTILE, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F);
+			level.gameEvent(null, GameEvent.ENTITY_DIE, worldPosition);
 
 			for (ServerPlayer serverplayer : level.getEntitiesOfClass(ServerPlayer.class, new AABB(worldPosition).inflate(10.0D, 5.0D, 10.0D))) {
 				ModAdvancements.KILL_ENT_TRIGGER.trigger(serverplayer);

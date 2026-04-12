@@ -306,6 +306,7 @@ public class Razorleaf extends Monster {
 				this.spawnAtLocation(ModBlocks.YOUNG_RAZORLEAF.get());
 			}
 			this.playSound(RPGSounds.RAZORLEAF_EXTINGUISH.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
+			this.gameEvent(GameEvent.ENTITY_DIE);
 			this.discard();
 		}
 	}
@@ -558,6 +559,7 @@ public class Razorleaf extends Monster {
 		}
 		if (attackTimer == 1) {
 			this.playSound(RPGSounds.RAZORLEAF_ATTACK.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
+			this.gameEvent(GameEvent.ENTITY_ROAR);
 			this.playSound(RPGSounds.RAZORLEAF_EAT.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
 			if (entity != null && canSeeTarget(entity)) {
 				setTongueTarget(entity);
@@ -635,6 +637,7 @@ public class Razorleaf extends Monster {
 										if (!hasGoldenKill(player))this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
 									}
 							this.playSound(RPGSounds.RAZORLEAF_BITE.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
+							this.gameEvent(GameEvent.EAT);
 						}
 					}
 				}
@@ -709,6 +712,7 @@ public class Razorleaf extends Monster {
 			this.level().explode(this, this.getX(), this.getY(0.0625D), this.getZ(), 2.0F, Level.ExplosionInteraction.MOB);
 			spawnExtinguishSmokeCircleAnimated();
 			this.playSound(RPGSounds.RAZORLEAF_EXTINGUISH.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
+			this.gameEvent(GameEvent.ENTITY_DIE);
 			this.spawnAtLocation(ModItems.MUSIC_DISC_TIRE.get());
 			for(ServerPlayer serverplayer : level().getEntitiesOfClass(ServerPlayer.class, new AABB(this.blockPosition()).inflate(32.0D, 25.0D, 32.0D))) {
 				ModAdvancements.FEED_TIRE_TO_RAZORLEAF_TRIGGER.trigger(serverplayer);
@@ -730,6 +734,7 @@ public class Razorleaf extends Monster {
 			setForcedLookTarget(null);
 			spawnExtinguishSmokeCircleAnimated();
 			this.playSound(RPGSounds.RAZORLEAF_EXTINGUISH.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
+			this.gameEvent(GameEvent.ENTITY_DIE);
 			return;
 		}
 		if (item.getItem().isEdible())
@@ -738,6 +743,7 @@ public class Razorleaf extends Monster {
 		clearTongueTarget();
 
 		this.playSound(RPGSounds.RAZORLEAF_BITE.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
+		this.gameEvent(GameEvent.EAT);
 	}
 
 	@Override
@@ -775,6 +781,7 @@ public class Razorleaf extends Monster {
 		clearTongueTarget();
 
 		this.playSound(RPGSounds.RAZORLEAF_SPIT.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
+		this.gameEvent(GameEvent.ENTITY_DISMOUNT);
 
 		setState(State.IDLE);
 		setAttackTimer(0);
@@ -798,6 +805,7 @@ public class Razorleaf extends Monster {
 		originalItem.setDefaultPickUpDelay();
 
 		this.playSound(RPGSounds.RAZORLEAF_SPIT.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
+		this.gameEvent(GameEvent.ENTITY_DISMOUNT);
 
 		setState(State.IDLE);
 		clearTongueTarget();
@@ -830,6 +838,7 @@ public class Razorleaf extends Monster {
 		}
 
 		this.playSound(RPGSounds.RAZORLEAF_SPIT.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
+		this.gameEvent(GameEvent.ENTITY_DISMOUNT);
 
 		setState(State.IDLE);
 		clearTongueTarget();
@@ -847,8 +856,10 @@ public class Razorleaf extends Monster {
 		}
 
 		if (attackTimer < 20) {
-			if (attackTimer == 1)
+			if (attackTimer == 1) {
 				this.playSound(RPGSounds.RAZORLEAF_ATTACK.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
+				this.gameEvent(GameEvent.ENTITY_ROAR);
+			}
 			if (entity != null && canSeeTarget(entity)) {
 				setForcedLookTarget(entity.position().add(0, entity.getEyeHeight() * 0.5, 0));
 			}
@@ -861,8 +872,10 @@ public class Razorleaf extends Monster {
 				handleItemIngestion(item);
 			}
 
-			if (attackTimer == 21)
+			if (attackTimer == 21) {
 				this.playSound(RPGSounds.RAZORLEAF_FIRE.get(), 1.0F, 1F);
+				this.gameEvent(GameEvent.ENTITY_ROAR);
+			}
 			if (entity != null && canSeeTarget(entity)) {
 				setForcedLookTarget(entity.position().add(0, entity.getEyeHeight() * 0.5, 0));
 			}
@@ -899,6 +912,7 @@ public class Razorleaf extends Monster {
 
 			this.playSound(RPGSounds.RAZORLEAF_ATTACK.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
 			this.playSound(RPGSounds.RAZORLEAF_SPIN.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
+			this.gameEvent(GameEvent.ENTITY_ROAR);
 		} else if (attackTimer < 20) {
 			boolean hitAnyPlayer = false;
 			for (Player player : this.level().getEntitiesOfClass(Player.class,

@@ -106,9 +106,8 @@ public class BeamRenderer {
 				}
 
 				if (usingItem.getItem() instanceof NetherStarScrollItem &&
-						EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), usingItem) > 0
-						&& player.getTicksUsingItem() > 40) {
-					renderNetherStarBeam(poseStack, bufferSource, partialTick, cameraPos, player);
+						EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), usingItem) > 0) {
+					renderNetherStarBeam(poseStack, bufferSource, partialTick, cameraPos, player, player.getTicksUsingItem());
 				}
 			}
 		}
@@ -116,7 +115,7 @@ public class BeamRenderer {
 	}
 
 	private static void renderNetherStarBeam(PoseStack poseStack, MultiBufferSource bufferSource,
-											 float partialTick, Vec3 cameraPos, Player player) {
+											 float partialTick, Vec3 cameraPos, Player player, int charged) {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null) return;
 
@@ -174,7 +173,7 @@ public class BeamRenderer {
 			currentStart = hit.getLocation();
 			remaining -= distToHit;
 		}
-		generateBeamParticles(player, start, directionVec, finalLength);
+		if (charged > 40) generateBeamParticles(player, start, directionVec, finalLength);
 
 		// 4. Повороты луча
 		double dx = directionVec.z;
@@ -188,7 +187,7 @@ public class BeamRenderer {
 		poseStack.mulPose(Axis.YP.rotation(-yaw));
 		poseStack.mulPose(Axis.XP.rotation(pitch));
 
-		if (firstPerson) {
+		if (firstPerson && charged > 40) {
 			renderBeamStartSprite(poseStack, bufferSource, player.tickCount, player.getTicksUsingItem(), partialTick);
 		}
 
@@ -204,6 +203,10 @@ public class BeamRenderer {
 		float glowRadius = 0.12F;
 		float textureScale = 1.0F;
 
+		if (charged <= 40) {
+			glowRadius = 0.06F * charged / 40F;
+		}
+
 		float f1 = -f;
 		float f2 = Mth.frac(f1 * 0.2F - (float) Mth.floor(f1 * 0.1F));
 		float vStart = -1.0F + f2;
@@ -213,41 +216,41 @@ public class BeamRenderer {
 		VertexConsumer glowConsumer = bufferSource.getBuffer(ModRenderTypes.SPELL_EFFECT.apply(BEACON_GLOW_LOCATION));
 		renderGlowBeamSides(poseStack, glowConsumer, glowRadius, vStart, vEnd, 1.0F, 1.0F, 1.0F, 1F, (float) finalLength);
 
-		VertexConsumer beamConsumer = bufferSource.getBuffer(ModRenderTypes.SPELL_EFFECT.apply(BEACON_BEAM_LOCATION));
-		renderBeamSides(poseStack, beamConsumer, beamRadius, vStart, vEnd, 1.0F, 1.0F, 1.0F, 1F, (float) finalLength);
+		if (charged > 40) {
+			VertexConsumer beamConsumer = bufferSource.getBuffer(ModRenderTypes.SPELL_EFFECT.apply(BEACON_BEAM_LOCATION));
+			renderBeamSides(poseStack, beamConsumer, beamRadius, vStart, vEnd, 1.0F, 1.0F, 1.0F, 1F, (float) finalLength);
 
-		VertexConsumer blackConsumer = bufferSource.getBuffer(ModRenderTypes.SPELL_EFFECT.apply(BEACON_BLACK_LOCATION));
-		renderGlowBeamSides(poseStack, blackConsumer, beamRadius, vStart, vEnd, 1.0F, 1.0F, 1.0F, 1F, (float) finalLength);
+			VertexConsumer blackConsumer = bufferSource.getBuffer(ModRenderTypes.SPELL_EFFECT.apply(BEACON_BLACK_LOCATION));
+			renderGlowBeamSides(poseStack, blackConsumer, beamRadius, vStart, vEnd, 1.0F, 1.0F, 1.0F, 1F, (float) finalLength);
+		}
 
 		poseStack.popPose();
 
-		// 5. Рендер билбордов в начале и конце луча
-		Vec3 end = start.add(directionVec.scale(finalLength));
-		renderBillboardAtPosition(poseStack, bufferSource, end, cameraPos, (player.getTicksUsingItem() - 40), -f);
+		if (charged > 40) {
+			// 5. Рендер билбордов в начале и конце луча
+			Vec3 end = start.add(directionVec.scale(finalLength));
+			renderBillboardAtPosition(poseStack, bufferSource, end, cameraPos, (player.getTicksUsingItem() - 40), -f);
+		}
 	}
 
 	private static void generateBeamParticles(Player player, Vec3 start, Vec3 direction, double length) {
-		// Генерируем партиклы только для локального игрока
-		if (player != Minecraft.getInstance().player) return;
 
-		RandomSource random = player.level().getRandom(); // рандом уровня
-		double step = 0.5; // расстояние между потенциальными позициями партиклов
+		RandomSource random = player.level().getRandom();
+		double step = 0.5;
 
 		for (double d = 0; d < length; d += step) {
 			Vec3 pos = start.add(direction.scale(d));
 
-			// Белый партикл (шанс 5%)
 			if (random.nextFloat() < 0.01f) {
 				float speedModifier = 0.0005F;
 				player.level().addParticle(ModParticles.WHITE_NETHER_STAR_BEAM.get(), pos.x, pos.y, pos.z,
-						random.nextFloat()*speedModifier, random.nextFloat()*speedModifier, random.nextFloat()*speedModifier);
+						random.nextFloat() * speedModifier, random.nextFloat() * speedModifier, random.nextFloat() * speedModifier);
 			}
 
-			// Чёрный партикл (шанс 5%)
 			if (random.nextFloat() < 0.01f) {
 				float speedModifier = 0F;
 				player.level().addParticle(ModParticles.BLACK_NETHER_STAR_BEAM.get(), pos.x, pos.y, pos.z,
-						random.nextFloat()*speedModifier, random.nextFloat()*speedModifier, random.nextFloat()*speedModifier);
+						random.nextFloat() * speedModifier, random.nextFloat() * speedModifier, random.nextFloat() * speedModifier);
 			}
 		}
 	}
@@ -448,13 +451,13 @@ public class BeamRenderer {
 		HumanoidArm mainArm = player.getMainArm();
 		boolean leftHand = mainArm == HumanoidArm.LEFT;
 		int side = leftHand ? -1 : 1;
-		if(player.getUsedItemHand() == InteractionHand.OFF_HAND) side *= -1;
+		if (player.getUsedItemHand() == InteractionHand.OFF_HAND) side *= -1;
 
 		if (firstPerson) {
 			Vec3 cameraPos = mc.gameRenderer.getMainCamera().getPosition();
 			double scale = 1000.0 / mc.getEntityRenderDispatcher().options.fov().get().intValue();
 			boolean isSlim = false;
-			if(player instanceof AbstractClientPlayer localPlayer) {
+			if (player instanceof AbstractClientPlayer localPlayer) {
 				isSlim = "slim".equals(localPlayer.getModelName());
 			}
 			float pLeftScale = isSlim ? 0.414F : 0.438F;

@@ -58,9 +58,7 @@ public class MintalTriangleItem extends Item implements Vanishable, RPGtooltip {
     public MintalTriangleItem(Properties pProperties) {
         super(pProperties);
     }
-   /**
-     * Return the enchantability factor of the item, most of the time is based on material.
-     */
+
     public int getEnchantmentValue() {
         return 14;
     }
@@ -97,6 +95,7 @@ public class MintalTriangleItem extends Item implements Vanishable, RPGtooltip {
             });
             setVibes(itemstack, 23);
             ModAdvancements.MINTAL_TRIANGLE_USED.trigger((ServerPlayer) pPlayer);
+            pPlayer.gameEvent(GameEvent.INSTRUMENT_PLAY);
         }
         pLevel.playSound(pPlayer, pPlayer.blockPosition(), RPGSounds.TRIANGLE_DING.get(), SoundSource.PLAYERS, volume(itemstack), (pPlayer.getRandom().nextFloat() - pPlayer.getRandom().nextFloat()) * 0.05F + 1.0F + pitch(itemstack));
 

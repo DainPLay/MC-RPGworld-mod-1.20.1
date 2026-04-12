@@ -17,6 +17,7 @@ import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.NoteBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.vibrations.VibrationSystem;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -46,6 +47,7 @@ public class NoteBlockMixin {
         if (pLevel.getBlockState(pPos.above()).isAir() && pLevel.getBlockState(pPos.below()).getBlock() == ModBlocks.MINTAL_BLOCK.get()) {
             if (pEntity instanceof ServerPlayer serverPlayer) ModAdvancements.MINTAL_BLOCK_NOTE_TRIGGER.trigger(serverPlayer);
             pLevel.playSound(null, pPos, RPGSounds.TRIANGLE_DING.get(), SoundSource.BLOCKS, 1F, (pLevel.random.nextFloat() - pLevel.random.nextFloat()) * 0.2F + 1.0F);
+            pLevel.gameEvent(pEntity, GameEvent.NOTE_BLOCK_PLAY, pPos);
             ((ServerLevel)pLevel).sendParticles(ParticleTypes.SONIC_BOOM, pPos.getX()+0.5D, pPos.getY()+1D, pPos.getZ()+0.5D, 1, 0.0D, 0.0D, 0.0D, 0.0D);
             AABB damageArea = new AABB(pPos).inflate(16D);
 

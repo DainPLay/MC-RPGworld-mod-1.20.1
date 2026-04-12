@@ -13,7 +13,6 @@ import net.dainplay.rpgworldmod.network.LoopSoundPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.PlayerIllusionForceProvider;
 import net.dainplay.rpgworldmod.network.PlayerManaProvider;
-import net.dainplay.rpgworldmod.network.S2CGuardianAttackData;
 import net.dainplay.rpgworldmod.network.S2CViewEyePacket;
 import net.dainplay.rpgworldmod.network.UpdateItemTagMessage;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
@@ -49,6 +48,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -234,8 +234,8 @@ public class EnderEyeScrollItem extends ScrollItem {
 
 			private static final HumanoidModel.ArmPose DESTRUCTION_POSE = HumanoidModel.ArmPose.create("DESTRUCTION", false, (model, entity, arm) -> {
 				float xOffset = 0F;
-				if(model.crouching) xOffset = -0.6f;
-				if(model.swimAmount > 0.0F) xOffset = -1.185f;
+				if (model.crouching) xOffset = -0.6f;
+				if (model.swimAmount > 0.0F) xOffset = -1.185f;
 				if (arm == HumanoidArm.RIGHT) {
 					model.rightArm.xRot = (-(float) Math.PI / 2F) + model.head.xRot + xOffset;
 					model.rightArm.yRot = -0.1F + model.head.yRot;
@@ -396,6 +396,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 				player.getCooldowns().addCooldown(this, 15);
 				level.playSound(null, player.blockPosition(), SoundEvents.ENDER_EYE_LAUNCH,
 						SoundSource.PLAYERS, 1.0F, 1.0F);
+				player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 				if (player instanceof ServerPlayer serverPlayer) {
 					ModAdvancements.SPELL_CONJURATION_ENDER_EYE_TRIGGER.trigger(serverPlayer);
 				}
@@ -488,6 +489,8 @@ public class EnderEyeScrollItem extends ScrollItem {
 				RPGSounds.SPELL_NECROMANCY_CAST.get(),
 				SoundSource.PLAYERS, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F
 		);
+		player.gameEvent(GameEvent.ENTITY_DAMAGE, player);
+		player.level().gameEvent(player, GameEvent.CONTAINER_OPEN, player.blockPosition());
 		if (player instanceof ServerPlayer serverPlayer) {
 			ModAdvancements.SPELL_NECROMANCY_ENDER_EYE_TRIGGER.trigger(serverPlayer);
 		}
@@ -529,16 +532,19 @@ public class EnderEyeScrollItem extends ScrollItem {
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_DESTRUCTION_ENDER_EYE_START.get(), SoundSource.PLAYERS, 0.5F, 1.0F);
+			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_ALTERATION_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_RESTORATION_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), stack) > 0) {

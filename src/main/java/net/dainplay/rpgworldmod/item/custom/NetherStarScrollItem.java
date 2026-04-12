@@ -31,9 +31,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -54,6 +56,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.border.WorldBorder;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.portal.PortalInfo;
 import net.minecraft.world.phys.AABB;
@@ -588,16 +591,19 @@ public class NetherStarScrollItem extends ScrollItem {
 
 	private void startEnchantmentSounds(Level level, Player player, ItemStack stack) {
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), stack) > 0) {
+			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_ALTERATION_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_RESTORATION_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), stack) > 0) {
@@ -609,6 +615,7 @@ public class NetherStarScrollItem extends ScrollItem {
 					RPGSounds.SPELL_NECROMANCY_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_NECROMANCY_NETHER_STAR_PRIMED.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+			player.gameEvent(GameEvent.PRIME_FUSE);
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -656,6 +663,7 @@ public class NetherStarScrollItem extends ScrollItem {
 					RPGSounds.SPELL_RESTORATION_CAST.get(),
 					SoundSource.PLAYERS, 1.0F, (player.level().random.nextFloat() - player.level().random.nextFloat()) * 0.2F + 1.0F
 			);
+			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 		}
 	}
 
@@ -745,6 +753,7 @@ public class NetherStarScrollItem extends ScrollItem {
 			nbtData.remove("isPickaxe");
 			stack.setTag(nbtData);
 			level.playSound(null, entity.blockPosition(), RPGSounds.SPELL_CONJURATION_STOP.get(), SoundSource.PLAYERS, 1F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F);
+			entity.gameEvent(GameEvent.ENTITY_DIE, entity);
 		}
 		if (stack.getTag() != null && stack.getTag().contains("summonProgress", Tag.TAG_INT) && stack.getOrCreateTag().getInt("summonProgress") > 0) {
 			CompoundTag nbtData = stack.getOrCreateTag();
@@ -893,6 +902,8 @@ public class NetherStarScrollItem extends ScrollItem {
 							RPGSounds.SPELL_NECROMANCY_CAST.get(),
 							SoundSource.PLAYERS, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F
 					);
+					player.gameEvent(GameEvent.ENTITY_DAMAGE, player);
+					player.gameEvent(GameEvent.EXPLODE);
 					if (player instanceof ServerPlayer serverPlayer)
 						ModAdvancements.SPELL_NECROMANCY_NETHER_STAR_TRIGGER.trigger(serverPlayer);
 					player.level().explode(player, player.getX(), player.getY(), player.getZ(), 4.5F, Level.ExplosionInteraction.MOB);
@@ -940,6 +951,7 @@ public class NetherStarScrollItem extends ScrollItem {
 									RPGSounds.SPELL_CONJURATION_START.get(),
 									SoundSource.PLAYERS, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F
 							);
+							player.gameEvent(GameEvent.ENTITY_PLACE, player);
 							CompoundTag nbtData = usingItem.getOrCreateTag();
 							nbtData.putInt("isPickaxe", 1);
 							nbtData.putInt("summonProgress", 20);
@@ -964,6 +976,7 @@ public class NetherStarScrollItem extends ScrollItem {
 									RPGSounds.SPELL_ALTERATION_CAST.get(),
 									SoundSource.PLAYERS, 1.0F,
 									(level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F);
+							player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 
 							ResourceKey<Level> currentDim = player.level().dimension();
 							ResourceKey<Level> targetDim = null;
@@ -1312,6 +1325,7 @@ public class NetherStarScrollItem extends ScrollItem {
 			player.level().playSound(null, pos.x, pos.y, pos.z,
 					RPGSounds.SPELL_DESTRUCTION_NETHER_STAR_START.get(), SoundSource.PLAYERS,
 					0.1F, 1.0F);
+			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 		}
 		if (player instanceof ServerPlayer serverPlayer)
 			ModAdvancements.SPELL_DESTRUCTION_NETHER_STAR_TRIGGER.trigger(serverPlayer);
@@ -1351,9 +1365,25 @@ public class NetherStarScrollItem extends ScrollItem {
 			if (distPerp > radius) continue;
 			if (!isEntityVisibleThroughTransparentBlocks(level, eyePos, targetCenter)) continue;
 
-			double damage = 14.0 * (1.0 - along / maxDist);
+			double t = 1.0 - along / maxDist;
+			double damage = 7.0 * t * t;
 			if (damage > 0) {
-				target.hurt(player.damageSources().magic(), (float) damage);
+				DamageSource source = player.damageSources().magic();
+				if (target instanceof Player targetPlayer) {
+					if ((float) targetPlayer.invulnerableTime > 10.0F) {
+						if (damage > targetPlayer.lastHurt) {
+							targetPlayer.hurt(source, (float) damage);
+						}
+					} else {
+						target.hurt(source, (float) damage);
+					}
+				} else {
+					target.hurt(source, (float) damage);
+				}
+				if (!source.is(DamageTypeTags.NO_ANGER)) {
+					target.setLastHurtByMob(player);
+				}
+				target.setLastHurtByPlayer(player);
 				hitPositions.add(targetCenter);
 			}
 		}
