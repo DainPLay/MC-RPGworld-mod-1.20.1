@@ -30,17 +30,14 @@ public class ClientAdditionalHealthCostData {
 		float currentYaw = player.getYRot();
 		float currentPitch = player.getXRot();
 
-		// Нормализуем углы от -180 до 180
+
 		float yawDiff = Math.abs(normalizeAngle(currentYaw - lastYaw));
 		float pitchDiff = Math.abs(normalizeAngle(currentPitch - lastPitch));
 
-		// Вычисляем угловое расстояние как сумму (можно изменить на другую метрику)
+
 		float totalDiff = yawDiff + pitchDiff;
 
-		// Или используйте евклидово расстояние:
-		// float totalDiff = (float) Math.sqrt(yawDiff * yawDiff + pitchDiff * pitchDiff);
 
-		// Ограничиваем 90 градусами
 		totalDiff = Math.min(totalDiff, 90);
 
 		return totalDiff;

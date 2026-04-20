@@ -84,7 +84,6 @@ import java.util.OptionalInt;
 import java.util.UUID;
 
 public class Razorleaf extends Monster {
-
 	public static boolean checkRazorleafSpawnRules(EntityType<Razorleaf> razorleafEntityType, ServerLevelAccessor serverLevelAccessor, MobSpawnType mobSpawnType, BlockPos blockPos, RandomSource randomSource) {
 		return true;
 	}
@@ -120,7 +119,7 @@ public class Razorleaf extends Monster {
 	private int fireCooldown = 0;
 	private int randomSeed = 0;
 	private int lastVisibilityCheckTick = 0;
-	private static final int VISIBILITY_CHECK_INTERVAL = 5; // Проверка видимости каждые 5 тиков
+	private static final int VISIBILITY_CHECK_INTERVAL = 5;
 
 	private ItemStack heldItem = ItemStack.EMPTY;
 	private int tongueRetractTimer = 0;
@@ -255,7 +254,7 @@ public class Razorleaf extends Monster {
 
 		if (this.level().isClientSide) {
 			this.randomSeed = this.entityData.get(DATA_RANDOM_SEED);
-			// Клиентская обработка притягивания
+
 			handleClientPull();
 		}
 
@@ -269,13 +268,10 @@ public class Razorleaf extends Monster {
 	}
 
 	private void handleClientPull() {
-		// Проверяем, находимся ли мы в состоянии притягивания
 		Vec3 pullDirection = getPullDirection();
 		if (pullDirection.lengthSqr() > 0.01) {
-			// Находим цель притягивания
 			Entity target = getTongueTargetEntity();
 			if (target != null) {
-				// Если цель - текущий игрок, применяем движение
 				if (target instanceof Player player && player == Minecraft.getInstance().player) {
 					Vec3 motion = pullDirection.scale(0.75);
 					player.setDeltaMovement(motion);
@@ -328,7 +324,6 @@ public class Razorleaf extends Monster {
 					Mth.floor(box.maxX),
 					Mth.floor(box.maxY),
 					Mth.floor(box.maxZ))) {
-
 				FluidState fluidState = this.level().getFluidState(pos);
 				if (!fluidState.isEmpty() && fluidState.getFluidType() != null) {
 					if (fluidState.getFluidType().canExtinguish(this)) {
@@ -443,11 +438,11 @@ public class Razorleaf extends Monster {
 		}
 	}
 
-	// Новый метод для проверки видимости цели
+
 	private boolean canSeeTarget(Entity target) {
 		if (target == null) return false;
 
-		// Проверяем только каждые N тиков для оптимизации
+
 		if (this.tickCount - lastVisibilityCheckTick < VISIBILITY_CHECK_INTERVAL) {
 			return this.entityData.get(DATA_CAN_SEE_TARGET);
 		}
@@ -456,14 +451,12 @@ public class Razorleaf extends Monster {
 		boolean canSee = false;
 
 		if (target instanceof LivingEntity) {
-			// Для живых существ используем стандартную проверку видимости
 			canSee = this.hasLineOfSight((LivingEntity) target);
 		} else {
-			// Для предметов и других сущностей используем проверку прямой видимости
 			Vec3 eyePos = this.getEyePosition();
 			Vec3 targetPos = target.getBoundingBox().getCenter();
 
-			// Проверяем, нет ли препятствий между Razorleaf и целью
+
 			BlockHitResult hitResult = this.level().clip(new ClipContext(
 					eyePos,
 					targetPos,
@@ -495,7 +488,7 @@ public class Razorleaf extends Monster {
 		tongueRetractTimer = 0;
 		setHasItemInMouth(false);
 		heldItem = ItemStack.EMPTY;
-		// Сбрасываем направление притягивания
+
 		setPullDirection(Vec3.ZERO);
 	}
 
@@ -540,9 +533,8 @@ public class Razorleaf extends Monster {
 	private void handleTongueAttack(Entity entity) {
 		int attackTimer = getAttackTimer();
 
-		// Проверяем видимость цели в начале атаки и периодически во время атаки
+
 		if ((attackTimer == 1 || attackTimer % 10 == 0) && entity != null && !canSeeTarget(entity)) {
-			// Если потеряли видимость цели, прерываем атаку
 			clearTongueTarget();
 			setState(State.IDLE);
 			setAttackTimer(0);
@@ -586,9 +578,8 @@ public class Razorleaf extends Monster {
 			if (target != null && canSeeTarget(target)) {
 				setForcedLookTarget(target.position());
 			} else {
-				// Если потеряли видимость, прерываем атаку
 				clearTongueTarget();
-				if(getState() == State.ATTACKING) setState(State.IDLE);
+				if (getState() == State.ATTACKING) setState(State.IDLE);
 			}
 		} else if (attackTimer <= 30) {
 			Entity target = getTongueTargetEntity();
@@ -603,14 +594,13 @@ public class Razorleaf extends Monster {
 						handleItemIngestion(item);
 					}
 				} else if (target instanceof LivingEntity living && living.position().distanceTo(this.position()) < 4) {
-					// Синхронизируем направление притягивания
 					setPullDirection(pullDirection);
 
-					// Применяем движение и синхронизируем с клиентом
+
 					Vec3 motion = pullDirection.scale(0.75D);
 					target.setDeltaMovement(motion);
 
-					// Синхронизируем движение с клиентом
+
 					if (target instanceof ServerPlayer serverPlayer) {
 						ModMessages.sendToPlayer(new SyncEntityMotionPacket(
 								serverPlayer.getId(),
@@ -634,7 +624,8 @@ public class Razorleaf extends Monster {
 								if (living instanceof ServerPlayer player)
 									if (!player.fireImmune() && !this.entityData.get(DATA_DEALT_DAMAGE)) {
 										this.entityData.set(DATA_DEALT_DAMAGE, true);
-										if (!hasGoldenKill(player))this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
+										if (!hasGoldenKill(player))
+											this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
 									}
 							this.playSound(RPGSounds.RAZORLEAF_BITE.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
 							this.gameEvent(GameEvent.EAT);
@@ -642,13 +633,11 @@ public class Razorleaf extends Monster {
 					}
 				}
 			} else {
-				// Если потеряли видимость цели, прерываем атаку
 				setPullDirection(Vec3.ZERO);
 				clearTongueTarget();
-				if(getState() != State.EXTINGUISHED) setState(State.IDLE);
+				if (getState() != State.EXTINGUISHED) setState(State.IDLE);
 			}
 		} else if (attackTimer == 31) {
-			// Сбрасываем направление притягивания
 			setPullDirection(Vec3.ZERO);
 
 			if (hasItemInMouth()) {
@@ -714,7 +703,7 @@ public class Razorleaf extends Monster {
 			this.playSound(RPGSounds.RAZORLEAF_EXTINGUISH.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);
 			this.gameEvent(GameEvent.ENTITY_DIE);
 			this.spawnAtLocation(ModItems.MUSIC_DISC_TIRE.get());
-			for(ServerPlayer serverplayer : level().getEntitiesOfClass(ServerPlayer.class, new AABB(this.blockPosition()).inflate(32.0D, 25.0D, 32.0D))) {
+			for (ServerPlayer serverplayer : level().getEntitiesOfClass(ServerPlayer.class, new AABB(this.blockPosition()).inflate(32.0D, 25.0D, 32.0D))) {
 				ModAdvancements.FEED_TIRE_TO_RAZORLEAF_TRIGGER.trigger(serverplayer);
 			}
 			this.discard();
@@ -827,7 +816,7 @@ public class Razorleaf extends Monster {
 		entity.setDeltaMovement(direction);
 		entity.hurtMarked = true;
 
-		// Синхронизируем движение с клиентом
+
 		if (entity instanceof ServerPlayer serverPlayer) {
 			ModMessages.sendToPlayer(new SyncEntityMotionPacket(
 					serverPlayer.getId(),
@@ -847,9 +836,8 @@ public class Razorleaf extends Monster {
 	private void handleFireBreath(LivingEntity entity) {
 		int attackTimer = getAttackTimer();
 
-		// Проверяем видимость цели в начале атаки и периодически во время атаки
+
 		if ((attackTimer == 1 || attackTimer % 10 == 0) && (entity == null || !canSeeTarget(entity))) {
-			// Если потеряли видимость цели, прерываем атаку
 			setState(State.IDLE);
 			setAttackTimer(0);
 			return;
@@ -864,7 +852,6 @@ public class Razorleaf extends Monster {
 				setForcedLookTarget(entity.position().add(0, entity.getEyeHeight() * 0.5, 0));
 			}
 		} else if (attackTimer < 60) {
-
 			List<ItemEntity> items = this.level().getEntitiesOfClass(ItemEntity.class,
 					this.getBoundingBox());
 
@@ -893,7 +880,7 @@ public class Razorleaf extends Monster {
 	private void handlePetalSpin() {
 		int attackTimer = getAttackTimer();
 
-		// Для спин-атаки проверяем видимость игрока в начале
+
 		if (attackTimer == 1) {
 			Player targetPlayer = null;
 			for (Player player : this.level().getEntitiesOfClass(Player.class,
@@ -923,7 +910,8 @@ public class Razorleaf extends Monster {
 						if (player instanceof ServerPlayer serverPlayer)
 							if (!serverPlayer.fireImmune() && !this.entityData.get(DATA_DEALT_DAMAGE)) {
 								this.entityData.set(DATA_DEALT_DAMAGE, true);
-								if (!hasGoldenKill(serverPlayer)) this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
+								if (!hasGoldenKill(serverPlayer))
+									this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
 							}
 					Vec3 knockback = player.position()
 							.subtract(this.position())
@@ -932,7 +920,7 @@ public class Razorleaf extends Monster {
 							.add(0, 0.5, 0);
 					player.setDeltaMovement(knockback);
 
-					// Синхронизируем откидывание с клиентом
+
 					if (player instanceof ServerPlayer serverPlayer) {
 						ModMessages.sendToPlayer(new SyncEntityMotionPacket(
 								serverPlayer.getId(),
@@ -944,7 +932,7 @@ public class Razorleaf extends Monster {
 				}
 			}
 
-			// Если не попали ни в одного видимого игрока, прерываем атаку
+
 			if (!hitAnyPlayer && attackTimer > 10) {
 				setState(State.IDLE);
 				setAttackTimer(0);
@@ -982,9 +970,9 @@ public class Razorleaf extends Monster {
 	}
 
 	public void dealtDamage(ServerPlayer player) {
-			if (!this.entityData.get(DATA_DEALT_DAMAGE)) {
-				if (!hasGoldenKill(player)) this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
-			}
+		if (!this.entityData.get(DATA_DEALT_DAMAGE)) {
+			if (!hasGoldenKill(player)) this.playSound(RPGSounds.GOLDEN_TOKEN_FAIL.get(), 2.0F, 1.0F);
+		}
 		this.entityData.set(DATA_DEALT_DAMAGE, true);
 	}
 
@@ -1005,7 +993,6 @@ public class Razorleaf extends Monster {
 				}
 
 				if (checkWaterContact(level, projectile.position)) {
-					// Эффект шипения в воде
 					level.sendParticles(ParticleTypes.SMOKE,
 							projectile.position.x, projectile.position.y, projectile.position.z,
 							5, 0.2, 0.2, 0.2, 0.05);
@@ -1037,7 +1024,7 @@ public class Razorleaf extends Monster {
 		}
 	}
 
-	// Проверка контакта с водой
+
 	private boolean checkWaterContact(Level level, Vec3 position) {
 		BlockPos pos = new BlockPos(
 				(int) Math.floor(position.x),
@@ -1045,13 +1032,13 @@ public class Razorleaf extends Monster {
 				(int) Math.floor(position.z)
 		);
 
-		// Проверяем блок жидкости
+
 		FluidState fluidState = level.getFluidState(pos);
 		if (fluidState.is(FluidTags.WATER)) {
 			return true;
 		}
 
-		// Проверяем соседние блоки для точности
+
 		for (int dx = -1; dx <= 1; dx++) {
 			for (int dy = -1; dy <= 1; dy++) {
 				for (int dz = -1; dz <= 1; dz++) {
@@ -1072,16 +1059,15 @@ public class Razorleaf extends Monster {
 		return false;
 	}
 
-	// Проверка столкновений
+
 	private boolean checkCollisions(Level level, FireProjectileData projectile) {
-		// Проверка столкновения с блоками
 		Vec3 startPos = projectile.position.subtract(projectile.velocity);
 		Vec3 endPos = projectile.position.add(projectile.velocity);
 
 		BlockHitResult blockHit = level.clip(new ClipContext(
 				startPos, endPos,
 				ClipContext.Block.COLLIDER,
-				ClipContext.Fluid.ANY, // Учитываем жидкости для лучшей детекции
+				ClipContext.Fluid.ANY,
 				null
 		));
 
@@ -1089,9 +1075,8 @@ public class Razorleaf extends Monster {
 			BlockPos hitPos = blockHit.getBlockPos();
 			BlockState hitState = level.getBlockState(hitPos);
 
-			// Проверяем, не попали ли в воду (на всякий случай)
+
 			if (level.getFluidState(hitPos).is(FluidTags.WATER)) {
-				// Эффект шипения
 				level.playSound(null, hitPos, RPGSounds.EMBER_GEM_EXTINGUISH.get(),
 						SoundSource.BLOCKS, 0.5F, 1.0F);
 
@@ -1103,10 +1088,8 @@ public class Razorleaf extends Monster {
 				return true;
 			}
 
-			// Проверяем, является ли блок горючим
-			if (hitState.is(ModBlocks.ARBOR_FUEL_BLOCK.get())) {
 
-				// Заменяем блок земли на огонь
+			if (hitState.is(ModBlocks.ARBOR_FUEL_BLOCK.get())) {
 				BlockState fireState = BaseFireBlock.getState(level, hitPos);
 				if (BaseFireBlock.canBePlacedAt(level, hitPos, Direction.UP)) {
 					level.setBlockAndUpdate(hitPos, fireState);
@@ -1115,9 +1098,7 @@ public class Razorleaf extends Monster {
 			}
 
 			if (hitState.getBlock() instanceof TntBlock tnt) {
-				// Создаём мнимый горящий снаряд для взаимодействия с TNT
 				if (level instanceof ServerLevel serverLevel) {
-					// Создаём фейковый SmallFireball (или другой Projectile, который горит)
 					SmallFireball fireProjectile = new SmallFireball(
 							serverLevel,
 							projectile.position.x,
@@ -1130,55 +1111,51 @@ public class Razorleaf extends Monster {
 
 					fireProjectile.setOwner(this);
 
-					// Устанавливаем, что снаряд горит
+
 					fireProjectile.setSecondsOnFire(100);
 
-					// Вызываем метод взаимодействия TNT со снарядом
+
 					tnt.onProjectileHit(level, hitState, blockHit, fireProjectile);
 				}
 				return true;
 			}
 
-			// Для остальных блоков - проверяем, можно ли использовать зажигалку
-			// Создаём мнимую зажигалку для проверки
+
 			ItemStack flintAndSteel = new ItemStack(Items.FLINT_AND_STEEL);
 
-			// Проверяем, может ли зажигалка быть использована на этом блоке
-			// Создаём контекст для использования предмета
+
 			if (level instanceof ServerLevel serverLevel) {
-				// Создаём фейкового игрока
 				FakePlayer fakePlayer = FakePlayerFactory.get(serverLevel, new GameProfile(UUID.randomUUID(), "FakePlayer"));
 
-				// Устанавливаем позицию фейкового игрока в точку удара
+
 				fakePlayer.setPos(hitPos.getX(), hitPos.getY(), hitPos.getZ());
 
-				// Устанавливаем правильное вращение для контекста
+
 				fakePlayer.setYRot(blockHit.getDirection().toYRot());
 				fakePlayer.setXRot((float) Math.toDegrees(blockHit.getDirection().toYRot()));
 
-				// Даём фейковому игроку зажигалку в руку
+
 				fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, flintAndSteel.copy());
 
-				// Создаём UseOnContext для проверки использования зажигалки
+
 				UseOnContext context = new UseOnContext(fakePlayer, InteractionHand.MAIN_HAND, blockHit);
 
-				// Проверяем, можно ли использовать зажигалку на блоке
+
 				InteractionResult useResult = InteractionResult.PASS;
 				if (flintAndSteel.getItem() instanceof FlintAndSteelItem flintAndSteelItem) {
 					useResult = flintAndSteelItem.useOn(context);
 				}
 
-				// Очищаем руку фейкового игрока
+
 				fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 
-				// Если зажигалка может быть использована (вернула SUCCESS или CONSUME),
-				// то не спавним огонь на соседнем блоке
+
 				if (useResult.consumesAction()) {
 					return true;
 				}
 			}
 
-			// Если зажигалка не может быть использована, пробуем поставить огонь на соседнем блоке
+
 			BlockPos firePos = hitPos.relative(blockHit.getDirection());
 
 			if (BaseFireBlock.canBePlacedAt(level, firePos, Direction.UP)) {
@@ -1187,7 +1164,7 @@ public class Razorleaf extends Monster {
 			return true;
 		}
 
-		// Проверка столкновения с существами
+
 		List<Entity> entities = level.getEntities(null,
 				new net.minecraft.world.phys.AABB(startPos, endPos).inflate(0.3));
 
@@ -1205,8 +1182,6 @@ public class Razorleaf extends Monster {
 			fakeFireball.setSecondsOnFire(1);
 			if (entity instanceof LivingEntity livingEntity &&
 					entity != this && !entity.fireImmune()) {
-
-				// Поджигаем существо на 5 секунд (100 тиков)
 				livingEntity.setSecondsOnFire(8);
 				if (entity.hurt(this.damageSources().fireball(fakeFireball, this), 1.0F)) {
 					if (entity instanceof ServerPlayer player)

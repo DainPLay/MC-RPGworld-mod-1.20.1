@@ -10,28 +10,26 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 public class ClearEffectsWithCheeseTrigger extends SimpleCriterionTrigger<ClearEffectsWithCheeseTrigger.Instance> {
+	public static final ResourceLocation ID = RPGworldMod.prefix("clear_effects_with_cheese");
 
-    public static final ResourceLocation ID = RPGworldMod.prefix("clear_effects_with_cheese");
+	@Override
+	public ResourceLocation getId() {
+		return ID;
+	}
 
-    @Override
-    public ResourceLocation getId() {
-        return ID;
-    }
-
-    @Override
-    public Instance createInstance(JsonObject json, ContextAwarePredicate player, DeserializationContext condition) {
+	@Override
+	public Instance createInstance(JsonObject json, ContextAwarePredicate player, DeserializationContext condition) {
 		return new ClearEffectsWithCheeseTrigger.Instance(player);
-    }
+	}
 
-    public void trigger(ServerPlayer player) {
-       this.trigger(player, (instance) -> true);
-    }
+	public void trigger(ServerPlayer player) {
+		this.trigger(player, (instance) -> true);
+	}
 
-    public static class Instance extends AbstractCriterionTriggerInstance {
+	public static class Instance extends AbstractCriterionTriggerInstance {
+		public Instance(ContextAwarePredicate player) {
+			super(ClearEffectsWithCheeseTrigger.ID, player);
+		}
 
-        public Instance(ContextAwarePredicate player) {
-            super(ClearEffectsWithCheeseTrigger.ID, player);
-        }
-
-    }
+	}
 }

@@ -45,14 +45,14 @@ public class GasbassItem extends Item {
 		if (stack.hasTag() && stack.getTag().contains(USE_DURATION_TAG)) {
 			return stack.getTag().getInt(USE_DURATION_TAG);
 		}
-		return 32; // значение по умолчанию
+		return 32;
 	}
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 
-		// Определяем длительность использования и сохраняем в NBT
+
 		int duration = calculateUseDuration(player);
 		CompoundTag tag = stack.getOrCreateTag();
 		tag.putInt(USE_DURATION_TAG, duration);
@@ -71,10 +71,7 @@ public class GasbassItem extends Item {
 		}
 	}
 
-	/**
-	 * Called when the player finishes using this Item (E.g. finishes eating.). Not called when the player stops using
-	 * the Item before the action is complete.
-	 */
+
 	public ItemStack finishUsingItem(ItemStack pStack, Level pLevel, LivingEntity entity) {
 		if (!pLevel.isClientSide()) {
 			double teleportPosX;
@@ -131,7 +128,6 @@ public class GasbassItem extends Item {
 			if (entity instanceof ServerPlayer serverplayer) {
 				if (serverplayer.connection.isAcceptingMessages() &&
 						serverplayer.level() == pLevel && !serverplayer.isSleeping()) {
-
 					if (serverplayer.isPassenger()) {
 						serverplayer.dismountTo(serverplayer.getX(), serverplayer.getY(), serverplayer.getZ());
 					}
@@ -166,7 +162,7 @@ public class GasbassItem extends Item {
 						BlockPos currentPos = entity.blockPosition();
 						int highestY = findHighestSolidBlockY(serverLevel, currentPos.getX(), currentPos.getZ());
 						if (highestY > serverLevel.getMinBuildHeight()) {
-							double newY = highestY + 1.0; // встать на блок
+							double newY = highestY + 1.0;
 							entity.teleportTo(currentPos.getX() + 0.5, newY, currentPos.getZ() + 0.5);
 							entity.resetFallDistance();
 						}
@@ -227,7 +223,6 @@ public class GasbassItem extends Item {
 
 			if (Math.abs(entityPos.getX() - biomePos.getX()) > 500 ||
 					Math.abs(entityPos.getZ() - biomePos.getZ()) > 500) {
-
 				return findSafeSurfacePosition(level, biomePos);
 			} else {
 				int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, biomePos.getX(), biomePos.getZ());
@@ -270,9 +265,7 @@ public class GasbassItem extends Item {
 		return spawnPos;
 	}
 
-	/**
-	 * Ручной поиск безопасной поверхности
-	 */
+
 	private BlockPos findManualSurfacePosition(ServerLevel level, BlockPos targetPos) {
 		for (int y = level.getMaxBuildHeight() - 1; y > level.getMinBuildHeight(); y--) {
 			BlockPos checkPos = new BlockPos(targetPos.getX(), y, targetPos.getZ());

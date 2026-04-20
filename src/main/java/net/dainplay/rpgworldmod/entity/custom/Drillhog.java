@@ -62,7 +62,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 public class Drillhog extends Monster {
-
 	private static final EntityDataAccessor<Boolean> DATA_DEALT_DAMAGE = SynchedEntityData.defineId(Drillhog.class, EntityDataSerializers.BOOLEAN);
 	private static final Predicate<Entity> AGGRO_PLAYERS = (player) ->
 			(player.isDiscrete() && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player));
@@ -149,17 +148,13 @@ public class Drillhog extends Monster {
 			return this.tryTicks % 100 == 0;
 		}
 
-		/**
-		 * Return true to set given position as destination
-		 */
+
 		protected boolean isValidTarget(LevelReader pLevel, BlockPos pPos) {
 			BlockState blockstate = pLevel.getBlockState(pPos);
 			return blockstate.is(BlockTags.LOGS) && blockstate.hasProperty(BlockStateProperties.AXIS);
 		}
 
-		/**
-		 * Keep ticking a continuous task that has already been started
-		 */
+
 		public void tick() {
 			if (this.isReachedTarget()) {
 				if (this.ticksWaited >= 40) {
@@ -195,17 +190,12 @@ public class Drillhog extends Monster {
 			}
 		}
 
-		/**
-		 * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
-		 * method as well.
-		 */
+
 		public boolean canUse() {
 			return !Drillhog.this.isSleeping() && super.canUse();
 		}
 
-		/**
-		 * Execute a one shot task or start executing a continuous task
-		 */
+
 		public void start() {
 			this.ticksWaited = 0;
 			super.start();
@@ -221,21 +211,21 @@ public class Drillhog extends Monster {
 	}
 
 	public static boolean hasRieLeavesAboveBlock(LevelAccessor world, BlockPos pos) {
-		int y = pos.getY() + 1;  // Start 1 block above the given pos
+		int y = pos.getY() + 1;
 
-		while (y < world.getMaxBuildHeight()) {  // Iterate upwards till the world's build limit
+		while (y < world.getMaxBuildHeight()) {
 			BlockPos blockAbovePos = new BlockPos(pos.getX(), y, pos.getZ());
 			BlockState blockState = world.getBlockState(blockAbovePos);
 
-			if (!blockState.isAir()) {  // Check if it's not air
+			if (!blockState.isAir()) {
 				Block blockAbove = blockState.getBlock();
-				return blockAbove == ModBlocks.RIE_LEAVES.get();  // Check if it's oak leaves
+				return blockAbove == ModBlocks.RIE_LEAVES.get();
 			}
 
 			y++;
 		}
 
-		return false;  // If no non-air block was found above the initial BlockPos
+		return false;
 	}
 
 	protected float getStandingEyeHeight(Pose pPose, EntityDimensions pSize) {
@@ -341,7 +331,8 @@ public class Drillhog extends Monster {
 	}
 
 	static void throwTarget(LivingEntity entity, LivingEntity pTarget) {
-		if (pTarget instanceof Player player && player.getUseItem().canPerformAction(ToolActions.SHIELD_BLOCK)) player.disableShield(false);
+		if (pTarget instanceof Player player && player.getUseItem().canPerformAction(ToolActions.SHIELD_BLOCK))
+			player.disableShield(false);
 		double d0 = entity.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
 		double d1 = pTarget.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
 		double d2 = d0 - d1;

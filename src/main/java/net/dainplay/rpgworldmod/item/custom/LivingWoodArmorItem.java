@@ -67,6 +67,7 @@ public class LivingWoodArmorItem extends ArmorItem implements RPGtooltip {
 	public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
 		return "rpgworldmod:textures/models/armor/living_wood_layer_" + (this.getType() == Type.LEGGINGS ? 2 : 1) + ".png";
 	}
+
 	@Override
 	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
 		return enchantment == Enchantments.MENDING || super.canApplyAtEnchantingTable(stack, enchantment);

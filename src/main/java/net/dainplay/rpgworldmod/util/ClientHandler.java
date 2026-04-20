@@ -12,7 +12,6 @@ import net.dainplay.rpgworldmod.network.ClientVelocityStorage;
 import net.dainplay.rpgworldmod.network.EntFaceDestroyProgressPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.particle.ModParticles;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
@@ -66,9 +65,8 @@ public class ClientHandler {
 			Minecraft minecraft = Minecraft.getInstance();
 			if (minecraft.player == null || minecraft.level == null) return;
 
-			// Проверяем наличие эффекта отравления
+
 			if (minecraft.player.hasEffect(ModEffects.PARANOIA.get())) {
-				// Спавним частицы с определенной частотой
 				if (minecraft.level.getGameTime() % 40 == 0) {
 					spawnParanoiaParticles(minecraft.player);
 				}
@@ -86,17 +84,17 @@ public class ClientHandler {
 							attackTicks++;
 							if (attackTicks >= PACKET_INTERVAL) {
 								attackTicks = 0;
-								// Отправляем пакет с предметом в руке игрока
+
 								ModMessages.sendToServer(new EntFaceDestroyProgressPacket(
 										pos,
 										true,
-										minecraft.player.getMainHandItem() // Добавляем предмет
+										minecraft.player.getMainHandItem()
 								));
 							}
 						} else {
 							lastAttackedBlock = pos;
 							attackTicks = 0;
-							// Отправляем сразу первый пакет с предметом
+
 							ModMessages.sendToServer(new EntFaceDestroyProgressPacket(
 									pos,
 									true,
@@ -116,19 +114,19 @@ public class ClientHandler {
 	private static void spawnParanoiaParticles(Player player) {
 		Level level = player.level();
 
-		// Уровень глаз игрока
+
 		double eyeHeight = player.getEyeHeight();
 		double eyeY = player.getY() + eyeHeight;
 
-		double distance = 5 + level.getRandom().nextDouble() * 7; // От 5 до 12
+		double distance = 5 + level.getRandom().nextDouble() * 7;
 
-		// Случайный угол от 0 до 360 градусов
+
 		double angle = level.getRandom().nextDouble() * 2 * Math.PI;
 
-		// Случайное смещение по Y в пределах ±1 блока от уровня глаз
-		double yOffset = (level.getRandom().nextDouble() * 2 - 1); // От -1 до 1
 
-		// Вычисляем координаты относительно игрока
+		double yOffset = (level.getRandom().nextDouble() * 2 - 1);
+
+
 		double xOffset = distance * Math.cos(angle);
 		double zOffset = distance * Math.sin(angle);
 
@@ -136,17 +134,17 @@ public class ClientHandler {
 		double targetY = eyeY + yOffset;
 		double targetZ = player.getZ() + zOffset;
 
-		// Проверяем, находится ли точка в запретной зоне (радиус 5 блоков в 3D)
+
 		double dx = targetX - player.getX();
 		double dy = targetY - player.getY();
 		double dz = targetZ - player.getZ();
 		double distSquared = dx * dx + dy * dy + dz * dz;
 
-		if (distSquared < 25) { // 5^2 = 25
+		if (distSquared < 25) {
 			return;
 		}
 
-		// Проверяем видимость от глаз игрока до точки
+
 		if (isVisibleFromPlayer(player, targetX, targetY, targetZ)) {
 			double px = targetX + (level.getRandom().nextDouble() - 0.5) * 0.5;
 			double py = targetY + (level.getRandom().nextDouble() - 0.5) * 0.5;
@@ -161,13 +159,13 @@ public class ClientHandler {
 	private static boolean isVisibleFromPlayer(Player player, double x, double y, double z) {
 		Level level = player.level();
 
-		// Начальная точка - глаза игрока
+
 		Vec3 start = player.getEyePosition();
 
-		// Конечная точка - целевая позиция
+
 		Vec3 end = new Vec3(x, y, z);
 
-		// Проверяем, нет ли препятствий на пути
+
 		ClipContext context = new ClipContext(
 				start,
 				end,
@@ -178,9 +176,9 @@ public class ClientHandler {
 
 		BlockHitResult result = level.clip(context);
 
-		// Если луч не достиг цели (уперся в блок), точка не видна
+
 		return result.getType() == HitResult.Type.MISS ||
-				result.getLocation().distanceToSqr(end) < 0.25; // Допуск 0.5 блока (0.5^2 = 0.25)
+				result.getLocation().distanceToSqr(end) < 0.25;
 	}
 
 	@SubscribeEvent
@@ -227,7 +225,7 @@ public class ClientHandler {
 		GameRenderer gameRenderer = mc.gameRenderer;
 		Entity cameraEntity = mc.getCameraEntity();
 
-		// Если эффект был сброшен извне, сбрасываем флаг
+
 		if (gameRenderer.currentEffect() == null) {
 			isInvertLoadedByUs = false;
 		}

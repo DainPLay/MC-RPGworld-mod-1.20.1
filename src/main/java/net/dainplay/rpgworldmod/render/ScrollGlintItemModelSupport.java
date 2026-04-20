@@ -1,8 +1,6 @@
 package net.dainplay.rpgworldmod.render;
 
-import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -11,13 +9,10 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelData;
-import org.checkerframework.checker.optional.qual.OptionalBottom;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +23,6 @@ public class ScrollGlintItemModelSupport implements BakedModel {
 	private final BakedModel originalModel;
 
 	public ScrollGlintItemModelSupport(BakedModel originalModel) {
-
 		this.originalModel = originalModel;
 	}
 
@@ -83,9 +77,9 @@ public class ScrollGlintItemModelSupport implements BakedModel {
 		List<RenderType> renderTypes = new ArrayList<>();
 
 		if (stack.getTag() != null && stack.getTag().contains("SummonedObject", Tag.TAG_INT)) {
-				renderTypes.add(ModRenderTypes.getItemEntityTranslucentCull(originalModel.getParticleIcon().atlasLocation()));
-				renderTypes.add(ModRenderTypes.SUMMONED_GLINT);
-				renderTypes.add(ModRenderTypes.SUMMONED_GLINT);
+			renderTypes.add(ModRenderTypes.getItemEntityTranslucentCull(originalModel.getParticleIcon().atlasLocation()));
+			renderTypes.add(ModRenderTypes.SUMMONED_GLINT);
+			renderTypes.add(ModRenderTypes.SUMMONED_GLINT);
 		} else if (stack.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0) {
 			renderTypes.add(ModRenderTypes.getItemEntityTranslucentCull(originalModel.getParticleIcon().atlasLocation()));
 			renderTypes.add(ModRenderTypes.ALTERATION_GLINT);

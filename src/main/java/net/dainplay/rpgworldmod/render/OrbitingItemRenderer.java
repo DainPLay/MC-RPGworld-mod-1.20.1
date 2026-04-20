@@ -11,6 +11,7 @@ import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.ManaCostItem;
 import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
 import net.dainplay.rpgworldmod.item.custom.OrbitingItem;
+import net.dainplay.rpgworldmod.item.custom.PillagerScrollItem;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.dainplay.rpgworldmod.network.ClientManaData;
 import net.minecraft.client.Camera;
@@ -21,7 +22,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -32,7 +32,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -97,14 +96,13 @@ public class OrbitingItemRenderer {
 				event.getItemStack().getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0 &&
 				event.getItemStack().getTag() != null &&
 				event.getItemStack().getTag().contains("isPickaxe", Tag.TAG_INT)) {
-
 			event.setCanceled(true);
 
 			Minecraft mc = Minecraft.getInstance();
 			AbstractClientPlayer player = mc.player;
 			if (player == null) return;
 
-			// Создаём временный стак с нужными NBT, чтобы модель подхватила summonedObjectModel
+
 			ItemStack dummyStack = new ItemStack(ModItems.NETHER_STAR_SCROLL.get());
 			CompoundTag nbtData = new CompoundTag();
 			nbtData.putInt("SummonedObject", 1);
@@ -122,7 +120,7 @@ public class OrbitingItemRenderer {
 			boolean rightHand = hand == InteractionHand.MAIN_HAND ^ (mc.player.getMainArm() == HumanoidArm.LEFT);
 			float flip = rightHand ? 1.0F : -1.0F;
 
-			// Анимация руки
+
 			float sqrtSwing = Mth.sqrt(swingProgress);
 			float f5 = -0.4F * Mth.sin(sqrtSwing * (float) Math.PI);
 			float f6 = 0.2F * Mth.sin(sqrtSwing * ((float) Math.PI * 2F));
@@ -137,10 +135,8 @@ public class OrbitingItemRenderer {
 				if (summonProgress > 0) {
 					float iprogress;
 					if (summonProgress / 20.0f < 0.25f) {
-						// Быстрое появление: 0 → 1 за 0.5 секунды (10 тиков)
 						iprogress = summonProgress / 20.0f * 4f;
 					} else {
-						// Плавное исчезновение: 1 → 0 за 1.5 секунды (30 тиков)
 						iprogress = 1f - ((summonProgress / 20.0f - 0.25f) / 0.75f);
 					}
 					renderSummonBeamsFirstPerson(flip, ms, buffer, iprogress, player.tickCount + Minecraft.getInstance().getFrameTime());
@@ -291,11 +287,15 @@ public class OrbitingItemRenderer {
 				float tz = 0.0F;
 				ms.translate(tx, ty, tz);
 			}
+			if (item.shouldRotate(event.getItemStack(), player)) {
+				float f = (float) player.tickCount % 360F + event.getPartialTick();
+				ms.mulPose(Axis.ZP.rotation((float) Math.toRadians(f) * -2.25F));
+			}
 
 			float size = useCube ? 0.15F : item.get1Size(event.getItemStack(), player);
 			if (item instanceof NetherStarScrollItem
 					&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), event.getItemStack()) > 0
-					&& player.getTicksUsingItem() <= 40) {
+					&& player.getTicksUsingItem() <= 40 && player.getUsedItemHand() == event.getHand()) {
 				size += (0.6F - size) * player.getTicksUsingItem() / 40;
 			}
 			VertexConsumer vertexconsumer;
@@ -304,7 +304,9 @@ public class OrbitingItemRenderer {
 			if ((hasEnough || player.getAbilities().instabuild)
 					&& !(item instanceof NetherStarScrollItem
 					&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), event.getItemStack()) > 0
-					&& player.getTicksUsingItem() > 40)) {
+					&& player.getTicksUsingItem() > 40 && player.getUsedItemHand() == event.getHand())
+					&& !(item instanceof PillagerScrollItem
+					&& player.isUsingItem() && player.getUseItem() == event.getItemStack())) {
 				if (textureString != null && !textureString.isEmpty()) {
 					int currentFrame = (player.tickCount / animationSpeed) % animationLength;
 					float frameHeight = 1.0F / animationLength;
@@ -323,7 +325,6 @@ public class OrbitingItemRenderer {
 					}
 
 					if (useCube) {
-
 						float hsX = size;
 
 						if (isSlim) {
@@ -354,7 +355,6 @@ public class OrbitingItemRenderer {
 								hsX, size, size,
 								0, vMax2, 1, vMax2, 1, vMin2, 0, vMin2, 1, 0, 0);
 					} else {
-
 						vertexconsumer.vertex(matrix4f, -size, -size, 0.0F)
 								.color(1.0F, 1.0F, 1.0F, 1.0F)
 								.uv(0.0F, vMax1)

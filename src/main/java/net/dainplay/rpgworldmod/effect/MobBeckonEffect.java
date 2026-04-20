@@ -8,59 +8,54 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.extensions.common.IClientMobEffectExtensions;
 
-import java.util.UUID;
 import java.util.function.Consumer;
 
 public class MobBeckonEffect extends MobEffect {
+	public MobBeckonEffect(MobEffectCategory mobEffectCategory, int color) {
+		super(mobEffectCategory, color);
+	}
 
-    public MobBeckonEffect(MobEffectCategory mobEffectCategory, int color) {
-        super(mobEffectCategory, color);
-    }
+	@Override
+	public void applyEffectTick(LivingEntity pLivingEntity, int pAmplifier) {
+		if (!pLivingEntity.level().isClientSide() && pLivingEntity instanceof AbstractVillager) {
+			((AbstractVillager) pLivingEntity).setTradingPlayer((Player) null);
+		}
 
-    @Override
-    public void applyEffectTick(LivingEntity pLivingEntity, int pAmplifier) {
-        if (!pLivingEntity.level().isClientSide() && pLivingEntity instanceof AbstractVillager) {
-            ((AbstractVillager)pLivingEntity).setTradingPlayer((Player)null);
-        }
+		super.applyEffectTick(pLivingEntity, pAmplifier);
+	}
 
-        super.applyEffectTick(pLivingEntity, pAmplifier);
-    }
+	@Override
+	public void initializeClient(Consumer<IClientMobEffectExtensions> consumer) {
+		consumer.accept(new MobBeckonEffect.MobBeckonEffectClient());
+	}
 
-    @Override
-    public void initializeClient(Consumer<IClientMobEffectExtensions> consumer) {
-        consumer.accept(new MobBeckonEffect.MobBeckonEffectClient());
-    }
+	private static class MobBeckonEffectClient implements IClientMobEffectExtensions {
+		@Override
+		public boolean isVisibleInInventory(MobEffectInstance instance) {
+			return false;
+		}
 
-    private static class MobBeckonEffectClient implements IClientMobEffectExtensions {
+		@Override
+		public boolean isVisibleInGui(MobEffectInstance instance) {
+			return false;
+		}
 
-        @Override
-        public boolean isVisibleInInventory(MobEffectInstance instance) {
-            return false;
-        }
 
-        @Override
-        public boolean isVisibleInGui(MobEffectInstance instance) {
-            return false;
-        }
+		@Override
+		public boolean renderInventoryIcon(MobEffectInstance instance, EffectRenderingInventoryScreen<?> screen,
+										   GuiGraphics guiGraphics, int x, int y, int blitOffset) {
+			return true;
+		}
 
-        // Остальные методы можно удалить или оставить пустыми
-        @Override
-        public boolean renderInventoryIcon(MobEffectInstance instance, EffectRenderingInventoryScreen<?> screen,
-                                           GuiGraphics guiGraphics, int x, int y, int blitOffset) {
-            return true; // Возвращаем true, чтобы не рисовалась иконка
-        }
-
-        @Override
-        public boolean renderGuiIcon(MobEffectInstance instance, Gui gui, GuiGraphics guiGraphics,
-                                     int x, int y, float z, float alpha) {
-            return true; // Возвращаем true, чтобы не рисовалась иконка
-        }
-    }
+		@Override
+		public boolean renderGuiIcon(MobEffectInstance instance, Gui gui, GuiGraphics guiGraphics,
+									 int x, int y, float z, float alpha) {
+			return true;
+		}
+	}
 
 }

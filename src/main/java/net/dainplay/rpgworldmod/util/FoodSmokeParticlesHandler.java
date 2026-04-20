@@ -2,7 +2,6 @@ package net.dainplay.rpgworldmod.util;
 
 import com.mojang.serialization.Dynamic;
 import net.dainplay.rpgworldmod.RPGworldMod;
-import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.GasbassItem;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.NbtOps;
@@ -10,16 +9,13 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 public class FoodSmokeParticlesHandler {
-
 	@SubscribeEvent
 	public static void onLivingEntityUseItem(LivingEntityUseItemEvent event) {
 		ItemStack itemStack = event.getItem();
@@ -39,7 +35,7 @@ public class FoodSmokeParticlesHandler {
 								itemStack.getTag().get("rpgworldmod.return_pos_dimension")))
 						.resultOrPartial(RPGworldMod.LOGGER::error)
 						.orElse(entity.getCommandSenderWorld().dimension());
-				if(!entity.level().isClientSide) {
+				if (!entity.level().isClientSide) {
 					if (entity.getServer() != null && entity.getServer().getLevel(teleportDimension) != null)
 						emitSmokeParticles(teleportPosX, teleportPosY, teleportPosZ, entity.getRandom(), entity.getServer().getLevel(teleportDimension));
 				}
@@ -66,7 +62,7 @@ public class FoodSmokeParticlesHandler {
 								itemStack.getTag().get("rpgworldmod.return_pos_dimension")))
 						.resultOrPartial(RPGworldMod.LOGGER::error)
 						.orElse(entity.getCommandSenderWorld().dimension());
-				if(!entity.level().isClientSide) {
+				if (!entity.level().isClientSide) {
 					if (entity.getServer() != null && entity.getServer().getLevel(teleportDimension) != null)
 						emitSmokeParticles(teleportPosX, teleportPosY, teleportPosZ, entity.getRandom(), entity.getServer().getLevel(teleportDimension));
 				}
@@ -95,7 +91,6 @@ public class FoodSmokeParticlesHandler {
 	}
 
 	private static void emitSmokeParticles(double x, double y, double z, RandomSource random, ServerLevel level) {
-
 		double offsetX = (random.nextDouble() - 0.5) * 0.8;
 		double offsetY = (random.nextDouble() - 0.5) * 0.4;
 		double offsetZ = (random.nextDouble() - 0.5) * 0.8;

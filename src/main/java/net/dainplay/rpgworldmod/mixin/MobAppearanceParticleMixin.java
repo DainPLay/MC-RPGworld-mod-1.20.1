@@ -6,9 +6,8 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(MobAppearanceParticle.class)
 public class MobAppearanceParticleMixin {
-
-    @Unique
-    public boolean shouldCull() {
-        return false;
-    }
+	@Unique
+	public boolean shouldCull() {
+		return false;
+	}
 }

@@ -20,7 +20,7 @@ public class TooltipBlockItem extends BlockItem implements RPGtooltip {
 	@Override
 	public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
-        ClientRPGtooltipHandler.appendHoverText(pStack, pLevel, pTooltip, pFlag, this)
-    );
+				ClientRPGtooltipHandler.appendHoverText(pStack, pLevel, pTooltip, pFlag, this)
+		);
 	}
 }

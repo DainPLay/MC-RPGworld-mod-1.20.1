@@ -10,28 +10,26 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 public class DepressionDeathCheck extends SimpleCriterionTrigger<DepressionDeathCheck.Instance> {
+	public static final ResourceLocation ID = RPGworldMod.prefix("depression_death_check");
 
-    public static final ResourceLocation ID = RPGworldMod.prefix("depression_death_check");
+	@Override
+	public ResourceLocation getId() {
+		return ID;
+	}
 
-    @Override
-    public ResourceLocation getId() {
-        return ID;
-    }
-
-    @Override
-    public Instance createInstance(JsonObject json, ContextAwarePredicate player, DeserializationContext condition) {
+	@Override
+	public Instance createInstance(JsonObject json, ContextAwarePredicate player, DeserializationContext condition) {
 		return new DepressionDeathCheck.Instance(player);
-    }
+	}
 
-    public void trigger(ServerPlayer player) {
-       this.trigger(player, (instance) -> true);
-    }
+	public void trigger(ServerPlayer player) {
+		this.trigger(player, (instance) -> true);
+	}
 
-    public static class Instance extends AbstractCriterionTriggerInstance {
+	public static class Instance extends AbstractCriterionTriggerInstance {
+		public Instance(ContextAwarePredicate player) {
+			super(DepressionDeathCheck.ID, player);
+		}
 
-        public Instance(ContextAwarePredicate player) {
-            super(DepressionDeathCheck.ID, player);
-        }
-
-    }
+	}
 }

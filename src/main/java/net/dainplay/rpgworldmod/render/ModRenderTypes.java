@@ -2,24 +2,13 @@ package net.dainplay.rpgworldmod.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.ItemStack;
-import org.joml.Matrix4f;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.OptionalDouble;
 import java.util.function.Function;
 
@@ -244,7 +233,7 @@ public class ModRenderTypes extends RenderType {
 					.setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeLinesShader))
 					.setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty()))
 					.setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
-					.setTransparencyState(RenderStateShard.NO_TRANSPARENCY)   // <-- изменено
+					.setTransparencyState(RenderStateShard.NO_TRANSPARENCY)
 					.setWriteMaskState(RenderStateShard.COLOR_WRITE)
 					.setCullState(RenderStateShard.NO_CULL)
 					.setDepthTestState(RenderStateShard.NO_DEPTH_TEST)

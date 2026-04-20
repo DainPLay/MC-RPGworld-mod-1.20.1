@@ -63,11 +63,8 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -80,11 +77,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class EmberScrollItem extends ScrollItem {
-
-	// Хранилище активных снарядов с привязкой к уровню
 	private static final Map<Level, Map<UUID, EmberProjectileData>> activeProjectiles = new HashMap<>();
 
-	// Хранилище для отслеживания использования игроком с привязкой к уровню
+
 	private static final Map<Level, Map<UUID, PlayerUseData>> playerUseData = new HashMap<>();
 
 	public EmberScrollItem(Properties pProperties) {
@@ -235,11 +230,10 @@ public class EmberScrollItem extends ScrollItem {
 	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
 		consumer.accept(new IClientItemExtensions() {
-
 			private static final HumanoidModel.ArmPose DESTRUCTION_POSE = HumanoidModel.ArmPose.create("DESTRUCTION", false, (model, entity, arm) -> {
 				float xOffset = 0F;
-				if(model.crouching) xOffset = -0.6f;
-				if(model.swimAmount > 0.0F) xOffset = -1.185f;
+				if (model.crouching) xOffset = -0.6f;
+				if (model.swimAmount > 0.0F) xOffset = -1.185f;
 				if (arm == HumanoidArm.RIGHT) {
 					model.rightArm.xRot = (-(float) Math.PI / 2F) + model.head.xRot + xOffset;
 					model.rightArm.yRot = -0.1F + model.head.yRot;
@@ -317,7 +311,6 @@ public class EmberScrollItem extends ScrollItem {
 
 	@Override
 	public int getManaCost(ItemStack item, Player player) {
-		// Возвращаем 1, если предмет зачарован на DESTRUCTION, иначе 5
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), item) > 0) {
 			return 1;
 		}
@@ -379,7 +372,7 @@ public class EmberScrollItem extends ScrollItem {
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack itemstack = player.getItemInHand(hand);
 
-		// Проверка наличия нужного зачарования
+
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), itemstack) <= 0
 				&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), itemstack) <= 0
 				&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), itemstack) <= 0
@@ -390,7 +383,6 @@ public class EmberScrollItem extends ScrollItem {
 		}
 
 		if (!level.isClientSide) {
-			// Для CONJURATION не нужно начинать использование (работает через useOn)
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), itemstack) > 0) {
 				return InteractionResultHolder.pass(itemstack);
 			}
@@ -404,7 +396,7 @@ public class EmberScrollItem extends ScrollItem {
 				return InteractionResultHolder.success(itemstack);
 			}
 
-			// На сервере
+
 			UUID playerId = player.getUUID();
 
 			AtomicBoolean cir = new AtomicBoolean(false);
@@ -429,7 +421,7 @@ public class EmberScrollItem extends ScrollItem {
 
 			if (cir.get()) {
 				getPlayerUseData(level).remove(playerId);
-				// Отправляем пакет для остановки звуков на клиентах
+
 				ModMessages.sendToNearbyPlayers(
 						new LoopSoundPacket(player.getId(), false, itemstack),
 						(ServerLevel) level,
@@ -442,7 +434,6 @@ public class EmberScrollItem extends ScrollItem {
 			getPlayerUseData(level).put(playerId, new PlayerUseData(playerId, level.getGameTime()));
 
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), itemstack) > 0) {
-				// Воспроизводим звук начала для всех игроков
 				level.playSound(null,
 						player.getX(), player.getY(), player.getZ(),
 						RPGSounds.SPELL_DESTRUCTION_EMBER_START.get(),
@@ -450,7 +441,7 @@ public class EmberScrollItem extends ScrollItem {
 				);
 				player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 
-				// Отправляем пакет для запуска зацикленного звука на клиентах
+
 				ModMessages.sendToNearbyPlayers(
 						new LoopSoundPacket(player.getId(), true, itemstack),
 						(ServerLevel) level,
@@ -460,7 +451,6 @@ public class EmberScrollItem extends ScrollItem {
 			}
 
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), itemstack) > 0) {
-				// Воспроизводим звук начала для всех игроков
 				level.playSound(null,
 						player.getX(), player.getY(), player.getZ(),
 						RPGSounds.SPELL_RESTORATION_START.get(),
@@ -468,7 +458,7 @@ public class EmberScrollItem extends ScrollItem {
 				);
 				player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 
-				// Отправляем пакет для запуска зацикленного звука на клиентах
+
 				ModMessages.sendToNearbyPlayers(
 						new LoopSoundPacket(player.getId(), true, itemstack),
 						(ServerLevel) level,
@@ -478,7 +468,6 @@ public class EmberScrollItem extends ScrollItem {
 			}
 
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), itemstack) > 0) {
-				// Воспроизводим звук начала для всех игроков
 				level.playSound(null,
 						player.getX(), player.getY(), player.getZ(),
 						RPGSounds.SPELL_ALTERATION_START.get(),
@@ -486,7 +475,7 @@ public class EmberScrollItem extends ScrollItem {
 				);
 				player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 
-				// Отправляем пакет для запуска зацикленного звука на клиентах
+
 				ModMessages.sendToNearbyPlayers(
 						new LoopSoundPacket(player.getId(), true, itemstack),
 						(ServerLevel) level,
@@ -496,14 +485,13 @@ public class EmberScrollItem extends ScrollItem {
 			}
 
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), itemstack) > 0) {
-				// Воспроизводим звук начала для всех игроков
 				level.playSound(null,
 						player.getX(), player.getY(), player.getZ(),
 						RPGSounds.SPELL_ILLUSION_START.get(),
 						SoundSource.PLAYERS, 1.0F, 1.0F
 				);
 
-				// Отправляем пакет для запуска зацикленного звука на клиентах
+
 				ModMessages.sendToNearbyPlayers(
 						new LoopSoundPacket(player.getId(), true, itemstack),
 						(ServerLevel) level,
@@ -513,7 +501,6 @@ public class EmberScrollItem extends ScrollItem {
 			}
 
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), itemstack) > 0) {
-				// Воспроизводим звук начала для всех игроков
 				level.playSound(null,
 						player.getX(), player.getY(), player.getZ(),
 						RPGSounds.SPELL_NECROMANCY_START.get(),
@@ -521,7 +508,7 @@ public class EmberScrollItem extends ScrollItem {
 				);
 				player.gameEvent(GameEvent.ENTITY_DAMAGE, player);
 
-				// Отправляем пакет для запуска зацикленного звука на клиентах
+
 				ModMessages.sendToNearbyPlayers(
 						new LoopSoundPacket(player.getId(), true, itemstack),
 						(ServerLevel) level,
@@ -532,7 +519,6 @@ public class EmberScrollItem extends ScrollItem {
 
 			player.startUsingItem(hand);
 		} else {
-			// Для CONJURATION не нужно начинать использование
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), itemstack) > 0) {
 				return InteractionResultHolder.pass(itemstack);
 			}
@@ -540,7 +526,7 @@ public class EmberScrollItem extends ScrollItem {
 				return InteractionResultHolder.success(itemstack);
 			}
 
-			// Клиентская проверка маны
+
 			if (usesHealthInsteadOfMana(itemstack)) {
 				if (!player.getAbilities().instabuild && Mth.ceil(player.getHealth()) < getManaCost(itemstack, player))
 					return InteractionResultHolder.fail(itemstack);
@@ -560,9 +546,8 @@ public class EmberScrollItem extends ScrollItem {
 		Player player = context.getPlayer();
 		ItemStack itemstack = context.getItemInHand();
 
-		// Проверяем зачарование CONJURATION
+
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), itemstack) > 0) {
-			// На клиенте проверяем ману только для визуальной обратной связи
 			if (level.isClientSide) {
 				if (player != null && !player.getAbilities().instabuild &&
 						ClientManaData.get() < getManaCost(itemstack, player)) {
@@ -570,15 +555,14 @@ public class EmberScrollItem extends ScrollItem {
 				}
 			}
 
-			// Используем логику BlockItem для размещения костра
+
 			InteractionResult interactionresult = this.placeCampfire(new BlockPlaceContext(context));
 
-			// На сервере даем кулдаун и проигрываем звук заклинания, если размещение удалось
+
 			if (!level.isClientSide && interactionresult.consumesAction() && player != null) {
-				// Даем кулдаун
 				player.getCooldowns().addCooldown(this, 15);
 
-				// Проигрываем звук заклинания
+
 				level.playSound(null, context.getClickedPos(),
 						RPGSounds.SPELL_CONJURATION_START.get(),
 						SoundSource.BLOCKS, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F
@@ -612,19 +596,18 @@ public class EmberScrollItem extends ScrollItem {
 					ItemStack itemstack = blockplacecontext.getItemInHand();
 					BlockState blockstate1 = level.getBlockState(blockpos);
 
-					// Проверяем, что размещенный блок действительно костер
+
 					if (blockstate1.is(ModBlocks.BOUND_CAMPFIRE.get())) {
-						// Обновляем состояние блока из тегов (если есть)
 						blockstate1 = this.updateBlockStateFromTag(blockpos, level, itemstack, blockstate1);
 
-						// Вызываем стандартный метод размещения блока
+
 						blockstate1.getBlock().setPlacedBy(level, blockpos, blockstate1, player, itemstack);
 						BlockEntity blockEntity = level.getBlockEntity(blockpos);
 						if (blockEntity instanceof BoundCampfireBlockEntity boundCampfire) {
-							// Устанавливаем владельца костра
 							if (player != null) {
 								boundCampfire.setOwner(player);
-								if(player instanceof ServerPlayer serverPlayer) ModAdvancements.SPELL_CONJURATION_EMBER_TRIGGER.trigger(serverPlayer);
+								if (player instanceof ServerPlayer serverPlayer)
+									ModAdvancements.SPELL_CONJURATION_EMBER_TRIGGER.trigger(serverPlayer);
 							}
 						}
 					}
@@ -640,7 +623,7 @@ public class EmberScrollItem extends ScrollItem {
 		}
 	}
 
-	// Аналогично BlockItem.getPlaceSound
+
 	protected net.minecraft.sounds.SoundEvent getPlaceSound(BlockState state, Level world, BlockPos pos, Player entity) {
 		return state.getSoundType(world, pos, entity).getPlaceSound();
 	}
@@ -657,14 +640,13 @@ public class EmberScrollItem extends ScrollItem {
 	}
 
 	private BlockState updateBlockStateFromTag(BlockPos pos, Level level, ItemStack stack, BlockState state) {
-		// Наш свиток не имеет тегов блока, поэтому просто возвращаем состояние
 		return state;
 	}
 
 	protected boolean canPlace(BlockPlaceContext context, BlockState state) {
 		Player player = context.getPlayer();
 		CollisionContext collisioncontext = player == null ? CollisionContext.empty() : CollisionContext.of(player);
-		// Проверяем, что блок может выжить и что место не занято другими сущностями
+
 		return (state.canSurvive(context.getLevel(), context.getClickedPos())) &&
 				context.getLevel().isUnobstructed(state, context.getClickedPos(), collisioncontext);
 	}
@@ -674,14 +656,13 @@ public class EmberScrollItem extends ScrollItem {
 		BlockPos blockpos = context.getClickedPos();
 		Player player = context.getPlayer();
 
-		// Проверяем, что у игрока достаточно маны (только на сервере)
+
 		if (!level.isClientSide && player != null && !player.getAbilities().instabuild) {
 			AtomicBoolean hasEnoughMana = new AtomicBoolean(true);
 			player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
 				if (mana.getMana() < getManaCost(context.getItemInHand(), player)) {
 					hasEnoughMana.set(false);
 				} else {
-					// Тратим ману
 					mana.reduceMana((ServerPlayer) player, getManaCost(context.getItemInHand(), player));
 				}
 			});
@@ -701,7 +682,8 @@ public class EmberScrollItem extends ScrollItem {
 		MobEffectInstance burnout = new MobEffectInstance(ModEffects.BURNOUT.get(), -1, healthToIgnite - 1);
 		burnout.setCurativeItems(new ArrayList<>());
 		player.addEffect(burnout);
-		if(player instanceof ServerPlayer serverPlayer) ModAdvancements.SPELL_NECROMANCY_EMBER_TRIGGER.trigger(serverPlayer);
+		if (player instanceof ServerPlayer serverPlayer)
+			ModAdvancements.SPELL_NECROMANCY_EMBER_TRIGGER.trigger(serverPlayer);
 		player.level().playSound(null,
 				player.getX(), player.getY(), player.getZ(),
 				RPGSounds.EMBER_GEM_IGNITE_ENTITY.get(),
@@ -710,7 +692,6 @@ public class EmberScrollItem extends ScrollItem {
 	}
 
 	public void cast(Player player, LivingEntity target, ItemStack item) {
-
 		AtomicBoolean hasEnoughMana = new AtomicBoolean(true);
 		if (!player.getAbilities().instabuild) {
 			player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
@@ -727,7 +708,8 @@ public class EmberScrollItem extends ScrollItem {
 			MobEffectInstance illusion = new MobEffectInstance(ModEffects.BURN_ILLUSION.get(), 1200, 0);
 			illusion.setCurativeItems(new ArrayList<>());
 			target.addEffect(illusion);
-			if(player instanceof ServerPlayer serverPlayer) ModAdvancements.SPELL_ILLUSION_EMBER_TRIGGER.trigger(serverPlayer);
+			if (player instanceof ServerPlayer serverPlayer)
+				ModAdvancements.SPELL_ILLUSION_EMBER_TRIGGER.trigger(serverPlayer);
 			player.level().playSound(null,
 					player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_ILLUSION_CAST.get(),
@@ -742,18 +724,16 @@ public class EmberScrollItem extends ScrollItem {
 			UUID playerId = player.getUUID();
 
 			if (!level.isClientSide) {
-				// На сервере
 				getPlayerUseData(level).remove(playerId);
 
 				if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), stack) > 0) {
-					// Воспроизводим звук окончания для всех игроков
 					level.playSound(null,
 							player.getX(), player.getY(), player.getZ(),
 							RPGSounds.SPELL_DESTRUCTION_EMBER_STOP.get(),
 							SoundSource.PLAYERS, 1.0F, 1.0F
 					);
 
-					// Отправляем пакет для остановки зацикленного звука
+
 					ModMessages.sendToNearbyPlayers(
 							new LoopSoundPacket(player.getId(), false, stack),
 							(ServerLevel) level,
@@ -763,14 +743,13 @@ public class EmberScrollItem extends ScrollItem {
 				}
 
 				if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) > 0) {
-					// Воспроизводим звук окончания для всех игроков
 					level.playSound(null,
 							player.getX(), player.getY(), player.getZ(),
 							RPGSounds.SPELL_ALTERATION_STOP.get(),
 							SoundSource.PLAYERS, 1.0F, 1.0F
 					);
 
-					// Отправляем пакет для остановки зацикленного звука
+
 					ModMessages.sendToNearbyPlayers(
 							new LoopSoundPacket(player.getId(), false, stack),
 							(ServerLevel) level,
@@ -780,14 +759,13 @@ public class EmberScrollItem extends ScrollItem {
 				}
 
 				if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), stack) > 0) {
-					// Воспроизводим звук окончания для всех игроков
 					level.playSound(null,
 							player.getX(), player.getY(), player.getZ(),
 							RPGSounds.SPELL_RESTORATION_STOP.get(),
 							SoundSource.PLAYERS, 1.0F, 1.0F
 					);
 
-					// Отправляем пакет для остановки зацикленного звука
+
 					ModMessages.sendToNearbyPlayers(
 							new LoopSoundPacket(player.getId(), false, stack),
 							(ServerLevel) level,
@@ -799,14 +777,13 @@ public class EmberScrollItem extends ScrollItem {
 				}
 
 				if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), stack) > 0) {
-					// Воспроизводим звук окончания для всех игроков
 					level.playSound(null,
 							player.getX(), player.getY(), player.getZ(),
 							RPGSounds.SPELL_ILLUSION_STOP.get(),
 							SoundSource.PLAYERS, 1.0F, 1.0F
 					);
 
-					// Отправляем пакет для остановки зацикленного звука
+
 					ModMessages.sendToNearbyPlayers(
 							new LoopSoundPacket(player.getId(), false, stack),
 							(ServerLevel) level,
@@ -816,14 +793,13 @@ public class EmberScrollItem extends ScrollItem {
 				}
 
 				if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), stack) > 0) {
-					// Воспроизводим звук окончания для всех игроков
 					level.playSound(null,
 							player.getX(), player.getY(), player.getZ(),
 							RPGSounds.SPELL_NECROMANCY_STOP.get(),
 							SoundSource.PLAYERS, 1.0F, 1.0F
 					);
 
-					// Отправляем пакет для остановки зацикленного звука
+
 					ModMessages.sendToNearbyPlayers(
 							new LoopSoundPacket(player.getId(), false, stack),
 							(ServerLevel) level,
@@ -848,7 +824,7 @@ public class EmberScrollItem extends ScrollItem {
 	public void inventoryTick(ItemStack stack, Level level, Entity entity, int i, boolean held) {
 		super.inventoryTick(stack, level, entity, i, held);
 
-		// Обновляем тег UseTime на клиенте (аналогично RaygunItem)
+
 		if (level.isClientSide) {
 			boolean using = entity instanceof LivingEntity living && living.getUseItem().equals(stack);
 			int useTime = getUseTime(stack);
@@ -867,7 +843,7 @@ public class EmberScrollItem extends ScrollItem {
 		}
 	}
 
-	// Вспомогательные методы для работы с данными
+
 	public static Map<UUID, PlayerUseData> getPlayerUseData(Level level) {
 		return playerUseData.computeIfAbsent(level, k -> new HashMap<>());
 	}
@@ -876,7 +852,7 @@ public class EmberScrollItem extends ScrollItem {
 		return activeProjectiles.computeIfAbsent(level, k -> new HashMap<>());
 	}
 
-	// Класс для отслеживания использования игроком
+
 	private static class PlayerUseData {
 		private final UUID playerId;
 		private long startTime;
@@ -924,7 +900,7 @@ public class EmberScrollItem extends ScrollItem {
 		}
 	}
 
-	// Класс для хранения данных снаряда
+
 	private static class EmberProjectileData {
 		private final UUID ownerId;
 		private Vec3 position;
@@ -939,12 +915,12 @@ public class EmberScrollItem extends ScrollItem {
 		}
 	}
 
-	// --- НОВЫЙ ВСПОМОГАТЕЛЬНЫЙ МЕТОД ДЛЯ ОСТАНОВКИ ИСПОЛЬЗОВАНИЯ ---
+
 	private static void stopPlayerUse(ServerLevel level, Player player, ItemStack usingItem) {
 		if (player == null) return;
 		player.stopUsingItem();
 
-		// Отправляем пакет остановки звука
+
 		ModMessages.sendToNearbyPlayers(
 				new LoopSoundPacket(player.getId(), false, usingItem),
 				level,
@@ -976,10 +952,9 @@ public class EmberScrollItem extends ScrollItem {
 	}
 
 	public static void processPlayerUsageStatic(ServerLevel level) {
-		// Получаем данные для этого уровня
 		Map<UUID, PlayerUseData> levelPlayerUseData = getPlayerUseData(level);
 
-		// Копируем для безопасного удаления
+
 		Map<UUID, PlayerUseData> copy = new HashMap<>(levelPlayerUseData);
 
 		for (Map.Entry<UUID, PlayerUseData> entry : copy.entrySet()) {
@@ -987,17 +962,17 @@ public class EmberScrollItem extends ScrollItem {
 			PlayerUseData useData = entry.getValue();
 
 			Player player = level.getPlayerByUUID(playerId);
-			// --- ИСПРАВЛЕНИЕ: если игрок не найден, просто удаляем запись и идём дальше ---
+
 			if (player == null) {
 				levelPlayerUseData.remove(playerId);
 				continue;
 			}
 
-			// Проверяем, использует ли игрок предмет
+
 			if (!player.isUsingItem()) {
 				levelPlayerUseData.remove(playerId);
 				ItemStack usingItem = player.getUseItem();
-				// Останавливаем использование, если оно было
+
 				ModMessages.sendToNearbyPlayers(
 						new LoopSoundPacket(player.getId(), false, usingItem),
 						level,
@@ -1014,7 +989,7 @@ public class EmberScrollItem extends ScrollItem {
 			if (!(usingItem.getItem() instanceof EmberScrollItem)) {
 				levelPlayerUseData.remove(playerId);
 				player.stopUsingItem();
-				// Отправляем пакет остановки звука
+
 				ModMessages.sendToNearbyPlayers(
 						new LoopSoundPacket(player.getId(), false, usingItem),
 						level,
@@ -1024,7 +999,7 @@ public class EmberScrollItem extends ScrollItem {
 				continue;
 			}
 
-			// Проверяем наличие зачарования
+
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), usingItem) <= 0
 					&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), usingItem) <= 0
 					&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), usingItem) <= 0
@@ -1035,7 +1010,7 @@ public class EmberScrollItem extends ScrollItem {
 				continue;
 			}
 
-			// Проверяем особый случай для NECROMANCY с шифтом
+
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), usingItem) > 0 && player.isShiftKeyDown()) {
 				levelPlayerUseData.remove(playerId);
 				stopPlayerUse(level, player, usingItem);
@@ -1044,7 +1019,7 @@ public class EmberScrollItem extends ScrollItem {
 
 			useData.tick();
 
-			// Флаг для определения, нужно ли продолжать использование
+
 			boolean continueUsing = true;
 
 			if (useData.shouldConsumeMana(usingItem)) {
@@ -1071,7 +1046,7 @@ public class EmberScrollItem extends ScrollItem {
 				continue;
 			}
 
-			// Обработка ALTERATION - управление лавой
+
 			if (!player.isShiftKeyDown() && useData.shouldProcessAlteration(usingItem)) {
 				processLavaAlteration(level, player);
 			}
@@ -1080,7 +1055,8 @@ public class EmberScrollItem extends ScrollItem {
 			}
 
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), usingItem) > 0) {
-				if(player instanceof ServerPlayer serverPlayer) ModAdvancements.SPELL_DESTRUCTION_EMBER_TRIGGER.trigger(serverPlayer);
+				if (player instanceof ServerPlayer serverPlayer)
+					ModAdvancements.SPELL_DESTRUCTION_EMBER_TRIGGER.trigger(serverPlayer);
 				spawnProjectile(level, player);
 			}
 		}
@@ -1094,7 +1070,7 @@ public class EmberScrollItem extends ScrollItem {
 		List<BlockPos> lavaSources = new ArrayList<>();
 		List<BlockPos> flowingLavas = new ArrayList<>();
 
-		// Собираем все блоки с лавой в радиусе
+
 		for (int x = -radius; x <= radius; x++) {
 			for (int y = -radius; y <= radius; y++) {
 				for (int z = -radius; z <= radius; z++) {
@@ -1113,27 +1089,27 @@ public class EmberScrollItem extends ScrollItem {
 			}
 		}
 
-		// Сортируем по расстоянию до игрока (ближайшие первые)
+
 		lavaSources.sort(Comparator.comparingDouble(playerPos::distSqr));
 		flowingLavas.sort(Comparator.comparingDouble(playerPos::distSqr));
 
 		boolean removedAny = false;
 
-		// Удаляем один ближайший источник, если есть
+
 		if (!lavaSources.isEmpty()) {
 			BlockPos sourcePos = lavaSources.get(0);
 			removeLavaAt(level, sourcePos);
 			removedAny = true;
 		}
 
-		// Удаляем один ближайший текучий блок, если есть
+
 		if (!flowingLavas.isEmpty()) {
 			BlockPos flowingPos = flowingLavas.get(0);
 			removeLavaAt(level, flowingPos);
 			removedAny = true;
 		}
 
-		// Триггер вызывается, если удалили хотя бы один блок
+
 		if (removedAny && player instanceof ServerPlayer serverPlayer) {
 			ModAdvancements.SPELL_ALTERATION_EMBER_TRIGGER.trigger(serverPlayer);
 		}
@@ -1150,23 +1126,23 @@ public class EmberScrollItem extends ScrollItem {
 		BlockPos playerPos = player.blockPosition();
 		int radius = 5;
 
-		// Находим ближайший подходящий блок в радиусе
+
 		BlockPos nearestLavaPos = null;
 		double nearestDistance = Double.MAX_VALUE;
 
-		// Проходим по всем блокам в кубе радиусом 5 блоков
+
 		for (int x = -radius; x <= radius; x++) {
 			for (int y = -radius; y <= radius; y++) {
 				for (int z = -radius; z <= radius; z++) {
 					BlockPos checkPos = playerPos.offset(x, y, z);
 					double distance = playerPos.distSqr(checkPos);
 
-					// Проверяем, что блок находится в сферическом радиусе
+
 					if (distance <= radius * radius) {
 						BlockState state = level.getBlockState(checkPos);
 						FluidState fluidState = level.getFluidState(checkPos);
 
-						// Проверяем, является ли блок лавой (источником или текущей)
+
 						boolean isLavaSource = state.is(Blocks.LAVA) && fluidState.isSource();
 						boolean isFlowingLava = fluidState.is(FluidTags.LAVA) && !fluidState.isSource();
 
@@ -1176,7 +1152,7 @@ public class EmberScrollItem extends ScrollItem {
 								if (direction != Direction.UP) {
 									BlockPos neighborPos = checkPos.relative(direction);
 
-									// Проверяем, можно ли распространить лаву на этот блок
+
 									if (canLavaSpreadTo(level, neighborPos)) {
 										proceedLavaSource = true;
 									}
@@ -1193,33 +1169,30 @@ public class EmberScrollItem extends ScrollItem {
 			}
 		}
 
-		// Если нашли подходящий блок
+
 		if (nearestLavaPos != null) {
 			BlockState state = level.getBlockState(nearestLavaPos);
 			FluidState fluidState = level.getFluidState(nearestLavaPos);
 
-			// Если это льющаяся лава (не источник)
-			if (fluidState.is(FluidTags.LAVA) && !fluidState.isSource()) {
-				// Превращаем в источник лавы
-				level.setBlockAndUpdate(nearestLavaPos, Fluids.LAVA.getSource().defaultFluidState().createLegacyBlock());
-				if(player instanceof ServerPlayer serverPlayer) ModAdvancements.SPELL_ALTERATION_EMBER_TRIGGER.trigger(serverPlayer);
 
-				// Спавним частицы для визуального эффекта
+			if (fluidState.is(FluidTags.LAVA) && !fluidState.isSource()) {
+				level.setBlockAndUpdate(nearestLavaPos, Fluids.LAVA.getSource().defaultFluidState().createLegacyBlock());
+				if (player instanceof ServerPlayer serverPlayer)
+					ModAdvancements.SPELL_ALTERATION_EMBER_TRIGGER.trigger(serverPlayer);
+
+
 				level.sendParticles(ParticleTypes.LAVA,
 						nearestLavaPos.getX() + 0.5, nearestLavaPos.getY() + 0.5, nearestLavaPos.getZ() + 0.5,
 						5, 0.2, 0.2, 0.2, 0.01);
-			}
-			// Если это источник лавы
-			else if (state.is(Blocks.LAVA) && fluidState.isSource()) {
-				// Распространяем лаву на один соседний блок
+			} else if (state.is(Blocks.LAVA) && fluidState.isSource()) {
 				spreadLavaInstantly(level, nearestLavaPos);
-				if(player instanceof ServerPlayer serverPlayer) ModAdvancements.SPELL_ALTERATION_EMBER_TRIGGER.trigger(serverPlayer);
+				if (player instanceof ServerPlayer serverPlayer)
+					ModAdvancements.SPELL_ALTERATION_EMBER_TRIGGER.trigger(serverPlayer);
 			}
 		}
 	}
 
 	private static void spreadLavaInstantly(ServerLevel level, BlockPos sourcePos) {
-		// Проверяем все соседние блоки
 		for (Direction direction : Direction.values()) {
 			BlockPos neighborPos = sourcePos.relative(direction);
 
@@ -1230,13 +1203,12 @@ public class EmberScrollItem extends ScrollItem {
 				continue;
 			}
 
-			// Проверяем, можно ли распространить лаву на этот блок
-			if (canLavaSpreadTo(level, neighborPos)) {
 
+			if (canLavaSpreadTo(level, neighborPos)) {
 				if (level.getFluidState(sourcePos).getType() instanceof LavaFluid lava)
 					lava.spreadTo(level, neighborPos, level.getBlockState(neighborPos), direction, lava.getFlowing(6, direction == Direction.DOWN));
 
-				// Спавним частицы
+
 				level.sendParticles(ParticleTypes.LAVA,
 						neighborPos.getX() + 0.5, neighborPos.getY() + 0.5, neighborPos.getZ() + 0.5,
 						3, 0.1, 0.1, 0.1, 0.005);
@@ -1250,7 +1222,6 @@ public class EmberScrollItem extends ScrollItem {
 	}
 
 	private static void spawnProjectile(ServerLevel level, Player player) {
-		// Создаем снаряд
 		Vec3 lookAngle = player.getLookAngle();
 		Vec3 startPos = player.getEyePosition().add(lookAngle.scale(0.5));
 
@@ -1265,12 +1236,11 @@ public class EmberScrollItem extends ScrollItem {
 	}
 
 	public static void processProjectilesStatic(ServerLevel level) {
-		// Получаем снаряды для этого уровня
 		Map<UUID, EmberProjectileData> levelActiveProjectiles = getActiveProjectiles(level);
 
 		if (level == null || levelActiveProjectiles.isEmpty()) return;
 
-		// Копируем для безопасного удаления
+
 		Map<UUID, EmberProjectileData> copy = new HashMap<>(levelActiveProjectiles);
 
 		for (Map.Entry<UUID, EmberProjectileData> entry : copy.entrySet()) {
@@ -1286,9 +1256,8 @@ public class EmberScrollItem extends ScrollItem {
 				continue;
 			}
 
-			// Проверяем контакт с жидкостью перед обновлением позиции
+
 			if (checkWaterContact(level, projectile.position)) {
-				// Эффект шипения в воде
 				level.sendParticles(ParticleTypes.SMOKE,
 						projectile.position.x, projectile.position.y, projectile.position.z,
 						5, 0.2, 0.2, 0.2, 0.05);
@@ -1304,16 +1273,16 @@ public class EmberScrollItem extends ScrollItem {
 				continue;
 			}
 
-			// Обновляем позицию (в 2 раза быстрее)
+
 			projectile.position = projectile.position.add(projectile.velocity);
 
-			// Проверяем столкновения
+
 			if (checkCollisions(level, projectile, projectileId)) {
 				levelActiveProjectiles.remove(projectileId);
 				continue;
 			}
 
-			// Спавним частицы
+
 			if (level.getGameTime() - projectile.spawnTime <= 1) level.sendParticles(ParticleTypes.FLAME,
 					projectile.position.x, projectile.position.y, projectile.position.z,
 					1, 0.1, 0.1, 0.1, 0.01);
@@ -1321,14 +1290,14 @@ public class EmberScrollItem extends ScrollItem {
 					projectile.position.x, projectile.position.y, projectile.position.z,
 					1, 0.1, 0.1, 0.1, 0.01);
 
-			// Добавляем больше частиц для эффекта скорости
+
 			level.sendParticles(ParticleTypes.SMOKE,
 					projectile.position.x, projectile.position.y, projectile.position.z,
 					1, 0.05, 0.05, 0.05, 0.005);
 		}
 	}
 
-	// Проверка контакта с водой
+
 	private static boolean checkWaterContact(Level level, Vec3 position) {
 		BlockPos pos = new BlockPos(
 				(int) Math.floor(position.x),
@@ -1336,13 +1305,13 @@ public class EmberScrollItem extends ScrollItem {
 				(int) Math.floor(position.z)
 		);
 
-		// Проверяем блок жидкости
+
 		FluidState fluidState = level.getFluidState(pos);
 		if (fluidState.is(FluidTags.WATER)) {
 			return true;
 		}
 
-		// Проверяем соседние блоки для точности
+
 		for (int dx = -1; dx <= 1; dx++) {
 			for (int dy = -1; dy <= 1; dy++) {
 				for (int dz = -1; dz <= 1; dz++) {
@@ -1363,9 +1332,8 @@ public class EmberScrollItem extends ScrollItem {
 		return false;
 	}
 
-	// Проверка столкновений
+
 	private static boolean checkCollisions(Level level, EmberProjectileData projectile, UUID projectileId) {
-		// Проверка столкновения с блоками
 		Vec3 startPos = projectile.position.subtract(projectile.velocity);
 		Vec3 endPos = projectile.position.add(projectile.velocity);
 
@@ -1380,9 +1348,8 @@ public class EmberScrollItem extends ScrollItem {
 			BlockPos hitPos = blockHit.getBlockPos();
 			BlockState hitState = level.getBlockState(hitPos);
 
-			// Проверяем, не попали ли в воду (на всякий случай)
+
 			if (level.getFluidState(hitPos).is(FluidTags.WATER)) {
-				// Эффект шипения
 				level.playSound(null, hitPos, RPGSounds.EMBER_GEM_EXTINGUISH.get(),
 						SoundSource.BLOCKS, 0.3F, 1.0F);
 
@@ -1394,9 +1361,8 @@ public class EmberScrollItem extends ScrollItem {
 				return true;
 			}
 
-			// Проверяем, является ли блок горючим
+
 			if (hitState.is(ModBlocks.ARBOR_FUEL_BLOCK.get())) {
-				// Заменяем блок земли на огонь
 				BlockState fireState = BaseFireBlock.getState(level, hitPos);
 				if (BaseFireBlock.canBePlacedAt(level, hitPos, Direction.UP)) {
 					level.setBlockAndUpdate(hitPos, fireState);
@@ -1405,9 +1371,7 @@ public class EmberScrollItem extends ScrollItem {
 			}
 
 			if (hitState.getBlock() instanceof TntBlock tnt) {
-				// Создаём мнимый горящий снаряд для взаимодействия с TNT
 				if (level instanceof ServerLevel serverLevel) {
-					// Создаём фейковый SmallFireball
 					SmallFireball fireProjectile = new SmallFireball(
 							serverLevel,
 							projectile.position.x,
@@ -1418,7 +1382,7 @@ public class EmberScrollItem extends ScrollItem {
 							projectile.velocity.z
 					);
 
-					// Устанавливаем владельца снаряда, если есть
+
 					if (projectile.ownerId != null) {
 						Entity owner = serverLevel.getEntity(projectile.ownerId);
 						if (owner != null) {
@@ -1426,73 +1390,69 @@ public class EmberScrollItem extends ScrollItem {
 						}
 					}
 
-					// Устанавливаем, что снаряд горит
+
 					fireProjectile.setSecondsOnFire(100);
 
-					// Вызываем метод взаимодействия TNT со снарядом
+
 					tnt.onProjectileHit(level, hitState, blockHit, fireProjectile);
 				}
 				return true;
 			}
 
-			// НОВЫЙ КОД: Проверка воспламеняемости блоков
+
 			int flammability = Math.max(100 - hitState.getFlammability(level, hitPos, blockHit.getDirection()), 0);
 			if (flammability < 100) {
 				long timeAlive = 10 - ((level.getGameTime() - projectile.spawnTime));
 				double requiredFlammability = timeAlive * 12;
 
 				if (requiredFlammability >= flammability) {
-					// Уничтожаем блок без дропа
 					level.destroyBlock(hitPos, false);
-					// Ставим блок огня на его место
+
 					BlockState fireState = BaseFireBlock.getState(level, hitPos);
 					if (BaseFireBlock.canBePlacedAt(level, hitPos, Direction.UP)) {
 						level.setBlockAndUpdate(hitPos, fireState);
 					} else level.setBlockAndUpdate(hitPos, Blocks.AIR.defaultBlockState());
 					return false;
 				}
-				// Если воспламеняемость недостаточна, продолжаем обычную обработку
+
 			}
 
-			// Для остальных блоков - проверяем, можно ли использовать зажигалку
-			// Создаём мнимую зажигалку для проверки
+
 			ItemStack flintAndSteel = new ItemStack(Items.FLINT_AND_STEEL);
 
-			// Проверяем, может ли зажигалка быть использована на этом блоке
+
 			if (level instanceof ServerLevel serverLevel) {
-				// Создаём фейкового игрока
 				FakePlayer fakePlayer = FakePlayerFactory.get(serverLevel, new GameProfile(UUID.randomUUID(), "FakePlayer"));
 
-				// Устанавливаем позицию фейкового игрока в точку удара
+
 				fakePlayer.setPos(hitPos.getX(), hitPos.getY(), hitPos.getZ());
 
-				// Устанавливаем правильное вращение для контекста
+
 				fakePlayer.setYRot(blockHit.getDirection().toYRot());
 				fakePlayer.setXRot((float) Math.toDegrees(blockHit.getDirection().toYRot()));
 
-				// Даём фейковому игроку зажигалку в руку
+
 				fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, flintAndSteel.copy());
 
-				// Создаём UseOnContext для проверки использования зажигалки
+
 				UseOnContext context = new UseOnContext(fakePlayer, InteractionHand.MAIN_HAND, blockHit);
 
-				// Проверяем, можно ли использовать зажигалку на блоке
+
 				InteractionResult useResult = InteractionResult.PASS;
 				if (flintAndSteel.getItem() instanceof FlintAndSteelItem flintAndSteelItem) {
 					useResult = flintAndSteelItem.useOn(context);
 				}
 
-				// Очищаем руку фейкового игрока
+
 				fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 
-				// Если зажигалка может быть использована (вернула SUCCESS или CONSUME),
-				// то не спавним огонь на соседнем блоке
+
 				if (useResult.consumesAction()) {
 					return true;
 				}
 			}
 
-			// Если зажигалка не может быть использована, пробуем поставить огонь на соседнем блоке
+
 			BlockPos firePos = hitPos.relative(blockHit.getDirection());
 
 			if (BaseFireBlock.canBePlacedAt(level, firePos, Direction.UP)) {
@@ -1501,7 +1461,7 @@ public class EmberScrollItem extends ScrollItem {
 			return true;
 		}
 
-		// Проверка столкновения с существами
+
 		List<Entity> entities = level.getEntities(null,
 				new net.minecraft.world.phys.AABB(startPos, endPos).inflate(0.5));
 
@@ -1521,8 +1481,6 @@ public class EmberScrollItem extends ScrollItem {
 				fakeFireball.setSecondsOnFire(1);
 				if (entity instanceof LivingEntity livingEntity &&
 						!entity.getUUID().equals(projectile.ownerId) && !entity.fireImmune()) {
-
-					// Поджигаем существо на 5 секунд (100 тиков)
 					livingEntity.setSecondsOnFire(5);
 					if (owner != null)
 						entity.hurt(owner.damageSources().fireball(fakeFireball, owner), 2F);

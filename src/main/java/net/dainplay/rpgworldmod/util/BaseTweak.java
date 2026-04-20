@@ -14,7 +14,6 @@ public class BaseTweak implements ITweak {
 
 	@Override
 	public void adjust(Entity entity) {
-
 	}
 
 	@Override

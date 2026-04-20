@@ -4,7 +4,6 @@ import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.PacketTireSwingInteraction;
-import net.dainplay.rpgworldmod.network.PullPlayerPacket;
 import net.dainplay.rpgworldmod.network.SwingPlayerPacket;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.core.BlockPos;
@@ -55,60 +54,60 @@ public class TireSwingEntity extends Entity {
 	private static final EntityDataAccessor<Optional<BlockPos>> DATA_FENCE_POS = SynchedEntityData.defineId(TireSwingEntity.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
 	private static final EntityDataAccessor<Float> DATA_ROPE_LENGTH = SynchedEntityData.defineId(TireSwingEntity.class, EntityDataSerializers.FLOAT);
 
-	// Физические константы
+
 	private static final float MAX_SWING_ANGLE = 90.0F;
 	private static final float SWING_DAMPING = 0.995F;
 	private static final float SWING_GRAVITY = 0.3F;
 	private static final float PLAYER_PUSH_STRENGTH = 0.015F;
 	private static final float STOP_THRESHOLD = 0.01F;
-	private static final float COLLISION_LOOKAHEAD_FACTOR = 1.2F; // Множитель для проверки столкновений вперед
+	private static final float COLLISION_LOOKAHEAD_FACTOR = 1.2F;
 	private static final float MIN_VELOCITY_FOR_SOUND = 0.1F;
 
-	// Константы для типа привязки
+
 	public static final byte LEASH_TYPE_NONE = 0;
 	public static final byte LEASH_TYPE_PLAYER = 1;
 	public static final byte LEASH_TYPE_FENCE_KNOT = 2;
 
-	// Максимальное расстояние для привязки
+
 	private static final float MAX_LEASH_DISTANCE = 10.0F;
 	private static final int MAX_FENCE_HEIGHT = 7;
 
-	// Константы для поворота качелей
+
 	private static final float BASE_ROTATION_SPEED = 1.5F;
 	private static final float ROTATION_SMOOTHNESS = 0.1F;
 	private static final float ROTATION_ANGLE_LIMIT = 15.0F;
 	private static final float MAX_HEAD_YAW_OFFSET = 90.0F;
 
-	// Константы для случайного поворота
+
 	private static final float RANDOM_ROTATION_CHANCE = 0.02F;
 	private static final float MAX_RANDOM_ROTATION = 5.0F;
 	private static final float MIN_ANGLE_FOR_RANDOM_ROTATION = 10.0F;
 	private static final float RANDOM_ROTATION_DECAY = 0.95F;
 
-	// Константы для поворота модели
+
 	private static final float BASE_MODEL_ROTATION = 45.0F;
 	private static final float MAX_MODEL_ROTATION_ADD = 15.0F;
 
-	// Добавьте эти константы в раздел с другими константами
-	private static final float SWOOSH_ANGLE_THRESHOLD = 45.0F;
-	private static final float CRACK_VELOCITY_THRESHOLD = 1.5F; // Средняя скорость для звука треска
-	private static final float MAX_SWOOSH_SPEED = 5.0F; // Максимальная скорость для нормализации громкости
-	private static final float CRACK_ANGLE_DEADZONE = 2.0F; // Зона вокруг 0 градусов для предотвращения спама
 
-	// Константы для эффекта регенерации
-	private static final int HAPPINESS_DURATION = 200; // 10 секунд (200 тиков)
-	private static final int MAX_HAPPINESS_DURATION = 3600; // 3 минуты (3600 тиков)
-	private static final float HAPPINESS_VELOCITY_THRESHOLD = 1.0F; // Порог скорости для активации эффекта
-	private static final int HAPPINESS_COOLDOWN = 20; // Кулдаун 1 секунда
+	private static final float SWOOSH_ANGLE_THRESHOLD = 45.0F;
+	private static final float CRACK_VELOCITY_THRESHOLD = 1.5F;
+	private static final float MAX_SWOOSH_SPEED = 5.0F;
+	private static final float CRACK_ANGLE_DEADZONE = 2.0F;
+
+
+	private static final int HAPPINESS_DURATION = 200;
+	private static final int MAX_HAPPINESS_DURATION = 3600;
+	private static final float HAPPINESS_VELOCITY_THRESHOLD = 1.0F;
+	private static final int HAPPINESS_COOLDOWN = 20;
 	private int happinessCooldown = 0;
 
-	// Добавьте эти поля в раздел с другими переменными
+
 	private boolean hasCrossedZeroRecently = false;
 	private boolean wasAboveSwooshAngle = false;
 	private int zeroCrossCooldown = 0;
 	private int swooshCooldown = 0;
 
-	// Переменные для анимации и интерполяции
+
 	private float swingProgress = 0.0F;
 	private float lastSwingProgress = 0.0F;
 	private float renderSwingAngle = 0.0F;
@@ -119,12 +118,12 @@ public class TireSwingEntity extends Entity {
 	private float lastSwingYaw = 0.0F;
 	private float targetSwingYaw = 0.0F;
 
-	// Переменные для плавного управления
+
 	private float currentRotationSpeed = 0.0F;
 	private float randomRotationOffset = 0.0F;
 	private int randomRotationTimer = 0;
 
-	// Для интерполяции на клиенте
+
 	private float clientSwingAngle = 0.0F;
 	private float clientSwingVelocity = 0.0F;
 	private float prevClientSwingAngle = 0.0F;
@@ -132,22 +131,22 @@ public class TireSwingEntity extends Entity {
 	private float clientSwingYaw = 0.0F;
 	private float prevClientSwingYaw = 0.0F;
 
-	// Таймеры для управления
+
 	private int pushDirection = 0;
 	private int swingUpdateTimer = 0;
 	private int rotationInput = 0;
 	private int ticksSeatInsideBlock = 0;
 
-	// Рандомизатор
+
 	private final Random random = new Random();
 
-	// Второй хитбокс для сиденья
+
 	private final TireSwingSeatPart seatPart;
 
-	// Флаг для отслеживания, было ли взаимодействие с сиденьем
+
 	private boolean seatInteraction = false;
 
-	// Заменим константу ROPE_LENGTH на использование переменной
+
 	private float currentRopeLength = 5.0F;
 	private BlockPos fencePos;
 	private boolean isLeashed = false;
@@ -169,7 +168,7 @@ public class TireSwingEntity extends Entity {
 		this.entityData.define(DATA_SWING_YAW, 0.0F);
 		this.entityData.define(DATA_TARGET_SWING_YAW, 0.0F);
 
-		// Новые параметры для привязки
+
 		this.entityData.define(DATA_LEASH_HOLDER_ID, -1);
 		this.entityData.define(DATA_LEASH_TYPE, (byte) 0);
 		this.entityData.define(DATA_FENCE_POS, Optional.empty());
@@ -192,7 +191,7 @@ public class TireSwingEntity extends Entity {
 				this.prevClientSwingYaw = this.clientSwingYaw;
 				float newYaw = getSwingYaw();
 
-				// Корректируем для плавной интерполяции
+
 				float diff = newYaw - this.prevClientSwingYaw;
 				if (diff > 180.0F) {
 					newYaw -= 360.0F;
@@ -205,14 +204,12 @@ public class TireSwingEntity extends Entity {
 		}
 	}
 
-	// Добавим новые методы для работы с поводком
-	public void setLeashedTo(@Nullable Entity entity, boolean broadcast) {
 
+	public void setLeashedTo(@Nullable Entity entity, boolean broadcast) {
 		if (entity != null) {
 			this.isLeashed = true;
 			this.entityData.set(DATA_LEASH_HOLDER_ID, entity.getId());
 			if (entity instanceof LeashFenceKnotEntity knot) {
-
 				this.entityData.set(DATA_LEASH_TYPE, LEASH_TYPE_FENCE_KNOT);
 				this.entityData.set(DATA_FENCE_POS, Optional.of(knot.getPos()));
 			} else {
@@ -221,7 +218,7 @@ public class TireSwingEntity extends Entity {
 			}
 
 			if (broadcast && !this.level().isClientSide) {
-				this.level().broadcastEntityEvent(this, (byte) 7); // Событие привязки
+				this.level().broadcastEntityEvent(this, (byte) 7);
 			}
 		} else {
 			this.entityData.set(DATA_LEASH_HOLDER_ID, null);
@@ -239,7 +236,7 @@ public class TireSwingEntity extends Entity {
 	@Nullable
 	public Entity getLeashHolder() {
 		Entity leashholder = null;
-		// Пытаемся восстановить из данных
+
 		int holderId = this.entityData.get(DATA_LEASH_HOLDER_ID);
 		if (holderId != -1) {
 			leashholder = this.level().getEntity(holderId);
@@ -260,11 +257,9 @@ public class TireSwingEntity extends Entity {
 		return new ItemStack(ModBlocks.TIRE.get());
 	}
 
-	// Метод для привязки к забору
+
 	public boolean leashToFence(BlockPos fencePos, Player player, boolean newSwing) {
-		// Проверяем условия для привязки к забору
 		if (canLeashToFence(fencePos)) {
-			// Используем существующий узел или создаем новый
 			LeashFenceKnotEntity knot = LeashFenceKnotEntity.getOrCreateKnot(this.level(), fencePos);
 			knot.playPlacementSound();
 			return leashToExistingKnot(knot, player, newSwing);
@@ -272,21 +267,20 @@ public class TireSwingEntity extends Entity {
 		return false;
 	}
 
-	// Проверка возможности привязки к забору
+
 	private boolean canLeashToFence(BlockPos fencePos) {
-		// Проверяем, что забор находится на той же координате Y (вертикально над качелями)
 		BlockPos currentPos = this.blockPosition();
 		if (fencePos.getX() != currentPos.getX() || fencePos.getZ() != currentPos.getZ()) {
 			return false;
 		}
 
-		// Проверяем, что забор не выше 7 блоков
+
 		int heightDiff = fencePos.getY() - currentPos.getY();
 		if (heightDiff <= 1 || heightDiff > MAX_FENCE_HEIGHT) {
 			return false;
 		}
 
-		// Проверяем, что между качелями и забором нет блоков
+
 		for (int y = currentPos.getY() + 1; y < fencePos.getY(); y++) {
 			BlockPos checkPos = new BlockPos(currentPos.getX(), y, currentPos.getZ());
 			BlockState state = this.level().getBlockState(checkPos);
@@ -295,14 +289,13 @@ public class TireSwingEntity extends Entity {
 			}
 		}
 
-		// Проверяем, что на позиции забора действительно забор
+
 		BlockState fenceState = this.level().getBlockState(fencePos);
 		return fenceState.getBlock() instanceof FenceBlock;
 	}
 
-	// Метод для отвязки
+
 	public void dropLeash(boolean broadcast, boolean dropItem) {
-		// Сохраняем текущего держателя поводка
 		Entity oldHolder = getLeashHolder();
 		byte leashType = getLeashType();
 
@@ -312,13 +305,11 @@ public class TireSwingEntity extends Entity {
 		this.entityData.set(DATA_FENCE_POS, Optional.empty());
 		this.fencePos = null;
 
-		// Если это был узел на заборе, не уничтожаем его сразу
-		// Узел будет уничтожен только если к нему больше никто не привязан
+
 		if (oldHolder instanceof LeashFenceKnotEntity knot) {
-			// Проверяем, остались ли другие существа, привязанные к узлу
 			boolean hasOtherEntities = false;
 
-			// Проверяем мобов
+
 			List<Mob> mobs = this.level().getEntitiesOfClass(Mob.class,
 					new AABB(knot.getX() - 7, knot.getY() - 7, knot.getZ() - 7,
 							knot.getX() + 7, knot.getY() + 7, knot.getZ() + 7));
@@ -329,7 +320,7 @@ public class TireSwingEntity extends Entity {
 				}
 			}
 
-			// Проверяем другие качели
+
 			if (!hasOtherEntities) {
 				List<TireSwingEntity> swings = this.level().getEntitiesOfClass(TireSwingEntity.class,
 						new AABB(knot.getX() - 7, knot.getY() - 7, knot.getZ() - 7,
@@ -342,19 +333,19 @@ public class TireSwingEntity extends Entity {
 				}
 			}
 
-			// Если больше никто не привязан к узлу, удаляем его
+
 			if (!hasOtherEntities && !this.level().isClientSide) {
 				knot.discard();
 			}
 		}
 
-		// Если качели не привязаны и нужно выпадать предметы, уничтожаем их
+
 		if (dropItem && !this.level().isClientSide) {
 			this.destroyAndDropTire();
 		}
 
 		if (broadcast && !this.level().isClientSide) {
-			this.level().broadcastEntityEvent(this, (byte) 6); // Событие отвязки
+			this.level().broadcastEntityEvent(this, (byte) 6);
 		}
 	}
 
@@ -368,22 +359,20 @@ public class TireSwingEntity extends Entity {
 			return false;
 		}
 
-		// Узел может делиться с любыми другими существами
+
 		return true;
 	}
 
 	public Vec3 getLeashRopePosition(float partialTicks) {
 		if (getLeashType() == LEASH_TYPE_FENCE_KNOT && getLeashHolder() instanceof LeashFenceKnotEntity) {
-			// Для узла на заборе используем его позицию
 			return new Vec3(getLeashHolder().getX(), getLeashHolder().getY() + 0.5, getLeashHolder().getZ());
 		} else if (getLeashHolder() != null) {
-			// Для игрока используем стандартный метод
 			return getLeashHolder().getRopeHoldPosition(partialTicks);
 		}
 		return this.position();
 	}
 
-	// Метод для уничтожения качелей и выпадения шины
+
 	private void destroyAndDropTire() {
 		if (!this.level().isClientSide) {
 			this.spawnAtLocation(ModBlocks.TIRE.get());
@@ -392,26 +381,22 @@ public class TireSwingEntity extends Entity {
 		}
 	}
 
-	// Метод для посадки игрока (вызывается как из основного тела, так и из сиденья)
+
 	public InteractionResult tryMountPlayer(Player player) {
 		if (this.getPassengers().isEmpty() && !player.isSecondaryUseActive() && getLeashType() == LEASH_TYPE_FENCE_KNOT) {
 			if (!this.level().isClientSide) {
-				// НЕ меняем yaw качелей под игрока, оставляем текущий поворот качелей
-				// Только устанавливаем yaw тела пассажира на текущий yaw качелей
 				float currentSwingYaw = getSwingYaw();
 				this.passengerBodyYaw = currentSwingYaw;
 				this.lastPassengerBodyYaw = currentSwingYaw;
 
 				setPassengerYaw(currentSwingYaw);
-				// НЕ меняем swingYaw и targetSwingYaw - оставляем как есть
 
-				// Позиция рассчитывается в positionRider, поэтому просто запускаем riding
+
 				if (player.startRiding(this)) {
 					setOccupied(true);
 					return InteractionResult.CONSUME;
 				}
 			} else {
-				// На клиенте просто возвращаем успех
 				return InteractionResult.SUCCESS;
 			}
 		} else if (getLeashType() == LEASH_TYPE_PLAYER) {
@@ -442,7 +427,7 @@ public class TireSwingEntity extends Entity {
 		if (this.tickCount == 1 && !this.level().isClientSide && this.isLeashed) {
 			restoreLeash();
 		}
-		// Обновляем позицию хитбокса сиденья
+
 		updateSeatPartPosition();
 		if (seatPart != null) {
 			boolean seatCollision = checkAABBCollisionWithSolidBlocks(seatPart.getBoundingBox());
@@ -457,7 +442,7 @@ public class TireSwingEntity extends Entity {
 			}
 		}
 
-		// Обновляем интерполированные значения для рендеринга
+
 		if (this.level().isClientSide) {
 			this.lastRenderSwingAngle = this.renderSwingAngle;
 			this.renderSwingAngle = getRenderSwingAngleInternal(1.0F);
@@ -466,7 +451,7 @@ public class TireSwingEntity extends Entity {
 			float targetSwing = (float) Math.sin(Math.toRadians(this.renderSwingAngle * 10)) * 0.5F;
 			this.swingProgress += (targetSwing - this.swingProgress) * 0.2F;
 
-			// Интерполируем yaw тела пассажира и качелей
+
 			this.lastPassengerBodyYaw = this.passengerBodyYaw;
 			float newPassengerYaw = getPassengerYaw();
 
@@ -497,25 +482,24 @@ public class TireSwingEntity extends Entity {
 				validateLeashConnection();
 			}
 			updateLeashState();
-			// Серверная логика
+
 			boolean hasPassenger = !this.getPassengers().isEmpty();
 			setOccupied(hasPassenger);
 
-			// Обновляем физику качания (включая проверку столкновений)
+
 			updateSwingPhysics(hasPassenger);
 
-			// Обновляем поворот качелей
+
 			updateSwingRotation(hasPassenger);
 
-			// Обновляем yaw тела пассажира и обработку ввода
+
 			if (hasPassenger) {
 				Entity passenger = this.getPassengers().get(0);
 
 				if (passenger instanceof Player player) {
-					// 1. Ограничиваем вращение головы игрока
 					limitPlayerHeadRotation(player);
 
-					// 2. Обрабатываем ввод для качания вперед/назад (только если нет столкновения)
+
 					float moveInput = player.zza;
 					if (moveInput != 0 && !checkSeatCollision(getSwingAngle())) {
 						this.pushDirection = (int) Math.signum(moveInput);
@@ -526,7 +510,7 @@ public class TireSwingEntity extends Entity {
 						this.pushDirection = 0;
 					}
 
-					// 3. Обрабатываем ввод для поворота качелей
+
 					float strafeInput = player.xxa;
 					if (Math.abs(strafeInput) > 0.1f) {
 						this.rotationInput = (int) Math.signum(strafeInput);
@@ -535,7 +519,7 @@ public class TireSwingEntity extends Entity {
 					}
 				}
 
-				// Синхронизируем каждые 2 тика для плавности
+
 				if (swingUpdateTimer++ % 2 == 0) {
 					this.entityData.set(DATA_SWING_ANGLE, getSwingAngle());
 					this.entityData.set(DATA_SWING_VELOCITY, getSwingVelocity());
@@ -550,12 +534,9 @@ public class TireSwingEntity extends Entity {
 
 		Entity holder = getLeashHolder();
 		if (holder instanceof LeashFenceKnotEntity knot) {
-			// Проверяем, что узел все еще существует и на месте
 			if (!knot.isAlive()) {
-				// Узел был уничтожен, отвязываем
 				this.dropLeash(true, true);
 			} else if (this.fencePos != null && !knot.getPos().equals(this.fencePos)) {
-				// Узел был перемещен (маловероятно, но на всякий случай)
 				this.dropLeash(true, true);
 			}
 		}
@@ -564,17 +545,17 @@ public class TireSwingEntity extends Entity {
 	public boolean leashToExistingKnot(LeashFenceKnotEntity knot, Player player, boolean newSwing) {
 		BlockPos fencePos = knot.getPos();
 
-		// Проверяем условия для привязки
+
 		if (canLeashToFence(fencePos)) {
 			this.isLeashed = true;
 			this.fencePos = fencePos;
 
-			// Обновляем синхронизированные данные
+
 			this.entityData.set(DATA_LEASH_HOLDER_ID, knot.getId());
 			this.entityData.set(DATA_LEASH_TYPE, LEASH_TYPE_FENCE_KNOT);
 			this.entityData.set(DATA_FENCE_POS, Optional.of(fencePos));
 
-			// Устанавливаем длину веревки как расстояние до узла
+
 			float distance = (float) Math.sqrt(
 					Math.pow(knot.getX() - this.getX(), 2) +
 							Math.pow(knot.getY() + 0.5 - this.getY(), 2) +
@@ -583,7 +564,7 @@ public class TireSwingEntity extends Entity {
 			this.currentRopeLength = distance;
 			this.entityData.set(DATA_ROPE_LENGTH, distance);
 
-			// Отправляем событие привязки
+
 			if (!this.level().isClientSide) {
 				this.level().broadcastEntityEvent(this, (byte) 7);
 			}
@@ -605,16 +586,14 @@ public class TireSwingEntity extends Entity {
 					break;
 			}
 		} else {
-			// Если не привязаны, уничтожаем
 			this.destroyAndDropTire();
 		}
 	}
 
-	// Обновление привязки к игроку
+
 	private void updatePlayerLeash() {
 		Entity holder = this.getLeashHolder();
 		if (holder != null && holder.isAlive()) {
-			// Проверяем расстояние до игрока
 			double distance = this.distanceTo(holder);
 			if (distance > MAX_LEASH_DISTANCE) {
 				this.dropLeash(true, true);
@@ -633,22 +612,19 @@ public class TireSwingEntity extends Entity {
 		return null;
 	}
 
-	// Обновление привязки к забору
+
 	private void updateFenceLeash() {
 		BlockPos fence = this.getFencePos();
 		if (fence != null) {
-			// Проверяем, существует ли еще узел
 			LeashFenceKnotEntity knot = this.getLeashKnot();
 			if (knot != null && knot.isAlive()) {
-				// Также проверяем, что на позиции забора все еще забор
 				BlockState fenceState = this.level().getBlockState(fence);
 				if (!(fenceState.getBlock() instanceof FenceBlock)) {
-					// Забор был заменен на другой блок, отвязываем
 					this.dropLeash(true, true);
 					return;
 				}
 
-				// Обновляем длину веревки
+
 				float distance = (float) Math.sqrt(
 						Math.pow(knot.getX() - this.getX(), 2) +
 								Math.pow(knot.getY() + 0.5 - this.getY(), 2) +
@@ -657,7 +633,6 @@ public class TireSwingEntity extends Entity {
 				this.currentRopeLength = distance;
 				this.entityData.set(DATA_ROPE_LENGTH, distance);
 			} else {
-				// Узел был уничтожен, пытаемся восстановить
 				this.dropLeash(true, true);
 			}
 		} else {
@@ -665,7 +640,7 @@ public class TireSwingEntity extends Entity {
 		}
 	}
 
-	// Обновим метод для получения длины веревки
+
 	public float getRopeLength() {
 		return this.entityData.get(DATA_ROPE_LENGTH);
 	}
@@ -673,7 +648,7 @@ public class TireSwingEntity extends Entity {
 	private void updateSeatPartPosition() {
 		if (seatPart == null) return;
 
-		// Вычисляем позицию сиденья на основе текущего угла качания
+
 		float swingAngleRad = (float) Math.toRadians(getSwingAngle());
 		float swingYawRad = (float) Math.toRadians(getSwingYaw());
 
@@ -681,7 +656,7 @@ public class TireSwingEntity extends Entity {
 		double verticalOffset = getRopeLength() * (1.0 - Math.cos(swingAngleRad));
 		double yOffset = this.getPassengersRidingOffset();
 
-		// Поворачиваем смещение согласно swingYaw
+
 		double rotatedX = -forwardOffset * Math.sin(swingYawRad);
 		double rotatedZ = forwardOffset * Math.cos(swingYawRad);
 
@@ -690,9 +665,9 @@ public class TireSwingEntity extends Entity {
 
 		seatPart.setPos(seatPos.x, seatPos.y, seatPos.z);
 
-		// Обновляем bounding box сиденья (слегка уменьшаем для лучшего геймплея)
-		float width = 0.8f; // Было 0.875f
-		float height = 0.8f; // Было 0.875f
+
+		float width = 0.8f;
+		float height = 0.8f;
 		seatPart.setBoundingBox(new AABB(
 				seatPos.x - width / 2, seatPos.y - 0.05, seatPos.z - width / 2,
 				seatPos.x + width / 2, seatPos.y + height, seatPos.z + width / 2
@@ -703,7 +678,7 @@ public class TireSwingEntity extends Entity {
 		float swingYaw = getSwingYaw();
 		float headYaw = player.getYHeadRot();
 
-		// Нормализуем углы в диапазон -180..180
+
 		float normalizedSwingYaw = swingYaw % 360;
 		if (normalizedSwingYaw > 180) normalizedSwingYaw -= 360;
 		if (normalizedSwingYaw < -180) normalizedSwingYaw += 360;
@@ -712,18 +687,18 @@ public class TireSwingEntity extends Entity {
 		if (normalizedHeadYaw > 180) normalizedHeadYaw -= 360;
 		if (normalizedHeadYaw < -180) normalizedHeadYaw += 360;
 
-		// Вычисляем разницу
+
 		float diff = normalizedHeadYaw - normalizedSwingYaw;
 
-		// Корректируем разницу в диапазон -180..180
+
 		if (diff > 180) diff -= 360;
 		if (diff < -180) diff += 360;
 
-		// Ограничиваем отклонение головы
+
 		if (Math.abs(diff) > MAX_HEAD_YAW_OFFSET) {
 			float limitedHeadYaw = normalizedSwingYaw + (Math.signum(diff) * MAX_HEAD_YAW_OFFSET);
 
-			// Возвращаем в исходный диапазон
+
 			if (limitedHeadYaw > 180) limitedHeadYaw -= 360;
 			if (limitedHeadYaw < -180) limitedHeadYaw += 360;
 
@@ -732,7 +707,7 @@ public class TireSwingEntity extends Entity {
 			player.setYRot(limitedHeadYaw);
 		}
 
-		// Тело игрока следует за направлением качелей
+
 		this.passengerBodyYaw = swingYaw;
 		setPassengerYaw(this.passengerBodyYaw);
 	}
@@ -748,11 +723,10 @@ public class TireSwingEntity extends Entity {
 	}
 
 	private float lerpAngle(float partialTicks, float start, float end) {
-		// Нормализуем углы
 		start = normalizeAngle(start);
 		end = normalizeAngle(end);
 
-		// Вычисляем кратчайший путь
+
 		float diff = end - start;
 		if (diff > 180.0F) {
 			diff -= 360.0F;
@@ -770,52 +744,47 @@ public class TireSwingEntity extends Entity {
 
 		float currentAngle = getSwingAngle();
 
-		// Проверяем, что качели в диапазоне для поворота
+
 		if (Math.abs(currentAngle) > ROTATION_ANGLE_LIMIT) {
-			// Сбрасываем ввод, если вышли за пределы
 			this.rotationInput = 0;
 			this.currentRotationSpeed = 0.0F;
 			return;
 		}
 
-		// Вычисляем множитель влияния в зависимости от угла качания
+
 		float angleFactor = 1.0F - (Math.abs(currentAngle) / ROTATION_ANGLE_LIMIT);
 
-		// Целевая скорость поворота на основе ввода игрока
+
 		float targetRotationSpeed = 0.0F;
 
 		if (this.rotationInput != 0) {
-			// Игрок нажимает клавиши - учитываем его ввод
 			targetRotationSpeed = -this.rotationInput * BASE_ROTATION_SPEED * angleFactor;
 
-			// Плавное изменение текущей скорости
+
 			this.currentRotationSpeed += (targetRotationSpeed - this.currentRotationSpeed) * ROTATION_SMOOTHNESS;
 
-			// Сбрасываем случайное смещение при активном вводе
+
 			this.randomRotationOffset *= 0.5F;
 		} else {
-			// Игрок не нажимает клавиши - плавно замедляемся
 			this.currentRotationSpeed *= 0.8F;
 
-			// Если скорость очень мала, обнуляем её
+
 			if (Math.abs(this.currentRotationSpeed) < 0.01F) {
 				this.currentRotationSpeed = 0.0F;
 			}
 
-			// Добавляем случайные повороты при малом угле качания
+
 			if (Math.abs(currentAngle) < MIN_ANGLE_FOR_RANDOM_ROTATION) {
-				// Увеличиваем таймер
 				randomRotationTimer++;
 
-				// Случайный поворот с определенной вероятностью
+
 				if (randomRotationTimer > 10 && this.random.nextFloat() < RANDOM_ROTATION_CHANCE) {
-					// Генерируем случайное смещение
 					float randomRotation = (this.random.nextFloat() - 0.5F) * 2.0F * MAX_RANDOM_ROTATION;
 					this.randomRotationOffset += randomRotation;
 					randomRotationTimer = 0;
 				}
 
-				// Применяем случайное смещение
+
 				if (Math.abs(this.randomRotationOffset) > 0.01F) {
 					this.currentRotationSpeed += this.randomRotationOffset * 0.05F;
 					this.randomRotationOffset *= RANDOM_ROTATION_DECAY;
@@ -823,18 +792,18 @@ public class TireSwingEntity extends Entity {
 			}
 		}
 
-		// Ограничиваем максимальную скорость поворота
+
 		float maxSpeed = BASE_ROTATION_SPEED * angleFactor;
 		this.currentRotationSpeed = Mth.clamp(this.currentRotationSpeed, -maxSpeed, maxSpeed);
 
-		// Обновляем целевой yaw
+
 		this.targetSwingYaw += this.currentRotationSpeed;
 
-		// Плавное приближение текущего yaw к целевому
+
 		float currentSwingYaw = getSwingYaw();
 		float targetDiff = this.targetSwingYaw - currentSwingYaw;
 
-// Корректируем разницу для кратчайшего пути
+
 		if (targetDiff > 180.0F) {
 			targetDiff -= 360.0F;
 		} else if (targetDiff < -180.0F) {
@@ -845,7 +814,7 @@ public class TireSwingEntity extends Entity {
 
 		setSwingYaw(newSwingYaw);
 
-		// Нормализуем целевой yaw
+
 		while (this.targetSwingYaw > 180.0F) this.targetSwingYaw -= 360.0F;
 		while (this.targetSwingYaw < -180.0F) this.targetSwingYaw += 360.0F;
 		setTargetSwingYaw(this.targetSwingYaw);
@@ -854,16 +823,15 @@ public class TireSwingEntity extends Entity {
 	private boolean checkSeatCollisionWithVelocity(float swingAngle, float velocity) {
 		if (seatPart == null) return false;
 
-		// Если скорость очень мала, не проверяем столкновение (чтобы избежать ложных срабатываний)
+
 		if (Math.abs(velocity) < STOP_THRESHOLD) {
 			return false;
 		}
 
-		// Проверяем столкновение в направлении движения
-		// Используем небольшое смещение вперед по направлению движения
+
 		float lookAheadAngle = swingAngle + velocity * COLLISION_LOOKAHEAD_FACTOR;
 
-		// Получаем позицию сиденья для будущего угла
+
 		float swingAngleRad = (float) Math.toRadians(lookAheadAngle);
 		float swingYawRad = (float) Math.toRadians(getSwingYaw());
 
@@ -871,14 +839,14 @@ public class TireSwingEntity extends Entity {
 		double verticalOffset = getRopeLength() * (1.0 - Math.cos(swingAngleRad));
 		double yOffset = this.getPassengersRidingOffset();
 
-		// Поворачиваем смещение согласно swingYaw
+
 		double rotatedX = -forwardOffset * Math.sin(swingYawRad);
 		double rotatedZ = forwardOffset * Math.cos(swingYawRad);
 
 		Vec3 futureSeatPos = this.position()
 				.add(rotatedX, yOffset + verticalOffset, rotatedZ);
 
-		// Создаём AABB для будущей позиции сиденья
+
 		float collisionWidth = 0.7f;
 		float collisionHeight = 0.7f;
 		AABB futureSeatCollisionBox = new AABB(
@@ -890,7 +858,7 @@ public class TireSwingEntity extends Entity {
 				futureSeatPos.z + collisionWidth / 2
 		);
 
-		// Также проверяем текущую позицию на всякий случай
+
 		float currentSwingAngleRad = (float) Math.toRadians(swingAngle);
 		double currentForwardOffset = getRopeLength() * Math.sin(currentSwingAngleRad);
 		double currentVerticalOffset = getRopeLength() * (1.0 - Math.cos(currentSwingAngleRad));
@@ -910,10 +878,10 @@ public class TireSwingEntity extends Entity {
 				currentSeatPos.z + collisionWidth / 2
 		);
 
-		// Проверяем столкновение с твёрдыми блоками для будущей позиции
+
 		boolean futureCollision = checkAABBCollisionWithSolidBlocks(futureSeatCollisionBox);
 
-		// Если будущая позиция свободна, но текущая занята - тоже считаем столкновением
+
 		boolean currentCollision = checkAABBCollisionWithSolidBlocks(currentSeatCollisionBox);
 
 		return futureCollision || currentCollision;
@@ -923,93 +891,90 @@ public class TireSwingEntity extends Entity {
 		float currentAngle = getSwingAngle();
 		float currentVelocity = getSwingVelocity();
 
-		// Сохраняем предыдущий угол для проверки пересечения
+
 		float previousAngle = getSwingAngle();
 
-		// 1. Проверяем столкновение С УЧЕТОМ НАПРАВЛЕНИЯ ДВИЖЕНИЯ
+
 		boolean collisionDetected = checkSeatCollisionWithVelocity(currentAngle, currentVelocity);
 
-		// Сохраняем скорость до столкновения для звука
+
 		float preCollisionVelocity = currentVelocity;
 
-		// 2. Гравитационная сила с нелинейным усилением
+
 		float angleRad = (float) Math.toRadians(currentAngle);
 		float gravityForce = (float) -Math.sin(angleRad) * SWING_GRAVITY;
 
-		// Нелинейное усиление: на больших углах сила растёт быстрее
+
 		float angleRatio = Math.abs(currentAngle) / MAX_SWING_ANGLE;
 		float nonLinearBoost = 1.0F + angleRatio * angleRatio * 2.0F;
 		gravityForce *= nonLinearBoost;
 
-		// 3. Сила от игрока (только если есть пассажир и активен ввод)
+
 		float playerForce = 0.0f;
 		if (hasPassenger && this.pushDirection != 0) {
-			// Игрок толкает эффективнее всего в нижней точке (cos максимален при angle=0°)
 			float efficiency = (float) Math.cos(angleRad);
-			efficiency = Math.max(0.2F, Math.abs(efficiency)); // Минимум 20% эффективности
+			efficiency = Math.max(0.2F, Math.abs(efficiency));
 
 			playerForce = this.pushDirection * PLAYER_PUSH_STRENGTH * efficiency;
 
-			// Автоматический сброс pushDirection после применения
+
 			this.pushDirection = 0;
 		}
 
-		// 4. Если обнаружено столкновение - применяем отскок
+
 		if (collisionDetected) {
-			// Эластичный отскок: сохраняем 70% энергии, меняем направление
-			float bounceFactor = 0.7F; // 70% энергии сохраняется
+			float bounceFactor = 0.7F;
 			float newVelocity = -currentVelocity * bounceFactor;
 
-			// Ограничиваем максимальную скорость после отскока
+
 			float maxBounceVelocity = 2.0F;
 			if (Math.abs(newVelocity) > maxBounceVelocity) {
 				newVelocity = Math.signum(newVelocity) * maxBounceVelocity;
 			}
 
-			// Применяем отскок
+
 			currentVelocity = newVelocity;
 
-			// Немного уменьшаем угол, чтобы качели не застревали в блоке
-			float angleReduction = 0.9F; // Уменьшаем угол на 10%
+
+			float angleReduction = 0.9F;
 			currentAngle *= angleReduction;
 
-			// Сбрасываем силу игрока при столкновении
+
 			playerForce = 0.0f;
 			this.pushDirection = 0;
 
-			// Воспроизводим звук ТОЛЬКО если скорость до столкновения была достаточной
+
 			if (Math.abs(preCollisionVelocity) >= MIN_VELOCITY_FOR_SOUND) {
 				level().playSound(null, this.seatPart.blockPosition(), RPGSounds.TIRE_BOUNCE.get(),
 						SoundSource.BLOCKS, 1.0F, (level().random.nextFloat() - level().random.nextFloat()) * 0.2F + 1.0F);
 			}
 		}
 
-		// 5. Суммарное ускорение (гравитация доминирует)
+
 		float acceleration = gravityForce + playerForce;
 
-		// 6. Обновление скорости с демпфированием (увеличиваем трение при столкновении)
+
 		float currentDamping = collisionDetected ? SWING_DAMPING * 0.9F : SWING_DAMPING;
 		currentVelocity += acceleration;
 		currentVelocity *= currentDamping;
 
-		// 7. Обновление угла
+
 		currentAngle += currentVelocity;
 
-		// 8. Ограничение угла с потерей энергии при ударе о предельный угол
+
 		if (Math.abs(currentAngle) > MAX_SWING_ANGLE) {
 			currentAngle = MAX_SWING_ANGLE * Math.signum(currentAngle);
-			currentVelocity *= -0.6F; // Потеря 40% энергии при отскоке
+			currentVelocity *= -0.6F;
 
-			// Звук при ударе о предельный угол
+
 			if (Math.abs(preCollisionVelocity) >= MIN_VELOCITY_FOR_SOUND) {
 				level().playSound(null, this.seatPart.blockPosition(), RPGSounds.TIRE_BOUNCE.get(),
 						SoundSource.BLOCKS, 0.8F, (level().random.nextFloat() - level().random.nextFloat()) * 0.2F + 0.9F);
 			}
 		}
 
-		// 9. Гарантированный возврат в нейтраль при малых колебаниях
+
 		if (Math.abs(currentVelocity) < STOP_THRESHOLD && Math.abs(currentAngle) < 2.0F) {
-			// Плавное возвращение к нулю
 			currentAngle *= 0.9F;
 			if (Math.abs(currentAngle) < 0.5F) {
 				currentAngle = 0.0F;
@@ -1017,18 +982,18 @@ public class TireSwingEntity extends Entity {
 			}
 		}
 
-		// 10. Проверка для звука SWOOSH при развороте на угле выше 45 градусов
+
 		updateSwooshSound(currentAngle, currentVelocity);
 
-		// 11. Проверка для звука CRACK при пересечении 0 градусов
+
 		updateCrackSound(previousAngle, currentAngle, currentVelocity);
 
-		// Обновляем углы и скорости после всех проверок
+
 		setSwingAngle(currentAngle);
 		setSwingVelocity(currentVelocity);
 	}
 
-	// Новый метод для обработки звука SWOOSH
+
 	private void updateSwooshSound(float currentAngle, float currentVelocity) {
 		if (swooshCooldown > 0) {
 			swooshCooldown--;
@@ -1038,82 +1003,79 @@ public class TireSwingEntity extends Entity {
 		float absAngle = Math.abs(currentAngle);
 		float absVelocity = Math.abs(currentVelocity);
 
-		// Проверяем, находимся ли мы выше порогового угла для звука свиста
+
 		boolean isAboveThreshold = absAngle >= SWOOSH_ANGLE_THRESHOLD;
 
-		// Если только что перешли порог и скорость достаточно высокая
-		if (isAboveThreshold && !wasAboveSwooshAngle && absVelocity > 0.5F) {
-			// Нормализуем скорость для вычисления громкости (0.0 - 1.0)
-			float normalizedSpeed = Math.min(absVelocity / MAX_SWOOSH_SPEED, 1.0F);
-			float volume = 0.5F + normalizedSpeed * 0.5F; // Громкость от 0.5 до 1.0
 
-			// Вычисляем высоту тона на основе угла и скорости
+		if (isAboveThreshold && !wasAboveSwooshAngle && absVelocity > 0.5F) {
+			float normalizedSpeed = Math.min(absVelocity / MAX_SWOOSH_SPEED, 1.0F);
+			float volume = 0.5F + normalizedSpeed * 0.5F;
+
+
 			float pitch = 0.8F + (normalizedSpeed * 0.4F);
 
 			level().playSound(null, this.blockPosition(), RPGSounds.TIRE_SWING_SWOOSH.get(),
 					SoundSource.BLOCKS, volume, pitch);
 
-			// Устанавливаем кулдаун для предотвращения спама
+
 			swooshCooldown = 5;
 			wasAboveSwooshAngle = true;
 		}
 
-		// Сбрасываем флаг, когда опускаемся ниже порога
+
 		if (!isAboveThreshold) {
 			wasAboveSwooshAngle = false;
 		}
 	}
 
-	// Новый метод для обработки звука CRACK при пересечении 0 градусов
+
 	private void updateCrackSound(float previousAngle, float currentAngle, float currentVelocity) {
 		if (zeroCrossCooldown > 0) {
 			zeroCrossCooldown--;
 			return;
 		}
 
-		// Обновляем кулдаун регенерации
+
 		if (happinessCooldown > 0) {
 			happinessCooldown--;
 		}
 
-		// Проверяем, пересекли ли мы ноль (знак угла изменился)
+
 		boolean crossedZero = (previousAngle > 0 && currentAngle <= 0) ||
 				(previousAngle < 0 && currentAngle >= 0);
 
-		// Проверяем, находимся ли мы достаточно далеко от нуля в предыдущем кадре
+
 		boolean wasFarEnoughFromZero = Math.abs(previousAngle) > CRACK_ANGLE_DEADZONE;
 
-		// Проверяем, достаточно ли высокая скорость для звука
+
 		boolean hasEnoughVelocityForSound = Math.abs(currentVelocity) >= CRACK_VELOCITY_THRESHOLD;
 
-		// Проверяем, достаточно ли высокая скорость для эффекта регенерации
+
 		boolean hasEnoughVelocityForHappiness = Math.abs(currentVelocity) >= HAPPINESS_VELOCITY_THRESHOLD;
 
-		// Если все условия выполнены для звука
-		if (crossedZero && wasFarEnoughFromZero && hasEnoughVelocityForSound && !hasCrossedZeroRecently) {
-			// Нормализуем скорость для вычисления громкости
-			float normalizedVelocity = Math.min(Math.abs(currentVelocity) / (CRACK_VELOCITY_THRESHOLD * 2), 1.0F);
-			float volume = 0.1F + normalizedVelocity * 0.1F; // Громкость от 0.6 до 1.0
 
-			// Вычисляем высоту тона на основе скорости
+		if (crossedZero && wasFarEnoughFromZero && hasEnoughVelocityForSound && !hasCrossedZeroRecently) {
+			float normalizedVelocity = Math.min(Math.abs(currentVelocity) / (CRACK_VELOCITY_THRESHOLD * 2), 1.0F);
+			float volume = 0.1F + normalizedVelocity * 0.1F;
+
+
 			float pitch = 0.3F + (normalizedVelocity * 0.2F);
 
 			level().playSound(null, this.blockPosition(), RPGSounds.TIRE_SWING_CRACK.get(),
 					SoundSource.BLOCKS, volume, pitch);
 
-			// Устанавливаем кулдаун для предотвращения спама
+
 			zeroCrossCooldown = 3;
 			hasCrossedZeroRecently = true;
 		}
 
-		// Обработка эффекта регенерации (только если есть пассажир)
-		if (hasEnoughVelocityForHappiness && happinessCooldown == 0 && !this.getPassengers().isEmpty()) {
 
+		if (hasEnoughVelocityForHappiness && happinessCooldown == 0 && !this.getPassengers().isEmpty()) {
 			applyHappinessEffect();
 			happinessCooldown = HAPPINESS_COOLDOWN;
 		}
 
-		// Сбрасываем флаг после пересечения нуля
+
 		if (Math.abs(currentAngle) > CRACK_ANGLE_DEADZONE) {
 			hasCrossedZeroRecently = false;
 		}
@@ -1126,42 +1088,40 @@ public class TireSwingEntity extends Entity {
 
 		Entity passenger = this.getPassengers().get(0);
 		if (passenger instanceof LivingEntity livingPassenger) {
-			// Проверяем, есть ли уже эффект регенерации
 			MobEffectInstance currentHappiness = livingPassenger.getEffect(ModEffects.HAPPINESS.get());
 
 			int newDuration = HAPPINESS_DURATION;
 
-			// Если эффект уже есть, добавляем время, но не превышаем максимум
+
 			if (currentHappiness != null) {
 				newDuration = currentHappiness.getDuration() + HAPPINESS_DURATION;
 
-				// Ограничиваем максимальной продолжительностью
+
 				if (newDuration > MAX_HAPPINESS_DURATION) {
 					newDuration = MAX_HAPPINESS_DURATION;
 				}
 
-				// Сохраняем уровень эффекта (усиление)
+
 				int amplifier = currentHappiness.getAmplifier();
 
-				// Создаём новый эффект с увеличенной длительностью
+
 				MobEffectInstance newEffect = new MobEffectInstance(
 						ModEffects.HAPPINESS.get(),
 						newDuration,
 						amplifier,
-						false, // не является ambient эффектом
-						true,  // показывать частицы
-						true   // показывать иконку
+						false,
+						true,
+						true
 				);
 				newEffect.setCurativeItems(new ArrayList<>());
 
 				livingPassenger.removeEffect(ModEffects.HAPPINESS.get());
 				livingPassenger.addEffect(newEffect);
 			} else {
-				// Создаём новый эффект
 				MobEffectInstance newEffect = new MobEffectInstance(
 						ModEffects.HAPPINESS.get(),
 						newDuration,
-						0, // уровень I
+						0,
 						false,
 						true,
 						true
@@ -1179,7 +1139,6 @@ public class TireSwingEntity extends Entity {
 	}
 
 	private boolean checkAABBCollisionWithSolidBlocks(AABB aabb) {
-		// Получаем все блоки, которые пересекаются с AABB
 		int minX = net.minecraft.util.Mth.floor(aabb.minX);
 		int minY = net.minecraft.util.Mth.floor(aabb.minY);
 		int minZ = net.minecraft.util.Mth.floor(aabb.minZ);
@@ -1193,9 +1152,8 @@ public class TireSwingEntity extends Entity {
 					net.minecraft.core.BlockPos pos = new net.minecraft.core.BlockPos(x, y, z);
 					net.minecraft.world.level.block.state.BlockState state = this.level().getBlockState(pos);
 
-					// Проверяем, является ли блок твёрдым (столкновение)
+
 					if (!state.isAir() && state.isSolid()) {
-						// Получаем VoxelShape блока и проверяем пересечение
 						net.minecraft.world.phys.shapes.VoxelShape shape = state.getCollisionShape(this.level(), pos);
 						if (!shape.isEmpty()) {
 							net.minecraft.world.phys.shapes.VoxelShape offsetShape = shape.move(pos.getX(), pos.getY(), pos.getZ());
@@ -1232,17 +1190,17 @@ public class TireSwingEntity extends Entity {
 		double verticalOffset = getRopeLength() * (1.0 - Math.cos(swingAngleRad));
 		double yOffset = this.getPassengersRidingOffset() + passenger.getMyRidingOffset();
 
-		// Используем swingYaw для позиционирования
+
 		double rotatedX = -forwardOffset * Math.sin(swingYawRad);
 		double rotatedZ = forwardOffset * Math.cos(swingYawRad);
 
 		Vec3 seatPos = this.position()
 				.add(rotatedX, yOffset + verticalOffset, rotatedZ);
 
-		// Используем предоставленную функцию перемещения
+
 		moveFunction.accept(passenger, seatPos.x, seatPos.y, seatPos.z);
 
-		// Устанавливаем тело пассажира в направлении качелей
+
 		passenger.setYBodyRot(getSwingYaw());
 	}
 
@@ -1253,7 +1211,6 @@ public class TireSwingEntity extends Entity {
 
 	@Override
 	public Vec3 getDismountLocationForPassenger(LivingEntity passenger) {
-		// Вычисляем позицию сиденья для спешивания
 		float swingAngleRad = (float) Math.toRadians(getSwingAngle());
 		float swingYawRad = (float) Math.toRadians(getSwingYaw());
 
@@ -1277,7 +1234,7 @@ public class TireSwingEntity extends Entity {
 
 	@Override
 	public void onPassengerTurned(Entity passenger) {
-		this.clampPassengerRotation(passenger); // Применяем ограничение при повороте пассажира
+		this.clampPassengerRotation(passenger);
 	}
 
 	private Vec3 calculateSeatVelocity() {
@@ -1285,18 +1242,16 @@ public class TireSwingEntity extends Entity {
 		float swingVelocityRad = (float) Math.toRadians(getSwingVelocity());
 		float swingYawRad = (float) Math.toRadians(getSwingYaw());
 
-		// Тангенциальная скорость: v = R * ω
+
 		double tangentialSpeed = getRopeLength() * swingVelocityRad;
 
-		// Направление скорости зависит от угла качания и поворота качелей
-		// При малых углах sin(θ) ≈ θ, cos(θ) ≈ 1
+
 		double velocityX = -tangentialSpeed * Math.cos(swingAngleRad) * Math.sin(swingYawRad);
 		double velocityZ = tangentialSpeed * Math.cos(swingAngleRad) * Math.cos(swingYawRad);
 		double velocityY = tangentialSpeed * Math.sin(swingAngleRad);
 
-		// Учитываем также вертикальную составляющую при больших углах
+
 		if (Math.abs(getSwingAngle()) > 30.0F) {
-			// Добавляем небольшую вертикальную составляющую для реалистичности
 			velocityY += Math.signum(getSwingVelocity()) * Math.abs(Math.sin(swingAngleRad)) * 0.2;
 		}
 
@@ -1305,23 +1260,22 @@ public class TireSwingEntity extends Entity {
 
 	@Override
 	protected void removePassenger(Entity passenger) {
-		// Вычисляем скорость сиденья до удаления (на сервере)
 		Vec3 seatVelocity = Vec3.ZERO;
 		if (!this.level().isClientSide && passenger != null) {
-			seatVelocity = calculateSeatVelocity().scale(2); // множитель, например 3.0
+			seatVelocity = calculateSeatVelocity().scale(2);
 		}
 
-		// Сначала выполняем стандартное удаление пассажира (он спешивается)
+
 		super.removePassenger(passenger);
 
-		// Теперь применяем скорость к уже спешенному игроку
+
 		if (!this.level().isClientSide && passenger != null && seatVelocity.lengthSqr() > 0) {
 			if (passenger instanceof ServerPlayer serverPlayer) {
 				ModMessages.sendToPlayer(new SwingPlayerPacket(seatVelocity, serverPlayer.getId()), serverPlayer);
 			}
 		}
 
-		// Сброс состояния качелей
+
 		if (this.getPassengers().isEmpty()) {
 			setOccupied(false);
 			this.pushDirection = 0;
@@ -1337,7 +1291,7 @@ public class TireSwingEntity extends Entity {
 		}
 	}
 
-	// Методы для рендерера
+
 	public float getRenderSwingAngle(float partialTicks) {
 		if (this.level().isClientSide) {
 			return this.lastRenderSwingAngle + (this.renderSwingAngle - this.lastRenderSwingAngle) * partialTicks;
@@ -1354,7 +1308,6 @@ public class TireSwingEntity extends Entity {
 
 	public float getRenderSwingYaw(float partialTicks) {
 		if (this.level().isClientSide) {
-			// Используем lerpAngle для плавной интерполяции
 			return lerpAngle(partialTicks, this.lastSwingYaw, this.swingYaw);
 		}
 		return getSwingYaw();
@@ -1366,13 +1319,12 @@ public class TireSwingEntity extends Entity {
 
 	public float getPassengerBodyYaw(float partialTicks) {
 		if (this.level().isClientSide) {
-			// Используем lerpAngle для плавной интерполяции
 			return lerpAngle(partialTicks, this.lastPassengerBodyYaw, this.passengerBodyYaw);
 		}
 		return getPassengerYaw();
 	}
 
-	// Метод для вычисления поворота модели
+
 	public float getModelRotationAngle(float swingAngle) {
 		if (!isOccupied()) return 0.0F;
 
@@ -1381,7 +1333,7 @@ public class TireSwingEntity extends Entity {
 		return BASE_MODEL_ROTATION - rotationAdjust;
 	}
 
-	// Геттеры/сеттеры
+
 	public float getSwingAngle() {
 		return this.entityData.get(DATA_SWING_ANGLE);
 	}
@@ -1470,7 +1422,7 @@ public class TireSwingEntity extends Entity {
 			this.targetSwingYaw = compound.getFloat("TargetSwingYaw");
 			setTargetSwingYaw(this.targetSwingYaw);
 		}
-		// Загружаем флаги звуков
+
 		if (compound.contains("HasCrossedZeroRecently")) {
 			this.hasCrossedZeroRecently = compound.getBoolean("HasCrossedZeroRecently");
 		}
@@ -1504,7 +1456,7 @@ public class TireSwingEntity extends Entity {
 			this.isLeashed = compound.getBoolean("IsLeashed");
 		}
 
-		// Восстанавливаем состояние узла при загрузке
+
 		if (this.level() != null && !this.level().isClientSide && this.isLeashed) {
 			this.restoreLeashConnection();
 		}
@@ -1518,7 +1470,7 @@ public class TireSwingEntity extends Entity {
 		compound.putFloat("PassengerBodyYaw", this.passengerBodyYaw);
 		compound.putFloat("SwingYaw", getSwingYaw());
 		compound.putFloat("TargetSwingYaw", this.targetSwingYaw);
-		// Сохраняем флаги звуков
+
 		compound.putBoolean("HasCrossedZeroRecently", this.hasCrossedZeroRecently);
 		compound.putBoolean("WasAboveSwooshAngle", this.wasAboveSwooshAngle);
 		compound.putInt("LeashHolderId", this.entityData.get(DATA_LEASH_HOLDER_ID));
@@ -1541,10 +1493,8 @@ public class TireSwingEntity extends Entity {
 		if (leashType == LEASH_TYPE_FENCE_KNOT && holderId != -1) {
 			Entity entity = this.level().getEntity(holderId);
 			if (entity instanceof LeashFenceKnotEntity knot) {
-				// Проверяем, что узел все еще существует и на правильном месте
 				BlockPos savedPos = this.fencePos;
 				if (savedPos != null && knot.getPos().equals(savedPos)) {
-					// Узел существует, обновляем длину веревки
 					float distance = (float) Math.sqrt(
 							Math.pow(knot.getX() - this.getX(), 2) +
 									Math.pow(knot.getY() + 0.5 - this.getY(), 2) +
@@ -1553,11 +1503,9 @@ public class TireSwingEntity extends Entity {
 					this.currentRopeLength = distance;
 					this.entityData.set(DATA_ROPE_LENGTH, distance);
 				} else {
-					// Узел был перемещен или уничтожен, отвязываем
 					this.dropLeash(false, false);
 				}
 			} else {
-				// Узел не найден, пытаемся восстановить
 				BlockPos fencePos = getFencePos();
 				if (fencePos != null) {
 					LeashFenceKnotEntity newKnot = LeashFenceKnotEntity.getOrCreateKnot(
@@ -1583,13 +1531,12 @@ public class TireSwingEntity extends Entity {
 			if (leashType == LEASH_TYPE_FENCE_KNOT) {
 				BlockPos fence = getFencePos();
 				if (fence != null) {
-					// Восстанавливаем узел на заборе
 					LeashFenceKnotEntity knot = LeashFenceKnotEntity.getOrCreateKnot(this.level(), fence);
 					if (knot != null) {
 						this.setLeashedTo(knot, false);
 						this.entityData.set(DATA_LEASH_HOLDER_ID, knot.getId());
 
-						// Восстанавливаем длину веревки
+
 						float distance = (float) Math.sqrt(
 								Math.pow(knot.getX() - this.getX(), 2) +
 										Math.pow(knot.getY() + 0.5 - this.getY(), 2) +
@@ -1598,12 +1545,10 @@ public class TireSwingEntity extends Entity {
 						this.currentRopeLength = distance;
 						this.entityData.set(DATA_ROPE_LENGTH, distance);
 					} else {
-						// Если узел не удалось восстановить, отвязываем
 						this.dropLeash(false, false);
 					}
 				}
 			} else if (leashType == LEASH_TYPE_PLAYER) {
-				// Восстановление привязки к игроку
 				int holderId = this.entityData.get(DATA_LEASH_HOLDER_ID);
 				if (holderId != -1) {
 					Entity holder = this.level().getEntity(holderId);
@@ -1622,12 +1567,12 @@ public class TireSwingEntity extends Entity {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
-	// Метод для обработки взаимодействия с сиденьем
+
 	public void setSeatInteraction(boolean seatInteraction) {
 		this.seatInteraction = seatInteraction;
 	}
 
-	// Внутренний класс для хитбокса сиденья
+
 	public class TireSwingSeatPart extends PartEntity<TireSwingEntity> {
 		public TireSwingSeatPart(TireSwingEntity parent) {
 			super(parent);
@@ -1640,17 +1585,14 @@ public class TireSwingEntity extends Entity {
 
 		@Override
 		protected void defineSynchedData() {
-			// Не требуется синхронизация данных для части
 		}
 
 		@Override
 		protected void readAdditionalSaveData(CompoundTag pCompound) {
-			// Части сущности не сохраняются отдельно
 		}
 
 		@Override
 		protected void addAdditionalSaveData(CompoundTag pCompound) {
-			// Части сущности не сохраняются отдельно
 		}
 
 		@Override
@@ -1665,14 +1607,13 @@ public class TireSwingEntity extends Entity {
 
 		@Override
 		public boolean hurt(net.minecraft.world.damagesource.DamageSource source, float amount) {
-			// Можно добавить логику повреждения качелей
 			return false;
 		}
 
 		@Override
 		public void setPos(double x, double y, double z) {
 			super.setPos(x, y, z);
-			// Сбрасываем bounding box при изменении позиции
+
 			this.setBoundingBox(this.getBoundingBox());
 		}
 
@@ -1692,12 +1633,12 @@ public class TireSwingEntity extends Entity {
 
 		@Override
 		public boolean isNoGravity() {
-			return true; // Часть не должна падать
+			return true;
 		}
 
 		@Override
 		public boolean isAttackable() {
-			return false; // Часть нельзя атаковать напрямую
+			return false;
 		}
 
 		@Override
@@ -1707,7 +1648,6 @@ public class TireSwingEntity extends Entity {
 
 		@Override
 		public void remove(net.minecraft.world.entity.Entity.RemovalReason reason) {
-			// Не позволяем удалять часть отдельно от родителя
 			if (this.getParent() != null && !this.getParent().isRemoved()) {
 				return;
 			}

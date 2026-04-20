@@ -8,7 +8,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -24,63 +23,63 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class FireCatcherItem extends BlockItem implements RPGtooltip {
-    public FireCatcherItem(Block block, Properties properties) {
-        super(block, properties);
-    }
+	public FireCatcherItem(Block block, Properties properties) {
+		super(block, properties);
+	}
 
-    @Override
-    public InteractionResult place(BlockPlaceContext context) {
-        if (!context.canPlace()) {
-            return InteractionResult.FAIL;
-        }
+	@Override
+	public InteractionResult place(BlockPlaceContext context) {
+		if (!context.canPlace()) {
+			return InteractionResult.FAIL;
+		}
 
-        Level level = context.getLevel();
-        BlockPos pos = context.getClickedPos();
-        Player player = context.getPlayer();
-        
-        // Проверяем размещение под потолком
-        BlockPos abovePos = pos.above();
-        if (!level.getBlockState(abovePos).isSolidRender(level, abovePos)) {
-            return InteractionResult.FAIL;
-        }
-        
-        // Проверяем место для нижней части
-        if (!level.getBlockState(pos.below()).canBeReplaced(context)) {
-            return InteractionResult.FAIL;
-        }
+		Level level = context.getLevel();
+		BlockPos pos = context.getClickedPos();
+		Player player = context.getPlayer();
 
-        BlockState bottomState = this.getBlock().defaultBlockState()
-            .setValue(FireCatcherBlock.HALF, Half.BOTTOM)
-            .setValue(FireCatcherBlock.HUNGRY, false);
-            
-        BlockState topState = this.getBlock().defaultBlockState()
-            .setValue(FireCatcherBlock.HALF, Half.TOP)
-            .setValue(FireCatcherBlock.HUNGRY, false);
 
-        // Размещаем нижнюю часть
-        level.setBlock(pos.below(), bottomState, 11);
-        
-        // Размещаем верхнюю часть
-        level.setBlock(pos, topState, 11);
+		BlockPos abovePos = pos.above();
+		if (!level.getBlockState(abovePos).isSolidRender(level, abovePos)) {
+			return InteractionResult.FAIL;
+		}
 
-        // Звук размещения
-        level.playSound(player, pos, SoundEvents.MOSS_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
-        
-        // Game event для анимации
-        level.gameEvent(GameEvent.BLOCK_PLACE, pos, GameEvent.Context.of(player, topState));
 
-        // Тратим предмет (если не креатив)
-        if (player != null && !player.isCreative()) {
-            context.getItemInHand().shrink(1);
-        }
+		if (!level.getBlockState(pos.below()).canBeReplaced(context)) {
+			return InteractionResult.FAIL;
+		}
 
-        return InteractionResult.sidedSuccess(level.isClientSide());
-    }
+		BlockState bottomState = this.getBlock().defaultBlockState()
+				.setValue(FireCatcherBlock.HALF, Half.BOTTOM)
+				.setValue(FireCatcherBlock.HUNGRY, false);
 
-    @Override
-    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
-        ClientRPGtooltipHandler.appendHoverText(pStack, pLevel, pTooltip, pFlag, this)
-    );
-    }
+		BlockState topState = this.getBlock().defaultBlockState()
+				.setValue(FireCatcherBlock.HALF, Half.TOP)
+				.setValue(FireCatcherBlock.HUNGRY, false);
+
+
+		level.setBlock(pos.below(), bottomState, 11);
+
+
+		level.setBlock(pos, topState, 11);
+
+
+		level.playSound(player, pos, SoundEvents.MOSS_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
+
+
+		level.gameEvent(GameEvent.BLOCK_PLACE, pos, GameEvent.Context.of(player, topState));
+
+
+		if (player != null && !player.isCreative()) {
+			context.getItemInHand().shrink(1);
+		}
+
+		return InteractionResult.sidedSuccess(level.isClientSide());
+	}
+
+	@Override
+	public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+				ClientRPGtooltipHandler.appendHoverText(pStack, pLevel, pTooltip, pFlag, this)
+		);
+	}
 }

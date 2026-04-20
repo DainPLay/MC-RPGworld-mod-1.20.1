@@ -14,45 +14,39 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LevelAccessor.class)
 public interface LevelAccessorMixin {
+	@Inject(method = "scheduleTick(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/Block;ILnet/minecraft/world/ticks/TickPriority;)V",
+			at = @At("HEAD"), cancellable = true)
+	private void onScheduleTickWithPriority(BlockPos pos, Block block, int delay,
+											TickPriority priority, CallbackInfo ci) {
+		if (!(this instanceof ServerLevel serverLevel)) return;
 
-    @Inject(method = "scheduleTick(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/Block;ILnet/minecraft/world/ticks/TickPriority;)V",
-            at = @At("HEAD"), cancellable = true)
-    private void onScheduleTickWithPriority(BlockPos pos, Block block, int delay,
-                                            TickPriority priority, CallbackInfo ci) {
-        // Проверяем, что текущий объект является ServerLevel
-        if (!(this instanceof ServerLevel serverLevel)) return;
+		if (block instanceof FireBlock) {
+			int chunkX = pos.getX() >> 4;
+			int chunkZ = pos.getZ() >> 4;
 
-        // Проверяем только блоки FireBlock
-        if (block instanceof FireBlock) {
-            int chunkX = pos.getX() >> 4;
-            int chunkZ = pos.getZ() >> 4;
+			FireCatcherManager manager = FireCatcherManager.get(serverLevel);
 
-            FireCatcherManager manager = FireCatcherManager.get(serverLevel);
+			if (manager.isHungryMode(chunkX, chunkZ, serverLevel.dimension())) {
+				ci.cancel();
+			}
+		}
+	}
 
-            // Отменяем запланированные тики в голодном режиме
-            if (manager.isHungryMode(chunkX, chunkZ, serverLevel.dimension())) {
-                ci.cancel();
-            }
-        }
-    }
+	@Inject(method = "scheduleTick(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/Block;I)V",
+			at = @At("HEAD"), cancellable = true)
+	private void onScheduleTickWithoutPriority(BlockPos pos, Block block, int delay,
+											   CallbackInfo ci) {
+		if (!(this instanceof ServerLevel serverLevel)) return;
 
-    @Inject(method = "scheduleTick(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/Block;I)V",
-            at = @At("HEAD"), cancellable = true)
-    private void onScheduleTickWithoutPriority(BlockPos pos, Block block, int delay,
-                                               CallbackInfo ci) {
-        // Проверяем, что текущий объект является ServerLevel
-        if (!(this instanceof ServerLevel serverLevel)) return;
+		if (block instanceof FireBlock) {
+			int chunkX = pos.getX() >> 4;
+			int chunkZ = pos.getZ() >> 4;
 
-        if (block instanceof FireBlock) {
-            int chunkX = pos.getX() >> 4;
-            int chunkZ = pos.getZ() >> 4;
+			FireCatcherManager manager = FireCatcherManager.get(serverLevel);
 
-            FireCatcherManager manager = FireCatcherManager.get(serverLevel);
-
-            // Отменяем запланированные тики в голодном режиме
-            if (manager.isHungryMode(chunkX, chunkZ, serverLevel.dimension())) {
-                ci.cancel();
-            }
-        }
-    }
+			if (manager.isHungryMode(chunkX, chunkZ, serverLevel.dimension())) {
+				ci.cancel();
+			}
+		}
+	}
 }

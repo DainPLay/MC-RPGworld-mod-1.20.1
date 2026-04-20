@@ -67,8 +67,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class EnderEyeScrollItem extends ScrollItem {
-
-	// Хранилище для отслеживания использования игроком с привязкой к уровню
 	private static final Map<Level, Map<UUID, PlayerUseData>> playerUseData = new HashMap<>();
 
 	private static final double MAX_BREATH_DISTANCE = 5.0D;
@@ -231,7 +229,6 @@ public class EnderEyeScrollItem extends ScrollItem {
 	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
 		consumer.accept(new IClientItemExtensions() {
-
 			private static final HumanoidModel.ArmPose DESTRUCTION_POSE = HumanoidModel.ArmPose.create("DESTRUCTION", false, (model, entity, arm) -> {
 				float xOffset = 0F;
 				if (model.crouching) xOffset = -0.6f;
@@ -406,22 +403,20 @@ public class EnderEyeScrollItem extends ScrollItem {
 				return handleNecromancy(level, player, itemstack);
 			}
 
-			// Общая проверка маны
+
 			if (!canUse(player, itemstack)) {
-				// Если не хватает маны, не начинаем использование
 				ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), false, itemstack),
 						(ServerLevel) level, player.blockPosition(), 64.0);
 				return InteractionResultHolder.fail(itemstack);
 			}
 
-			// Получаем или создаём PlayerUseData
+
 			Map<UUID, PlayerUseData> map = getPlayerUseData(level);
 			PlayerUseData data = map.get(player.getUUID());
 			if (data == null) {
 				data = new PlayerUseData(player.getUUID(), level.getGameTime());
 				map.put(player.getUUID(), data);
 			} else {
-				// Сбрасываем временные поля для нового использования
 				data.startTime = level.getGameTime();
 				data.useTicks = 0;
 				data.lastManaTick = 0;
@@ -435,7 +430,6 @@ public class EnderEyeScrollItem extends ScrollItem {
 			startEnchantmentSounds(level, player, itemstack);
 			player.startUsingItem(hand);
 		} else {
-			// Клиентская сторона (без изменений)
 			if (!canUseClient(player, itemstack)) {
 				return InteractionResultHolder.fail(itemstack);
 			}
@@ -586,7 +580,6 @@ public class EnderEyeScrollItem extends ScrollItem {
 			UUID playerId = player.getUUID();
 
 			if (!level.isClientSide) {
-				// Не удаляем данные, а только деактивируем
 				PlayerUseData data = getPlayerUseData(level).get(playerId);
 				if (data != null) {
 					data.active = false;
@@ -654,7 +647,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 		if (player == null) return;
 		player.stopUsingItem();
 
-		// Не удаляем данные, только деактивируем
+
 		PlayerUseData data = getPlayerUseData(level).get(player.getUUID());
 		if (data != null) {
 			data.active = false;
@@ -713,7 +706,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 		Vec3 muzzlePos = getMuzzlePositionForParticles(player);
 		RandomSource random = level.random;
 
-		// Трассировка луча для определения ближайшего блока на пути
+
 		ClipContext context = new ClipContext(
 				muzzlePos,
 				muzzlePos.add(lookVec.scale(MAX_BREATH_DISTANCE)),
@@ -726,27 +719,25 @@ public class EnderEyeScrollItem extends ScrollItem {
 		double maxDist = MAX_BREATH_DISTANCE;
 		if (result.getType() == HitResult.Type.BLOCK) {
 			maxDist = muzzlePos.distanceTo(result.getLocation());
-			// Если блок слишком близко (менее 0.5 блока), частицы не спавнятся
+
 			if (maxDist < 0.5) return;
 		}
 
-		// Базовая скорость по аналогии с WealdBlade (подставлена наша дальность)
-		double baseSpeed = MAX_BREATH_DISTANCE / 8.5 * 15 * 0.03; // ≈0.265 блока/тик
-		double speedFactor = baseSpeed * (0.8 + random.nextDouble() * 0.4); // 0.8–1.2 от базовой
 
-		int particleCount = 3 + random.nextInt(3); // 3–5 частиц за тик
+		double baseSpeed = MAX_BREATH_DISTANCE / 8.5 * 15 * 0.03;
+		double speedFactor = baseSpeed * (0.8 + random.nextDouble() * 0.4);
+
+		int particleCount = 3 + random.nextInt(3);
 
 		for (int i = 0; i < particleCount; i++) {
-			// Случайная точка вдоль луча от дула до maxDist
 			double distFactor = random.nextDouble();
 			double distAlong = maxDist * distFactor;
 			Vec3 pos = muzzlePos.add(lookVec.scale(distAlong));
 
-			// Смещение перпендикулярно направлению взгляда
+
 			Vec3 up = new Vec3(0, 1, 0);
 			Vec3 right = lookVec.cross(up).normalize();
 			if (right.lengthSqr() < 0.1) {
-				// Если взгляд почти вертикальный, используем другую опорную ось
 				right = new Vec3(1, 0, 0);
 			}
 			Vec3 upReal = right.cross(lookVec).normalize();
@@ -755,7 +746,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 			double offsetY = (random.nextDouble() - 0.5) * 0.6;
 			pos = pos.add(right.scale(offsetX)).add(upReal.scale(offsetY));
 
-			// Скорость с небольшим случайным шумом
+
 			double velX = lookVec.x * speedFactor + (random.nextDouble() - 0.5) * 0.05;
 			double velY = lookVec.y * speedFactor + (random.nextDouble() - 0.5) * 0.05;
 			double velZ = lookVec.z * speedFactor + (random.nextDouble() - 0.5) * 0.05;
@@ -774,26 +765,24 @@ public class EnderEyeScrollItem extends ScrollItem {
 			UUID playerId = entry.getKey();
 			PlayerUseData data = entry.getValue();
 
-			// Проверяем активность
+
 			if (!data.active) {
 				continue;
 			}
 
 			Player player = level.getPlayerByUUID(playerId);
 			if (player == null) {
-				// Игрок вышел — можно удалить данные (опционально)
 				levelPlayerUseData.remove(playerId);
 				continue;
 			}
 
-			// Очищаем список облаков от мёртвых
+
 			data.ownedClouds.removeIf(cloudId -> {
 				Entity e = level.getEntity(cloudId);
 				return !(e instanceof AreaEffectCloud) || !e.isAlive();
 			});
 
 			if (!player.isUsingItem()) {
-				// Игрок перестал использовать предмет, но данные ещё активны — деактивируем
 				data.active = false;
 				continue;
 			}
@@ -837,7 +826,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 				}
 			}
 
-			// Обработка зачарований
+
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), usingItem) > 0) {
 				processGazeControl(level, player, data, usingItem);
 			}
@@ -845,7 +834,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 				int healInterval = 10;
 				double searchRadius = 32.0D;
 
-				// Поиск ближайшего кристалла, если текущий отсутствует
+
 				if (data.nearestCrystalId == null) {
 					List<EndCrystal> crystals = level.getEntitiesOfClass(EndCrystal.class, player.getBoundingBox().inflate(searchRadius));
 					EndCrystal nearest = null;
@@ -863,14 +852,12 @@ public class EnderEyeScrollItem extends ScrollItem {
 					}
 				}
 
-				// Если есть связанный кристалл
+
 				if (data.nearestCrystalId != null) {
 					Entity crystalEntity = level.getEntity(data.nearestCrystalId);
 					if (crystalEntity instanceof EndCrystal crystal) {
-						// Проверяем, находится ли кристалл в радиусе действия
 						double distanceSq = crystal.distanceToSqr(player);
 						if (distanceSq > searchRadius * searchRadius) {
-							// Кристалл вышел за пределы радиуса — сбрасываем данные и ищем новый
 							data.nearestCrystalId = null;
 							data.wasCrystalAliveLastTick = false;
 						} else {
@@ -893,13 +880,11 @@ public class EnderEyeScrollItem extends ScrollItem {
 									data.lastHealGameTime = gameTime;
 								}
 							} else {
-								// Кристалл мёртв или исчез — сбрасываем данные
 								data.nearestCrystalId = null;
 								data.wasCrystalAliveLastTick = false;
 							}
 						}
 					} else {
-						// Сущность не является кристаллом или полностью удалена
 						if (data.wasCrystalAliveLastTick) {
 							player.hurt(level.damageSources().explosion(null, null), 10.0F);
 						}
@@ -921,7 +906,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 
 		Vec3 targetPos = player.getEyePosition();
 
-		// Обработка мобов (существующий код)
+
 		List<Mob> mobs = level.getEntitiesOfClass(Mob.class, aabb,
 				mob -> mob.isAlive() && mob.distanceToSqr(player) <= radius * radius);
 		for (Mob mob : mobs) {
@@ -950,13 +935,12 @@ public class EnderEyeScrollItem extends ScrollItem {
 			mob.yBodyRot = yaw;
 		}
 
-		// Обработка игроков (новая функциональность)
+
 		List<Player> nearbyPlayers = level.getEntitiesOfClass(Player.class, aabb,
 				p -> p != player && p.isAlive() && !p.isSpectator() && !p.isCreative() &&
 						p.distanceToSqr(player) <= radius * radius);
 
 		for (Player target : nearbyPlayers) {
-			// Проверка прямой видимости от глаз владельца до глаз цели
 			if (!canSeePlayer(target, player)) continue;
 			if (!isInPlayerViewCone(target, player)) {
 				continue;
@@ -969,7 +953,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 					visibilityHit.getLocation().distanceToSqr(targetEyePos) < 0.01;
 			if (!visible) continue;
 
-			// Проверяем, не находится ли цель уже под действием другой иллюзии
+
 			AtomicBoolean alreadyHasIllusion = new AtomicBoolean(false);
 			target.getCapability(PlayerIllusionForceProvider.PLAYER_ILLUSION_FORCE).ifPresent(illusionForce -> {
 				if (illusionForce.getIllusionForce() > 0) {
@@ -1007,26 +991,26 @@ public class EnderEyeScrollItem extends ScrollItem {
 	private static boolean isInPlayerViewCone(Player player, Player owner) {
 		if (player.isCreative() || player.isSpectator()) return false;
 
-		// Позиция энта
+
 		Vec3 ownerPos = owner.getEyePosition();
 
-		// Позиция глаз игрока
+
 		Vec3 playerEyePos = player.getEyePosition();
 
-		// Направление от игрока к энту
+
 		Vec3 toEnt = ownerPos.subtract(playerEyePos).normalize();
 
-		// Направление взгляда игрока
+
 		Vec3 lookVec = player.getViewVector(1.0F).normalize();
 
-		// Вычисляем угол между направлением взгляда игрока и направлением к энту
+
 		double dot = lookVec.dot(toEnt);
 		double angle = Math.acos(dot) * (180.0 / Math.PI);
 
-		// Конус видимости игрока (например, 60 градусов)
+
 		float playerViewCone = 120.0f;
 
-		// Проверяем, находится ли энт в конусе зрения игрока
+
 		boolean inViewCone = angle <= playerViewCone / 2;
 
 		return inViewCone;
@@ -1048,7 +1032,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 
 		net.minecraft.world.phys.BlockHitResult hitResult = player.level().clip(context);
 
-		// Если луч попал в блок до игрока, значит игрок не виден
+
 		if (hitResult.getType() != net.minecraft.world.phys.HitResult.Type.MISS) {
 			double distanceToHit = hitResult.getLocation().distanceTo(eyePos);
 			double distanceToPlayer = playerEyePos.distanceTo(eyePos);
@@ -1068,7 +1052,6 @@ public class EnderEyeScrollItem extends ScrollItem {
 				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), stack) > 0;
 	}
 
-// ==================== НОВАЯ ЛОГИКА ДЫХАНИЯ ДРАКОНА (DESTRUCTION) ====================
 
 	public static class PlayerUseData {
 		private final UUID playerId;
@@ -1117,9 +1100,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 
 	private static final float RADIUS_INCREMENT_PER_TICK = 0.05F;
 
-	/**
-	 * Обрабатывает дыхание дракона для зачарования DESTRUCTION.
-	 */
+
 	private static void processDestructionBreath(ServerLevel level, Player player, PlayerUseData useData, ItemStack stack) {
 		Vec3 eyePos = player.getEyePosition(1.0F);
 		Vec3 lookVec = player.getLookAngle().normalize();
@@ -1128,7 +1109,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 			ModAdvancements.SPELL_DESTRUCTION_ENDER_EYE_TRIGGER.trigger(serverPlayer);
 		}
 
-		// Поиск ближайшего пересечения с облаками игрока
+
 		double closestCloudDist = Double.MAX_VALUE;
 		AreaEffectCloud closestCloud = null;
 		for (UUID cloudId : useData.ownedClouds) {
@@ -1145,7 +1126,7 @@ public class EnderEyeScrollItem extends ScrollItem {
 			}
 		}
 
-		// Трассировка блоков
+
 		BlockHitResult blockHit = level.clip(new ClipContext(eyePos, maxEnd, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
 		double blockDist = blockHit.getType() == HitResult.Type.BLOCK ? eyePos.distanceToSqr(blockHit.getLocation()) : Double.MAX_VALUE;
 
@@ -1153,12 +1134,11 @@ public class EnderEyeScrollItem extends ScrollItem {
 		BlockPos targetBlockPos;
 		AreaEffectCloud targetCloud = null;
 
-		// Выбираем ближайшее препятствие
+
 		if (blockDist < closestCloudDist) {
-			// Блок ближе
 			targetPos = blockHit.getLocation();
 			targetBlockPos = blockHit.getBlockPos();
-			// Ищем облако рядом с точкой попадания (как раньше)
+
 			for (UUID cloudId : useData.ownedClouds) {
 				Entity entity = level.getEntity(cloudId);
 				if (entity instanceof AreaEffectCloud cloud && cloud.isAlive()) {
@@ -1173,7 +1153,6 @@ public class EnderEyeScrollItem extends ScrollItem {
 			targetBlockPos = new BlockPos((int) targetPos.x(), (int) targetPos.y(), (int) targetPos.z());
 			targetCloud = closestCloud;
 		} else {
-			// Ничего не найдено — конечная точка луча
 			targetPos = maxEnd;
 			targetBlockPos = new BlockPos((int) targetPos.x(), (int) targetPos.y(), (int) targetPos.z());
 		}
@@ -1194,7 +1173,6 @@ public class EnderEyeScrollItem extends ScrollItem {
 				level.sendParticles(ParticleTypes.DRAGON_BREATH, targetPos.x, targetPos.y, targetPos.z, 10, 0.5, 0.5, 0.5, 0.1);
 			}
 		} else {
-			// Облако существует — проверяем, сменилась ли цель
 			boolean sameTarget = useData.lastBreathTargetPos != null && useData.lastBreathTargetPos.equals(targetBlockPos);
 			if (!sameTarget) {
 				useData.lastBreathTargetPos = targetBlockPos;
@@ -1203,22 +1181,21 @@ public class EnderEyeScrollItem extends ScrollItem {
 
 			useData.breathProgress++;
 
-			// Плавное увеличение радиуса
+
 			float currentRadius = targetCloud.getRadius();
 			if (currentRadius < CLOUD_MAX_RADIUS) {
 				float newRadius = Math.min(currentRadius + RADIUS_INCREMENT_PER_TICK, CLOUD_MAX_RADIUS);
 				targetCloud.setRadius(newRadius);
 			}
 
-			// Продлеваем время жизни облака
+
 			targetCloud.setDuration(targetCloud.tickCount + CLOUD_DURATION);
 
-			// Визуальные частицы дыхания
-			//level.sendParticles(ParticleTypes.DRAGON_BREATH,targetPos.x, targetPos.y, targetPos.z,5, 0.3, 0.3, 0.3, 0.05);
+
 		}
 	}
 
-	// Методы для управления подсказками (без изменений)
+
 	public String getFirstPredicate(ItemStack item) {
 		return Minecraft.getInstance().options.keyShift.getKey().getDisplayName().getString();
 	}

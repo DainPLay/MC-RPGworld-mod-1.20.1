@@ -50,7 +50,6 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, OrbitingItem {
-
 	private static final Map<Level, Map<UUID, EmberProjectileData>> activeProjectiles = new HashMap<>();
 	private final int manacost;
 	private final int color;
@@ -291,7 +290,6 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 			}
 
 			if (hitState.is(ModBlocks.ARBOR_FUEL_BLOCK.get())) {
-
 				BlockState fireState = BaseFireBlock.getState(level, hitPos);
 				if (BaseFireBlock.canBePlacedAt(level, hitPos, Direction.UP)) {
 					level.setBlockAndUpdate(hitPos, fireState);
@@ -415,7 +413,6 @@ public class EmberGemItem extends Item implements RPGtooltip, ManaCostItem, Orbi
 				fakeFireball.setSecondsOnFire(1);
 				if (entity instanceof LivingEntity livingEntity &&
 						!entity.getUUID().equals(projectile.ownerId) && !entity.fireImmune()) {
-
 					livingEntity.setSecondsOnFire(5);
 					if (owner != null)
 						entity.hurt(owner.damageSources().fireball(fakeFireball, owner), 1F);

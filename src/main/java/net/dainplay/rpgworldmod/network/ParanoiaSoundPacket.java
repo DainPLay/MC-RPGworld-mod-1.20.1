@@ -8,27 +8,27 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class ParanoiaSoundPacket {
-    private final int entityId;
+	private final int entityId;
 
-    public ParanoiaSoundPacket(int entityId) {
-        this.entityId = entityId;
-    }
+	public ParanoiaSoundPacket(int entityId) {
+		this.entityId = entityId;
+	}
 
-    public ParanoiaSoundPacket(FriendlyByteBuf buf) {
-        this.entityId = buf.readInt();
-    }
+	public ParanoiaSoundPacket(FriendlyByteBuf buf) {
+		this.entityId = buf.readInt();
+	}
 
-    public void toBytes(FriendlyByteBuf buf) {
-        buf.writeInt(entityId);
-    }
+	public void toBytes(FriendlyByteBuf buf) {
+		buf.writeInt(entityId);
+	}
 
-    public boolean handle(Supplier<NetworkEvent.Context> supplier) {
-        NetworkEvent.Context context = supplier.get();
-        context.enqueueWork(() ->
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
-                        ClientPacketHandlers.handleParanoiaSound(entityId))
-        );
-        context.setPacketHandled(true);
-        return true;
-    }
+	public boolean handle(Supplier<NetworkEvent.Context> supplier) {
+		NetworkEvent.Context context = supplier.get();
+		context.enqueueWork(() ->
+				DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+						ClientPacketHandlers.handleParanoiaSound(entityId))
+		);
+		context.setPacketHandled(true);
+		return true;
+	}
 }

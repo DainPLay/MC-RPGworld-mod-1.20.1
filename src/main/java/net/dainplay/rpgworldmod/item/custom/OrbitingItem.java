@@ -6,7 +6,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public interface OrbitingItem {
-
 	default int getColor(ItemStack stack, Entity entity) {
 		return -65536;
 	}
@@ -65,6 +64,10 @@ public interface OrbitingItem {
 
 	default boolean shouldOrbit(ItemStack stack, Entity entity) {
 		return true;
+	}
+
+	default boolean shouldRotate(ItemStack stack, Entity entity) {
+		return false;
 	}
 
 	default PoseStack getUsingPose(ItemStack stack, Player player, PoseStack poseStack, float flip) {

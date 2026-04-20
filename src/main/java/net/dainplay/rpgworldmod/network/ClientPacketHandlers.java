@@ -7,6 +7,7 @@ import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
 import net.dainplay.rpgworldmod.item.custom.EnderEyeScrollItem;
 import net.dainplay.rpgworldmod.item.custom.HeartOfTheSeaScrollItem;
 import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
+import net.dainplay.rpgworldmod.item.custom.PillagerScrollItem;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.dainplay.rpgworldmod.sounds.LoopSound;
 import net.dainplay.rpgworldmod.sounds.PositionedLoopSound;
@@ -15,7 +16,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -39,8 +39,6 @@ import java.util.UUID;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientPacketHandlers {
-
-	// --- Mana ---
 	public static void handleManaSync(int mana) {
 		ClientManaData.set(mana);
 	}
@@ -61,7 +59,6 @@ public class ClientPacketHandlers {
 		Level level = Minecraft.getInstance().level;
 		if (level == null) return;
 
-		// Координаты центра эффекта (передаются как центр блока + 0.5 по X/Z, Y - уровень блока + 1)
 		double centerX = x;
 		double centerY = y;
 		double centerZ = z;
@@ -70,11 +67,9 @@ public class ClientPacketHandlers {
 			for (double d12 = 0.0; d12 < Math.PI * 2; d12 += 0.15707963267948966) {
 				double cos = Math.cos(d12);
 				double sin = Math.sin(d12);
-				// Первый слой частиц (скорость -5)
 				level.addParticle(ParticleTypes.PORTAL,
 						centerX + cos * 5.0, centerY - 0.4, centerZ + sin * 5.0,
 						cos * -5.0, 0.0, sin * -5.0);
-				// Второй слой (скорость -7)
 				level.addParticle(ParticleTypes.PORTAL,
 						centerX + cos * 5.0, centerY - 0.4, centerZ + sin * 5.0,
 						cos * -7.0, 0.0, sin * -7.0);
@@ -82,7 +77,6 @@ public class ClientPacketHandlers {
 		}
 	}
 
-	// --- Razorleaf ---
 	public static void handleSyncRazorleafData(int entityId, int state, int attackType, int attackTimer,
 											   int tongueAnimationTime, Vec3 spitDirection, Vec3 pullDirection,
 											   boolean hasItemInMouth) {
@@ -104,7 +98,6 @@ public class ClientPacketHandlers {
 		}
 	}
 
-	// --- Entity Motion ---
 	public static void handleSyncEntityMotion(int entityId, double motionX, double motionY, double motionZ) {
 		Level level = Minecraft.getInstance().level;
 		if (level == null) return;
@@ -114,13 +107,11 @@ public class ClientPacketHandlers {
 		}
 	}
 
-	// --- Illusion Force ---
 	public static void handleIllusionForceSync(int illusionForce, float entPositionX, float entPositionY, float entPositionZ, boolean isSet, boolean isEnt) {
 		ClientIllusionForceData.set(illusionForce, isEnt);
 		ClientEntPositionData.set(entPositionX, entPositionY, entPositionZ, isSet);
 	}
 
-	// --- Bound Entity ---
 	public static void handleBoundEntitySync(int entityId, boolean isRemoval, BoundEntitySyncPacket.BoundEntityData data) {
 		if (isRemoval) {
 			ClientBoundEntityData.removeEntity(entityId);
@@ -129,17 +120,16 @@ public class ClientPacketHandlers {
 		}
 	}
 
-	// --- Pull Player ---
 	public static void handlePullPlayer(Vec3 motion, int playerId) {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null || mc.player == null || mc.player.getId() != playerId) return;
 
-		// Если игрок уже не пассажир, применяем сразу
 		if (!mc.player.isPassenger()) {
 			mc.player.setDeltaMovement(mc.player.getDeltaMovement().add(motion));
 			mc.player.fallDistance = 0;
 		}
 	}
+
 	public static void handlePullDownPlayer() {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null || mc.player == null) return;
@@ -154,7 +144,6 @@ public class ClientPacketHandlers {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null || mc.player == null || mc.player.getId() != playerId) return;
 
-		// Если игрок уже не пассажир, применяем сразу
 		if (!mc.player.isPassenger()) {
 			mc.player.setDeltaMovement(mc.player.getDeltaMovement().add(motion));
 			mc.player.fallDistance = 0;
@@ -164,7 +153,6 @@ public class ClientPacketHandlers {
 		ClientVelocityStorage.storeVelocity(playerId, motion);
 	}
 
-	// --- Move Particles ---
 	public static void handleMoveParticles(Vec3 startPos, Vec3 velocity, ParticleOptions particleType,
 										   boolean shouldCollide, double maxDistance) {
 		Level level = Minecraft.getInstance().level;
@@ -234,9 +222,7 @@ public class ClientPacketHandlers {
 		}
 	}
 
-	// --- Loop Sound ---
 	public static void handleLoopSound(int playerId, boolean start, ItemStack itemStack) {
-		//Minecraft.getInstance().player.sendSystemMessage(Component.literal("Пакет получен"));
 		Level level = Minecraft.getInstance().level;
 		if (level == null) return;
 		Player player = (Player) level.getEntity(playerId);
@@ -294,20 +280,27 @@ public class ClientPacketHandlers {
 				if (itemStack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0)
 					soundEvent = RPGSounds.SPELL_NECROMANCY_LOOP.get();
 			}
+			if (itemStack.getItem() instanceof PillagerScrollItem) {
+				if (itemStack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0)
+					soundEvent = RPGSounds.SPELL_RESTORATION_LOOP.get();
+				if (itemStack.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0)
+					soundEvent = RPGSounds.SPELL_ALTERATION_LOOP.get();
+				if (itemStack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0)
+					soundEvent = RPGSounds.SPELL_CONJURATION_PILLAGER_PREPARE.get();
+			}
 			if (itemStack.getItem() instanceof StaffItem) {
 				soundEvent = RPGSounds.STAFF_LOOP.get();
 			}
 			LoopSound sound = new LoopSound(player, itemStack, soundEvent);
 			Minecraft.getInstance().getSoundManager().play(sound);
 			RPGLoopSoundManager.addSound(player.getUUID(), sound);
-			//Minecraft.getInstance().player.sendSystemMessage(Component.literal("Запуск звука "+soundEvent));
+
 		} else {
 			RPGLoopSoundManager.stopSound(player.getUUID());
-			//Minecraft.getInstance().player.sendSystemMessage(Component.literal("Звук остановлен"));
+
 		}
 	}
 
-	// Менеджер звуков внутри клиентского обработчика
 	public static class RPGLoopSoundManager {
 		private static final Map<UUID, LoopSound> activeSounds = new HashMap<>();
 		private static final Map<UUID, LoopSound> corruptedBeaconSounds = new HashMap<>();
@@ -334,7 +327,6 @@ public class ClientPacketHandlers {
 			Entity entity = level.getEntity(ownerId);
 			if (!(entity instanceof Player owner)) return;
 
-			// Проверка условия использования
 			ItemStack usingItem = owner.getUseItem();
 			boolean conditionMet = (usingItem.getItem() instanceof NetherStarScrollItem &&
 					usingItem.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0 &&
@@ -342,11 +334,9 @@ public class ClientPacketHandlers {
 
 			boolean shouldBeActive = conditionMet && isActive && length > 0.1;
 
-			// Получаем старый список звуков (или пустой)
 			List<PositionedLoopSound> oldSounds = activeBeamSounds.remove(ownerId);
 			if (oldSounds == null) oldSounds = new ArrayList<>();
 
-			// Вычисляем новые позиции
 			List<Vec3> newPositions = new ArrayList<>();
 			if (length > 0.1) {
 				double step = 1.0;
@@ -355,22 +345,17 @@ public class ClientPacketHandlers {
 				}
 			}
 
-			// Создаём новый список для звуков после обновления
 			List<PositionedLoopSound> newSounds = new ArrayList<>(newPositions.size());
 
-			// Проходим по индексам до максимума из двух размеров
 			int maxSize = Math.max(oldSounds.size(), newPositions.size());
 			for (int i = 0; i < maxSize; i++) {
 				if (i < newPositions.size()) {
-					// Есть новая позиция
 					if (i < oldSounds.size()) {
-						// Есть старый звук – переиспользуем
 						PositionedLoopSound sound = oldSounds.get(i);
 						sound.setPosition(newPositions.get(i));
 						sound.setActive(shouldBeActive);
 						newSounds.add(sound);
 					} else {
-						// Старого звука нет – создаём новый
 						PositionedLoopSound newSound = new PositionedLoopSound(
 								RPGSounds.SPELL_DESTRUCTION_NETHER_STAR_LOOP.get(),
 								ownerId, newPositions.get(i));
@@ -379,14 +364,11 @@ public class ClientPacketHandlers {
 						newSounds.add(newSound);
 					}
 				} else {
-					// Новых позиций больше нет – старый звук нужно остановить
 					PositionedLoopSound old = oldSounds.get(i);
-					old.markForStop(); // пометим на остановку, чтобы tick() завершил его
-					// звук не добавляем в newSounds
+					old.markForStop();
 				}
 			}
 
-			// Сохраняем новый список
 			activeBeamSounds.put(ownerId, newSounds);
 		}
 	}
@@ -404,7 +386,6 @@ public class ClientPacketHandlers {
 			double length = eyePos.distanceTo(endPos);
 			BeamSoundManager.updateBeamSounds(ownerId, eyePos, direction, length, true);
 
-			// Обновляем специальные звуки
 			SpecialBeamSoundManager.updateSpecialSounds(ownerId, hitEntityPositions, endPos);
 		} else {
 			BeamSoundManager.updateBeamSounds(ownerId, Vec3.ZERO, Vec3.ZERO, 0, false);
@@ -412,10 +393,9 @@ public class ClientPacketHandlers {
 		}
 	}
 
-	// Менеджер для специальных звуков (сущности, блок, игрок)
 	public static class SpecialBeamSoundManager {
 		private static final Map<Integer, List<PositionedLoopSound>> activeEntitySounds = new HashMap<>();
-		private static final Map<Integer, PositionedLoopSound> activeEndSound = new HashMap<>();   // переименовано
+		private static final Map<Integer, PositionedLoopSound> activeEndSound = new HashMap<>();
 		private static final Map<Integer, PositionedLoopSound> activeOwnerSound = new HashMap<>();
 
 		public static void updateSpecialSounds(int ownerId, List<Vec3> hitEntityPositions, Vec3 endPos) {
@@ -424,7 +404,6 @@ public class ClientPacketHandlers {
 			Entity entity = level.getEntity(ownerId);
 			if (!(entity instanceof Player owner)) return;
 
-			// 1. Звуки на сущностях (без изменений)
 			List<PositionedLoopSound> oldEntitySounds = activeEntitySounds.remove(ownerId);
 			if (oldEntitySounds == null) oldEntitySounds = new ArrayList<>();
 
@@ -454,7 +433,6 @@ public class ClientPacketHandlers {
 			}
 			activeEntitySounds.put(ownerId, newEntitySounds);
 
-			// 2. Звук на игроке (владельце) — без изменений
 			PositionedLoopSound oldOwnerSound = activeOwnerSound.get(ownerId);
 			boolean shouldHaveOwnerSound = !hitEntityPositions.isEmpty();
 			if (shouldHaveOwnerSound) {
@@ -480,7 +458,6 @@ public class ClientPacketHandlers {
 				}
 			}
 
-			// 3. Звук на конечной точке луча — всегда, если луч активен и имеет ненулевую длину
 			PositionedLoopSound oldEndSound = activeEndSound.get(ownerId);
 			ItemStack usingItem = owner.getUseItem();
 			boolean isBeamActive = usingItem.getItem() instanceof NetherStarScrollItem &&
@@ -489,7 +466,6 @@ public class ClientPacketHandlers {
 					owner.isUsingItem();
 			boolean shouldHaveEndSound = isBeamActive && endPos.distanceTo(owner.getEyePosition()) > 0.1;
 
-// Если старый звук есть, но он не должен играть или уже остановлен — удаляем
 			if (oldEndSound != null && (!shouldHaveEndSound || oldEndSound.isStopped())) {
 				oldEndSound.markForStop();
 				activeEndSound.remove(ownerId);
@@ -498,7 +474,6 @@ public class ClientPacketHandlers {
 
 			if (shouldHaveEndSound) {
 				if (oldEndSound == null) {
-					// Создаём новый звук
 					PositionedLoopSound newSound = new PositionedLoopSound(
 							RPGSounds.SPELL_DESTRUCTION_NETHER_STAR_HIT_BLOCK.get(),
 							ownerId, endPos);
@@ -507,7 +482,6 @@ public class ClientPacketHandlers {
 					Minecraft.getInstance().getSoundManager().play(newSound);
 					activeEndSound.put(ownerId, newSound);
 				} else {
-					// Обновляем существующий
 					oldEndSound.setPosition(endPos);
 					oldEndSound.setActive(true);
 					oldEndSound.setVolume(0.3F);
@@ -516,12 +490,10 @@ public class ClientPacketHandlers {
 		}
 	}
 
-	// --- Target Validation Result ---
 	public static void handleTargetValidationResult(int targetId, boolean isValid) {
 		ClientAnimateTargetData.setValidationResult(targetId, isValid);
 	}
 
-	// --- Sync Effect (Happiness) ---
 	public static void handleSyncEffect(int entityId, boolean hasEffect, int amplifier, int duration) {
 		Level level = Minecraft.getInstance().level;
 		if (level == null) return;
@@ -540,7 +512,6 @@ public class ClientPacketHandlers {
 		}
 	}
 
-	// --- Paranoia Sound ---
 	public static void handleParanoiaSound(int entityId) {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.player != null && mc.player.getId() == entityId) {
@@ -552,7 +523,6 @@ public class ClientPacketHandlers {
 		}
 	}
 
-	// --- Fire Extinguish Particles ---
 	public static void handleFireExtinguishParticles(BlockPos fireCatcherPos, BlockPos firePos) {
 		Level level = Minecraft.getInstance().level;
 		if (level == null) return;

@@ -9,12 +9,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class ProjectruffleArrowItem extends ArrowItem {
-    public ProjectruffleArrowItem(Properties props) {
-        super(props);
-    }
+	public ProjectruffleArrowItem(Properties props) {
+		super(props);
+	}
 
-    @Override
-    public AbstractArrow createArrow(Level world, ItemStack ammoStack, LivingEntity shooter) {
-        return new ProjectruffleArrowEntity(ModEntities.PROJECTRUFFLE_ARROW.get(), shooter, world);
-    }
+	@Override
+	public AbstractArrow createArrow(Level world, ItemStack ammoStack, LivingEntity shooter) {
+		return new ProjectruffleArrowEntity(ModEntities.PROJECTRUFFLE_ARROW.get(), shooter, world);
+	}
 }

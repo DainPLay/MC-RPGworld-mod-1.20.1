@@ -9,13 +9,11 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.ArrayList;
 
 public class BurnoutHandler {
-
 	@SubscribeEvent
 	public static void onLivingAttack(LivingAttackEvent event) {
 		if (!event.getEntity().isSpectator() && (event.getEntity()).hasEffect(ModEffects.BURNOUT.get())) {

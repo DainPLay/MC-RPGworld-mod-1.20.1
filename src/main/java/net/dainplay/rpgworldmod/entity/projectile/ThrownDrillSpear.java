@@ -1,7 +1,5 @@
 package net.dainplay.rpgworldmod.entity.projectile;
 
-import javax.annotation.Nullable;
-
 import net.dainplay.rpgworldmod.block.custom.LivingWoodLogBlock;
 import net.dainplay.rpgworldmod.block.custom.RieLeavesBlock;
 import net.dainplay.rpgworldmod.block.entity.custom.EntFaceBlockEntity;
@@ -9,8 +7,6 @@ import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.entity.ModEntities;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.multiplayer.chat.report.ReportEnvironment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -19,8 +15,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -33,17 +27,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.phys.*;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class ThrownDrillSpear extends AbstractArrow {
@@ -75,9 +70,7 @@ public class ThrownDrillSpear extends AbstractArrow {
 		this.entityData.define(ID_POWER, (float) 0F);
 	}
 
-	/**
-	 * Called to update the entity's position/logic.
-	 */
+
 	private void checkCollision() {
 		HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
 		if (hitresult.getType() == HitResult.Type.MISS || !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult))
@@ -85,7 +78,6 @@ public class ThrownDrillSpear extends AbstractArrow {
 	}
 
 	public void tick() {
-
 		AABB aabb = this.getBoundingBox().expandTowards(this.getDeltaMovement());
 		if (this.entityData.get(ID_POWER) > 0F) {
 			for (BlockPos pos : BlockPos.betweenClosed(Mth.floor(aabb.minX), Mth.floor(aabb.minY), Mth.floor(aabb.minZ), Mth.floor(aabb.maxX), Mth.floor(aabb.maxY), Mth.floor(aabb.maxZ))) {
@@ -95,7 +87,6 @@ public class ThrownDrillSpear extends AbstractArrow {
 				boolean isEntBlock = (block instanceof LivingWoodLogBlock livingWoodLogBlock && livingWoodLogBlock.isRelatedToEnt(blockstate) != 0) ||
 						(block instanceof RieLeavesBlock rieLeavesBlock && rieLeavesBlock.isRelatedToEnt(blockstate) != 0);
 				if (isEntBlock) {
-
 					for (int x = -16; x <= 16; x++) {
 						for (int y = -16; y <= 16; y++) {
 							for (int z = -16; z <= 16; z++) {
@@ -111,7 +102,8 @@ public class ThrownDrillSpear extends AbstractArrow {
 						}
 					}
 				}
-				if (level.getBlockEntity(pos) instanceof EntFaceBlockEntity entEntity) entEntity.onRelatedBlockAttacked(pos);
+				if (level.getBlockEntity(pos) instanceof EntFaceBlockEntity entEntity)
+					entEntity.onRelatedBlockAttacked(pos);
 				if (blockstate.getBlock().getExplosionResistance(blockstate, level(), pos, null) < 20F && !blockstate.isAir()) {
 					if (level.isClientSide())
 						level.addDestroyBlockEffect(pos, blockstate);
@@ -211,17 +203,13 @@ public class ThrownDrillSpear extends AbstractArrow {
 		return this.entityData.get(ID_FOIL);
 	}
 
-	/**
-	 * Gets the EntityHitResult representing the entity hit
-	 */
+
 	@Nullable
 	protected EntityHitResult findHitEntity(Vec3 pStartVec, Vec3 pEndVec) {
 		return this.dealtDamage ? null : super.findHitEntity(pStartVec, pEndVec);
 	}
 
-	/**
-	 * Called when the arrow hits an entity
-	 */
+
 	protected void onHitEntity(EntityHitResult pResult) {
 		Entity entity = pResult.getEntity();
 		float f = 3.0F;
@@ -256,16 +244,12 @@ public class ThrownDrillSpear extends AbstractArrow {
 		return super.tryPickup(pPlayer) || this.isNoPhysics() && this.ownedBy(pPlayer) && pPlayer.getInventory().add(this.getPickupItem());
 	}
 
-	/**
-	 * The sound made when an entity is hit by this projectile
-	 */
+
 	protected SoundEvent getDefaultHitGroundSoundEvent() {
 		return RPGSounds.DRILL_SPEAR_HIT_GROUND.get();
 	}
 
-	/**
-	 * Called by a player entity when they collide with an entity
-	 */
+
 	public void playerTouch(Player pEntity) {
 		if (this.ownedBy(pEntity) || this.getOwner() == null) {
 			super.playerTouch(pEntity);
@@ -273,9 +257,7 @@ public class ThrownDrillSpear extends AbstractArrow {
 
 	}
 
-	/**
-	 * (abstract) Protected helper method to read subclass entity data from NBT.
-	 */
+
 	public void readAdditionalSaveData(CompoundTag pCompound) {
 		super.readAdditionalSaveData(pCompound);
 		if (pCompound.contains("Drill Spear", 10)) {

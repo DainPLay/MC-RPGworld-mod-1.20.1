@@ -15,33 +15,31 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import java.util.function.Supplier;
 
 public class CurioLayers {
+	public static final ModelLayerLocation
 
-    public static final ModelLayerLocation
+			SCARF = createLayerLocation("scarf"),
+			CHARM = createLayerLocation("charm"),
+			BELT = createLayerLocation("belt"),
+			TURRET = createLayerLocation("turret"),
+			THIMBLE = createLayerLocation("thimble");
 
-            SCARF = createLayerLocation("scarf"),
-            CHARM = createLayerLocation("charm"),
-            BELT = createLayerLocation("belt"),
-            TURRET = createLayerLocation("turret"),
-            THIMBLE = createLayerLocation("thimble");
+	public static ModelLayerLocation createLayerLocation(String name) {
+		return new ModelLayerLocation(new ResourceLocation(RPGworldMod.MOD_ID, name), name);
+	}
 
-    public static ModelLayerLocation createLayerLocation(String name) {
-        return new ModelLayerLocation(new ResourceLocation(RPGworldMod.MOD_ID, name), name);
-    }
+	private static Supplier<LayerDefinition> layer(MeshDefinition mesh, int textureWidth, int textureHeight) {
+		return () -> LayerDefinition.create(mesh, textureWidth, textureHeight);
+	}
 
-    private static Supplier<LayerDefinition> layer(MeshDefinition mesh, int textureWidth, int textureHeight) {
-        return () -> LayerDefinition.create(mesh, textureWidth, textureHeight);
-    }
+	private static void register(EntityRenderersEvent.RegisterLayerDefinitions event, ModelLayerLocation layerLocation, Supplier<LayerDefinition> layer) {
+		event.registerLayerDefinition(layerLocation, layer);
+	}
 
-    private static void register(EntityRenderersEvent.RegisterLayerDefinitions event, ModelLayerLocation layerLocation, Supplier<LayerDefinition> layer) {
-        event.registerLayerDefinition(layerLocation, layer);
-    }
-
-    public static void register(EntityRenderersEvent.RegisterLayerDefinitions event) {
-
-        register(event, SCARF, layer(ScarfModel.createScarf(), 28, 16));
-        register(event, CHARM, layer(CharmModel.createCharm(), 32, 32));
-        register(event, BELT, layer(BeltModel.createBelt(), 28, 16));
-        register(event, TURRET, layer(TurretModel.createTurret(), 64, 64));
-        register(event, THIMBLE, layer(ThimbleModel.createThimble(), 16, 16));
-    }
+	public static void register(EntityRenderersEvent.RegisterLayerDefinitions event) {
+		register(event, SCARF, layer(ScarfModel.createScarf(), 28, 16));
+		register(event, CHARM, layer(CharmModel.createCharm(), 32, 32));
+		register(event, BELT, layer(BeltModel.createBelt(), 28, 16));
+		register(event, TURRET, layer(TurretModel.createTurret(), 64, 64));
+		register(event, THIMBLE, layer(ThimbleModel.createThimble(), 16, 16));
+	}
 }

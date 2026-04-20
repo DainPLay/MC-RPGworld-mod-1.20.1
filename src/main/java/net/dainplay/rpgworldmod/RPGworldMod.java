@@ -28,6 +28,7 @@ import net.dainplay.rpgworldmod.item.custom.EmptyScrollItem;
 import net.dainplay.rpgworldmod.item.custom.EnderEyeScrollItem;
 import net.dainplay.rpgworldmod.item.custom.HeartOfTheSeaScrollItem;
 import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
+import net.dainplay.rpgworldmod.item.custom.PillagerScrollItem;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.dainplay.rpgworldmod.item.custom.WealdBladeItem;
 import net.dainplay.rpgworldmod.loot.ModLootModifiers;
@@ -113,7 +114,6 @@ public class RPGworldMod {
 					GameRules.BooleanValue.create(false));
 
 	public RPGworldMod() {
-
 		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		ModMessages.register();
 
@@ -169,17 +169,15 @@ public class RPGworldMod {
 		}
 
 		if (event.getDrops().isEmpty()) {
-			return; // No items were fished up, so we shouldn't trigger the advancement.
+			return;
 		}
 
 		for (ItemStack itemStack : event.getDrops()) {
-
 			if (itemStack.getItem() == ModItems.MOSSFRONT.get()
 					|| itemStack.getItem() == ModItems.PLATINUMFISH.get()
 					|| itemStack.getItem() == ModItems.GASBASS.get()
 					|| itemStack.getItem() == ModItems.SHEENTROUT.get()
 					|| itemStack.getItem() == ModItems.BHLEE.get()) {
-
 				ResourceLocation vanillaAdvancementId = new ResourceLocation("husbandry/fishy_business");
 
 				Advancement vanillaAdvancement = player.server.getAdvancements().getAdvancement(vanillaAdvancementId);
@@ -357,6 +355,12 @@ public class RPGworldMod {
 			event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
 			event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
 			event.accept(EnderEyeScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
+			event.accept(PillagerScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.RESTORATION.get(), ModEnchantments.RESTORATION.get().getMaxLevel())));
+			event.accept(PillagerScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
+			event.accept(PillagerScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ILLUSION.get(), ModEnchantments.ILLUSION.get().getMaxLevel())));
+			event.accept(PillagerScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
+			event.accept(PillagerScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
+			event.accept(PillagerScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
 			event.accept(NetherStarScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.RESTORATION.get(), ModEnchantments.RESTORATION.get().getMaxLevel())));
 			event.accept(NetherStarScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
 			event.accept(NetherStarScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ILLUSION.get(), ModEnchantments.ILLUSION.get().getMaxLevel())));
@@ -541,6 +545,7 @@ public class RPGworldMod {
 			event.accept(ModItems.EMBER_SCROLL);
 			event.accept(ModItems.HEART_OF_THE_SEA_SCROLL);
 			event.accept(ModItems.ENDER_EYE_SCROLL);
+			event.accept(ModItems.PILLAGER_SCROLL);
 			event.accept(ModItems.NETHER_STAR_SCROLL);
 		}
 
@@ -564,7 +569,6 @@ public class RPGworldMod {
 
 	private void setup(final FMLCommonSetupEvent event) {
 		event.enqueueWork(() -> {
-			// Given we only add two biomes, we should keep our weight relatively low.
 			Regions.register(new RPGworldRegionProvider(new ResourceLocation(MOD_ID, "overworld_1"), 1));
 
 			ComposterBlock.COMPOSTABLES.put(ModBlocks.RIE_LEAVES.get().asItem(), 0.3F);
@@ -626,7 +630,7 @@ public class RPGworldMod {
 			DispenserBlock.registerBehavior(ModItems.RIE_BOAT.get(), new ModBoatDispenseItemBehavior(ModBoat.Type.RIE, false));
 			DispenserBlock.registerBehavior(ModItems.RIE_CHEST_BOAT.get(), new ModBoatDispenseItemBehavior(ModBoat.Type.RIE, true));
 
-			// PARALYSIS
+
 			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
 					Ingredient.of(createPotion(Potions.AWKWARD)),
 					Ingredient.of(ModItems.PARALILY_BERRY.get()),
@@ -643,7 +647,7 @@ public class RPGworldMod {
 					PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.PARALYSIS_POTION.get())
 			));
 
-			// LONG PARALYSIS
+
 			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
 					Ingredient.of(createPotion(ModPotions.PARALYSIS_POTION.get())),
 					Ingredient.of(Items.REDSTONE),
@@ -660,7 +664,7 @@ public class RPGworldMod {
 					PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.LONG_PARALYSIS_POTION.get())
 			));
 
-			// STRONG PARALYSIS
+
 			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
 					Ingredient.of(createPotion(ModPotions.PARALYSIS_POTION.get())),
 					Ingredient.of(Items.GLOWSTONE_DUST),
@@ -677,7 +681,7 @@ public class RPGworldMod {
 					PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.STRONG_PARALYSIS_POTION.get())
 			));
 
-			// MOSSIOSIS
+
 			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
 					Ingredient.of(createPotion(Potions.AWKWARD)),
 					Ingredient.of(ModBlocks.MOSSHROOM.get()),
@@ -694,7 +698,7 @@ public class RPGworldMod {
 					PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.MOSSIOSIS_POTION.get())
 			));
 
-			// LONG MOSSIOSIS
+
 			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
 					Ingredient.of(createPotion(ModPotions.MOSSIOSIS_POTION.get())),
 					Ingredient.of(Items.REDSTONE),
@@ -711,7 +715,7 @@ public class RPGworldMod {
 					PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.LONG_MOSSIOSIS_POTION.get())
 			));
 
-			// STRONG MOSSIOSIS
+
 			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
 					Ingredient.of(createPotion(ModPotions.MOSSIOSIS_POTION.get())),
 					Ingredient.of(Items.GLOWSTONE_DUST),
@@ -728,7 +732,7 @@ public class RPGworldMod {
 					PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.STRONG_MOSSIOSIS_POTION.get())
 			));
 
-			// LONG ARBOR FUEL (обрати внимание, базового варианта с AWKWARD здесь нет)
+
 			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
 					Ingredient.of(createPotion(ModPotions.ARBOR_FUEL_BOTTLE.get())),
 					Ingredient.of(Items.REDSTONE),
@@ -745,7 +749,7 @@ public class RPGworldMod {
 					PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.LONG_ARBOR_FUEL_BOTTLE.get())
 			));
 
-			// PARANOIA
+
 			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
 					Ingredient.of(createPotion(Potions.AWKWARD)),
 					Ingredient.of(Items.ENDER_EYE),
@@ -762,7 +766,7 @@ public class RPGworldMod {
 					PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.PARANOIA_POTION.get())
 			));
 
-			// LONG PARANOIA
+
 			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
 					Ingredient.of(createPotion(ModPotions.PARANOIA_POTION.get())),
 					Ingredient.of(Items.REDSTONE),
@@ -779,7 +783,7 @@ public class RPGworldMod {
 					PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), ModPotions.LONG_PARANOIA_POTION.get())
 			));
 
-			// STRONG PARANOIA
+
 			BrewingRecipeRegistry.addRecipe(new ProperBrewingRecipe(
 					Ingredient.of(createPotion(ModPotions.PARANOIA_POTION.get())),
 					Ingredient.of(Items.GLOWSTONE_DUST),
@@ -816,7 +820,7 @@ public class RPGworldMod {
 
 	public void enqueueIMC(final InterModEnqueueEvent event) {
 		SlotTypePreset[] types = {SlotTypePreset.NECKLACE, SlotTypePreset.BELT, SlotTypePreset.BACK, SlotTypePreset.RING};
-		SlotTypePreset[] cosmeticTypes = {SlotTypePreset.NECKLACE, SlotTypePreset.BELT, SlotTypePreset.BACK};
+		SlotTypePreset[] cosmeticTypes = {SlotTypePreset.NECKLACE, SlotTypePreset.BELT, SlotTypePreset.BACK, SlotTypePreset.RING};
 		for (SlotTypePreset type : types) {
 			InterModComms.sendTo(CuriosApi.MODID, SlotTypeMessage.REGISTER_TYPE, () -> type.getMessageBuilder().build());
 		}

@@ -28,7 +28,7 @@ public class UseOnItemTargetPacket {
 
 	public UseOnItemTargetPacket(FriendlyByteBuf buf) {
 		this.playerId = buf.readInt();
-		int size = buf.readInt(); // читаем размер списка
+		int size = buf.readInt();
 		this.targetIds = new ArrayList<>(size);
 		for (int i = 0; i < size; i++) {
 			targetIds.add(buf.readInt());
@@ -37,7 +37,7 @@ public class UseOnItemTargetPacket {
 
 	public void toBytes(FriendlyByteBuf buf) {
 		buf.writeInt(playerId);
-		buf.writeInt(targetIds.size()); // пишем размер
+		buf.writeInt(targetIds.size());
 		for (int id : targetIds) {
 			buf.writeInt(id);
 		}
@@ -55,7 +55,7 @@ public class UseOnItemTargetPacket {
 					targets.add(itemEntity);
 				}
 			}
-			if(!targets.isEmpty()) {
+			if (!targets.isEmpty()) {
 				ItemStack itemInHand = player.getItemInHand(player.getUsedItemHand());
 
 				if (itemInHand.getItem() instanceof BrainCoralStaffItem

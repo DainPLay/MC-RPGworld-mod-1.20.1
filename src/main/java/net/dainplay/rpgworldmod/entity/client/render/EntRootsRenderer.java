@@ -12,7 +12,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 public class EntRootsRenderer extends EntityRenderer<EntRootsEntity> {
-
 	private static final ResourceLocation TEXTURE = new ResourceLocation(RPGworldMod.MOD_ID, "textures/entity/ent/roots.png");
 	private final EntRootsModel model;
 
@@ -24,7 +23,6 @@ public class EntRootsRenderer extends EntityRenderer<EntRootsEntity> {
 	@Override
 	public void render(EntRootsEntity entity, float entityYaw, float partialTicks, PoseStack poseStack,
 					   MultiBufferSource buffer, int packedLight) {
-
 		poseStack.pushPose();
 
 		int maxLifetime = 20;
@@ -35,32 +33,25 @@ public class EntRootsRenderer extends EntityRenderer<EntRootsEntity> {
 			return;
 		}
 
-		float progress = Mth.clamp((activeTime + partialTicks) / (float)maxLifetime, 0.0f, 1.0f);
+		float progress = Mth.clamp((activeTime + partialTicks) / (float) maxLifetime, 0.0f, 1.0f);
 		float maxHeight = 1f;
 
-		// Разделяем анимацию на три фазы:
-		// 1. Быстрый подъем (0-30% времени)
-		// 2. Стояние на месте (30-70% времени)
-		// 3. Медленное опускание (70-100% времени)
 
 		float yOffset;
 		if (progress < 0.3f) {
-			// Фаза 1: Быстрый подъем
 			float phaseProgress = progress / 0.3f;
 			yOffset = Mth.sin(phaseProgress * Mth.HALF_PI) * maxHeight;
 		} else if (progress < 0.7f) {
-			// Фаза 2: Стояние на месте
 			yOffset = maxHeight;
 		} else {
-			// Фаза 3: Медленное опускание
 			float phaseProgress = (progress - 0.7f) / 0.3f;
 			yOffset = Mth.cos(phaseProgress * Mth.HALF_PI) * maxHeight;
 		}
 
-		// Применяем смещение
+
 		poseStack.translate(0.0D, yOffset, 0.0D);
 
-		// Легкое покачивание
+
 		if (progress < 0.7f) {
 			float sway = Mth.sin(progress * Mth.PI * 4) * 0.01f;
 			poseStack.translate(sway, 0.0D, sway);

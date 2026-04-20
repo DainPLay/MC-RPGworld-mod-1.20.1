@@ -8,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -74,32 +73,32 @@ public class FireCatcherBlock extends Block implements EntityBlock {
 		BlockPos pos = context.getClickedPos();
 		Player player = context.getPlayer();
 
-		// Проверяем, что блок размещается под потолком
+
 		BlockPos abovePos = pos.above();
 		if (!level.getBlockState(abovePos).isSolidRender(level, abovePos)) {
 			return null;
 		}
 
-		// Проверяем, что есть место для нижней части
+
 		if (!level.getBlockState(pos.below()).canBeReplaced(context)) {
 			return null;
 		}
 
-		// Размещаем нижнюю часть
+
 		level.setBlock(pos.below(),
 				this.defaultBlockState()
 						.setValue(HALF, Half.BOTTOM)
 						.setValue(HUNGRY, false),
 				3);
 
-		// Размещаем верхнюю часть
+
 		level.setBlock(pos,
 				this.defaultBlockState()
 						.setValue(HALF, Half.TOP)
 						.setValue(HUNGRY, false),
 				3);
 
-		// Принудительно обновляем клиент для нижнего блока
+
 		level.sendBlockUpdated(pos.below(),
 				level.getBlockState(pos.below()),
 				level.getBlockState(pos.below()),
@@ -113,11 +112,10 @@ public class FireCatcherBlock extends Block implements EntityBlock {
 		super.setPlacedBy(level, pos, state, placer, stack);
 
 		if (!level.isClientSide && state.getValue(HALF) == Half.TOP) {
-			// Немедленно обновляем менеджер при размещении
 			FireCatcherManager manager = FireCatcherManager.get(level);
 			manager.addFireCatcher(pos, false, level.dimension());
 
-			// Синхронизируем BlockEntity
+
 			if (level.getBlockEntity(pos) instanceof FireCatcherBlockEntity catcher) {
 				catcher.setInitialState(false);
 			}
@@ -126,18 +124,16 @@ public class FireCatcherBlock extends Block implements EntityBlock {
 
 	@Override
 	public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-		// При разрушении одной части, разрушаем и другую
 		Half half = state.getValue(HALF);
 		BlockPos otherPos = half == Half.TOP ? pos.below() : pos.above();
 		BlockState otherState = level.getBlockState(otherPos);
 
 		if (otherState.getBlock() == this) {
-			// Не вызываем playerWillDestroy для другой части, чтобы избежать рекурсии
 			level.setBlock(otherPos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 35);
 			level.levelEvent(player, 2001, otherPos, Block.getId(otherState));
 		}
 
-		// Всегда удаляем из системы защиты при разрушении
+
 		if (!level.isClientSide) {
 			BlockPos mainPos = getMainPos(pos, state);
 			FireCatcherManager manager = FireCatcherManager.get(level);
@@ -151,10 +147,9 @@ public class FireCatcherBlock extends Block implements EntityBlock {
 	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
 								 InteractionHand hand, BlockHitResult hit) {
 		if (!level.isClientSide && hand == InteractionHand.MAIN_HAND) {
-			// Определяем основную позицию (верхнюю часть)
 			BlockPos mainPos = getMainPos(pos, state);
 
-			// Переключаем состояние
+
 			BlockEntity be = level.getBlockEntity(mainPos);
 			if (be instanceof FireCatcherBlockEntity catcher) {
 				if (!state.getValue(HUNGRY) && player instanceof ServerPlayer serverPlayer) {
@@ -162,17 +157,16 @@ public class FireCatcherBlock extends Block implements EntityBlock {
 				}
 				catcher.toggleMode();
 
-				// Звук переключения
+
 				if (state.getValue(HUNGRY)) {
 					level.playSound(null, pos, RPGSounds.FIRE_CATCHER_NOT_HUNGRY.get(), SoundSource.BLOCKS, 0.3f, 1f);
 					level.gameEvent(GameEvent.BLOCK_DEACTIVATE, pos, GameEvent.Context.of(state));
-				}
-				else {
+				} else {
 					level.playSound(null, pos, RPGSounds.FIRE_CATCHER_HUNGRY.get(), SoundSource.BLOCKS, 0.3f, 1f);
 					level.gameEvent(GameEvent.BLOCK_ACTIVATE, pos, GameEvent.Context.of(state));
 				}
 
-				// Обновляем соседние блоки для синхронизации клиента
+
 				level.sendBlockUpdated(mainPos, state, state, 3);
 
 				return InteractionResult.SUCCESS;
@@ -185,7 +179,6 @@ public class FireCatcherBlock extends Block implements EntityBlock {
 	@Override
 	public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
 		if (!level.isClientSide && state.getValue(HALF) == Half.TOP) {
-			// Добавляем в систему защиты
 			FireCatcherManager manager = FireCatcherManager.get(level);
 			manager.addFireCatcher(pos, false, level.dimension());
 		}
@@ -193,9 +186,7 @@ public class FireCatcherBlock extends Block implements EntityBlock {
 
 	@Override
 	public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-		// Визуальные эффекты
 		if (state.getValue(HUNGRY) && state.getValue(HALF) == Half.TOP) {
-			// Частицы для голодного состояния
 			if (random.nextInt(2) == 0) {
 				double x = pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.5;
 				double y = pos.getY() + 0.5625;
@@ -210,14 +201,12 @@ public class FireCatcherBlock extends Block implements EntityBlock {
 		super.neighborChanged(state, level, pos, block, fromPos, isMoving);
 
 		if (!level.isClientSide && !canSurvive(state, level, pos)) {
-			// Разрушаем обе части, если блок не может выжить
 			destroyBothParts(level, pos, state);
 		}
 	}
 
 	@Override
 	public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-		// Проверяем, может ли блок выжить после обновления соседа
 		if (!canSurvive(state, level, pos)) {
 			if (!level.isClientSide()) {
 				level.scheduleTick(pos, this, 1);
@@ -230,11 +219,9 @@ public class FireCatcherBlock extends Block implements EntityBlock {
 		Half half = state.getValue(HALF);
 
 		if (half == Half.TOP) {
-			// Верхняя часть должна быть прикреплена к блоку сверху
 			BlockPos supportPos = pos.above();
 			return level.getBlockState(supportPos).isFaceSturdy(level, supportPos, Direction.DOWN);
 		} else {
-			// Нижняя часть должна иметь верхнюю часть над собой
 			BlockPos topPos = pos.above();
 			BlockState topState = level.getBlockState(topPos);
 			return topState.getBlock() == this && topState.getValue(HALF) == Half.TOP;
@@ -246,16 +233,16 @@ public class FireCatcherBlock extends Block implements EntityBlock {
 		BlockPos otherPos = half == Half.TOP ? pos.below() : pos.above();
 		BlockPos mainPos = getMainPos(pos, state);
 
-		// Удаляем из системы защиты
+
 		if (!level.isClientSide) {
 			FireCatcherManager manager = FireCatcherManager.get(level);
 			manager.removeFireCatcher(mainPos, level.dimension(), (ServerLevel) level);
 		}
 
-		// Разрушаем эту часть
+
 		level.destroyBlock(pos, true);
 
-		// Разрушаем другую часть (без дропа, чтобы не дублировать)
+
 		if (level.getBlockState(otherPos).getBlock() == this) {
 			level.destroyBlock(otherPos, false);
 		}

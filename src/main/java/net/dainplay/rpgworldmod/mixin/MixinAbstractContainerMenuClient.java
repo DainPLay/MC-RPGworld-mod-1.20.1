@@ -31,7 +31,6 @@ import java.util.Set;
 @OnlyIn(Dist.CLIENT)
 @Mixin(AbstractContainerMenu.class)
 public abstract class MixinAbstractContainerMenuClient implements ITriggerChestStaffs {
-
 	@Unique
 	private boolean rpgworldmod$sentTrigger = false;
 
@@ -45,7 +44,6 @@ public abstract class MixinAbstractContainerMenuClient implements ITriggerChestS
 		this.rpgworldmod$sentTrigger = sent;
 	}
 
-	// При изменении одного слота
 	@Inject(method = "setItem(IILnet/minecraft/world/item/ItemStack;)V", at = @At("RETURN"))
 	private void onSetItem(int slotId, int stateId, ItemStack stack, CallbackInfo ci) {
 		if (stack.getItem() instanceof StaffItem) {
@@ -64,13 +62,11 @@ public abstract class MixinAbstractContainerMenuClient implements ITriggerChestS
 		}
 	}
 
-	// При полной инициализации всех слотов (открытие контейнера, полный ресет)
 	@Inject(method = "initializeContents(ILjava/util/List;Lnet/minecraft/world/item/ItemStack;)V", at = @At("RETURN"))
 	private void onInitializeContents(int stateId, List<ItemStack> items, ItemStack carried, CallbackInfo ci) {
 		this.checkAndSendTrigger();
 	}
 
-	// При синхронизации удалённого слота (используется ContainerSynchronizer)
 	@Inject(method = "setRemoteSlot", at = @At("RETURN"))
 	private void onSetRemoteSlot(int slot, ItemStack stack, CallbackInfo ci) {
 		if (stack.getItem() instanceof StaffItem) {
@@ -89,7 +85,6 @@ public abstract class MixinAbstractContainerMenuClient implements ITriggerChestS
 		}
 	}
 
-	// Без копирования (редко, но тоже нужно)
 	@Inject(method = "setRemoteSlotNoCopy", at = @At("RETURN"))
 	private void onSetRemoteSlotNoCopy(int slot, ItemStack stack, CallbackInfo ci) {
 		if (stack.getItem() instanceof StaffItem) {
@@ -126,7 +121,6 @@ public abstract class MixinAbstractContainerMenuClient implements ITriggerChestS
 
 		Set<String> uniqueKeys = new HashSet<>();
 		for (Slot slot : menu.slots) {
-			// Пропускаем инвентарь игрока
 			if (slot.container instanceof Inventory) continue;
 			if (slot instanceof CreativeModeInventoryScreen.CustomCreativeSlot) continue;
 
@@ -143,7 +137,6 @@ public abstract class MixinAbstractContainerMenuClient implements ITriggerChestS
 			}
 		}
 
-		// Если условие перестало выполняться, сбрасываем флаг (чтобы можно было отправить снова при возвращении предметов)
 		if (uniqueKeys.size() < 27 && this.rpgworldmod$hasSentTrigger()) {
 			this.rpgworldmod$setSentTrigger(false);
 		}

@@ -1,28 +1,22 @@
 package net.dainplay.rpgworldmod.mixin;
 
-import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.gui.HealthOverlayEventHandler;
 import net.dainplay.rpgworldmod.gui.ManaOverlayEventHandler;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.network.ClientMaxManaData;
-import net.dainplay.rpgworldmod.util.StarMenuHandler;
+import net.dainplay.rpgworldmod.util.BeaconSpellStarMenuHandler;
+import net.dainplay.rpgworldmod.util.RecolorWoolMenuHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.horse.SkeletonHorse;
-import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import org.joml.Quaternionf;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,7 +27,6 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(Gui.class)
 public abstract class GuiMixin {
-
 	@Shadow
 	public abstract Font getFont();
 
@@ -55,16 +48,16 @@ public abstract class GuiMixin {
 			return;
 		}
 
-		// Вмешиваемся только для нужного предмета
+
 		if (this.lastToolHighlight.getItem() != ModItems.BRAIN_CORAL_STAFF.get()
 				&& this.lastToolHighlight.getItem() != ModItems.TUBE_CORAL_STAFF.get()
 				&& this.lastToolHighlight.getItem() != ModItems.BUBBLE_CORAL_STAFF.get()
 				&& this.lastToolHighlight.getItem() != ModItems.HORN_CORAL_STAFF.get()
 				&& this.lastToolHighlight.getItem() != ModItems.FIRE_CORAL_STAFF.get()) {
-			return; // для остальных оставляем оригинальное поведение
+			return;
 		}
 
-		// Формируем компонент имени точно как в оригинале
+
 		MutableComponent mutablecomponent = Component.empty()
 				.append(this.lastToolHighlight.getHoverName())
 				.withStyle(this.lastToolHighlight.getRarity().getStyleModifier());
@@ -73,7 +66,7 @@ public abstract class GuiMixin {
 		}
 		Component highlightTip = this.lastToolHighlight.getHighlightTip(mutablecomponent);
 
-		// Первая строка: текст оригинального названия с его стилем
+
 		String firstLineText = highlightTip.getString();
 		Style baseStyle = highlightTip.getStyle();
 		int color = 16777215;
@@ -90,47 +83,47 @@ public abstract class GuiMixin {
 				.append(Component.literal(" ").withStyle(ChatFormatting.ITALIC))
 				.append(Component.translatable(key).withStyle(ChatFormatting.ITALIC).withStyle(style -> style.withColor(finalColor)));
 
-		// Отменяем стандартную отрисовку
+
 		ci.cancel();
 
-		// Определяем шрифт (кастомный, если есть)
+
 		Font font = IClientItemExtensions.of(this.lastToolHighlight)
 				.getFont(this.lastToolHighlight, IClientItemExtensions.FontContext.SELECTED_ITEM_NAME);
 		if (font == null) {
 			font = this.getFont();
 		}
 
-		// Ширина каждой строки и максимальная ширина
+
 		int firstWidth = font.width(firstLineText);
 		int secondWidth = font.width(secondLineComponent);
 		int maxWidth = Math.max(firstWidth, secondWidth);
 
-		// Базовый Y (низ последней строки, как в оригинале)
+
 		int baseY = this.screenHeight - Math.max(yShift, 59);
 		if (!Minecraft.getInstance().gameMode.canHurtPlayer()) {
 			baseY += 14;
 		}
 
-		// Альфа-канал для эффекта появления/исчезновения
+
 		int alpha = (int) ((float) this.toolHighlightTimer * 256.0F / 10.0F);
 		if (alpha > 255) alpha = 255;
 		int colorWithAlpha = color + (alpha << 24);
 
 		int lineHeight = font.lineHeight;
-		// Верх первой строки (так как строк две)
+
 		int startY = baseY - lineHeight;
 
-		// Фон под всем текстом
+
 		int bgColor = Minecraft.getInstance().options.getBackgroundColor(0);
 		int bgX = (this.screenWidth - maxWidth) / 2;
 		guiGraphics.fill(bgX - 2, startY - 2, bgX + maxWidth + 2, startY + 2 * lineHeight + 2, bgColor);
 
-		// Рисуем первую строку (центрированную)
+
 		int x1 = (this.screenWidth - firstWidth) / 2;
 		Component firstComponent = Component.literal(firstLineText).withStyle(baseStyle);
 		guiGraphics.drawString(font, firstComponent, x1, startY, colorWithAlpha);
 
-		// Рисуем вторую строку (центрированную)
+
 		int x2 = (this.screenWidth - secondWidth) / 2;
 		guiGraphics.drawString(font, secondLineComponent, x2, startY + lineHeight, colorWithAlpha);
 	}
@@ -146,7 +139,7 @@ public abstract class GuiMixin {
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/Gui;renderHeart(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Gui$HeartType;IIIZZ)V",
-					ordinal = 0, // первый вызов renderHeart (контейнер)
+					ordinal = 0,
 					shift = At.Shift.AFTER
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
@@ -159,7 +152,6 @@ public abstract class GuiMixin {
 			Gui.HeartType heartType, int i, int j, int k, int l,
 			int i1, int j1, int k1, int l1, int i2
 	) {
-		// Этот метод будет вызываться для каждого сердца
 		HealthOverlayEventHandler.setRandomOffset(i1, i2);
 	}
 
@@ -182,7 +174,7 @@ public abstract class GuiMixin {
 
 	@Inject(method = "renderCrosshair", at = @At(value = "HEAD"), cancellable = true)
 	private void onRenderCrosshair(GuiGraphics pGuiGraphics, CallbackInfo ci) {
-		if (StarMenuHandler.isActive()) {
+		if (BeaconSpellStarMenuHandler.isActive() || RecolorWoolMenuHandler.isActive()) {
 			ci.cancel();
 		}
 	}

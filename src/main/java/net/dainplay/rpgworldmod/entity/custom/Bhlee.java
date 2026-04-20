@@ -10,27 +10,27 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class Bhlee extends AbstractSchoolingFish {
-   public Bhlee(EntityType<? extends Bhlee> pEntityType, Level pLevel) {
-      super(pEntityType, pLevel);
-   }
+	public Bhlee(EntityType<? extends Bhlee> pEntityType, Level pLevel) {
+		super(pEntityType, pLevel);
+	}
 
-   public ItemStack getBucketItemStack() {
-      return new ItemStack(ModItems.BHLEE_BUCKET.get());
-   }
+	public ItemStack getBucketItemStack() {
+		return new ItemStack(ModItems.BHLEE_BUCKET.get());
+	}
 
-   protected SoundEvent getAmbientSound() {
-      return RPGSounds.BHLEE_AMBIENT.get();
-   }
+	protected SoundEvent getAmbientSound() {
+		return RPGSounds.BHLEE_AMBIENT.get();
+	}
 
-   protected SoundEvent getDeathSound() {
-      return RPGSounds.BHLEE_DEATH.get();
-   }
+	protected SoundEvent getDeathSound() {
+		return RPGSounds.BHLEE_DEATH.get();
+	}
 
-   protected SoundEvent getHurtSound(DamageSource pDamageSource) {
-      return RPGSounds.BHLEE_HURT.get();
-   }
+	protected SoundEvent getHurtSound(DamageSource pDamageSource) {
+		return RPGSounds.BHLEE_HURT.get();
+	}
 
-   protected SoundEvent getFlopSound() {
-      return RPGSounds.BHLEE_FLOP.get();
-   }
+	protected SoundEvent getFlopSound() {
+		return RPGSounds.BHLEE_FLOP.get();
+	}
 }

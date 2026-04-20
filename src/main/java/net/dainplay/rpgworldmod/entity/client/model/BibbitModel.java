@@ -1,25 +1,23 @@
-package net.dainplay.rpgworldmod.entity.client.model;// Made with Blockbench 4.8.3
-// Exported for Minecraft version 1.17 or later with Mojang mappings
-// Paste this class into your mod and generate all required imports
+package net.dainplay.rpgworldmod.entity.client.model;
 
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.entity.custom.Bibbit;
-import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 public class BibbitModel<Type extends Bibbit> extends EntityModel<Bibbit> {
-	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(RPGworldMod.MOD_ID, "bibbit"), "main");
 	ModelPart head;
 	public final ModelPart left_leg;
@@ -32,6 +30,7 @@ public class BibbitModel<Type extends Bibbit> extends EntityModel<Bibbit> {
 		this.right_leg = root.getChild("right_leg");
 		this.sitting_head = root.getChild("sitting_head");
 	}
+
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
@@ -53,14 +52,13 @@ public class BibbitModel<Type extends Bibbit> extends EntityModel<Bibbit> {
 
 	@Override
 	public void setupAnim(Bibbit entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-
 		limbSwingAmount = Math.min(0.25F, limbSwingAmount);
-			this.head.xRot = headPitch * ((float)Math.PI / 180F);
-			this.head.yRot = netHeadYaw * ((float)Math.PI / 180F);
+		this.head.xRot = headPitch * ((float) Math.PI / 180F);
+		this.head.yRot = netHeadYaw * ((float) Math.PI / 180F);
 		this.left_leg.xRot = Mth.sin(limbSwing * 1.5F * 0.5F) * 2.0F * limbSwingAmount;
-		this.right_leg.xRot = Mth.sin(limbSwing * 1.5F * 0.5F + (float)Math.PI) * 2.0F * limbSwingAmount;
+		this.right_leg.xRot = Mth.sin(limbSwing * 1.5F * 0.5F + (float) Math.PI) * 2.0F * limbSwingAmount;
 		this.left_leg.zRot = 0.17453292F * Mth.cos(limbSwing * 1.5F * 0.5F) * limbSwingAmount;
-		this.right_leg.zRot = 0.17453292F * Mth.cos(limbSwing * 1.5F * 0.5F + (float)Math.PI) * limbSwingAmount;
+		this.right_leg.zRot = 0.17453292F * Mth.cos(limbSwing * 1.5F * 0.5F + (float) Math.PI) * limbSwingAmount;
 	}
 
 	@Override
@@ -71,7 +69,5 @@ public class BibbitModel<Type extends Bibbit> extends EntityModel<Bibbit> {
 		right_leg.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
 	}
 
-	/**
-	 * Sets this entity's model rotation angles
-	 */
+
 }

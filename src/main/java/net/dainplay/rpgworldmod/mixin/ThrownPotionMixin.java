@@ -15,32 +15,31 @@ import java.util.UUID;
 
 @Mixin(ThrownPotion.class)
 public abstract class ThrownPotionMixin {
+	@Inject(method = "applyWater", at = @At("TAIL"))
+	private void isMosquitoSwarmOrHasMosquitoEffect(CallbackInfo ci) {
+		ThrownPotion potion = (ThrownPotion) (Object) this;
+		AABB aabb = potion.getBoundingBox().inflate(4.0D, 2.0D, 4.0D);
 
-    @Inject(method = "applyWater", at = @At("TAIL"))
-    private void isMosquitoSwarmOrHasMosquitoEffect(CallbackInfo ci) {
-        ThrownPotion potion = (ThrownPotion) (Object) this;
-        AABB aabb = potion.getBoundingBox().inflate(4.0D, 2.0D, 4.0D);
+		for (LivingEntity livingentity : potion.level().getEntitiesOfClass(LivingEntity.class, aabb,
+				(entity) -> entity.hasEffect(ModEffects.MOSQUITOING.get()))) {
+			double d0 = potion.distanceToSqr(livingentity);
+			if (d0 < 16.0D) {
+				UUID ownerUUID = null;
+				if (livingentity.getPersistentData().hasUUID("MosquitoSwarmOwner")) {
+					ownerUUID = livingentity.getPersistentData().getUUID("MosquitoSwarmOwner");
+					livingentity.getPersistentData().remove("MosquitoSwarmOwner");
+				}
+				MosquitoSwarm.spawnBlock(livingentity, livingentity.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier(), ownerUUID);
+				livingentity.removeEffect(ModEffects.MOSQUITOING.get());
+			}
+		}
 
-        for(LivingEntity livingentity : potion.level().getEntitiesOfClass(LivingEntity.class, aabb,
-                (entity) -> entity.hasEffect(ModEffects.MOSQUITOING.get()))) {
-            double d0 = potion.distanceToSqr(livingentity);
-            if (d0 < 16.0D) {
-                UUID ownerUUID = null;
-                if (livingentity.getPersistentData().hasUUID("MosquitoSwarmOwner")) {
-                    ownerUUID = livingentity.getPersistentData().getUUID("MosquitoSwarmOwner");
-                    livingentity.getPersistentData().remove("MosquitoSwarmOwner");
-                }
-                MosquitoSwarm.spawnBlock(livingentity,livingentity.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier(),ownerUUID);
-                livingentity.removeEffect(ModEffects.MOSQUITOING.get());
-            }
-        }
+		for (MosquitoSwarm mosquitoSwarm : potion.level().getEntitiesOfClass(MosquitoSwarm.class, aabb)) {
+			mosquitoSwarm.transformIntoBlock(mosquitoSwarm.getSize());
+		}
 
-        for(MosquitoSwarm mosquitoSwarm : potion.level().getEntitiesOfClass(MosquitoSwarm.class, aabb)) {
-            mosquitoSwarm.transformIntoBlock(mosquitoSwarm.getSize());
-        }
-
-        for(Razorleaf razorleaf : potion.level().getEntitiesOfClass(Razorleaf.class, aabb)) {
-            razorleaf.turnToBlock();
-        }
-    }
+		for (Razorleaf razorleaf : potion.level().getEntitiesOfClass(Razorleaf.class, aabb)) {
+			razorleaf.turnToBlock();
+		}
+	}
 }

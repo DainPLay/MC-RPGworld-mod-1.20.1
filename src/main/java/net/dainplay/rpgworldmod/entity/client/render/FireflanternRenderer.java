@@ -7,25 +7,16 @@ import com.mojang.math.Axis;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.entity.client.model.FireflanternModel;
 import net.dainplay.rpgworldmod.entity.custom.Fireflantern;
-import net.dainplay.rpgworldmod.entity.custom.Sheentrout;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.GlowSquid;
-import net.minecraft.world.entity.animal.allay.Allay;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 
@@ -42,7 +33,7 @@ public class FireflanternRenderer extends MobRenderer<Fireflantern, Fireflantern
 
 	public FireflanternRenderer(EntityRendererProvider.Context context) {
 		super(context, new FireflanternModel<>(context.bakeLayer(FireflanternModel.LAYER_LOCATION)), 0.25F);
-		//this.addLayer(new FireflanternFireLayer<>(this));
+
 	}
 
 	protected int getBlockLightLevel(Fireflantern p_234560_, BlockPos p_234561_) {
@@ -86,25 +77,24 @@ public class FireflanternRenderer extends MobRenderer<Fireflantern, Fireflantern
 		pPoseStack.pushPose();
 		pPoseStack.translate(0.0F, 0.5F, 0.0F);
 
-		// Получаем камеру клиента
+
 		Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
 		Vec3 cameraPos = camera.getPosition();
 
-		// Получаем вектор взгляда камеры как Vector3f и преобразуем в Vec3
+
 		Vector3f lookVector3f = camera.getLookVector();
 		Vec3 cameraLookDir = new Vec3(lookVector3f.x(), lookVector3f.y(), lookVector3f.z());
 
 		Vec3 entityPos = pEntity.position().add(0, 0.5F, 0);
 
-		// Вычисляем направление от моба к камере
+
 		Vec3 toCamera = cameraPos.subtract(entityPos).normalize();
 
-		// Для размещения лучей позади моба относительно камеры
-		// Используем обратное направление (от камеры к мобу)
+
 		float backwardOffset = -0.5f;
 		Vec3 backwardOffsetVector = cameraLookDir.scale(-backwardOffset);
 
-		// Вычисляем целевую позицию для лучей (позади моба относительно камеры)
+
 		Vec3 targetPos = entityPos.add(backwardOffsetVector);
 
 		float animationProgress = (pEntity.tickCount + pPartialTicks) * 0.005F;
@@ -116,14 +106,14 @@ public class FireflanternRenderer extends MobRenderer<Fireflantern, Fireflantern
 
 				pPoseStack.translate(targetPos.x - entityPos.x, targetPos.y - entityPos.y, targetPos.z - entityPos.z);
 
-				// Направляем лучи на камеру
+
 				Vec3 directionToCamera = cameraPos.subtract(targetPos).normalize();
 				double horizontalAngleToCamera = Math.toDegrees(Math.atan2(directionToCamera.x, directionToCamera.z));
 				double verticalAngleToCamera = Math.toDegrees(Math.asin(directionToCamera.y));
 
 				float angle = animationProgress * 360F + (360f / beamCount) * i;
 
-				// Поворачиваем лучи чтобы смотреть на камеру
+
 				float depthOffset = i * 0.01f;
 				pPoseStack.mulPose(Axis.YP.rotationDegrees((float) horizontalAngleToCamera));
 				pPoseStack.mulPose(Axis.XP.rotationDegrees((float) -verticalAngleToCamera));

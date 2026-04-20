@@ -1,10 +1,9 @@
-// LivingWoodStaffItem.java
+
 package net.dainplay.rpgworldmod.item.custom;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -32,7 +31,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class StaffItem extends Item implements RPGtooltip, Vanishable {
-
 	public enum GemType {
 		EMBER_GEM("ember_gem"),
 		HEART_OF_THE_SEA("heart_of_the_sea"),
@@ -72,10 +70,8 @@ public class StaffItem extends Item implements RPGtooltip, Vanishable {
 	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
 		consumer.accept(new IClientItemExtensions() {
-
 			@Override
 			public boolean applyForgeHandTransform(PoseStack poseStack, LocalPlayer player, HumanoidArm arm, ItemStack itemInHand, float partialTick, float equipProcess, float swingProcess) {
-				// Применяем только если предмет используется в этой руке
 				if (player.isUsingItem() && player.getUsedItemHand() == (arm == HumanoidArm.RIGHT ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND)) {
 					int direction = arm == HumanoidArm.RIGHT ? 1 : -1;
 
@@ -98,7 +94,7 @@ public class StaffItem extends Item implements RPGtooltip, Vanishable {
 					if (progress > 0.1F) {
 						float shake = Mth.sin((useTime - 0.1F) * 1.3F);
 						float shakeAmount = shake * (progress - 0.1F);
-						poseStack.rotateAround(Axis.YP.rotationDegrees(shakeAmount), -0.3F, 0F, direction*-0.3F);
+						poseStack.rotateAround(Axis.YP.rotationDegrees(shakeAmount), -0.3F, 0F, direction * -0.3F);
 					}
 					poseStack.mulPose(Axis.YP.rotationDegrees(90F));
 					poseStack.mulPose(Axis.XP.rotationDegrees(25F));

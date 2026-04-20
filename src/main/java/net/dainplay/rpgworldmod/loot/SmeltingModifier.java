@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
-import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.FlintShovelItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -13,11 +12,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -28,8 +25,6 @@ import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
 
 public class SmeltingModifier extends LootModifier {
 	public static final Codec<SmeltingModifier> CODEC = RecordCodecBuilder.create(inst -> LootModifier.codecStart(inst).apply(inst, SmeltingModifier::new));
@@ -69,7 +64,7 @@ public class SmeltingModifier extends LootModifier {
 						.map(itemStack -> ItemHandlerHelper.copyStackWithSize(itemStack, stack.getCount() * itemStack.getCount()))
 						.orElse(stack);
 				newLoot.add(smelted);
-				if(!context.getLevel().isClientSide && origin != null) {
+				if (!context.getLevel().isClientSide && origin != null) {
 					BlockPos blockPos = new BlockPos(
 							(int) Math.floor(origin.x),
 							(int) Math.floor(origin.y),
@@ -82,9 +77,9 @@ public class SmeltingModifier extends LootModifier {
 								.orElse(0f);
 
 						if (totalExperience > 0f) {
-							spawnExperience(context, blockPos, (int)(totalExperience*10));
+							spawnExperience(context, blockPos, (int) (totalExperience * 10));
 						}
-						context.getLevel().sendParticles(ParticleTypes.FLAME, blockPos.getX()+0.5f, blockPos.getY()+0.5f, blockPos.getZ()+0.5f, 20, context.getLevel().getRandom().nextFloat()/5, context.getLevel().getRandom().nextFloat()/5, context.getLevel().getRandom().nextFloat()/5, 0.01f);
+						context.getLevel().sendParticles(ParticleTypes.FLAME, blockPos.getX() + 0.5f, blockPos.getY() + 0.5f, blockPos.getZ() + 0.5f, 20, context.getLevel().getRandom().nextFloat() / 5, context.getLevel().getRandom().nextFloat() / 5, context.getLevel().getRandom().nextFloat() / 5, 0.01f);
 					}
 				}
 			} else {

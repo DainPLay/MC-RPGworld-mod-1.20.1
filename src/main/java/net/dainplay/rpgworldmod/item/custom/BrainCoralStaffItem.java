@@ -1,6 +1,5 @@
 package net.dainplay.rpgworldmod.item.custom;
 
-import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.network.LoopSoundPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
@@ -10,9 +9,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -21,18 +17,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
 public class BrainCoralStaffItem extends StaffItem implements ChooseTargetItem {
-
 	public BrainCoralStaffItem(Properties properties) {
 		super(properties);
 	}
@@ -66,7 +58,6 @@ public class BrainCoralStaffItem extends StaffItem implements ChooseTargetItem {
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-
 		ItemStack itemstack = player.getItemInHand(hand);
 		int activeRechargeLevel = itemstack.getEnchantmentLevel(ModEnchantments.ACTIVE_RECHARGE.get());
 		int doubleExposureLevel = itemstack.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get());
@@ -100,14 +91,13 @@ public class BrainCoralStaffItem extends StaffItem implements ChooseTargetItem {
 		}
 
 		if (!level.isClientSide) {
-			// Воспроизводим звук начала использования для всех рядом
 			level.playSound(null,
 					player.getX(), player.getY(), player.getZ(),
 					RPGSounds.STAFF_START.get(),
 					SoundSource.PLAYERS, 1.0F, 1.0F
 			);
 
-			// Запускаем зацикленный звук на клиентах
+
 			ModMessages.sendToNearbyPlayers(
 					new LoopSoundPacket(player.getId(), true, itemstack),
 					(ServerLevel) level,

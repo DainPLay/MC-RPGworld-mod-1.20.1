@@ -1,4 +1,4 @@
-package net.dainplay.rpgworldmod.entity.client.model;// Made with Blockbench 5.0.7
+package net.dainplay.rpgworldmod.entity.client.model;
 
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -30,16 +30,15 @@ public class TireSwingModel<T extends Entity> extends EntityModel<T> {
 		PartDefinition partdefinition = meshdefinition.getRoot();
 
 		PartDefinition swing = partdefinition.addOrReplaceChild("swing", CubeListBuilder.create().texOffs(0, 0).addBox(-7.0F, 0.0F, -3.0F, 4.0F, 14.0F, 6.0F, new CubeDeformation(0.0F))
-		.texOffs(0, 20).addBox(3.0F, 0.0F, -3.0F, 4.0F, 14.0F, 6.0F, new CubeDeformation(0.0F))
-		.texOffs(20, 13).addBox(-3.0F, 10.0F, -3.0F, 6.0F, 4.0F, 6.0F, new CubeDeformation(0.0F))
-		.texOffs(20, 0).addBox(-3.0F, -0.5F, -3.5F, 6.0F, 6.0F, 7.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 9.999F, 0.0F));
+				.texOffs(0, 20).addBox(3.0F, 0.0F, -3.0F, 4.0F, 14.0F, 6.0F, new CubeDeformation(0.0F))
+				.texOffs(20, 13).addBox(-3.0F, 10.0F, -3.0F, 6.0F, 4.0F, 6.0F, new CubeDeformation(0.0F))
+				.texOffs(20, 0).addBox(-3.0F, -0.5F, -3.5F, 6.0F, 6.0F, 7.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 9.999F, 0.0F));
 
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
 
 	@Override
 	public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-
 		if (entity instanceof TireSwingEntity swing) {
 			float swingAngle = swing.getSwingAngle();
 			float rotation = (float) Math.sin(Math.toRadians(swingAngle)) * 30.0F;

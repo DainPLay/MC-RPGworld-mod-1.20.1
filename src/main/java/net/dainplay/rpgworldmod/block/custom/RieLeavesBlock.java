@@ -2,8 +2,6 @@ package net.dainplay.rpgworldmod.block.custom;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.Block;
@@ -36,7 +34,7 @@ public class RieLeavesBlock extends LeavesBlock {
 	@Override
 	public float getExplosionResistance(BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
 		if (state.getValue(RELATED_TO_ENT) != 0) {
-			return 3600000.0F; // Неразрушим взрывом
+			return 3600000.0F;
 		}
 		return super.getExplosionResistance(state, level, pos, explosion);
 	}
@@ -44,7 +42,7 @@ public class RieLeavesBlock extends LeavesBlock {
 	@Override
 	public float getDestroyProgress(BlockState state, net.minecraft.world.entity.player.Player player, BlockGetter level, BlockPos pos) {
 		if (state.getValue(RELATED_TO_ENT) != 0 && !player.getAbilities().instabuild) {
-			return 0.0F; // Нельзя разрушить в выживании
+			return 0.0F;
 		}
 		return super.getDestroyProgress(state, player, level, pos);
 	}

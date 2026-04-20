@@ -1,6 +1,7 @@
 package net.dainplay.rpgworldmod.mixin;
 
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
+import net.dainplay.rpgworldmod.network.C2SCheckItemForTempNBTPacket;
 import net.dainplay.rpgworldmod.network.C2STriggerChestStaffsPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.util.ITriggerChestStaffs;
@@ -27,66 +28,81 @@ import java.util.Set;
 @OnlyIn(Dist.CLIENT)
 @Mixin(AbstractContainerMenu.class)
 public abstract class MixinAbstractContainerMenuClick implements ITriggerChestStaffs {
+	@Unique
+	private boolean rpgworldmod$sentTrigger = false;
 
-    @Unique
-    private boolean rpgworldmod$sentTrigger = false;
+	@Override
+	public boolean rpgworldmod$hasSentTrigger() {
+		return this.rpgworldmod$sentTrigger;
+	}
 
-    @Override
-    public boolean rpgworldmod$hasSentTrigger() {
-        return this.rpgworldmod$sentTrigger;
-    }
+	@Override
+	public void rpgworldmod$setSentTrigger(boolean sent) {
+		this.rpgworldmod$sentTrigger = sent;
+	}
 
-    @Override
-    public void rpgworldmod$setSentTrigger(boolean sent) {
-        this.rpgworldmod$sentTrigger = sent;
-    }
+	@Inject(method = "clicked", at = @At("RETURN"))
+	private void onClicked(int slotId, int button, ClickType clickType, Player player, CallbackInfo ci) {
+		if (player != Minecraft.getInstance().player) return;
 
-    @Inject(method = "clicked", at = @At("RETURN"))
-    private void onClicked(int slotId, int button, ClickType clickType, Player player, CallbackInfo ci) {
-        if (player != Minecraft.getInstance().player) return;
+		if (clickType == ClickType.PICKUP || clickType == ClickType.QUICK_MOVE || clickType == ClickType.SWAP) {
+			Minecraft.getInstance().submitAsync(() -> checkAndSendTriggerDelayed(clickType, slotId));
+		}
+	}
 
-        if (clickType == ClickType.PICKUP || clickType == ClickType.QUICK_MOVE || clickType == ClickType.SWAP) {
-            Minecraft.getInstance().submitAsync(this::checkAndSendTriggerDelayed);
-        }
-    }
+	@Unique
+	private void checkAndSendTriggerDelayed(ClickType clickType, int slotId) {
+		new Thread(() -> {
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException ignored) {
+			}
+			Minecraft.getInstance().execute(() -> checkAndSendTrigger());
+			Minecraft.getInstance().execute(() -> CheckItemForTempNBTPacket(clickType, slotId));
+		}).start();
+	}
 
-    @Unique
-    private void checkAndSendTriggerDelayed() {
-        new Thread(() -> {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException ignored) {}
-            Minecraft.getInstance().execute(this::checkAndSendTrigger);
-        }).start();
-    }
+	@Unique
+	private void CheckItemForTempNBTPacket(ClickType clickType, int slot) {
+		AbstractContainerMenu menu = (AbstractContainerMenu) (Object) this;
 
-    @Unique
-    private void checkAndSendTrigger() {
-        AbstractContainerMenu menu = (AbstractContainerMenu) (Object) this;
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null) return;
-        if (this.rpgworldmod$hasSentTrigger()) return;
+		if (clickType == ClickType.QUICK_MOVE) {
+			ModMessages.sendToServer(new C2SCheckItemForTempNBTPacket(slot, clickType));
+			return;
+		}
 
-        Set<String> uniqueKeys = new HashSet<>();
-        for (Slot slot : menu.slots) {
-            if (slot.container instanceof Inventory) continue;
-            if (slot instanceof CreativeModeInventoryScreen.CustomCreativeSlot) continue;
+		if (menu.slots.get(slot).container instanceof Inventory) return;
+		if (menu.slots.get(slot) instanceof CreativeModeInventoryScreen.CustomCreativeSlot) return;
+		ModMessages.sendToServer(new C2SCheckItemForTempNBTPacket(slot));
+	}
 
-            ItemStack stack = slot.getItem();
-            if (stack.getItem() instanceof StaffItem staff) {
-                StaffItem.GemType gem = StaffItem.getGemType(stack);
-                String key = BuiltInRegistries.ITEM.getKey(staff).toString() + "_" + gem.getName();
-                uniqueKeys.add(key);
-                if (uniqueKeys.size() >= 27) {
-                    ModMessages.sendToServer(new C2STriggerChestStaffsPacket());
-                    this.rpgworldmod$setSentTrigger(true);
-                    break;
-                }
-            }
-        }
+	@Unique
+	private void checkAndSendTrigger() {
+		AbstractContainerMenu menu = (AbstractContainerMenu) (Object) this;
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.player == null) return;
+		if (this.rpgworldmod$hasSentTrigger()) return;
 
-        if (uniqueKeys.size() < 27 && this.rpgworldmod$hasSentTrigger()) {
-            this.rpgworldmod$setSentTrigger(false);
-        }
-    }
+		Set<String> uniqueKeys = new HashSet<>();
+		for (Slot slot : menu.slots) {
+			if (slot.container instanceof Inventory) continue;
+			if (slot instanceof CreativeModeInventoryScreen.CustomCreativeSlot) continue;
+
+			ItemStack stack = slot.getItem();
+			if (stack.getItem() instanceof StaffItem staff) {
+				StaffItem.GemType gem = StaffItem.getGemType(stack);
+				String key = BuiltInRegistries.ITEM.getKey(staff).toString() + "_" + gem.getName();
+				uniqueKeys.add(key);
+				if (uniqueKeys.size() >= 27) {
+					ModMessages.sendToServer(new C2STriggerChestStaffsPacket());
+					this.rpgworldmod$setSentTrigger(true);
+					break;
+				}
+			}
+		}
+
+		if (uniqueKeys.size() < 27 && this.rpgworldmod$hasSentTrigger()) {
+			this.rpgworldmod$setSentTrigger(false);
+		}
+	}
 }

@@ -3,7 +3,6 @@ package net.dainplay.rpgworldmod.data;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.biome.BiomeRegistry;
 import net.dainplay.rpgworldmod.damage.ModDamageTypes;
-import net.dainplay.rpgworldmod.item.ModBannerPatterns;
 import net.dainplay.rpgworldmod.trim.ModTrimMaterials;
 import net.dainplay.rpgworldmod.trim.ModTrimPatterns;
 import net.dainplay.rpgworldmod.world.feature.ModConfiguredFeatures;
@@ -18,7 +17,6 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public class RegistryDataGenerator extends DatapackBuiltinEntriesProvider {
-
 	public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
 			.add(Registries.CONFIGURED_FEATURE, ModConfiguredFeatures::bootstrap)
 			.add(Registries.PLACED_FEATURE, ModPlacedFeatures::bootstrap)

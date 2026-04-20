@@ -26,7 +26,6 @@ public class HappinessBeamRenderer {
 		LivingEntity entity = event.getEntity();
 
 		if (entity.hasEffect(ModEffects.HAPPINESS.get()) && !entity.isSpectator() && !entity.isInvisible()) {
-
 			var effect = entity.getEffect(ModEffects.HAPPINESS.get());
 			if (effect != null) {
 				renderRegenerationBeams(
@@ -53,11 +52,11 @@ public class HappinessBeamRenderer {
 		VertexConsumer vertexconsumer = bufferSource.getBuffer(RenderType.lightning());
 		poseStack.pushPose();
 
-		// Смещаем к центру сущности
+
 		float yOffset = entity.getBbHeight() * 0.5F;
 		poseStack.translate(0.0F, yOffset, 0.0F);
 
-		// Получаем камеру
+
 		Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
 		Vec3 cameraPos = camera.getPosition();
 		Vector3f lookVector3f = camera.getLookVector();
@@ -65,21 +64,21 @@ public class HappinessBeamRenderer {
 
 		Vec3 entityPos = entity.position().add(0, yOffset, 0);
 
-		// Вычисляем радиус (от 1.5 до 0 в последние 10 секунд)
+
 		float radius = 1.5F;
-		int fadeTime = 10 * 20; // 10 секунд в тиках
+		int fadeTime = 10 * 20;
 		if (duration < fadeTime) {
 			radius = 1.5F * (duration / (float) fadeTime);
 		}
 
 		float speedMultiplier = Math.min(2.5F, 1F + 0.375F * amplifier);
 
-		// Размещение лучей позади моба относительно камеры
+
 		float backwardOffset = -0.25f;
 		Vec3 backwardOffsetVector = cameraLookDir.scale(-backwardOffset);
 		Vec3 targetPos = entityPos.add(backwardOffsetVector);
 
-		// Анимация с учетом уровня эффекта
+
 		float animationProgress = (entity.tickCount + partialTick) * 0.005F * speedMultiplier;
 
 		int beamCount = 10;
@@ -92,7 +91,7 @@ public class HappinessBeamRenderer {
 					targetPos.z - entityPos.z
 			);
 
-			// Направляем лучи на камеру
+
 			Vec3 directionToCamera = cameraPos.subtract(targetPos).normalize();
 			double horizontalAngle = Math.toDegrees(Math.atan2(directionToCamera.x, directionToCamera.z));
 			double verticalAngle = Math.toDegrees(Math.asin(directionToCamera.y));
@@ -105,7 +104,7 @@ public class HappinessBeamRenderer {
 
 			Matrix4f matrix4f = poseStack.last().pose();
 
-			// Белый цвет для эффекта регенерации
+
 			int alpha = duration < fadeTime ? 128 * duration / fadeTime : 128;
 			vertex01(vertexconsumer, matrix4f, alpha);
 			vertex3(vertexconsumer, matrix4f, radius, 0.5F);

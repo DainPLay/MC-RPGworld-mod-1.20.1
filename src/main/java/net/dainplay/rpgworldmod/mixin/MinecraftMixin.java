@@ -1,5 +1,6 @@
 package net.dainplay.rpgworldmod.mixin;
 
+import net.dainplay.rpgworldmod.biome.BiomeRegistry;
 import net.dainplay.rpgworldmod.item.custom.ChooseTargetItem;
 import net.dainplay.rpgworldmod.network.C2SRequestTargetValidationPacket;
 import net.dainplay.rpgworldmod.network.ClientAnimateTargetData;
@@ -13,7 +14,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.sounds.Music;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,15 +32,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.dainplay.rpgworldmod.util.FogEventHandler.isInRieWeald;
-
 @Mixin(Minecraft.class)
 public abstract class MinecraftMixin {
-
 	@Shadow
 	public LocalPlayer player;
 
@@ -49,8 +45,6 @@ public abstract class MinecraftMixin {
 
 	@Shadow
 	public HitResult hitResult;
-
-	Minecraft mc = (Minecraft) (Object) this;
 
 	@Inject(method = "startAttack", at = @At("HEAD"), cancellable = true)
 	private void onStartAttack(CallbackInfoReturnable<Boolean> cir) {
@@ -75,7 +69,13 @@ public abstract class MinecraftMixin {
 
 	@Inject(method = "getSituationalMusic", at = @At(value = "HEAD"), cancellable = true)
 	private void getSituationalRieWealdMusic(CallbackInfoReturnable<Music> cir) {
-		if (isInRieWeald()) cir.setReturnValue(ModConfiguredFeatures.RIE_WEALD_MUSIC_FOG);
+		if (isInRieWealdDuringFog()) cir.setReturnValue(ModConfiguredFeatures.RIE_WEALD_MUSIC_FOG);
+	}
+
+	private static boolean isInRieWealdDuringFog() {
+		return Minecraft.getInstance().level != null && Minecraft.getInstance().player != null &&
+				Minecraft.getInstance().level.getBiome(Minecraft.getInstance().player.blockPosition()).is(BiomeRegistry.RIE_WEALD)
+				&& (Minecraft.getInstance().player.level().isRaining() || Minecraft.getInstance().player.level().isThundering());
 	}
 
 	@Inject(method = "shouldEntityAppearGlowing", at = @At("HEAD"), cancellable = true)
@@ -87,10 +87,8 @@ public abstract class MinecraftMixin {
 		if (this.player.isUsingItem() &&
 				this.player.getUseItemRemainingTicks() > 0 &&
 				this.player.getUseItem().getItem() instanceof ChooseTargetItem) {
-
 			ChooseTargetItem catItem = (ChooseTargetItem) this.player.getUseItem().getItem();
 
-			// Подсветка живых целей (анимация)
 			if (catItem.highlightAnimateTarget(this.player.getUseItem(), this.player)) {
 				if (!(entity instanceof LivingEntity)) {
 					return;
@@ -133,7 +131,6 @@ public abstract class MinecraftMixin {
 				}
 			}
 
-			// Подсветка всех предметов в поле зрения (32 блока, угол 15°)
 			if (catItem.highlightItemsInSight(this.player.getUseItem(), this.player)) {
 				if (!(entity instanceof ItemEntity itemEntity)) {
 					return;
@@ -150,7 +147,6 @@ public abstract class MinecraftMixin {
 				}
 			}
 
-			// Подсветка всех предметов в радиусе 16 блоков
 			if (catItem.highlightItemsInRadius(this.player.getUseItem(), this.player)) {
 				if (!(entity instanceof ItemEntity itemEntity)) {
 					return;
@@ -162,7 +158,6 @@ public abstract class MinecraftMixin {
 				}
 			}
 
-			// Подсветка случайного предмета в радиусе 64 блоков
 			if (catItem.highlightRandomItemInRadius(this.player.getUseItem(), this.player)) {
 				if (!(entity instanceof ItemEntity)) {
 					return;
@@ -187,8 +182,6 @@ public abstract class MinecraftMixin {
 		}
 	}
 
-	// Вспомогательные методы для поиска предметов
-
 	private List<ItemEntity> getAllVisibleItemsInSight(Player player, double maxDistance, double angleThreshold) {
 		Vec3 eyePos = player.getEyePosition();
 		AABB searchBox = player.getBoundingBox().inflate(maxDistance);
@@ -200,15 +193,14 @@ public abstract class MinecraftMixin {
 
 		List<ItemEntity> visibleInSight = new ArrayList<>();
 		for (ItemEntity entity : entities) {
-			double angle = getAngleToCenter(player, entity);               // ← замена
-			if (angle < angleThreshold && hasLineOfSightToCenter(player, entity, eyePos, maxDistance)) { // ← замена
+			double angle = getAngleToCenter(player, entity);
+			if (angle < angleThreshold && hasLineOfSightToCenter(player, entity, eyePos, maxDistance)) {
 				visibleInSight.add(entity);
 			}
 		}
 		return visibleInSight;
 	}
 
-	// ---- существующие методы (без изменений) ----
 	private ItemEntity findVisibleItemTargetInSight(Player player, double maxDistance, double angleThreshold) {
 		Vec3 eyePos = player.getEyePosition();
 		AABB searchBox = player.getBoundingBox().inflate(maxDistance);
@@ -222,9 +214,9 @@ public abstract class MinecraftMixin {
 		double closestAngle = angleThreshold;
 
 		for (ItemEntity entity : entities) {
-			double angle = getAngleToCenter(player, entity);               // ← замена
+			double angle = getAngleToCenter(player, entity);
 			if (angle < angleThreshold) {
-				if (hasLineOfSightToCenter(player, entity, eyePos, maxDistance)) { // ← замена
+				if (hasLineOfSightToCenter(player, entity, eyePos, maxDistance)) {
 					if (angle < closestAngle) {
 						closestAngle = angle;
 						closest = entity;

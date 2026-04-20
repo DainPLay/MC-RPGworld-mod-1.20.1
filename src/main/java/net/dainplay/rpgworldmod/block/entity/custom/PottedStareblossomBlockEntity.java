@@ -15,104 +15,103 @@ import java.util.Comparator;
 import java.util.List;
 
 public class PottedStareblossomBlockEntity extends BlockEntity {
-    private int tickCounter = 0;
-    private int lastSignal = 0;
+	private int tickCounter = 0;
+	private int lastSignal = 0;
 
-    public PottedStareblossomBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.POTTED_STAREBLOSSOM_BLOCK_ENTITY.get(), pos, state);
-    }
+	public PottedStareblossomBlockEntity(BlockPos pos, BlockState state) {
+		super(ModBlockEntities.POTTED_STAREBLOSSOM_BLOCK_ENTITY.get(), pos, state);
+	}
 
-    public void serverTick() {
-        if (this.level == null || this.level.isClientSide) return;
+	public void serverTick() {
+		if (this.level == null || this.level.isClientSide) return;
 
-        tickCounter++;
+		tickCounter++;
 
-        // Проверяем игроков каждые 10 тиков для оптимизации
-        if (tickCounter % 10 == 0) {
-            updateSignalAndCheckPlayers();
-        }
-    }
 
-    private void updateSignalAndCheckPlayers() {
-        if (this.level == null || this.level.isClientSide) return;
+		if (tickCounter % 10 == 0) {
+			updateSignalAndCheckPlayers();
+		}
+	}
 
-        List<Player> players = this.level.getEntitiesOfClass(
-                Player.class,
-                new AABB(
-                        worldPosition.getX() - 50, worldPosition.getY() - 50, worldPosition.getZ() - 50,
-                        worldPosition.getX() + 50, worldPosition.getY() + 50, worldPosition.getZ() + 50
-                )
-        );
+	private void updateSignalAndCheckPlayers() {
+		if (this.level == null || this.level.isClientSide) return;
 
-        if (players.isEmpty()) {
-            updateSignal(0);
-            return;
-        }
+		List<Player> players = this.level.getEntitiesOfClass(
+				Player.class,
+				new AABB(
+						worldPosition.getX() - 50, worldPosition.getY() - 50, worldPosition.getZ() - 50,
+						worldPosition.getX() + 50, worldPosition.getY() + 50, worldPosition.getZ() + 50
+				)
+		);
 
-        // Находим ближайшего видимого игрока
-        Player closestVisiblePlayer = players.stream()
-                .filter(player -> canSeePlayer(player))
-                .min(Comparator.comparingDouble(player ->
-                        player.distanceToSqr(Vec3.atCenterOf(worldPosition))))
-                .orElse(null);
+		if (players.isEmpty()) {
+			updateSignal(0);
+			return;
+		}
 
-        if (closestVisiblePlayer != null) {
-            double distance = Math.sqrt(closestVisiblePlayer.distanceToSqr(Vec3.atCenterOf(worldPosition)));
-            updateSignal(calculateSignalStrength(distance));
-        } else {
-            updateSignal(0);
-        }
-    }
 
-    private boolean canSeePlayer(Player player) {
-        if (this.level == null) return false;
+		Player closestVisiblePlayer = players.stream()
+				.filter(player -> canSeePlayer(player))
+				.min(Comparator.comparingDouble(player ->
+						player.distanceToSqr(Vec3.atCenterOf(worldPosition))))
+				.orElse(null);
 
-        Vec3 blockCenter = Vec3.atCenterOf(this.worldPosition);
-        Vec3 playerEyes = player.getEyePosition();
+		if (closestVisiblePlayer != null) {
+			double distance = Math.sqrt(closestVisiblePlayer.distanceToSqr(Vec3.atCenterOf(worldPosition)));
+			updateSignal(calculateSignalStrength(distance));
+		} else {
+			updateSignal(0);
+		}
+	}
 
-        blockCenter.add(0d,0.5d,0d);
+	private boolean canSeePlayer(Player player) {
+		if (this.level == null) return false;
 
-        // Проверяем, нет ли блоков между цветком и игроком
-        HitResult hitResult = this.level.clip(new ClipContext(
-                blockCenter,
-                playerEyes,
-                ClipContext.Block.COLLIDER,
-                ClipContext.Fluid.NONE,
-                player
-        ));
+		Vec3 blockCenter = Vec3.atCenterOf(this.worldPosition);
+		Vec3 playerEyes = player.getEyePosition();
 
-        // Если луч попал в блок до достижения игрока, значит есть препятствие
-        if (hitResult.getType() != HitResult.Type.MISS) {
-            double distanceToHit = hitResult.getLocation().distanceTo(blockCenter);
-            double distanceToPlayer = playerEyes.distanceTo(blockCenter);
+		blockCenter.add(0d, 0.5d, 0d);
 
-            // Если попадание произошло ближе чем игрок, значит луч уперся в блок
-            return distanceToHit >= distanceToPlayer - 0.5;
-        }
 
-        return true;
-    }
+		HitResult hitResult = this.level.clip(new ClipContext(
+				blockCenter,
+				playerEyes,
+				ClipContext.Block.COLLIDER,
+				ClipContext.Fluid.NONE,
+				player
+		));
 
-    private int calculateSignalStrength(double distance) {
-        if (distance > 50) return 0;
 
-        // 50 блоков = сигнал 1
-        // Каждые 3 блока ближе увеличивают сигнал на 1
-        int signal = 1 + (int)((50 - distance) / 3.0);
+		if (hitResult.getType() != HitResult.Type.MISS) {
+			double distanceToHit = hitResult.getLocation().distanceTo(blockCenter);
+			double distanceToPlayer = playerEyes.distanceTo(blockCenter);
 
-        // Ограничиваем максимальным значением редстоуна (15)
-        return Math.min(15, Math.max(0, signal));
-    }
 
-    private void updateSignal(int newSignal) {
-        if (this.level == null || this.level.isClientSide || newSignal == lastSignal) return;
+			return distanceToHit >= distanceToPlayer - 0.5;
+		}
 
-        lastSignal = newSignal;
+		return true;
+	}
 
-        BlockState currentState = this.getBlockState();
-        if (currentState.getBlock() instanceof StareblossomPotBlock) {
-            BlockState newState = currentState.setValue(StareblossomPotBlock.SIGNAL, newSignal);
-            this.level.setBlock(this.worldPosition, newState, 3);
-        }
-    }
+	private int calculateSignalStrength(double distance) {
+		if (distance > 50) return 0;
+
+
+		int signal = 1 + (int) ((50 - distance) / 3.0);
+
+
+		return Math.min(15, Math.max(0, signal));
+	}
+
+	private void updateSignal(int newSignal) {
+		if (this.level == null || this.level.isClientSide || newSignal == lastSignal) return;
+
+		lastSignal = newSignal;
+
+		BlockState currentState = this.getBlockState();
+		if (currentState.getBlock() instanceof StareblossomPotBlock) {
+			BlockState newState = currentState.setValue(StareblossomPotBlock.SIGNAL, newSignal);
+			this.level.setBlock(this.worldPosition, newState, 3);
+		}
+	}
 }

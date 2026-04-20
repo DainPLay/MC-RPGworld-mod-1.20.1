@@ -1,9 +1,12 @@
 package net.dainplay.rpgworldmod.particle.custom;
 
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.*;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.util.Mth;
 
 import javax.annotation.Nullable;
 
@@ -27,19 +30,18 @@ public class BlackNetherStarBeamParticles extends TextureSheetParticle {
 
 	@Override
 	public float getQuadSize(float pScaleFactor) {
-		// Линейное уменьшение размера от полного в начале до 0 в конце жизни
 		float progress = (this.age + pScaleFactor) / (float) this.lifetime;
-		float scaleFactor = 1.0F - progress; // от 1 до 0
+		float scaleFactor = 1.0F - progress;
 		return this.quadSize * scaleFactor;
 	}
 
-	// Добавляем свечение
+
 	@Override
 	public int getLightColor(float partialTick) {
 		int i = super.getLightColor(partialTick);
-		int j = i & 255;       // блочный свет
-		int k = i >> 16 & 255; // небесный свет
-		j = 240;               // устанавливаем максимальную яркость блочного света
+		int j = i & 255;
+		int k = i >> 16 & 255;
+		j = 240;
 		return j | (k << 16);
 	}
 
@@ -61,7 +63,7 @@ public class BlackNetherStarBeamParticles extends TextureSheetParticle {
 			BlackNetherStarBeamParticles netherStarBeamParticle = new BlackNetherStarBeamParticles(pLevel, pX, pY, pZ, 0.5D - pLevel.getRandom().nextDouble(), pYSpeed, 0.5D - pLevel.getRandom().nextDouble(), this.sprite);
 			float[][] colors = {
 					{0, 0, 0},
-					{17F/255F, 11F/255F, 22F/255F}
+					{17F / 255F, 11F / 255F, 22F / 255F}
 			};
 			float[] chosen = colors[pLevel.random.nextInt(colors.length)];
 			netherStarBeamParticle.setColor(chosen[0], chosen[1], chosen[2]);

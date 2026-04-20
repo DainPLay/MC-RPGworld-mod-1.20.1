@@ -9,14 +9,13 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = RPGworldMod.MOD_ID)
 public class EmberGemEvents {
-
-    @SubscribeEvent
-    public static void onServerTick(TickEvent.ServerTickEvent event) {
-        if (event.phase == TickEvent.Phase.START) {
-            event.getServer().getAllLevels().forEach(EmberScrollItem::processPlayerUsageStatic);
-        } else if (event.phase == TickEvent.Phase.END) {
-            event.getServer().getAllLevels().forEach(EmberGemItem::processProjectilesStatic);
-            event.getServer().getAllLevels().forEach(EmberScrollItem::processProjectilesStatic);
-        }
-    }
+	@SubscribeEvent
+	public static void onServerTick(TickEvent.ServerTickEvent event) {
+		if (event.phase == TickEvent.Phase.START) {
+			event.getServer().getAllLevels().forEach(EmberScrollItem::processPlayerUsageStatic);
+		} else if (event.phase == TickEvent.Phase.END) {
+			event.getServer().getAllLevels().forEach(EmberGemItem::processProjectilesStatic);
+			event.getServer().getAllLevels().forEach(EmberScrollItem::processProjectilesStatic);
+		}
+	}
 }

@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.core.particles.VibrationParticleOption;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
@@ -39,15 +40,16 @@ import net.minecraft.world.level.gameevent.PositionSource;
 import net.minecraft.world.level.gameevent.vibrations.VibrationInfo;
 import net.minecraft.world.level.gameevent.vibrations.VibrationSystem;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.core.particles.VibrationParticleOption;
 
 import javax.annotation.Nullable;
-import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.WeakHashMap;
 
 public class SculkStaffItem extends StaffItem {
-
-	// Используем обычную мапу, т.к. системы добавляются и удаляются синхронно
 	private static final Map<Player, SculkStaffVibrationSystem> ACTIVE_SYSTEMS = new WeakHashMap<>();
 
 	public SculkStaffItem(Properties properties) {
@@ -61,8 +63,6 @@ public class SculkStaffItem extends StaffItem {
 
 	@Override
 	public void onUseTick(Level pLevel, LivingEntity pLivingEntity, ItemStack pStack, int pRemainingUseDuration) {
-		// ... Ваш существующий код обработки caughtVibration, кулдаунов и т.д. без изменений ...
-
 		if (pStack.getTag() != null && pStack.getTag().contains("caughtVibration", Tag.TAG_INT) && pStack.getTag().getInt("caughtVibration") > 0) {
 			CompoundTag nbtData = pStack.getTag();
 			if (pStack.getTag().getInt("caughtVibration") == 0) {
@@ -97,14 +97,13 @@ public class SculkStaffItem extends StaffItem {
 			cooldownsMap.remove(pStack.getItem());
 			cooldownsMap.put(pStack.getItem(), new ItemCooldowns.CooldownInstance(startTick, endTick - activeRechargeLevel));
 		} else {
-			// --- ИЗМЕНЕНИЕ: Тикаем нашу кастомную систему вместо VibrationSystem.Ticker.tick ---
 			if (!pLevel.isClientSide && pLivingEntity instanceof Player player) {
 				SculkStaffVibrationSystem system = ACTIVE_SYSTEMS.get(player);
 				if (system != null && player.isUsingItem() && player.getUseItem() == pStack) {
 					system.tick((ServerLevel) pLevel);
 				}
 			}
-			// Конец изменения
+
 
 			if (pLivingEntity instanceof Player player) {
 				if (!pLevel.isClientSide) {
@@ -213,7 +212,7 @@ public class SculkStaffItem extends StaffItem {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(), RPGSounds.STAFF_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, itemstack), (ServerLevel) level, player.blockPosition(), 64.0);
 
-			// Создаём и регистрируем новую систему
+
 			SculkStaffVibrationSystem system = new SculkStaffVibrationSystem(player, itemstack);
 			ACTIVE_SYSTEMS.put(player, system);
 			registerListener((ServerLevel) level, system);
@@ -294,9 +293,7 @@ public class SculkStaffItem extends StaffItem {
 		registry.unregister(system.getListener());
 	}
 
-	// -------------------------------------------------------------------------
-	// НОВАЯ РЕАЛИЗАЦИЯ: система, поддерживающая множество параллельных вибраций
-	// -------------------------------------------------------------------------
+
 	private static class SculkStaffVibrationSystem {
 		private final Player owner;
 		private final ItemStack staffStack;
@@ -332,13 +329,12 @@ public class SculkStaffItem extends StaffItem {
 			Iterator<ActiveVibration> it = activeVibrations.iterator();
 			while (it.hasNext()) {
 				ActiveVibration vib = it.next();
-				// Уменьшаем время и при необходимости отправляем частицу движения
+
 				vib.decrementTime();
 				if (vib.getTicksLeft() > 0) {
 					sendVibrationParticle(level, vib);
 				}
 				if (vib.isDone()) {
-					// Применяем эффект
 					BlockPos sourcePos = BlockPos.containing(vib.getInfo().pos());
 					vibrationUser.onReceiveVibration(
 							level,
@@ -357,7 +353,7 @@ public class SculkStaffItem extends StaffItem {
 		public void addVibration(VibrationInfo info, ServerLevel level) {
 			int travelTime = vibrationUser.calculateTravelTimeInTicks(info.distance());
 			activeVibrations.add(new ActiveVibration(info, travelTime));
-			// Стартовая частица (как в ваниле)
+
 			level.sendParticles(
 					new VibrationParticleOption(vibrationUser.getPositionSource(), travelTime),
 					info.pos().x, info.pos().y, info.pos().z,
@@ -380,9 +376,7 @@ public class SculkStaffItem extends StaffItem {
 			);
 		}
 
-		// ---------------------------------------------------------------------
-		// Вспомогательные классы
-		// ---------------------------------------------------------------------
+
 		private static class ActiveVibration {
 			private final VibrationInfo info;
 			private int ticksLeft;
@@ -550,7 +544,7 @@ public class SculkStaffItem extends StaffItem {
 				if (!user.canReceiveVibration(level, BlockPos.containing(pos), event, context))
 					return false;
 
-				// Проверка на преграду (как в ванильном VibrationSystem.Listener.isOccluded)
+
 				if (VibrationSystem.Listener.isOccluded(level, pos, userPos))
 					return false;
 

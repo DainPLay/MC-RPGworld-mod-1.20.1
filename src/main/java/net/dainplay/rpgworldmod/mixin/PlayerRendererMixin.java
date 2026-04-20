@@ -6,9 +6,9 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
-import net.dainplay.rpgworldmod.item.custom.MintalTriangleItem;
 import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
-import net.minecraft.client.model.HumanoidModel;
+import net.dainplay.rpgworldmod.item.custom.PillagerScrollItem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -17,17 +17,14 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerRenderer.class)
 public abstract class PlayerRendererMixin {
@@ -38,6 +35,20 @@ public abstract class PlayerRendererMixin {
 		if (!pPlayer.isInvisible()) {
 			boolean isNecromancy = pPlayer.isUsingItem() && pPlayer.getUseItem().getItem() instanceof NetherStarScrollItem &&
 					EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), pPlayer.getUseItem()) > 0;
+			HumanoidArm mainArm = pPlayer.getMainArm();
+			boolean mainLeftHand = mainArm == HumanoidArm.LEFT;
+			boolean isSlim = "slim".equals(pPlayer.getModelName());
+			boolean isPillagerScrollLeft = pPlayer.isUsingItem()
+					&& pPlayer.getUseItem().getItem() instanceof PillagerScrollItem scroll
+					&& scroll.hasAnyEnchant(pPlayer.getUseItem())
+					&& pRendererArm == playerRenderer.getModel().leftArm
+					&& pPlayer.getUsedItemHand() == (mainLeftHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
+			boolean isPillagerScrollRight = pPlayer.isUsingItem()
+					&& pPlayer.getUseItem().getItem() instanceof PillagerScrollItem scroll
+					&& scroll.hasAnyEnchant(pPlayer.getUseItem())
+					&& pRendererArm == playerRenderer.getModel().rightArm
+					&& pPlayer.getUsedItemHand() == (mainLeftHand ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
+
 			float necroProgress;
 			if (isNecromancy && pPlayer.getTicksUsingItem() > 0) {
 				necroProgress = Math.min(30, pPlayer.getTicksUsingItem()) / 30.0F;
@@ -46,14 +57,28 @@ public abstract class PlayerRendererMixin {
 				if (flash) {
 					RenderSystem.setShaderColor(255F, 255F, 255F, 1.0F);
 				}
+				VertexConsumer ivertexbuilder = pBuffer.getBuffer(RenderType.entityCutoutNoCull(new ResourceLocation(RPGworldMod.MOD_ID, "textures/entity/explosion_overlay.png")));
+				pRendererArmwear.render(pMatrixStack, ivertexbuilder, pCombinedLight, OverlayTexture.NO_OVERLAY);
+			} else if (isPillagerScrollRight || isPillagerScrollLeft) {
+				float partialTick = Minecraft.getInstance().getFrameTime();
+				float time = (pPlayer.tickCount + partialTick) * 0.3f;
+				float pulse = (float) ((Math.sin(time) + 1.0) / 2.0);
+				float brightness = 0.6f + pulse * 0.4f;
+
+				ResourceLocation texture = isPillagerScrollRight
+						? new ResourceLocation(RPGworldMod.MOD_ID, "textures/entity/pillager_spell_usage_right" + (isSlim ? "_slim.png" : ".png"))
+						: new ResourceLocation(RPGworldMod.MOD_ID, "textures/entity/pillager_spell_usage_left" + (isSlim ? "_slim.png" : ".png"));
+
+				VertexConsumer ivertexbuilder = pBuffer.getBuffer(RenderType.energySwirl(texture, 0F, 0F));
+				pRendererArmwear.render(pMatrixStack, ivertexbuilder, pCombinedLight, OverlayTexture.NO_OVERLAY, brightness, brightness, brightness, 1.0F);
 			}
-			VertexConsumer ivertexbuilder = pBuffer.getBuffer(RenderType.entityCutoutNoCull(new ResourceLocation(RPGworldMod.MOD_ID, "textures/entity/explosion_overlay.png")));
-			pRendererArmwear.render(pMatrixStack, ivertexbuilder, pCombinedLight, OverlayTexture.NO_OVERLAY);
 		}
+
 		if (pPlayer.hasEffect(ModEffects.MOSSIOSIS.get())) {
 			VertexConsumer ivertexbuilder = pBuffer.getBuffer(RenderType.entityCutoutNoCull(new ResourceLocation(RPGworldMod.MOD_ID, "textures/entity/mossiosis_overlay.png")));
 			pRendererArmwear.render(pMatrixStack, ivertexbuilder, pCombinedLight, OverlayTexture.NO_OVERLAY);
 		}
+
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1.0F);
 	}
 
@@ -70,13 +95,12 @@ public abstract class PlayerRendererMixin {
 		if (isNecromancy && pPlayer.getTicksUsingItem() > 0) {
 			necroProgress = Math.min(30, pPlayer.getTicksUsingItem()) / 30.0F;
 
-			boolean flash = (int)(necroProgress * 10) % 2 == 0;
+			boolean flash = (int) (necroProgress * 10) % 2 == 0;
 			if (flash) {
 				RenderSystem.setShaderColor(255F, 255F, 255F, 1.0F);
 			}
 		}
 	}
-
 
 	@Inject(method = "renderHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/player/PlayerRenderer;setModelProperties(Lnet/minecraft/client/player/AbstractClientPlayer;)V", shift = At.Shift.AFTER, opcode = Opcodes.PUTFIELD), cancellable = true)
 	private void renderHandMossiosisAndInvisCheck(PoseStack pMatrixStack, MultiBufferSource pBuffer,
@@ -93,5 +117,4 @@ public abstract class PlayerRendererMixin {
 			ci.cancel();
 		}
 	}
-
 }

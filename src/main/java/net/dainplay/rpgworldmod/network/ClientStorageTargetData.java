@@ -2,11 +2,6 @@ package net.dainplay.rpgworldmod.network;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.vehicle.ContainerEntity;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ClientStorageTargetData {
 	private static Entity currentEntityTarget;

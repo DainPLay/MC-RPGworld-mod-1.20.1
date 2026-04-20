@@ -44,22 +44,22 @@ public class LivingWoodArmorModel<T extends Entity> extends EntityModel<T> {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 
-		// Голова поднята на 1 пиксель вверх (0.0625 блока)
+
 		PartDefinition head = partdefinition.addOrReplaceChild("head", CubeListBuilder.create()
 						.texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(1.0F))
 						.texOffs(32, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(1.25F)),
-				PartPose.offset(0.0F, 0.0F, 0.0F)); // Изменено с -1.0F на -1.0625F (поднято на 1 пиксель вверх)
+				PartPose.offset(0.0F, 0.0F, 0.0F));
 
 		PartDefinition leaves_r1 = head.addOrReplaceChild("leaves_r1", CubeListBuilder.create()
 						.texOffs(20, -4).addBox(0.0F, -4.0F, 0.0F, 0.0F, 5.0F, 4.0F, new CubeDeformation(0.0F)),
 				PartPose.offsetAndRotation(4.75F, -4.75F, 4.75F, 0.0F, 0.7854F, 0.0F));
 
-		// Тело остаётся с деформацией 1.0F
+
 		PartDefinition body = partdefinition.addOrReplaceChild("body", CubeListBuilder.create()
 						.texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(1.0F)),
 				PartPose.offset(0.0F, 0.0F, 0.0F));
 
-		// Ботинки остаются с деформацией 1.0F
+
 		PartDefinition left_shoe = partdefinition.addOrReplaceChild("left_shoe", CubeListBuilder.create()
 				.texOffs(0, 16).mirror().addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(1.0F))
 				.mirror(false), PartPose.offset(1.9F, 12.0F, 0.0F));
@@ -76,7 +76,7 @@ public class LivingWoodArmorModel<T extends Entity> extends EntityModel<T> {
 						.texOffs(20, -4).addBox(0.0F, -4.0F, 0.0F, 0.0F, 5.0F, 4.0F, new CubeDeformation(0.0F)),
 				PartPose.offsetAndRotation(-2.75F, 9.0F, 2.75F, 0.0F, -0.7854F, 0.0F));
 
-		// Руки остаются с деформацией 1.0F
+
 		PartDefinition left_arm = partdefinition.addOrReplaceChild("left_arm", CubeListBuilder.create()
 				.texOffs(40, 16).mirror().addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(1.0F))
 				.mirror(false), PartPose.offset(5.0F, 2.0F, 0.0F));
@@ -89,7 +89,7 @@ public class LivingWoodArmorModel<T extends Entity> extends EntityModel<T> {
 						.texOffs(40, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(1.0F)),
 				PartPose.offset(-5.0F, 2.0F, 0.0F));
 
-		// Ноги изменены на 0.75F (по вашему запросу)
+
 		PartDefinition left_leg = partdefinition.addOrReplaceChild("left_leg", CubeListBuilder.create()
 				.texOffs(0, 16).mirror().addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.4F))
 				.mirror(false), PartPose.offset(1.9F, 12.0F, 0.0F));
@@ -98,7 +98,7 @@ public class LivingWoodArmorModel<T extends Entity> extends EntityModel<T> {
 						.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.4F)),
 				PartPose.offset(-1.9F, 12.0F, 0.0F));
 
-		// Пояс изменён на 0.75F (по вашему запросу)
+
 		PartDefinition waist = partdefinition.addOrReplaceChild("waist", CubeListBuilder.create()
 						.texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.5F)),
 				PartPose.offset(0.0F, 0.0F, 0.0F));
@@ -125,6 +125,5 @@ public class LivingWoodArmorModel<T extends Entity> extends EntityModel<T> {
 
 	@Override
 	public void setupAnim(T pEntity, float pLimbSwing, float pLimbSwingAmount, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
-
 	}
 }

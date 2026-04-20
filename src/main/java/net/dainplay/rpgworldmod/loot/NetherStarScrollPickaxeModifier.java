@@ -23,62 +23,58 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class NetherStarScrollPickaxeModifier extends LootModifier {
+	public static final Codec<NetherStarScrollPickaxeModifier> CODEC = RecordCodecBuilder.create(inst ->
+			LootModifier.codecStart(inst).apply(inst, NetherStarScrollPickaxeModifier::new)
+	);
 
-    public static final Codec<NetherStarScrollPickaxeModifier> CODEC = RecordCodecBuilder.create(inst ->
-            LootModifier.codecStart(inst).apply(inst, NetherStarScrollPickaxeModifier::new)
-    );
+	public NetherStarScrollPickaxeModifier(LootItemCondition[] conditions) {
+		super(conditions);
+	}
 
-    public NetherStarScrollPickaxeModifier(LootItemCondition[] conditions) {
-        super(conditions);
-    }
+	@Override
+	protected @NotNull ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
+		ItemStack tool = context.getParamOrNull(LootContextParams.TOOL);
+		if (!(tool.getItem() instanceof NetherStarScrollItem scrollItem)) return generatedLoot;
 
-    @Override
-    protected @NotNull ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
-        // Получаем инструмент, которым был сломан блок
-        ItemStack tool = context.getParamOrNull(LootContextParams.TOOL);
-        if (!(tool.getItem() instanceof NetherStarScrollItem scrollItem)) return generatedLoot;
-        // Проверяем, что свиток находится в режиме кирки
-        if (!scrollItem.isPickaxeMode(tool)) return generatedLoot;
+		if (!scrollItem.isPickaxeMode(tool)) return generatedLoot;
 
-        // Получаем игрока (добытчика)
-        Entity entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
-        if (!(entity instanceof Player player)) return generatedLoot;
 
-        // Получаем информацию о блоке
-        BlockState state = context.getParamOrNull(LootContextParams.BLOCK_STATE);
-        if (state == null) return generatedLoot;
+		Entity entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
+		if (!(entity instanceof Player player)) return generatedLoot;
 
-        Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
-        if (origin == null) return generatedLoot;
-        BlockPos pos = new BlockPos((int) origin.x, (int) origin.y, (int) origin.z);
 
-        // Создаём копию инструмента и добавляем нужное зачарование
-        ItemStack modifiedTool = Items.NETHERITE_PICKAXE.getDefaultInstance();
-        if (player.isShiftKeyDown()) {
-            // Зажат Shift → Удача III
-            modifiedTool.enchant(Enchantments.BLOCK_FORTUNE, 3);
-        } else {
-            // Не зажат Shift → Шёлковое касание
-            modifiedTool.enchant(Enchantments.SILK_TOUCH, 1);
-        }
+		BlockState state = context.getParamOrNull(LootContextParams.BLOCK_STATE);
+		if (state == null) return generatedLoot;
 
-        // Генерируем дроп заново с модифицированным инструментом
-        List<ItemStack> newDrops = Block.getDrops(
-                state,
-                context.getLevel(),
-                pos,
-                context.getParamOrNull(LootContextParams.BLOCK_ENTITY),
-                entity,
-                modifiedTool
-        );
+		Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
+		if (origin == null) return generatedLoot;
+		BlockPos pos = new BlockPos((int) origin.x, (int) origin.y, (int) origin.z);
 
-        ObjectArrayList<ItemStack> result = new ObjectArrayList<>();
-        result.addAll(newDrops);
-        return result;
-    }
 
-    @Override
-    public Codec<? extends IGlobalLootModifier> codec() {
-        return CODEC;
-    }
+		ItemStack modifiedTool = Items.NETHERITE_PICKAXE.getDefaultInstance();
+		if (player.isShiftKeyDown()) {
+			modifiedTool.enchant(Enchantments.BLOCK_FORTUNE, 3);
+		} else {
+			modifiedTool.enchant(Enchantments.SILK_TOUCH, 1);
+		}
+
+
+		List<ItemStack> newDrops = Block.getDrops(
+				state,
+				context.getLevel(),
+				pos,
+				context.getParamOrNull(LootContextParams.BLOCK_ENTITY),
+				entity,
+				modifiedTool
+		);
+
+		ObjectArrayList<ItemStack> result = new ObjectArrayList<>();
+		result.addAll(newDrops);
+		return result;
+	}
+
+	@Override
+	public Codec<? extends IGlobalLootModifier> codec() {
+		return CODEC;
+	}
 }

@@ -2,6 +2,7 @@
   "values": [
     "minecraft:iron_golem",
     "minecraft:snow_golem",
-    "minecraft:ravager"
+    "minecraft:ravager",
+    "rpgworldmod:friendly_ravager"
   ]
 }

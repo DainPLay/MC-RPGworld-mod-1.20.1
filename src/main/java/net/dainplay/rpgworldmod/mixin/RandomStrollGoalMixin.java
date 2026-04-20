@@ -14,32 +14,32 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(RandomStrollGoal.class)
 public abstract class RandomStrollGoalMixin {
-    @Shadow
+	@Shadow
 	protected final PathfinderMob mob;
 
-    protected RandomStrollGoalMixin(PathfinderMob mob) {
-        this.mob = mob;
-    }
+	protected RandomStrollGoalMixin(PathfinderMob mob) {
+		this.mob = mob;
+	}
 
-    @Inject(method = "canUse", at = @At("HEAD"), cancellable = true)
-    public void canUseWithParalysis(CallbackInfoReturnable<Boolean> cir) {
-        if (shouldParalyzeLook()) {
-            cir.setReturnValue(false);
-        }
-    }
+	@Inject(method = "canUse", at = @At("HEAD"), cancellable = true)
+	public void canUseWithParalysis(CallbackInfoReturnable<Boolean> cir) {
+		if (shouldParalyzeLook()) {
+			cir.setReturnValue(false);
+		}
+	}
 
-    @Inject(method = "canContinueToUse", at = @At("HEAD"), cancellable = true)
-    public void canContinueToUseWithParalysis(CallbackInfoReturnable<Boolean> cir) {
-        if (shouldParalyzeLook()) {
-            cir.setReturnValue(false);
-        }
-    }
+	@Inject(method = "canContinueToUse", at = @At("HEAD"), cancellable = true)
+	public void canContinueToUseWithParalysis(CallbackInfoReturnable<Boolean> cir) {
+		if (shouldParalyzeLook()) {
+			cir.setReturnValue(false);
+		}
+	}
 
-    private boolean shouldParalyzeLook() {
-        return (!(mob instanceof AbstractSkeleton) && !(mob instanceof SkeletonHorse)
-                && mob.hasEffect(ModEffects.PARALYSIS.get())
-                && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(mob)
-                && mob.getEffect(ModEffects.PARALYSIS.get()).getAmplifier() >= 1) ||
-                (mob.hasEffect(ModEffects.MOB_BECKON.get()) && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(mob));
-    }
+	private boolean shouldParalyzeLook() {
+		return (!(mob instanceof AbstractSkeleton) && !(mob instanceof SkeletonHorse)
+				&& mob.hasEffect(ModEffects.PARALYSIS.get())
+				&& EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(mob)
+				&& mob.getEffect(ModEffects.PARALYSIS.get()).getAmplifier() >= 1) ||
+				(mob.hasEffect(ModEffects.MOB_BECKON.get()) && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(mob));
+	}
 }

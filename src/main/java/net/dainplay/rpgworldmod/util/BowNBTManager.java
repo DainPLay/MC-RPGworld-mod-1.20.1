@@ -14,20 +14,16 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = "rpgworldmod", bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class BowNBTManager {
-
 	@SubscribeEvent
 	public static void onBowUseStart(LivingEntityUseItemEvent.Start event) {
 		if (event.getEntity() instanceof Player player &&
 				event.getItem().getItem() == Items.BOW) {
-
 			ItemStack bowStack = event.getItem();
 
 			if (player.getProjectile(bowStack).getItem() == ModItems.PROJECTRUFFLE_ITEM.get()) {
-				// Устанавливаем тег
 				CompoundTag tag = bowStack.getOrCreateTag();
 				tag.putBoolean("UsingProjectruffle", true);
 			} else {
-				// Удаляем тег если он есть
 				if (bowStack.hasTag() && bowStack.getTag().contains("UsingProjectruffle")) {
 					bowStack.getTag().remove("UsingProjectruffle");
 				}

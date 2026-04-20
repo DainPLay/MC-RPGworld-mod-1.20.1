@@ -1,7 +1,6 @@
 package net.dainplay.rpgworldmod.enchantment;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -9,41 +8,42 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
-import net.minecraft.world.item.enchantment.MendingEnchantment;
 import org.jetbrains.annotations.NotNull;
 
 public class MagicScrollEnchantment extends Enchantment {
-    public MagicScrollEnchantment(Rarity pRarity, EnchantmentCategory pCategory, EquipmentSlot... pApplicableSlots) {
-        super(pRarity, pCategory, pApplicableSlots);
-    }
-    public int getMinCost(int pEnchantmentLevel) {
-        return 1;
-    }
+	public MagicScrollEnchantment(Rarity pRarity, EnchantmentCategory pCategory, EquipmentSlot... pApplicableSlots) {
+		super(pRarity, pCategory, pApplicableSlots);
+	}
 
-    public int getMaxCost(int pEnchantmentLevel) {
-        return this.getMinCost(pEnchantmentLevel) + 40;
-    }
+	public int getMinCost(int pEnchantmentLevel) {
+		return 1;
+	}
 
-    public boolean checkCompatibility(Enchantment pEnch) {
-        return !(pEnch instanceof MagicScrollEnchantment) && super.checkCompatibility(pEnch);
-    }
-    public boolean isAllowedOnBooks() {
-        return false;
-    }
+	public int getMaxCost(int pEnchantmentLevel) {
+		return this.getMinCost(pEnchantmentLevel) + 40;
+	}
 
-    public boolean canEnchant(ItemStack pStack) {
-        if(pStack.getItem() == Items.BOOK || pStack.getItem() == Items.ENCHANTED_BOOK) return false;
-        return super.canEnchant(pStack);
-    }
+	public boolean checkCompatibility(Enchantment pEnch) {
+		return !(pEnch instanceof MagicScrollEnchantment) && super.checkCompatibility(pEnch);
+	}
 
-    public boolean isTradeable() {
-        return false;
-    }
+	public boolean isAllowedOnBooks() {
+		return false;
+	}
 
-    @Override
-    public @NotNull Component getFullname(int pLevel) {
-        MutableComponent mutablecomponent = Component.translatable(this.getDescriptionId());
-            mutablecomponent.withStyle(ChatFormatting.BLUE);
-        return mutablecomponent;
-    }
+	public boolean canEnchant(ItemStack pStack) {
+		if (pStack.getItem() == Items.BOOK || pStack.getItem() == Items.ENCHANTED_BOOK) return false;
+		return super.canEnchant(pStack);
+	}
+
+	public boolean isTradeable() {
+		return false;
+	}
+
+	@Override
+	public @NotNull Component getFullname(int pLevel) {
+		MutableComponent mutablecomponent = Component.translatable(this.getDescriptionId());
+		mutablecomponent.withStyle(ChatFormatting.BLUE);
+		return mutablecomponent;
+	}
 }

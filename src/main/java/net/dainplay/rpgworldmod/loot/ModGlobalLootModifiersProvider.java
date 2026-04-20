@@ -7,7 +7,6 @@ import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.world.RPGLootTables;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.LocationPredicate;
-import net.minecraft.advancements.critereon.LootTableTrigger;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
@@ -45,7 +44,7 @@ public class ModGlobalLootModifiersProvider extends GlobalLootModifierProvider {
 						new LootTableIdCondition.Builder(BuiltInLootTables.FISHING).build()}, RPGLootTables.RIE_WEALD_FISHING));
 		add("tool_smelting", new SmeltingModifier(new LootItemCondition[]{MatchTool.toolMatches(ItemPredicate.Builder.item().of(ModItems.FLINT_PICKAXE.get(), ModItems.FLINT_SHOVEL.get(), ModItems.FLINT_SWORD.get(), ModItems.FLINT_AXE.get(), ModItems.FLINT_HOE.get())).build()}));
 		add("nether_star_scroll_pickaxe", new NetherStarScrollPickaxeModifier(
-				new LootItemCondition[] {
+				new LootItemCondition[]{
 						MatchTool.toolMatches(ItemPredicate.Builder.item().of(ModItems.NETHER_STAR_SCROLL.get())).build()
 				}
 		));

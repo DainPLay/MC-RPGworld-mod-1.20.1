@@ -1,6 +1,5 @@
 package net.dainplay.rpgworldmod.mixin;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -10,6 +9,7 @@ import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.ManaCostItem;
 import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
 import net.dainplay.rpgworldmod.item.custom.OrbitingItem;
+import net.dainplay.rpgworldmod.item.custom.PillagerScrollItem;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.dainplay.rpgworldmod.render.ModRenderTypes;
 import net.minecraft.client.Minecraft;
@@ -24,13 +24,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Final;
@@ -64,7 +62,6 @@ public class ItemInHandLayerMixin {
 				itemStack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0 &&
 				itemStack.getTag() != null &&
 				itemStack.getTag().contains("isPickaxe", Tag.TAG_INT)) {
-
 			ItemStack dummyStack = new ItemStack(ModItems.NETHER_STAR_SCROLL.get());
 			CompoundTag nbtData = new CompoundTag();
 			nbtData.putInt("SummonedObject", 1);
@@ -85,7 +82,7 @@ public class ItemInHandLayerMixin {
 				int summonProgress = itemStack.getTag().getInt("summonProgress");
 				if (summonProgress > 0) {
 					poseStack.pushPose();
-					poseStack.translate(0F,0.5F,0F);
+					poseStack.translate(0F, 0.5F, 0F);
 					float progress = summonProgress / 20.0f;
 					float partialTick = Minecraft.getInstance().getFrameTime();
 					float age = entity.tickCount + partialTick;
@@ -98,7 +95,7 @@ public class ItemInHandLayerMixin {
 			ci.cancel();
 			return;
 		}
-		// ==================== OrbitingItem ====================
+
 		if (itemStack.getItem() instanceof OrbitingItem orbitingItem && orbitingItem.shouldOrbit(itemStack, entity)) {
 			poseStack.pushPose();
 
@@ -128,6 +125,10 @@ public class ItemInHandLayerMixin {
 				poseStack.translate(handPosition.x(), handPosition.y(), handPosition.z() + orbitingItem.getZOffset(itemStack, entity));
 
 			}
+			if (orbitingItem.shouldRotate(itemStack, entity)) {
+				float f = (float) entity.tickCount % 360F + Minecraft.getInstance().getFrameTime();
+				poseStack.mulPose(Axis.ZP.rotation((float) Math.toRadians(f) * -2.25F));
+			}
 
 			String textureString = orbitingItem.getTexture(itemStack, entity);
 			int color = orbitingItem.getColor(itemStack, entity);
@@ -139,10 +140,9 @@ public class ItemInHandLayerMixin {
 				if (itemStack.hasTag() && itemStack.getTag().contains("notEnoughMana")) hasEnoughMana = false;
 			}
 
-			if (hasEnoughMana) {
-
+			if (hasEnoughMana && !(orbitingItem instanceof PillagerScrollItem
+					&& entity.isUsingItem() && entity.getUseItem() == itemStack)) {
 				if (useCube) {
-					// ---------- Рисуем куб ----------
 					int animationSpeed = orbitingItem.getAnimationSpeed(itemStack, entity);
 					int animationLength = orbitingItem.getAnimationLength(itemStack, entity);
 
@@ -161,7 +161,7 @@ public class ItemInHandLayerMixin {
 
 						vertexConsumer = bufferSource.getBuffer(ModRenderTypes.GLOW_SPELL_EFFECT.apply(new ResourceLocation(RPGworldMod.MOD_ID, textureString + ".png")));
 
-						// Передняя грань (Z = +size)
+
 						drawCubeFace(vertexConsumer, matrix,
 								-hsX, -size, size,
 								hsX, -size, size,
@@ -170,7 +170,7 @@ public class ItemInHandLayerMixin {
 								0, vMax1, 1, vMax1, 1, vMin1, 0, vMin1,
 								0, 0, 1,
 								packedLight);
-						// Задняя грань (Z = -size)
+
 						drawCubeFace(vertexConsumer, matrix,
 								hsX, -size, -size,
 								-hsX, -size, -size,
@@ -179,7 +179,7 @@ public class ItemInHandLayerMixin {
 								0, vMax3, 1, vMax3, 1, vMin3, 0, vMin3,
 								0, 0, -1,
 								packedLight);
-						// Левая грань (X = -size)
+
 						drawCubeFace(vertexConsumer, matrix,
 								-hsX, -size, -size,
 								-hsX, -size, size,
@@ -188,7 +188,7 @@ public class ItemInHandLayerMixin {
 								0, vMax4, 1, vMax4, 1, vMin4, 0, vMin4,
 								-1, 0, 0,
 								packedLight);
-						// Правая грань (X = +size)
+
 						drawCubeFace(vertexConsumer, matrix,
 								hsX, -size, size,
 								hsX, -size, -size,
@@ -204,7 +204,7 @@ public class ItemInHandLayerMixin {
 						int green = (color >> 8) & 0xFF;
 						int blue = color & 0xFF;
 
-						// Передняя грань
+
 						drawColoredCubeFace(vertexConsumer, matrix,
 								-size, -size, size,
 								size, -size, size,
@@ -213,7 +213,7 @@ public class ItemInHandLayerMixin {
 								red, green, blue, alpha,
 								0, 0, 1,
 								packedLight);
-						// Задняя грань
+
 						drawColoredCubeFace(vertexConsumer, matrix,
 								size, -size, -size,
 								-size, -size, -size,
@@ -222,7 +222,7 @@ public class ItemInHandLayerMixin {
 								red, green, blue, alpha,
 								0, 0, -1,
 								packedLight);
-						// Левая грань
+
 						drawColoredCubeFace(vertexConsumer, matrix,
 								-size, -size, -size,
 								-size, -size, size,
@@ -231,7 +231,7 @@ public class ItemInHandLayerMixin {
 								red, green, blue, alpha,
 								-1, 0, 0,
 								packedLight);
-						// Правая грань
+
 						drawColoredCubeFace(vertexConsumer, matrix,
 								size, -size, size,
 								size, -size, -size,
@@ -242,7 +242,6 @@ public class ItemInHandLayerMixin {
 								packedLight);
 					}
 				} else {
-					// ---------- Рисуем плоский квадрат (прежняя логика) ----------
 					if (textureString != null && !textureString.isEmpty()) {
 						int animationSpeed = orbitingItem.getAnimationSpeed(itemStack, entity);
 						int animationLength = orbitingItem.getAnimationLength(itemStack, entity);
@@ -323,7 +322,7 @@ public class ItemInHandLayerMixin {
 			ci.cancel();
 		}
 
-		// ==================== StaffItem ====================
+
 		if (itemStack.getItem() instanceof StaffItem staffItem && entity instanceof Player player) {
 			if (itemStack.hasTag() && itemStack.getTag().contains("onCooldown")) return;
 			poseStack.pushPose();
@@ -427,7 +426,7 @@ public class ItemInHandLayerMixin {
 		}
 	}
 
-	// Вспомогательные методы для рисования граней куба
+
 	private static void drawCubeFace(VertexConsumer consumer, Matrix4f matrix,
 									 float x1, float y1, float z1,
 									 float x2, float y2, float z2,
@@ -461,14 +460,14 @@ public class ItemInHandLayerMixin {
 		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.lightning());
 		poseStack.pushPose();
 
-		// Billboard: поворачиваем так, чтобы лучи всегда смотрели на камеру
+
 		net.minecraft.client.Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
 		float yaw = camera.getYRot();
 		float pitch = camera.getXRot();
 		poseStack.mulPose(Axis.YP.rotationDegrees(-yaw));
 		poseStack.mulPose(Axis.XP.rotationDegrees(-pitch));
 
-		float rotationAngle = ageTicks * 5.0f; // Скорость вращения лучей
+		float rotationAngle = ageTicks * 5.0f;
 		int beamCount = 12;
 		float maxLength = 0.8f;
 		float maxWidth = 0.3f;
@@ -482,8 +481,7 @@ public class ItemInHandLayerMixin {
 			poseStack.mulPose(Axis.ZP.rotationDegrees(angle));
 			Matrix4f matrix = poseStack.last().pose();
 
-			// Рисуем один луч (трёхгранная пирамида)
-			// Вершина в начале (0,0,0)
+
 			vertex01(vertexConsumer, matrix, alpha, 0, 0, 255);
 			vertex3(vertexConsumer, matrix, beamLength, beamWidth, 0, 0, 255);
 			vertex4(vertexConsumer, matrix, beamLength, beamWidth, 0, 0, 255);
@@ -496,7 +494,7 @@ public class ItemInHandLayerMixin {
 		poseStack.popPose();
 	}
 
-	// Вспомогательные методы для вершин лучей (адаптированы из BoundCampfireBlockRenderer)
+
 	private static void vertex01(VertexConsumer consumer, Matrix4f matrix, int alpha, int r, int g, int b) {
 		consumer.vertex(matrix, 0.0F, 0.0F, 0.0F)
 				.color(r, g, b, alpha)

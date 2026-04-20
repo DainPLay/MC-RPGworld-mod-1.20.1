@@ -1,38 +1,26 @@
 package net.dainplay.rpgworldmod.util;
 
 import net.dainplay.rpgworldmod.block.ModBlocks;
-import net.dainplay.rpgworldmod.fluid.ModFluids;
 import net.dainplay.rpgworldmod.item.ModItems;
-import net.dainplay.rpgworldmod.item.custom.FuelBucketItem;
 import net.dainplay.rpgworldmod.potion.ModPotions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
-import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractCauldronBlock;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CauldronBlock;
-import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 public class CauldronInteractionHandler {
 	@SubscribeEvent
@@ -45,7 +33,6 @@ public class CauldronInteractionHandler {
 		BlockState state = level.getBlockState(pos);
 
 		if (state.getBlock() instanceof AbstractCauldronBlock) {
-			// Handle Arbor Fuel Bucket Interaction
 			if (itemStack.is(ModItems.ARBOR_FUEL_BUCKET.get())) {
 				if (!player.isCreative() && !level.isClientSide) {
 					player.setItemInHand(hand, new ItemStack(Items.BUCKET));
@@ -53,8 +40,8 @@ public class CauldronInteractionHandler {
 				level.setBlock(pos, ModBlocks.ARBOR_FUEL_CAULDRON.get().defaultBlockState().setValue(BlockStateProperties.LEVEL_CAULDRON, 3), 3);
 				level.playSound((Player) null, pos, SoundEvents.BUCKET_EMPTY_LAVA, SoundSource.BLOCKS, 1.0F, 1.0F);
 				player.awardStat(Stats.FILL_CAULDRON);
-				event.setCanceled(true); // cancel the original behavior of the cauldron.
-				event.setCancellationResult(InteractionResult.SUCCESS); // cancel the original behavior of the cauldron and indicate the interaction was successful.
+				event.setCanceled(true);
+				event.setCancellationResult(InteractionResult.SUCCESS);
 			}
 		}
 		if (state.is(ModBlocks.ARBOR_FUEL_CAULDRON.get())) {

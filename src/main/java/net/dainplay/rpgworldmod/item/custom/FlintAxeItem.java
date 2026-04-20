@@ -1,22 +1,13 @@
 package net.dainplay.rpgworldmod.item.custom;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobType;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -27,7 +18,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class FlintAxeItem extends AxeItem implements RPGtooltip {
@@ -58,7 +48,7 @@ public class FlintAxeItem extends AxeItem implements RPGtooltip {
 			float totalChance = baseChance + (fortuneLevel * chancePerLevel);
 
 			if (attacker instanceof Player player) {
-					boolean flag2 = player.fallDistance > 0.0F && !player.onGround() && !player.onClimbable() && !player.isInWater() && !player.hasEffect(MobEffects.BLINDNESS) && !player.isPassenger() && !player.isSprinting();
+				boolean flag2 = player.fallDistance > 0.0F && !player.onGround() && !player.onClimbable() && !player.isInWater() && !player.hasEffect(MobEffects.BLINDNESS) && !player.isPassenger() && !player.isSprinting();
 				if (flag2) totalChance *= 5;
 			}
 
@@ -70,7 +60,7 @@ public class FlintAxeItem extends AxeItem implements RPGtooltip {
 				int fireDuration = 5 + (fortuneLevel * 5);
 				target.setSecondsOnFire(fireDuration);
 			} else {
-				((ServerLevel) target.level()).sendParticles(ParticleTypes.FLAME, target.getX(), target.getY()+target.getBbHeight()*0.5f, target.getZ(), 20, target.level().getRandom().nextFloat()/5, target.level().getRandom().nextFloat()/5, target.level().getRandom().nextFloat()/5, 0.01f);
+				((ServerLevel) target.level()).sendParticles(ParticleTypes.FLAME, target.getX(), target.getY() + target.getBbHeight() * 0.5f, target.getZ(), 20, target.level().getRandom().nextFloat() / 5, target.level().getRandom().nextFloat() / 5, target.level().getRandom().nextFloat() / 5, 0.01f);
 			}
 		}
 
@@ -80,7 +70,7 @@ public class FlintAxeItem extends AxeItem implements RPGtooltip {
 	@Override
 	public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
-        ClientRPGtooltipHandler.appendHoverText(pStack, pLevel, pTooltip, pFlag, this)
-    );
+				ClientRPGtooltipHandler.appendHoverText(pStack, pLevel, pTooltip, pFlag, this)
+		);
 	}
 }

@@ -16,14 +16,12 @@ import net.minecraftforge.registries.RegistryObject;
 import java.util.Locale;
 
 public class ItemModelGenerator extends ItemModelProvider {
-
 	public ItemModelGenerator(PackOutput output, ExistingFileHelper existingFileHelper) {
 		super(output, RPGworldMod.MOD_ID, existingFileHelper);
 	}
 
 	@Override
 	protected void registerModels() {
-
 		trimmedArmor(ModItems.LIVING_WOOD_HELMET);
 		trimmedArmor(ModItems.LIVING_WOOD_CHESTPLATE);
 		trimmedArmor(ModItems.LIVING_WOOD_LEGGINGS);
@@ -39,7 +37,8 @@ public class ItemModelGenerator extends ItemModelProvider {
 		for (int i = 0; i < layers.length; i++) {
 			builder = builder.texture("layer" + i, layers[i]);
 		}
-		if (emissivity > 0) builder = builder.customLoader(ItemLayerModelBuilder::begin).emissive(emissivity, emissivity, 0).renderType("minecraft:translucent", 0).end();
+		if (emissivity > 0)
+			builder = builder.customLoader(ItemLayerModelBuilder::begin).emissive(emissivity, emissivity, 0).renderType("minecraft:translucent", 0).end();
 		return builder;
 	}
 

@@ -20,7 +20,6 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = RPGworldMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class FireproofSkirtHandler {
-
 	@SubscribeEvent
 	public static void onEntityDamage(LivingAttackEvent event) {
 		if (event.getSource().is(DamageTypes.ON_FIRE)
@@ -46,9 +45,9 @@ public class FireproofSkirtHandler {
 						}
 					}
 					player.heal(event.getAmount());
-					if(player instanceof ServerPlayer serverPlayer) ModAdvancements.SPELL_RESTORATION_EMBER_TRIGGER.trigger(serverPlayer);
-				}
-				else if(player.tickCount % 10 == 0) {
+					if (player instanceof ServerPlayer serverPlayer)
+						ModAdvancements.SPELL_RESTORATION_EMBER_TRIGGER.trigger(serverPlayer);
+				} else if (player.tickCount % 10 == 0) {
 					if (player.getHealth() < player.getMaxHealth()) {
 						ParticleOptions particleoptions = ParticleTypes.HEART;
 						for (int i = 0; i < 4; ++i) {
@@ -59,7 +58,8 @@ public class FireproofSkirtHandler {
 						}
 					}
 					player.heal(event.getAmount());
-					if(player instanceof ServerPlayer serverPlayer) ModAdvancements.SPELL_RESTORATION_EMBER_TRIGGER.trigger(serverPlayer);
+					if (player instanceof ServerPlayer serverPlayer)
+						ModAdvancements.SPELL_RESTORATION_EMBER_TRIGGER.trigger(serverPlayer);
 				}
 				event.setCanceled(true);
 				return;

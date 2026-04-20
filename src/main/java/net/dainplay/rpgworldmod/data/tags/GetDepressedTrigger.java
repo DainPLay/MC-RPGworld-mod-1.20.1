@@ -10,28 +10,26 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 public class GetDepressedTrigger extends SimpleCriterionTrigger<GetDepressedTrigger.Instance> {
+	public static final ResourceLocation ID = RPGworldMod.prefix("get_depressed");
 
-    public static final ResourceLocation ID = RPGworldMod.prefix("get_depressed");
+	@Override
+	public ResourceLocation getId() {
+		return ID;
+	}
 
-    @Override
-    public ResourceLocation getId() {
-        return ID;
-    }
-
-    @Override
-    public Instance createInstance(JsonObject json, ContextAwarePredicate player, DeserializationContext condition) {
+	@Override
+	public Instance createInstance(JsonObject json, ContextAwarePredicate player, DeserializationContext condition) {
 		return new GetDepressedTrigger.Instance(player);
-    }
+	}
 
-    public void trigger(ServerPlayer player) {
-       this.trigger(player, (instance) -> true);
-    }
+	public void trigger(ServerPlayer player) {
+		this.trigger(player, (instance) -> true);
+	}
 
-    public static class Instance extends AbstractCriterionTriggerInstance {
+	public static class Instance extends AbstractCriterionTriggerInstance {
+		public Instance(ContextAwarePredicate player) {
+			super(GetDepressedTrigger.ID, player);
+		}
 
-        public Instance(ContextAwarePredicate player) {
-            super(GetDepressedTrigger.ID, player);
-        }
-
-    }
+	}
 }

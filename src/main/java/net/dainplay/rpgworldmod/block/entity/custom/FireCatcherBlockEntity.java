@@ -13,132 +13,129 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 public class FireCatcherBlockEntity extends BlockEntity {
-    private boolean isHungry = false;
-    private int tickCounter = 0;
+	private boolean isHungry = false;
+	private int tickCounter = 0;
 
-    public FireCatcherBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.FIRE_CATCHER.get(), pos, state);
-    }
+	public FireCatcherBlockEntity(BlockPos pos, BlockState state) {
+		super(ModBlockEntities.FIRE_CATCHER.get(), pos, state);
+	}
 
-    public void tick() {
-        if (level == null || level.isClientSide) return;
+	public void tick() {
+		if (level == null || level.isClientSide) return;
 
-        tickCounter++;
+		tickCounter++;
 
-        // Каждую секунду (20 тиков) обновляем состояние
-        if (tickCounter % 20 == 0) {
-            // Обновляем состояние блока
-            BlockState state = level.getBlockState(worldPosition);
-            if (state.getValue(FireCatcherBlock.HUNGRY) != isHungry) {
-                // Обновляем верхнюю часть
-                level.setBlockAndUpdate(worldPosition, state.setValue(FireCatcherBlock.HUNGRY, isHungry));
 
-                // Обновляем нижнюю часть
-                updateBottomPart();
-            }
+		if (tickCounter % 20 == 0) {
+			BlockState state = level.getBlockState(worldPosition);
+			if (state.getValue(FireCatcherBlock.HUNGRY) != isHungry) {
+				level.setBlockAndUpdate(worldPosition, state.setValue(FireCatcherBlock.HUNGRY, isHungry));
 
-            // Обновляем систему защиты
-            FireCatcherManager manager = FireCatcherManager.get(level);
-            manager.updateFireCatcher(worldPosition, isHungry, level.dimension());
 
-            // Если голодный, тушим огонь в чанках
-            if (isHungry && tickCounter % 40 == 0) {
-                manager.extinguishFireInProtectedChunks(worldPosition, level.dimension(), (ServerLevel) level);
-            }
-        }
-    }
+				updateBottomPart();
+			}
 
-    public void toggleMode() {
-        isHungry = !isHungry;
-        setChanged();
 
-        // Синхронизируем с клиентом
-        if (level != null) {
-            // Обновляем верхнюю часть
-            BlockState state = level.getBlockState(worldPosition);
-            level.setBlockAndUpdate(worldPosition, state.setValue(FireCatcherBlock.HUNGRY, isHungry));
-            level.sendBlockUpdated(worldPosition, state, state, 3);
+			FireCatcherManager manager = FireCatcherManager.get(level);
+			manager.updateFireCatcher(worldPosition, isHungry, level.dimension());
 
-            // Обновляем нижнюю часть
-            updateBottomPart();
-        }
-    }
 
-    private void updateBottomPart() {
-        if (level == null) return;
+			if (isHungry && tickCounter % 40 == 0) {
+				manager.extinguishFireInProtectedChunks(worldPosition, level.dimension(), (ServerLevel) level);
+			}
+		}
+	}
 
-        BlockPos bottomPos = worldPosition.below();
-        BlockState bottomState = level.getBlockState(bottomPos);
-        if (bottomState.getBlock() instanceof FireCatcherBlock) {
-            level.setBlockAndUpdate(bottomPos, bottomState.setValue(FireCatcherBlock.HUNGRY, isHungry));
-            level.sendBlockUpdated(bottomPos, bottomState, bottomState, 3);
-        }
-    }
+	public void toggleMode() {
+		isHungry = !isHungry;
+		setChanged();
 
-    public void setInitialState(boolean hungry) {
-        this.isHungry = hungry;
-        setChanged();
 
-        // Немедленно обновляем обе части
-        if (level != null) {
-            BlockState state = level.getBlockState(worldPosition);
-            level.setBlockAndUpdate(worldPosition, state.setValue(FireCatcherBlock.HUNGRY, isHungry));
-            updateBottomPart();
-        }
-    }
+		if (level != null) {
+			BlockState state = level.getBlockState(worldPosition);
+			level.setBlockAndUpdate(worldPosition, state.setValue(FireCatcherBlock.HUNGRY, isHungry));
+			level.sendBlockUpdated(worldPosition, state, state, 3);
 
-    public boolean isHungry() {
-        return isHungry;
-    }
 
-    @Override
-    protected void saveAdditional(@NotNull CompoundTag tag) {
-        super.saveAdditional(tag);
-        tag.putBoolean("Hungry", isHungry);
-    }
+			updateBottomPart();
+		}
+	}
 
-    @Override
-    public void load(@NotNull CompoundTag tag) {
-        super.load(tag);
-        isHungry = tag.getBoolean("Hungry");
+	private void updateBottomPart() {
+		if (level == null) return;
 
-        // При загрузке синхронизируем состояние
-        if (level != null && !level.isClientSide) {
-            BlockState state = level.getBlockState(worldPosition);
-            if (state.getValue(FireCatcherBlock.HUNGRY) != isHungry) {
-                level.setBlockAndUpdate(worldPosition, state.setValue(FireCatcherBlock.HUNGRY, isHungry));
-                updateBottomPart();
-            }
-        }
-    }
+		BlockPos bottomPos = worldPosition.below();
+		BlockState bottomState = level.getBlockState(bottomPos);
+		if (bottomState.getBlock() instanceof FireCatcherBlock) {
+			level.setBlockAndUpdate(bottomPos, bottomState.setValue(FireCatcherBlock.HUNGRY, isHungry));
+			level.sendBlockUpdated(bottomPos, bottomState, bottomState, 3);
+		}
+	}
 
-    @Override
-    public @NotNull CompoundTag getUpdateTag() {
-        CompoundTag tag = super.getUpdateTag();
-        tag.putBoolean("Hungry", isHungry);
-        return tag;
-    }
+	public void setInitialState(boolean hungry) {
+		this.isHungry = hungry;
+		setChanged();
 
-    @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
 
-    @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        CompoundTag tag = pkt.getTag() != null ? pkt.getTag() : new CompoundTag();
-        load(tag);
+		if (level != null) {
+			BlockState state = level.getBlockState(worldPosition);
+			level.setBlockAndUpdate(worldPosition, state.setValue(FireCatcherBlock.HUNGRY, isHungry));
+			updateBottomPart();
+		}
+	}
 
-        // Обновляем рендер
-        if (level != null && level.isClientSide) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+	public boolean isHungry() {
+		return isHungry;
+	}
 
-            // Также обновляем нижнюю часть на клиенте
-            BlockPos bottomPos = worldPosition.below();
-            BlockState bottomState = level.getBlockState(bottomPos);
-            if (bottomState.getBlock() instanceof FireCatcherBlock) {
-                level.sendBlockUpdated(bottomPos, bottomState, bottomState, 3);
-            }
-        }
-    }
+	@Override
+	protected void saveAdditional(@NotNull CompoundTag tag) {
+		super.saveAdditional(tag);
+		tag.putBoolean("Hungry", isHungry);
+	}
+
+	@Override
+	public void load(@NotNull CompoundTag tag) {
+		super.load(tag);
+		isHungry = tag.getBoolean("Hungry");
+
+
+		if (level != null && !level.isClientSide) {
+			BlockState state = level.getBlockState(worldPosition);
+			if (state.getValue(FireCatcherBlock.HUNGRY) != isHungry) {
+				level.setBlockAndUpdate(worldPosition, state.setValue(FireCatcherBlock.HUNGRY, isHungry));
+				updateBottomPart();
+			}
+		}
+	}
+
+	@Override
+	public @NotNull CompoundTag getUpdateTag() {
+		CompoundTag tag = super.getUpdateTag();
+		tag.putBoolean("Hungry", isHungry);
+		return tag;
+	}
+
+	@Override
+	public ClientboundBlockEntityDataPacket getUpdatePacket() {
+		return ClientboundBlockEntityDataPacket.create(this);
+	}
+
+	@Override
+	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+		CompoundTag tag = pkt.getTag() != null ? pkt.getTag() : new CompoundTag();
+		load(tag);
+
+
+		if (level != null && level.isClientSide) {
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+
+
+			BlockPos bottomPos = worldPosition.below();
+			BlockState bottomState = level.getBlockState(bottomPos);
+			if (bottomState.getBlock() instanceof FireCatcherBlock) {
+				level.sendBlockUpdated(bottomPos, bottomState, bottomState, 3);
+			}
+		}
+	}
 }

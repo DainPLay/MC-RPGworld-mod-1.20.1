@@ -8,7 +8,11 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
@@ -32,11 +36,11 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 	public final ModelPart leaf5;
 	public final ModelPart leaf6;
 
-	// Константы для плавности анимаций
-	private static final float ANIMATION_SMOOTHING = 0.05f;  // Коэффициент сглаживания
-	private static final float MAX_PETAL_ROTATION = 0.5f;    // Максимальный угол поворота лепестков
-	private static final float MAX_LEAF_ROTATION = 0.2f;     // Максимальный угол поворота листьев
-	private static final float TONGUE_SPEED = 0.5f;          // Скорость движения языка
+
+	private static final float ANIMATION_SMOOTHING = 0.05f;
+	private static final float MAX_PETAL_ROTATION = 0.5f;
+	private static final float MAX_LEAF_ROTATION = 0.2f;
+	private static final float TONGUE_SPEED = 0.5f;
 
 	public RazorleafModel(ModelPart root) {
 		this.body = root.getChild("body");
@@ -120,19 +124,18 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 		return LayerDefinition.create(meshdefinition, 256, 256);
 	}
 
-	// Вспомогательный метод для сглаживания значений
+
 	private float smooth(float current, float target) {
 		return current + (target - current) * ANIMATION_SMOOTHING;
 	}
 
-	// Вспомогательный метод для ограничения значений
+
 	private float clamp(float value, float min, float max) {
 		return Math.max(min, Math.min(max, value));
 	}
 
-	// Метод для применения всех сглаженных значений
+
 	private void applySmoothedValues(Razorleaf entity) {
-		// Чтение текущих значений из сущности
 		float currentPetal1XRot = entity.getCurrentPetal1XRot();
 		float currentPetal1ZRot = entity.getCurrentPetal1ZRot();
 		float currentPetal2XRot = entity.getCurrentPetal2XRot();
@@ -156,7 +159,7 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 		float currentTongueXRot = entity.getCurrentTongueXRot();
 		float currentHeadXRot = entity.getCurrentHeadXRot();
 
-		// Чтение целевых значений из сущности
+
 		float targetPetal1XRot = entity.getTargetPetal1XRot();
 		float targetPetal1ZRot = entity.getTargetPetal1ZRot();
 		float targetPetal2XRot = entity.getTargetPetal2XRot();
@@ -180,7 +183,7 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 		float targetTongueXRot = entity.getTargetTongueXRot();
 		float targetHeadXRot = entity.getTargetHeadXRot();
 
-		// Сглаживаем и применяем значения для лепестков
+
 		currentPetal1XRot = smooth(currentPetal1XRot, targetPetal1XRot);
 		currentPetal1ZRot = smooth(currentPetal1ZRot, targetPetal1ZRot);
 		currentPetal2XRot = smooth(currentPetal2XRot, targetPetal2XRot);
@@ -195,11 +198,11 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 		petal3.setRotation(currentPetal3XRot, petal3.yRot, currentPetal3ZRot);
 		petal4.setRotation(currentPetal4XRot, petal4.yRot, currentPetal4ZRot);
 
-		// Стебель
+
 		currentStemYRot = smooth(currentStemYRot, targetStemYRot);
 		stem.yRot = currentStemYRot;
 
-		// Группы листьев
+
 		currentLeaves1XRot = smooth(currentLeaves1XRot, targetLeaves1XRot);
 		currentLeaves2XRot = smooth(currentLeaves2XRot, targetLeaves2XRot);
 		currentLeaves3XRot = smooth(currentLeaves3XRot, targetLeaves3XRot);
@@ -208,7 +211,7 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 		leaves2.xRot = currentLeaves2XRot;
 		leaves3.xRot = currentLeaves3XRot;
 
-		// Отдельные листья
+
 		currentLeaf1ZRot = smooth(currentLeaf1ZRot, targetLeaf1ZRot);
 		currentLeaf2ZRot = smooth(currentLeaf2ZRot, targetLeaf2ZRot);
 		currentLeaf3ZRot = smooth(currentLeaf3ZRot, targetLeaf3ZRot);
@@ -223,7 +226,7 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 		leaf5.zRot = currentLeaf5ZRot;
 		leaf6.zRot = currentLeaf6ZRot;
 
-		// Язык
+
 		currentTongueXRot = smooth(currentTongueXRot, targetTongueXRot);
 		currentTongueYRot = smooth(currentTongueYRot, targetTongueYRot);
 		currentTongueZRot = smooth(currentTongueZRot, targetTongueZRot);
@@ -235,7 +238,7 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 		currentHeadXRot = smooth(currentHeadXRot, targetHeadXRot);
 		head.xRot = currentHeadXRot;
 
-		// Запись обновлённых текущих значений обратно в сущность
+
 		entity.setCurrentPetal1XRot(currentPetal1XRot);
 		entity.setCurrentPetal1ZRot(currentPetal1ZRot);
 		entity.setCurrentPetal2XRot(currentPetal2XRot);
@@ -269,16 +272,15 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 		Razorleaf.State prevState = entity.getPrevState();
 		int prevAttackType = entity.getPrevAttackType();
 
-		// Сбрасываем сглаживание при смене состояния или типа атаки
+
 		if (currentState != prevState || (currentState == Razorleaf.State.ATTACKING && currentAttackType != prevAttackType)) {
-			// Можно сбросить сглаживание, установив текущие значения равными целевым
 			resetSmoothing(entity);
 		}
 
 		entity.setPrevState(currentState);
 		entity.setPrevAttackType(currentAttackType);
 
-		// В зависимости от состояния
+
 		switch (currentState) {
 			case IDLE:
 				setTargetIdle(entity, ageInTicks);
@@ -286,15 +288,15 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 
 			case ATTACKING:
 				switch (currentAttackType) {
-					case 1: // Атака языком
+					case 1:
 						setTargetTongueAttack(entity, ageInTicks, netHeadYaw, headPitch);
 						break;
 
-					case 2: // Огненное дыхание
+					case 2:
 						setTargetFireBreath(entity, ageInTicks, netHeadYaw, headPitch);
 						break;
 
-					case 3: // Вращение лепестками
+					case 3:
 						setTargetPetalSpin(entity, ageInTicks);
 						break;
 				}
@@ -305,7 +307,7 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 				break;
 		}
 
-		// Обновляем выдвижение языка
+
 		float tongueExtension = entity.getCurrentTongueExtension();
 		float targetTongueExtension = tongueExtension;
 		float currentTongueExtension = entity.getCurrentTongueExtension();
@@ -313,12 +315,11 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 		entity.setCurrentTongueExtension(currentTongueExtension);
 		updateTonguePosition(entity, currentTongueExtension);
 
-		// Применяем сглаженные значения
+
 		applySmoothedValues(entity);
 	}
 
 	private void resetSmoothing(Razorleaf entity) {
-		// Устанавливаем текущие значения равными их текущему положению
 		entity.setCurrentPetal1XRot(petal1.xRot);
 		entity.setCurrentPetal1ZRot(petal1.zRot);
 		entity.setCurrentPetal2XRot(petal2.xRot);
@@ -344,10 +345,9 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 	}
 
 	private void setTargetIdle(Razorleaf entity, float ageInTicks) {
-		// Медленное движение лепестков
 		float time = ageInTicks * 0.05f;
 		float petalOpen = 0.05f + Mth.sin(time) * 0.05f;
-		if(!entity.isDay(entity.level())) petalOpen *= 0.05f;
+		if (!entity.isDay(entity.level())) petalOpen *= 0.05f;
 
 		entity.setTargetPetal1XRot(petalOpen);
 		entity.setTargetPetal1ZRot(-petalOpen);
@@ -358,18 +358,18 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 		entity.setTargetPetal4XRot(petalOpen);
 		entity.setTargetPetal4ZRot(petalOpen);
 
-		float stemRotate = Mth.sin(time)/3f;
-		if(!entity.isDay(entity.level())) stemRotate *= 0.05f;
-		entity.setTargetStemYRot(stemRotate); // Уменьшаем вращение стебля
+		float stemRotate = Mth.sin(time) / 3f;
+		if (!entity.isDay(entity.level())) stemRotate *= 0.05f;
+		entity.setTargetStemYRot(stemRotate);
 
-		entity.setTargetLeaf1ZRot(-petalOpen*0.25f);
-		entity.setTargetLeaf2ZRot(petalOpen*0.25f);
-		entity.setTargetLeaf3ZRot(-petalOpen*0.25f);
-		entity.setTargetLeaf4ZRot(-petalOpen*0.25f);
-		entity.setTargetLeaf5ZRot(-petalOpen*0.25f);
-		entity.setTargetLeaf6ZRot(petalOpen*0.25f);
+		entity.setTargetLeaf1ZRot(-petalOpen * 0.25f);
+		entity.setTargetLeaf2ZRot(petalOpen * 0.25f);
+		entity.setTargetLeaf3ZRot(-petalOpen * 0.25f);
+		entity.setTargetLeaf4ZRot(-petalOpen * 0.25f);
+		entity.setTargetLeaf5ZRot(-petalOpen * 0.25f);
+		entity.setTargetLeaf6ZRot(petalOpen * 0.25f);
 		float yOffset = 1f + Mth.sin(time);
-		if(!entity.isDay(entity.level())) yOffset *= 0.05f;
+		if (!entity.isDay(entity.level())) yOffset *= 0.05f;
 		leaf1.y = yOffset;
 		leaf2.y = yOffset;
 		leaf3.y = yOffset;
@@ -377,7 +377,7 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 		leaf5.y = yOffset;
 		leaf6.y = yOffset;
 
-		// Слегка приоткрытый рот
+
 		entity.setTargetTongueYRot(0f);
 		entity.setTargetTongueZRot(0f);
 		entity.setTargetTongueXRot(0f);
@@ -387,23 +387,21 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 	private void setTargetTongueAttack(Razorleaf entity, float ageInTicks, float netHeadYaw, float headPitch) {
 		float tongueTime = entity.getTongueAnimationTime();
 
-		// Вращение головы - плавно
+
 		if (tongueTime < 31) {
 			float progress = tongueTime / 22f;
 			entity.setTargetHeadXRot(0.9F * progress);
-		}
-		else {
+		} else {
 			entity.setTargetHeadXRot(0F);
 		}
 
 		float petalOpen;
 
-		// Лепестки открываются шире - плавно
+
 		if (tongueTime < 22) {
 			float progress = tongueTime / 22f;
 			petalOpen = 0.5f * progress;
-		}
-		else if (tongueTime >= 22 && tongueTime <= 30) {
+		} else if (tongueTime >= 22 && tongueTime <= 30) {
 			petalOpen = 0.5f;
 		} else if (tongueTime > 30 && tongueTime < 40) {
 			float progress = (tongueTime - 30) / 9f;
@@ -421,10 +419,10 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 		entity.setTargetPetal4XRot(petalOpen);
 		entity.setTargetPetal4ZRot(petalOpen);
 
-		// Ограничиваем вращение стебля во время атаки
+
 		entity.setTargetStemYRot(0f);
 
-		// Ограничиваем движение листьев
+
 		entity.setTargetLeaves1XRot(0f);
 		entity.setTargetLeaves2XRot(0f);
 		entity.setTargetLeaves3XRot(0f);
@@ -436,14 +434,13 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 		entity.setTargetLeaf5ZRot(0f);
 		entity.setTargetLeaf6ZRot(0f);
 
-		// Позиция языка будет обработана в updateTonguePosition
+
 		entity.setTargetTongueYRot(0f);
 		entity.setTargetTongueZRot(0f);
 		entity.setTargetTongueXRot(0f);
 	}
 
 	private void setTargetFireBreath(Razorleaf entity, float ageInTicks, float netHeadYaw, float headPitch) {
-		// Лепестки широко открыты для дыхания огнем - плавно
 		float petalOpen = 0.15f;
 
 		entity.setTargetPetal1XRot(petalOpen);
@@ -457,15 +454,15 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 
 		entity.setTargetHeadXRot(0.9F);
 
-		// Рот открыт
+
 		entity.setTargetTongueYRot(0f);
 
-		// Пульсация при дыхании огнем
+
 		float pulse = Mth.sin(ageInTicks * 0.3f) * 0.1f;
 		entity.setTargetTongueZRot(pulse);
 		entity.setTargetTongueXRot(0f);
 
-		// Минимальное движение стебля и листьев
+
 		entity.setTargetStemYRot(0f);
 		entity.setTargetLeaves1XRot(0f);
 		entity.setTargetLeaves2XRot(0f);
@@ -481,7 +478,7 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 	private void setTargetPetalSpin(Razorleaf entity, float ageInTicks) {
 		float spinSpeed = 25.0f;
 
-		// Лепестки открываются плавно
+
 		float petalOpen = 0.15f;
 
 		entity.setTargetPetal1XRot(petalOpen);
@@ -493,10 +490,10 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 		entity.setTargetPetal4XRot(petalOpen);
 		entity.setTargetPetal4ZRot(petalOpen);
 
-		// Вращение стебля (листьев) - плавно
-		entity.setTargetStemYRot((float) Math.toRadians(ageInTicks * spinSpeed * 0.5f)); // Уменьшаем скорость
 
-		// Листья следуют за вращением стебля
+		entity.setTargetStemYRot((float) Math.toRadians(ageInTicks * spinSpeed * 0.5f));
+
+
 		entity.setTargetLeaves1XRot(0f);
 		entity.setTargetLeaves2XRot(0f);
 		entity.setTargetLeaves3XRot(0f);
@@ -507,7 +504,7 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 		entity.setTargetLeaf5ZRot(0f);
 		entity.setTargetLeaf6ZRot(0f);
 
-		// Язык убран
+
 		entity.setTargetTongueYRot(0f);
 		entity.setTargetTongueZRot(0f);
 		entity.setTargetTongueXRot(0f);
@@ -515,7 +512,6 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 	}
 
 	private void setTargetExtinguished(Razorleaf entity) {
-		// Все лепестки и листья опущены плавно
 		float petalOpen = 0.5f;
 
 		entity.setTargetPetal1XRot(petalOpen);
@@ -527,12 +523,12 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 		entity.setTargetPetal4XRot(petalOpen);
 		entity.setTargetPetal4ZRot(petalOpen);
 
-		entity.setTargetLeaf1ZRot(-petalOpen*0.25f);
-		entity.setTargetLeaf2ZRot(petalOpen*0.25f);
-		entity.setTargetLeaf3ZRot(-petalOpen*0.25f);
-		entity.setTargetLeaf4ZRot(-petalOpen*0.25f);
-		entity.setTargetLeaf5ZRot(-petalOpen*0.25f);
-		entity.setTargetLeaf6ZRot(petalOpen*0.25f);
+		entity.setTargetLeaf1ZRot(-petalOpen * 0.25f);
+		entity.setTargetLeaf2ZRot(petalOpen * 0.25f);
+		entity.setTargetLeaf3ZRot(-petalOpen * 0.25f);
+		entity.setTargetLeaf4ZRot(-petalOpen * 0.25f);
+		entity.setTargetLeaf5ZRot(-petalOpen * 0.25f);
+		entity.setTargetLeaf6ZRot(petalOpen * 0.25f);
 		float yOffset = 2f;
 		leaf1.y = yOffset;
 		leaf2.y = yOffset;
@@ -548,12 +544,11 @@ public class RazorleafModel extends EntityModel<Razorleaf> {
 	}
 
 	private void updateTonguePosition(Razorleaf entity, float extension) {
-		// Позиция языка зависит от выдвижения
 		this.tongue.x = 0f;
 		this.tongue.y = 0f;
 		this.tongue.z = 0f;
 		this.tongue.yRot = 0f;
-		this.tongue.xRot = 0.6f * extension; // Двигаем язык вперед
+		this.tongue.xRot = 0.6f * extension;
 	}
 
 	@Override

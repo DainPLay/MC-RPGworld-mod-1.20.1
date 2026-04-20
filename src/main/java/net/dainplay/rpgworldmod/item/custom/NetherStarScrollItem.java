@@ -31,11 +31,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -76,7 +74,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class NetherStarScrollItem extends ScrollItem {
-
 	private static final Map<Level, Map<UUID, PlayerUseData>> playerUseData = new HashMap<>();
 
 	private static final double DESTRUCTION_BEAM_RANGE = 128.0;
@@ -261,7 +258,6 @@ public class NetherStarScrollItem extends ScrollItem {
 	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
 		consumer.accept(new IClientItemExtensions() {
-
 			private static final HumanoidModel.ArmPose DESTRUCTION_POSE = HumanoidModel.ArmPose.create("DESTRUCTION", false, (model, entity, arm) -> {
 				float xOffset = 0F;
 				if (model.crouching) xOffset = -0.6f;
@@ -288,10 +284,9 @@ public class NetherStarScrollItem extends ScrollItem {
 			});
 
 			private static final HumanoidModel.ArmPose SUMMON_POSE = HumanoidModel.ArmPose.create("SUMMON", false, (model, entity, arm) -> {
-				// Определяем руку и получаем предмет
 				InteractionHand hand = (arm == HumanoidArm.RIGHT) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
 				ItemStack stack = entity.getItemInHand(hand);
-				float progress = 0f; // от 0 до 1
+				float progress = 0f;
 				if (stack.getItem() instanceof NetherStarScrollItem && stack.getTag() != null) {
 					CompoundTag tag = stack.getTag();
 					if (tag.contains("summonProgress", Tag.TAG_INT) && tag.getInt("summonProgress") > 15) {
@@ -301,21 +296,20 @@ public class NetherStarScrollItem extends ScrollItem {
 				}
 
 				if (arm == HumanoidArm.RIGHT) {
-					// Целевые углы при progress=1 (summonProgress=20)
 					float highXRot = -(float) Math.PI * 0.8f;
 					float highZRot = -(float) Math.PI * 0.1f;
-					// Целевые углы при progress=0
+
 					float lowXRot = -(float) Math.PI / 10f;
 					float lowZRot = 0f;
-					// Интерполяция
+
 					float targetXRot = lowXRot + (highXRot - lowXRot) * progress;
 					float targetZRot = lowZRot + (highZRot - lowZRot) * progress;
 					model.rightArm.xRot = model.rightArm.xRot * 0.5f + targetXRot;
 					model.rightArm.zRot = model.rightArm.zRot * 0.5f + targetZRot;
 					model.rightArm.yRot = 0f;
-				} else { // левая рука
+				} else {
 					float highXRot = -(float) Math.PI * 0.8f;
-					float highZRot = (float) Math.PI * 0.1f; // положительный для левой
+					float highZRot = (float) Math.PI * 0.1f;
 					float lowXRot = -(float) Math.PI / 10f;
 					float lowZRot = 0f;
 					float targetXRot = lowXRot + (highXRot - lowXRot) * progress;
@@ -357,7 +351,6 @@ public class NetherStarScrollItem extends ScrollItem {
 							return HumanoidModel.ArmPose.ITEM;
 						}
 					} else {
-						// Обычное поведение: поза только во время использования
 						if (entityLiving.isUsingItem() && entityLiving.getUseItemRemainingTicks() > 0 && entityLiving.getUsedItemHand() == hand) {
 							return ACTIVE_USE_POSE;
 						}
@@ -497,22 +490,18 @@ public class NetherStarScrollItem extends ScrollItem {
 				}
 			}
 
-			// Общая проверка маны
 			if (!canUse(player, itemstack)) {
-				// Если не хватает маны, не начинаем использование
 				ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), false, itemstack),
 						(ServerLevel) level, player.blockPosition(), 64.0);
 				return InteractionResultHolder.fail(itemstack);
 			}
 
-			// Получаем или создаём PlayerUseData
 			Map<UUID, PlayerUseData> map = getPlayerUseData(level);
 			PlayerUseData data = map.get(player.getUUID());
 			if (data == null) {
 				data = new PlayerUseData(player.getUUID(), level.getGameTime());
 				map.put(player.getUUID(), data);
 			} else {
-				// Сбрасываем временные поля для нового использования
 				data.startTime = level.getGameTime();
 				data.useTicks = 0;
 				data.lastManaTick = 0;
@@ -525,7 +514,6 @@ public class NetherStarScrollItem extends ScrollItem {
 			startEnchantmentSounds(level, player, itemstack);
 			player.startUsingItem(hand);
 		} else {
-			// Клиентская сторона (без изменений)
 			if (!canUseClient(player, itemstack)) {
 				return InteractionResultHolder.fail(itemstack);
 			}
@@ -673,7 +661,6 @@ public class NetherStarScrollItem extends ScrollItem {
 			UUID playerId = player.getUUID();
 
 			if (!level.isClientSide) {
-				// Не удаляем данные, а только деактивируем
 				PlayerUseData data = getPlayerUseData(level).get(playerId);
 				if (data != null) {
 					data.active = false;
@@ -774,7 +761,6 @@ public class NetherStarScrollItem extends ScrollItem {
 		if (player == null) return;
 		player.stopUsingItem();
 
-		// Не удаляем данные, только деактивируем
 		PlayerUseData data = getPlayerUseData(level).get(player.getUUID());
 		if (data != null) {
 			data.active = false;
@@ -806,20 +792,18 @@ public class NetherStarScrollItem extends ScrollItem {
 			UUID playerId = entry.getKey();
 			PlayerUseData data = entry.getValue();
 
-			// Проверяем активность
+
 			if (!data.active) {
 				continue;
 			}
 
 			Player player = level.getPlayerByUUID(playerId);
 			if (player == null) {
-				// Игрок вышел — можно удалить данные (опционально)
 				levelPlayerUseData.remove(playerId);
 				continue;
 			}
 
 			if (!player.isUsingItem()) {
-				// Игрок перестал использовать предмет, но данные ещё активны — деактивируем
 				data.active = false;
 				continue;
 			}
@@ -860,7 +844,6 @@ public class NetherStarScrollItem extends ScrollItem {
 				}
 			}
 
-			// Обработка зачарований
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), usingItem) > 0) {
 				if (player instanceof ServerPlayer serverPlayer)
 					ModAdvancements.SPELL_ILLUSION_NETHER_STAR_TRIGGER.trigger(serverPlayer);
@@ -967,7 +950,6 @@ public class NetherStarScrollItem extends ScrollItem {
 					player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
 						int cost = netherStarScrollItem.getManaCost(usingItem, player);
 						if (mana.getMana() >= cost || player.getAbilities().instabuild) {
-
 							if (!player.getAbilities().instabuild) mana.reduceMana((ServerPlayer) player, cost);
 							data.active = false;
 							stopPlayerUse(level, player, usingItem, false);
@@ -989,7 +971,6 @@ public class NetherStarScrollItem extends ScrollItem {
 								return;
 							}
 
-							// Проверки
 							if (targetDim == Level.NETHER && !level.getServer().isNetherEnabled()) {
 								player.displayClientMessage(Component.translatable("message.rpgworldmod.nether_disabled"), true);
 								if (player instanceof ServerPlayer serverPlayer)
@@ -1008,7 +989,6 @@ public class NetherStarScrollItem extends ScrollItem {
 								return;
 							}
 
-							// Масштабирование координат
 							BlockPos sourcePos = player.blockPosition();
 							double x, z;
 							if (currentDim == Level.OVERWORLD) {
@@ -1027,10 +1007,8 @@ public class NetherStarScrollItem extends ScrollItem {
 							BlockPos safePos = findSafePortalPosition(targetLevel, new BlockPos((int) x, sourcePos.getY(), (int) z), Direction.Axis.X);
 							safePos = new BlockPos(safePos.getX(), safePos.getY() + 1, safePos.getZ());
 
-							// Выполняем телепортацию
 							player.changeDimension(targetLevel, new CustomTeleporter(safePos));
 
-							// После телепортации проверяем безопасность позиции и при необходимости создаём платформу
 							BlockPos playerPos = player.blockPosition();
 							if (!isSafePosition(targetLevel, playerPos)) {
 								BlockPos safeBelow = findSafeGroundBelow(targetLevel, playerPos, 256);
@@ -1069,7 +1047,6 @@ public class NetherStarScrollItem extends ScrollItem {
 					Vec3 direction = player.getLookAngle().normalize();
 					Vec3 endPoint = calculateBeamEndPoint(level, eyePos, direction, DESTRUCTION_BEAM_RANGE);
 
-					// Отправляем пакет каждый тик
 					if (data.lastSentBeamEndPoint == null) {
 						handleBeamStart(player, eyePos, endPoint, usingItem);
 					}
@@ -1088,31 +1065,26 @@ public class NetherStarScrollItem extends ScrollItem {
 		BlockState blockAtFeet = level.getBlockState(playerPos);
 		BlockState blockAtHead = level.getBlockState(playerPos.above());
 
-		// Если игрок не внутри твёрдого блока (ноги и голова в воздухе или заменяемых блоках), выходим
 		boolean isInsideSolid = (blockAtFeet.isSolid() && !blockAtFeet.canBeReplaced()) ||
 				(blockAtHead.isSolid() && !blockAtHead.canBeReplaced());
 		if (!isInsideSolid) {
 			return;
 		}
 
-		// Разрушаем блоки в области 3x3x2 вокруг игрока (X: -1..1, Z: -1..1, Y: 0..1 относительно ног)
-		float explosionResistanceThreshold = 20.0F; // как в примере со Spiky Ivy
+		float explosionResistanceThreshold = 20.0F;
 		BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
 		for (int dx = -1; dx <= 1; dx++) {
 			for (int dz = -1; dz <= 1; dz++) {
 				for (int dy = 0; dy <= 1; dy++) {
 					mutablePos.set(playerPos.getX() + dx, playerPos.getY() + dy, playerPos.getZ() + dz);
 					BlockState state = level.getBlockState(mutablePos);
-					// Проверяем, не взрывоустойчив ли блок (как в randomTick)
 					if (state.getExplosionResistance(level, mutablePos, null) < explosionResistanceThreshold) {
-						level.destroyBlock(mutablePos, true); // true - дропать предметы
+						level.destroyBlock(mutablePos, true);
 					}
 				}
 			}
 		}
 
-		// Дополнительно: попробуем немного сдвинуть игрока вверх, если он всё ещё внутри блока
-		// (на случай, если блоки были неразрушаемыми)
 		if (!level.getBlockState(player.blockPosition()).isAir()) {
 			player.teleportTo(player.getX(), player.getY() + 1, player.getZ());
 		}
@@ -1128,14 +1100,12 @@ public class NetherStarScrollItem extends ScrollItem {
 		@Override
 		public PortalInfo getPortalInfo(Entity entity, ServerLevel destWorld, Function<ServerLevel, PortalInfo> defaultPortalInfo) {
 			if (safePos != null) {
-				// Убедимся, что позиция внутри мира
 				double x = safePos.getX() + 0.5;
 				double y = safePos.getY() + 0.5;
 				double z = safePos.getZ() + 0.5;
 				y = Math.min(Math.max(y, destWorld.getMinBuildHeight() + 1), destWorld.dimension() == Level.OVERWORLD ? destWorld.getMaxBuildHeight() - 1 : 127);
 				return new PortalInfo(new Vec3(x, y, z), Vec3.ZERO, entity.getYRot(), entity.getXRot());
 			}
-			// Если safePos null, используем стандартную логику
 			return defaultPortalInfo.apply(destWorld);
 		}
 
@@ -1154,7 +1124,6 @@ public class NetherStarScrollItem extends ScrollItem {
 		double bestDist = Double.MAX_VALUE;
 		BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
 
-		// Поиск безопасной позиции
 		for (BlockPos candidate : BlockPos.spiralAround(pos, searchRadius, Direction.EAST, Direction.SOUTH)) {
 			int x = candidate.getX();
 			int z = candidate.getZ();
@@ -1208,16 +1177,13 @@ public class NetherStarScrollItem extends ScrollItem {
 			}
 		}
 
-		// Fallback: если не нашли, используем позицию с коррекцией высоты
 		if (bestPos == null) {
 			int fallbackY = Math.max(minY + 1, Math.min(70, maxY - 3));
 			bestPos = new BlockPos(pos.getX(), fallbackY, pos.getZ());
-			// Попытаемся подобрать безопасную высоту в этой точке
 			for (int y = fallbackY; y <= maxY - 2; y++) {
 				mutablePos.set(bestPos.getX(), y, bestPos.getZ());
 				BlockState below = level.getBlockState(mutablePos);
 				if ((!below.isAir() && below.isSolid()) || y == fallbackY) {
-					// Проверяем место над головой
 					boolean ok = true;
 					for (int h = 1; h <= 2; h++) {
 						mutablePos.set(bestPos.getX(), y + h, bestPos.getZ());
@@ -1242,9 +1208,7 @@ public class NetherStarScrollItem extends ScrollItem {
 		for (int dy = 0; dy <= maxFall; dy++) {
 			mutable.set(startPos.getX(), startPos.getY() - dy, startPos.getZ());
 			BlockState state = level.getBlockState(mutable);
-			// Ищем твёрдый блок, не лаву
 			if (state.isSolid()) {
-				// Проверяем, что над этим блоком есть 2 блока воздуха
 				boolean spaceAbove = true;
 				for (int h = 1; h <= 2; h++) {
 					mutable.set(startPos.getX(), startPos.getY() - dy + h, startPos.getZ());
@@ -1305,7 +1269,6 @@ public class NetherStarScrollItem extends ScrollItem {
 	}
 
 	private static void createPlatform(ServerLevel level, BlockPos belowPos) {
-		// Создаём платформу 3x3 из незерака
 		for (int dx = -1; dx <= 1; dx++) {
 			for (int dz = -1; dz <= 1; dz++) {
 				BlockPos pos = belowPos.offset(dx, 0, dz);
@@ -1366,25 +1329,19 @@ public class NetherStarScrollItem extends ScrollItem {
 			if (!isEntityVisibleThroughTransparentBlocks(level, eyePos, targetCenter)) continue;
 
 			double t = 1.0 - along / maxDist;
-			double damage = 7.0 * t * t;
+			double damage = 7.0F * t * t;
 			if (damage > 0) {
-				DamageSource source = player.damageSources().magic();
 				if (target instanceof Player targetPlayer) {
 					if ((float) targetPlayer.invulnerableTime > 10.0F) {
 						if (damage > targetPlayer.lastHurt) {
-							targetPlayer.hurt(source, (float) damage);
+							target.hurt(ModDamageTypes.getEntityDamageSource(level, ModDamageTypes.CORRUPTED_BEACON, player), (float) damage);
 						}
 					} else {
-						target.hurt(source, (float) damage);
+						target.hurt(ModDamageTypes.getEntityDamageSource(level, ModDamageTypes.CORRUPTED_BEACON, player), (float) damage);
 					}
 				} else {
-					target.hurt(source, (float) damage);
+					target.hurt(ModDamageTypes.getEntityDamageSource(level, ModDamageTypes.CORRUPTED_BEACON, player), (float) damage);
 				}
-				if (!source.is(DamageTypeTags.NO_ANGER)) {
-					target.setLastHurtByMob(player);
-				}
-				target.setLastHurtByPlayer(player);
-				hitPositions.add(targetCenter);
 			}
 		}
 		return hitPositions;
@@ -1393,7 +1350,7 @@ public class NetherStarScrollItem extends ScrollItem {
 	private static Vec3 calculateBeamEndPoint(ServerLevel level, Vec3 start, Vec3 direction, double maxDist) {
 		double remaining = maxDist;
 		Vec3 currentPos = start;
-		double epsilon = 0.01; // точность
+		double epsilon = 0.01;
 
 		while (remaining > epsilon) {
 			Vec3 end = currentPos.add(direction.scale(remaining));
@@ -1401,19 +1358,16 @@ public class NetherStarScrollItem extends ScrollItem {
 			BlockHitResult hit = level.clip(ctx);
 
 			if (hit.getType() == HitResult.Type.MISS) {
-				// Нет столкновений – возвращаем конечную точку на максимальной дистанции
 				return end;
 			}
 
 			BlockState state = level.getBlockState(hit.getBlockPos());
 			if (state.canOcclude()) {
-				// Непрозрачный блок – останавливаемся
 				return hit.getLocation();
 			}
 
-			// Прозрачный блок – продолжаем луч
 			double distToHit = currentPos.distanceTo(hit.getLocation());
-			currentPos = hit.getLocation().add(direction.scale(0.001)); // небольшой сдвиг, чтобы пройти сквозь блок
+			currentPos = hit.getLocation().add(direction.scale(0.001));
 			remaining -= distToHit;
 		}
 
@@ -1431,17 +1385,14 @@ public class NetherStarScrollItem extends ScrollItem {
 					ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null);
 			BlockHitResult hit = level.clip(ctx);
 			if (hit.getType() == HitResult.Type.MISS) {
-				// Нет столкновений — цель видима
 				return true;
 			}
 			BlockState state = level.getBlockState(hit.getBlockPos());
 			if (state.canOcclude()) {
-				// Блок непрозрачный — цель не видна
 				return false;
 			}
-			// Прозрачный блок — продолжаем луч
 			double distToHit = origin.distanceTo(hit.getLocation());
-			currentPos = hit.getLocation().add(direction.scale(0.001)); // сдвигаем, чтобы пройти сквозь блок
+			currentPos = hit.getLocation().add(direction.scale(0.001));
 			remaining -= distToHit;
 		}
 		return true;
@@ -1463,7 +1414,6 @@ public class NetherStarScrollItem extends ScrollItem {
 
 		BlockHitResult hitResult = player.level().clip(context);
 
-		// Если луч попал в блок до игрока, значит игрок не виден
 		if (hitResult.getType() != HitResult.Type.MISS) {
 			double distanceToHit = hitResult.getLocation().distanceTo(eyePos);
 			double distanceToPlayer = playerEyePos.distanceTo(eyePos);

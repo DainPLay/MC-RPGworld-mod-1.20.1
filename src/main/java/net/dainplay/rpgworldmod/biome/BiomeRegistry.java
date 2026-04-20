@@ -13,19 +13,16 @@ import net.minecraftforge.fml.common.Mod;
 
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-public class BiomeRegistry
-{
+public class BiomeRegistry {
+	public static final ResourceKey<Biome> RIE_WEALD = register("rie_weald");
 
-    public static final ResourceKey<Biome> RIE_WEALD = register("rie_weald");
+	private static ResourceKey<Biome> register(String name) {
+		return ResourceKey.create(Registries.BIOME, new ResourceLocation(RPGworldMod.MOD_ID, name));
+	}
 
-    private static ResourceKey<Biome> register(String name)
-    {
-        return ResourceKey.create(Registries.BIOME, new ResourceLocation(RPGworldMod.MOD_ID, name));
-    }
-    public static void bootstrapBiomes(BootstapContext<Biome> context)
-    {
-        HolderGetter<ConfiguredWorldCarver<?>> carverGetter = context.lookup(Registries.CONFIGURED_CARVER);
-        HolderGetter<PlacedFeature> placedFeatureGetter = context.lookup(Registries.PLACED_FEATURE);
-        context.register(RIE_WEALD, RPGworldBiomeDecorator.decorateRieWeald(placedFeatureGetter, carverGetter));
-    }
+	public static void bootstrapBiomes(BootstapContext<Biome> context) {
+		HolderGetter<ConfiguredWorldCarver<?>> carverGetter = context.lookup(Registries.CONFIGURED_CARVER);
+		HolderGetter<PlacedFeature> placedFeatureGetter = context.lookup(Registries.PLACED_FEATURE);
+		context.register(RIE_WEALD, RPGworldBiomeDecorator.decorateRieWeald(placedFeatureGetter, carverGetter));
+	}
 }

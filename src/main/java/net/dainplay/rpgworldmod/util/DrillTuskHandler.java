@@ -11,7 +11,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -36,7 +35,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import java.util.List;
 
 public class DrillTuskHandler {
-
 	public static List<BlockPos> resolve(PistonEvent.Pre event) {
 		List<BlockPos> toPush = Lists.newArrayList();
 		Direction pistonDirection = event.getDirection();
@@ -82,60 +80,60 @@ public class DrillTuskHandler {
 			return true;
 		} else {
 			int i = 1;
-				BlockState oldState;
-				while (blockstate.isStickyBlock()) {
-					BlockPos blockpos = pOriginPos.relative(pushDirection.getOpposite(), i);
-					oldState = blockstate;
-					blockstate = level.getBlockState(blockpos);
-					if (blockstate.isAir() || !(oldState.canStickTo(blockstate) && blockstate.canStickTo(oldState)) || !PistonBaseBlock.isPushable(blockstate, (Level) level, blockpos, pushDirection, false, pushDirection.getOpposite()) || blockpos.equals(pistonPos)) {
-						break;
-					}
-
-					++i;
+			BlockState oldState;
+			while (blockstate.isStickyBlock()) {
+				BlockPos blockpos = pOriginPos.relative(pushDirection.getOpposite(), i);
+				oldState = blockstate;
+				blockstate = level.getBlockState(blockpos);
+				if (blockstate.isAir() || !(oldState.canStickTo(blockstate) && blockstate.canStickTo(oldState)) || !PistonBaseBlock.isPushable(blockstate, (Level) level, blockpos, pushDirection, false, pushDirection.getOpposite()) || blockpos.equals(pistonPos)) {
+					break;
 				}
 
-				int l = 0;
+				++i;
+			}
 
-				for (int i1 = i - 1; i1 >= 0; --i1) {
-					toPush.add(pOriginPos.relative(pushDirection.getOpposite(), i1));
-					++l;
-				}
+			int l = 0;
 
-				int j1 = 1;
+			for (int i1 = i - 1; i1 >= 0; --i1) {
+				toPush.add(pOriginPos.relative(pushDirection.getOpposite(), i1));
+				++l;
+			}
 
-				while (true) {
-					BlockPos blockpos1 = pOriginPos.relative(pushDirection, j1);
-					int j = toPush.indexOf(blockpos1);
-					if (j > -1) {
-						toPush = reorderListAtCollision(l, j, toPush);
+			int j1 = 1;
 
-						for (int k = 0; k <= j + l; ++k) {
-							BlockPos blockpos2 = toPush.get(k);
-							if (level.getBlockState(blockpos2).isStickyBlock() && !addBranchingBlocks(blockpos2, level, pushDirection, pistonPos, toPush)) {
-								return false;
-							}
+			while (true) {
+				BlockPos blockpos1 = pOriginPos.relative(pushDirection, j1);
+				int j = toPush.indexOf(blockpos1);
+				if (j > -1) {
+					toPush = reorderListAtCollision(l, j, toPush);
+
+					for (int k = 0; k <= j + l; ++k) {
+						BlockPos blockpos2 = toPush.get(k);
+						if (level.getBlockState(blockpos2).isStickyBlock() && !addBranchingBlocks(blockpos2, level, pushDirection, pistonPos, toPush)) {
+							return false;
 						}
-
-						return true;
 					}
 
-					blockstate = level.getBlockState(blockpos1);
-					if (blockstate.isAir()) {
-						return true;
-					}
-
-					if (!PistonBaseBlock.isPushable(blockstate, (Level) level, blockpos1, pushDirection, true, pushDirection) || blockpos1.equals(pistonPos)) {
-						return true;
-					}
-
-					if (blockstate.getPistonPushReaction() == PushReaction.DESTROY) {
-						return true;
-					}
-
-					toPush.add(blockpos1);
-					++l;
-					++j1;
+					return true;
 				}
+
+				blockstate = level.getBlockState(blockpos1);
+				if (blockstate.isAir()) {
+					return true;
+				}
+
+				if (!PistonBaseBlock.isPushable(blockstate, (Level) level, blockpos1, pushDirection, true, pushDirection) || blockpos1.equals(pistonPos)) {
+					return true;
+				}
+
+				if (blockstate.getPistonPushReaction() == PushReaction.DESTROY) {
+					return true;
+				}
+
+				toPush.add(blockpos1);
+				++l;
+				++j1;
+			}
 		}
 	}
 
@@ -186,7 +184,7 @@ public class DrillTuskHandler {
 			BlockState blockstate = level.getBlockState(pos);
 
 			PistonStructureResolver sResolver = event.getStructureHelper();
-			if(sResolver == null) return;
+			if (sResolver == null) return;
 			sResolver.resolve();
 
 			if (blockstate.getBlock() instanceof DrillTuskBlock && DrillTuskBlock.getConnectedDirection(blockstate) != event.getDirection()) {
@@ -202,8 +200,7 @@ public class DrillTuskHandler {
 						BlockState blockstate1 = level.getBlockState(pos1);
 
 						if (blockstate1.getBlock().getExplosionResistance(blockstate1, level, pos1, null) < 20F) {
-							// Серверная часть
-							if(!(level.getBlockEntity(pos1) != null && blockstate1.getPistonPushReaction() == PushReaction.DESTROY)) {
+							if (!(level.getBlockEntity(pos1) != null && blockstate1.getPistonPushReaction() == PushReaction.DESTROY)) {
 								if (!level.isClientSide() && level instanceof ServerLevel serverLevel) {
 									if (blockstate1.is(Tags.Blocks.ORES)) {
 										for (ServerPlayer serverplayer : level.getEntitiesOfClass(ServerPlayer.class, new AABB(pos1).inflate(10.0D, 5.0D, 10.0D))) {
@@ -234,7 +231,7 @@ public class DrillTuskHandler {
 									}
 								}
 
-								// Клиентская часть (звук и эффект разрушения)
+
 								if (level.isClientSide()) {
 									((ClientLevel) level).addDestroyBlockEffect(pos1, blockstate1);
 								}

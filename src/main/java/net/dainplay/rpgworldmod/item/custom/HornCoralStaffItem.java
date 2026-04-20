@@ -88,14 +88,12 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 	}
 
 
-
 	private static void addStaffReachModifier(Player player) {
-		//player.sendSystemMessage(Component.literal("Выдан модификатор досягаемости"));
 		AttributeInstance blockReach = player.getAttribute(ForgeMod.BLOCK_REACH.get());
 		AttributeInstance entityReach = player.getAttribute(ForgeMod.ENTITY_REACH.get());
 		if (blockReach != null && entityReach != null) {
 			removeStaffReachModifier(player);
-			//player.sendSystemMessage(Component.literal("Удалён старый модификатор досягаемости"));
+
 			AttributeModifier modifier = new AttributeModifier(
 					STAFF_REACH_MODIFIER_UUID,
 					"Staff reach",
@@ -120,7 +118,6 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-
 		ItemStack itemstack = player.getItemInHand(hand);
 		int activeRechargeLevel = itemstack.getEnchantmentLevel(ModEnchantments.ACTIVE_RECHARGE.get());
 		int doubleExposureLevel = itemstack.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get());
@@ -154,14 +151,13 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 		}
 
 		if (!level.isClientSide) {
-			// Воспроизводим звук начала использования для всех рядом
 			level.playSound(null,
 					player.getX(), player.getY(), player.getZ(),
 					RPGSounds.STAFF_START.get(),
 					SoundSource.PLAYERS, 1.0F, 1.0F
 			);
 
-			// Запускаем зацикленный звук на клиентах
+
 			ModMessages.sendToNearbyPlayers(
 					new LoopSoundPacket(player.getId(), true, itemstack),
 					(ServerLevel) level,
@@ -195,7 +191,7 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 		super.releaseUsing(stack, level, livingEntity, timeCharged);
 	}
 
-	// Метод для сущностей (без изменений, оставлен для полноты)
+
 	public void cast(Player player, Entity target, ItemStack item) {
 		if (item.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get()) > 0 &&
 				player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F) {
@@ -297,13 +293,13 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 		item.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(player.getUsedItemHand()));
 	}
 
-	// === Проверка типа хранилища (блоки) ===
+
 	public static boolean isStorage(BlockEntity be) {
 		if (be == null) return false;
 		return be instanceof BaseContainerBlockEntity || be instanceof EnderChestBlockEntity;
 	}
 
-	// Метод для блоков (исправленный)
+
 	public void cast(Player player, BlockPos pos, ItemStack item) {
 		if (item.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get()) > 0 &&
 				player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F) {
@@ -323,7 +319,6 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 		BlockEntity target = player.level().getBlockEntity(pos);
 
 		if (isStorage(target)) {
-			// Отдельно обрабатываем эндер-сундук
 			if (target instanceof EnderChestBlockEntity enderChest) {
 				switch (getGemType(item)) {
 					case EMBER_GEM:
@@ -410,35 +405,27 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 							if (!player.getEnderChestInventory().getItem(i).isEmpty()) filledSlots++;
 						}
 						float power = 2.0F * (filledSlots / (float) totalSlots);
-						player.level().explode(player, pos.getX()+0.5F, pos.getY()+0.5F, pos.getZ()+0.5F, power, Level.ExplosionInteraction.BLOCK);
+						player.level().explode(player, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F, power, Level.ExplosionInteraction.BLOCK);
 						break;
 				}
-			}
-			// Обработка всех остальных контейнеров (включая двойные сундуки)
-			else {
-				// Определяем контейнер и MenuProvider с учётом возможного двойного сундука
+			} else {
 				Container container;
 				MenuProvider menuProvider;
 
 				if (target instanceof ChestBlockEntity) {
 					BlockState state = player.level().getBlockState(pos);
 					if (state.getBlock() instanceof ChestBlock chestBlock) {
-						// Получаем объединённый контейнер для двойного сундука
 						container = ChestBlock.getContainer(chestBlock, state, player.level(), pos, true);
-						// Получаем правильный MenuProvider от блока (он создаст меню на 6 рядов для двойного сундука)
 						menuProvider = chestBlock.getMenuProvider(state, player.level(), pos);
 					} else {
-						// На всякий случай, если блок не является ChestBlock (маловероятно)
 						container = (Container) target;
 						menuProvider = (MenuProvider) target;
 					}
 				} else {
-					// Для остальных типов (ваши BlockEntity, не являющиеся сундуками)
 					container = (Container) target;
 					menuProvider = (MenuProvider) target;
 				}
 
-				// Действие в зависимости от самоцвета
 				switch (getGemType(item)) {
 					case EMBER_GEM:
 						player.level().playSound(null,
@@ -479,13 +466,10 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 						if (!result.consumesAction()) {
 							player.openMenu(menuProvider);
 						}
-						if(container instanceof CompoundContainer compoundContainer) {
-							Container container1 = compoundContainer.container1;
-							if (container1 instanceof BaseContainerBlockEntity blockEntity) {
-								RemoteOpenContainerRegistry.addOpener(player.level(), blockEntity.getBlockPos(), player);
-							}
-						}
-						else {
+						if (container instanceof CompoundContainer compoundContainer) {
+							addOpenerForContainerPart(compoundContainer.container1, player);
+							addOpenerForContainerPart(compoundContainer.container2, player);
+						} else {
 							RemoteOpenContainerRegistry.addOpener(player.level(), pos, player);
 						}
 						break;
@@ -529,13 +513,19 @@ public class HornCoralStaffItem extends StaffItem implements ChooseTargetItem {
 							if (!container.getItem(i).isEmpty()) filledSlots++;
 						}
 						float power = 2.0F * (filledSlots / (float) totalSlots);
-						player.level().explode(player, pos.getX()+0.5F, pos.getY()+0.5F, pos.getZ()+0.5F, power, Level.ExplosionInteraction.BLOCK);
+						player.level().explode(player, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F, power, Level.ExplosionInteraction.BLOCK);
 						break;
 				}
 			}
 		}
 
 		item.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(player.getUsedItemHand()));
+	}
+
+	private void addOpenerForContainerPart(Container part, Player player) {
+		if (part instanceof BaseContainerBlockEntity blockEntity) {
+			RemoteOpenContainerRegistry.addOpener(player.level(), blockEntity.getBlockPos(), player);
+		}
 	}
 
 	@Override

@@ -29,7 +29,6 @@ import net.minecraftforge.common.Tags;
 import java.util.Map;
 
 public class BlazeStaffItem extends StaffItem implements ChooseTargetItem {
-
 	public BlazeStaffItem(Properties properties) {
 		super(properties);
 	}
@@ -64,7 +63,6 @@ public class BlazeStaffItem extends StaffItem implements ChooseTargetItem {
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-
 		ItemStack itemstack = player.getItemInHand(hand);
 		int activeRechargeLevel = itemstack.getEnchantmentLevel(ModEnchantments.ACTIVE_RECHARGE.get());
 		int doubleExposureLevel = itemstack.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get());
@@ -91,21 +89,20 @@ public class BlazeStaffItem extends StaffItem implements ChooseTargetItem {
 				ItemCooldowns.CooldownInstance instance = cooldownsMap.get(itemstack.getItem());
 				if (instance != null) {
 					int endTick = instance.endTime;
-					if (endTick - currentTick > getMaxCooldown(itemstack)*3 - getUseCooldown(itemstack)*2 && activeRechargeLevel <= 0)
+					if (endTick - currentTick > getMaxCooldown(itemstack) * 3 - getUseCooldown(itemstack) * 2 && activeRechargeLevel <= 0)
 						return InteractionResultHolder.pass(itemstack);
 				}
 			}
 		}
 
 		if (!level.isClientSide) {
-			// Воспроизводим звук начала использования для всех рядом
 			level.playSound(null,
 					player.getX(), player.getY(), player.getZ(),
 					RPGSounds.STAFF_START.get(),
 					SoundSource.PLAYERS, 1.0F, 1.0F
 			);
 
-			// Запускаем зацикленный звук на клиентах
+
 			ModMessages.sendToNearbyPlayers(
 					new LoopSoundPacket(player.getId(), true, itemstack),
 					(ServerLevel) level,
@@ -150,10 +147,11 @@ public class BlazeStaffItem extends StaffItem implements ChooseTargetItem {
 				int currentTick = player.getCooldowns().tickCount;
 				int amount = endTick - currentTick;
 				int addition = getUseCooldown(item);
-				if(amount+getUseCooldown(item) >= getMaxCooldown(item) && item.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get()) > 0) addition *= 2;
+				if (amount + getUseCooldown(item) >= getMaxCooldown(item) && item.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get()) > 0)
+					addition *= 2;
 				player.getCooldowns().addCooldown(this, amount + addition);
 			}
-		} else  {
+		} else {
 			player.getCooldowns().addCooldown(this, getUseCooldown(item));
 		}
 		player.swing(player.getUsedItemHand());
@@ -265,6 +263,7 @@ public class BlazeStaffItem extends StaffItem implements ChooseTargetItem {
 	public float getX(ItemStack stack, Entity entity, boolean righthand) {
 		return -0.065F;
 	}
+
 	@Override
 	public float get1XOffset(ItemStack stack, Entity entity, boolean righthand) {
 		return 0.225F;
@@ -286,15 +285,14 @@ public class BlazeStaffItem extends StaffItem implements ChooseTargetItem {
 
 	@Override
 	public boolean isOffCooldown(ItemStack item, Player player) {
-		if(item.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get())>0 && player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F) {
+		if (item.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get()) > 0 && player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F) {
 			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = player.getCooldowns().cooldowns;
 			ItemCooldowns.CooldownInstance instance = cooldownsMap.get(item.getItem());
 			if (instance == null) return true;
 			int endTick = instance.endTime;
 			int currentTick = player.getCooldowns().tickCount;
-			return endTick - currentTick <= getMaxCooldown(item)*3 - getUseCooldown(item)*2;
-		}
-		else if(player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F){
+			return endTick - currentTick <= getMaxCooldown(item) * 3 - getUseCooldown(item) * 2;
+		} else if (player.getCooldowns().getCooldownPercent(item.getItem(), 0.0F) > 0.0F) {
 			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = player.getCooldowns().cooldowns;
 			ItemCooldowns.CooldownInstance instance = cooldownsMap.get(item.getItem());
 			if (instance == null) return true;

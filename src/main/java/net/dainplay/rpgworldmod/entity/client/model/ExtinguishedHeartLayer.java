@@ -12,14 +12,15 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.Entity;
 
 public abstract class ExtinguishedHeartLayer<T extends Entity, M extends EntityModel<T>> extends RenderLayer<T, M> {
-        public ExtinguishedHeartLayer(RenderLayerParent<T, M> pRenderer) {
-            super(pRenderer);
-        }
+	public ExtinguishedHeartLayer(RenderLayerParent<T, M> pRenderer) {
+		super(pRenderer);
+	}
 
-        public void render(PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, T pLivingEntity, float pLimbSwing, float pLimbSwingAmount, float pPartialTicks, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
-            VertexConsumer vertexconsumer = pBuffer.getBuffer(this.renderType());
-            if(pLivingEntity instanceof Razorleaf razorleaf && razorleaf.getState() == Razorleaf.State.EXTINGUISHED) this.getParentModel().renderToBuffer(pPoseStack, vertexconsumer, 15728640, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-        }
+	public void render(PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, T pLivingEntity, float pLimbSwing, float pLimbSwingAmount, float pPartialTicks, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
+		VertexConsumer vertexconsumer = pBuffer.getBuffer(this.renderType());
+		if (pLivingEntity instanceof Razorleaf razorleaf && razorleaf.getState() == Razorleaf.State.EXTINGUISHED)
+			this.getParentModel().renderToBuffer(pPoseStack, vertexconsumer, 15728640, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+	}
 
-        public abstract RenderType renderType();
+	public abstract RenderType renderType();
 }

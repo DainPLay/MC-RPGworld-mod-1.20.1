@@ -1354,5 +1354,67 @@
         "name": "block.bubble_column.whirlpool_inside"
       }
     ]
+  },
+  "rpgworldmod.friendly_ravager.equip_saddle": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.armor.equip_chain"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.friendly_ravager.equip_saddle"
+  },
+  "rpgworldmod.friendly_ravager.unequip_saddle": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.armor.equip_chain"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.friendly_ravager.unequip_saddle"
+  },
+  "rpgworldmod.friendly_ravager.dash": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.camel.dash"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.friendly_ravager.dash"
+  },
+  "rpgworldmod.friendly_ravager.dash_ready": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.camel.dash_ready"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.friendly_ravager.dash_ready"
+  },
+  "rpgworldmod.spell.destruction_pillager": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.evoker.cast_spell"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.destruction_pillager"
+  },
+  "rpgworldmod.spell.conjuration_pillager_prepare": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.evoker.prepare_summon"
+      }
+    ]
+  },
+  "rpgworldmod.spell.conjuration_pillager": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.evoker.cast_spell"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.conjuration_pillager"
   }
 }

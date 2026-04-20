@@ -14,7 +14,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CampfireCookingRecipe;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -22,7 +21,6 @@ import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
@@ -58,13 +56,10 @@ public class BoundCampfireBlock extends CampfireBlock {
 		if (!level.isClientSide) {
 			BlockEntity blockEntity = level.getBlockEntity(pos);
 			if (blockEntity instanceof BoundCampfireBlockEntity boundCampfire) {
-				// Проверяем, что игрок — владелец
 				UUID ownerUUID = boundCampfire.getOwnerUUID();
 				if (ownerUUID != null && ownerUUID.equals(player.getUUID())) {
-					// Проверяем, что в главной руке каменный меч
 					ItemStack mainHand = player.getMainHandItem();
 					if (mainHand.getItem() == ModItems.EMBER_SCROLL.get() && mainHand.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0) {
-						// Разрушаем блок без дропа
 						level.destroyBlock(pos, false);
 					}
 				}
@@ -76,10 +71,9 @@ public class BoundCampfireBlock extends CampfireBlock {
 	@Override
 	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (!state.is(newState.getBlock())) {
-			// Добавляем проверку на null и isClientSide
 			if (!level.isClientSide) {
 				level.playSound(null, pos, RPGSounds.SPELL_CONJURATION_STOP.get(), SoundSource.BLOCKS, 1F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F);
-				((ServerLevel)level).sendParticles(ModParticles.SUMMON_REVOKE.get(), pos.getX()+0.5F, pos.getY()+0.5F, pos.getZ()+0.5F, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+				((ServerLevel) level).sendParticles(ModParticles.SUMMON_REVOKE.get(), pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F, 1, 0.0D, 0.0D, 0.0D, 0.0D);
 			}
 		}
 		super.onRemove(state, level, pos, newState, isMoving);

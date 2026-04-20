@@ -6,7 +6,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -27,6 +26,7 @@ public class RazorleafBudBlock extends FlowerBlock {
 	public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
 		return SHAPE;
 	}
+
 	@Override
 	public void randomTick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
 		float f = 0.25F;
@@ -36,7 +36,6 @@ public class RazorleafBudBlock extends FlowerBlock {
 		if (pLevel.isDay() &&
 				(aboveState.getExplosionResistance(pLevel, abovePos, null) < 20F || aboveState.isAir()) &&
 				net.minecraftforge.common.ForgeHooks.onCropsGrowPre(pLevel, pPos, pState, pRandom.nextInt((int) (25.0F / f) + 1) == 0)) {
-
 			pLevel.destroyBlock(abovePos, true);
 			pLevel.setBlock(pPos, ModBlocks.SPIKY_IVY.get().defaultBlockState(), 2);
 			pLevel.setBlock(abovePos, ModBlocks.YOUNG_RAZORLEAF.get().defaultBlockState(), 2);

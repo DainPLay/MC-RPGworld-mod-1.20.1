@@ -1,14 +1,13 @@
 package net.dainplay.rpgworldmod.entity.client.render;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.entity.client.model.RazorleafHeartLayer;
 import net.dainplay.rpgworldmod.entity.client.model.RazorleafModel;
 import net.dainplay.rpgworldmod.entity.client.model.RazorleafTongueLayer;
-import net.dainplay.rpgworldmod.entity.custom.Fireflantern;
 import net.dainplay.rpgworldmod.entity.custom.Razorleaf;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -21,7 +20,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class RazorleafRenderer extends MobRenderer<Razorleaf, RazorleafModel> {
-	private static final float HALF_SQRT_3 = (float)(Math.sqrt(3.0D) / 2.0D);
+	private static final float HALF_SQRT_3 = (float) (Math.sqrt(3.0D) / 2.0D);
 	public static final ResourceLocation TEXTURE = new ResourceLocation(RPGworldMod.MOD_ID, "textures/entity/razorleaf/razorleaf.png");
 	public static final ResourceLocation TEXTURE_LOW_HEALTH_1 = new ResourceLocation(RPGworldMod.MOD_ID, "textures/entity/razorleaf/razorleaf_low_health_1.png");
 	public static final ResourceLocation TEXTURE_LOW_HEALTH_2 = new ResourceLocation(RPGworldMod.MOD_ID, "textures/entity/razorleaf/razorleaf_low_health_2.png");
@@ -42,30 +41,29 @@ public class RazorleafRenderer extends MobRenderer<Razorleaf, RazorleafModel> {
 	@Override
 	public void render(Razorleaf pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
 		super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);
-		if(pEntity.getState() != Razorleaf.State.EXTINGUISHED) return;
+		if (pEntity.getState() != Razorleaf.State.EXTINGUISHED) return;
 		VertexConsumer vertexconsumer2 = pBuffer.getBuffer(RenderType.lightning());
 		pPoseStack.pushPose();
 		pPoseStack.translate(0.0F, 1.2F, 0.0F);
 
-		// Получаем камеру клиента
+
 		Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
 		Vec3 cameraPos = camera.getPosition();
 
-		// Получаем вектор взгляда камеры как Vector3f и преобразуем в Vec3
+
 		Vector3f lookVector3f = camera.getLookVector();
 		Vec3 cameraLookDir = new Vec3(lookVector3f.x(), lookVector3f.y(), lookVector3f.z());
 
 		Vec3 entityPos = pEntity.position().add(0, 1.2F, 0);
 
-		// Вычисляем направление от моба к камере
+
 		Vec3 toCamera = cameraPos.subtract(entityPos).normalize();
 
-		// Для размещения лучей позади моба относительно камеры
-		// Используем обратное направление (от камеры к мобу)
+
 		float backwardOffset = -0.25f;
 		Vec3 backwardOffsetVector = cameraLookDir.scale(-backwardOffset);
 
-		// Вычисляем целевую позицию для лучей (позади моба относительно камеры)
+
 		Vec3 targetPos = entityPos.add(backwardOffsetVector);
 
 		float animationProgress = (pEntity.tickCount + pPartialTicks) * 0.005F;
@@ -76,14 +74,14 @@ public class RazorleafRenderer extends MobRenderer<Razorleaf, RazorleafModel> {
 
 			pPoseStack.translate(targetPos.x - entityPos.x, targetPos.y - entityPos.y, targetPos.z - entityPos.z);
 
-			// Направляем лучи на камеру
+
 			Vec3 directionToCamera = cameraPos.subtract(targetPos).normalize();
 			double horizontalAngleToCamera = Math.toDegrees(Math.atan2(directionToCamera.x, directionToCamera.z));
 			double verticalAngleToCamera = Math.toDegrees(Math.asin(directionToCamera.y));
 
 			float angle = animationProgress * 360F + (360f / beamCount) * i;
 
-			// Поворачиваем лучи чтобы смотреть на камеру
+
 			pPoseStack.mulPose(Axis.YP.rotationDegrees((float) horizontalAngleToCamera));
 			pPoseStack.mulPose(Axis.XP.rotationDegrees((float) -verticalAngleToCamera));
 			pPoseStack.mulPose(Axis.ZP.rotationDegrees(angle));
@@ -102,6 +100,7 @@ public class RazorleafRenderer extends MobRenderer<Razorleaf, RazorleafModel> {
 		}
 		pPoseStack.popPose();
 	}
+
 	private static void vertex01(VertexConsumer pConsumer, Matrix4f pMatrix, int pAlpha) {
 		pConsumer.vertex(pMatrix, 0.0F, 0.0F, 0.0F).color(255, 255, 255, pAlpha).endVertex();
 	}

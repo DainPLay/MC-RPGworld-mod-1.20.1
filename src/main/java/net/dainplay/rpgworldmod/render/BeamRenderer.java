@@ -17,8 +17,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EndCrystalRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -40,7 +38,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 import java.util.List;
 
@@ -68,7 +65,7 @@ public class BeamRenderer {
 
 		poseStack.pushPose();
 
-		// Рендер существующих лучей (например, от атаки)
+
 		for (var entry : ClientGuardianAttackData.getAll().entrySet()) {
 			ClientGuardianAttackData.AttackData data = entry.getValue();
 			if (data.target == null || !data.target.isAlive() || data.attacker == null || !data.attacker.isAlive())
@@ -76,13 +73,12 @@ public class BeamRenderer {
 			renderGuardianBeam(poseStack, bufferSource, partialTick, cameraPos, data.attacker, data.target, data.attackTime);
 		}
 
-		// Рендер лучей от игроков, использующих свиток с чарами Restoration
+
 		for (Player player : mc.level.players()) {
 			if (player.isUsingItem()) {
 				ItemStack usingItem = player.getUseItem();
 				if (usingItem.getItem() instanceof EnderEyeScrollItem
 						&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), usingItem) > 0) {
-
 					double searchRadius = 32.0D;
 					AABB aabb = player.getBoundingBox().inflate(searchRadius);
 					List<EndCrystal> crystals = mc.level.getEntitiesOfClass(EndCrystal.class, aabb);
@@ -96,7 +92,7 @@ public class BeamRenderer {
 						}
 					}
 
-					// Проверяем, что найденный кристалл действительно находится в радиусе действия
+
 					if (nearest != null && nearestDistSq <= searchRadius * searchRadius) {
 						Vec3 playerPos = player.getPosition(partialTick).add(0, player.getBbHeight() * 0.5, 0);
 						int packedLight = mc.getEntityRenderDispatcher().getPackedLightCoords(nearest, partialTick);
@@ -119,7 +115,7 @@ public class BeamRenderer {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null) return;
 
-		// 1. Определяем точку прицеливания из глаз игрока, пропуская прозрачные блоки
+
 		double maxDist = 128.0;
 		Vec3 eyePos = player.getEyePosition(partialTick);
 		Vec3 viewVec = player.getViewVector(partialTick);
@@ -146,11 +142,11 @@ public class BeamRenderer {
 			targetPos = rayEnd;
 		}
 
-		// 2. Позиция дула
+
 		boolean firstPerson = mc.options.getCameraType().isFirstPerson() && player == Minecraft.getInstance().player;
 		Vec3 start = getMuzzlePosition(player, partialTick, firstPerson);
 
-		// 3. Вектор от дула к цели, с обрезанием по твёрдым блокам
+
 		Vec3 directionVec = targetPos.subtract(start);
 		double length = directionVec.length();
 		directionVec = directionVec.normalize();
@@ -175,7 +171,7 @@ public class BeamRenderer {
 		}
 		if (charged > 40) generateBeamParticles(player, start, directionVec, finalLength);
 
-		// 4. Повороты луча
+
 		double dx = directionVec.z;
 		double dy = -directionVec.y;
 		double dz = -directionVec.x;
@@ -212,7 +208,7 @@ public class BeamRenderer {
 		float vStart = -1.0F + f2;
 		float vEnd = (float) finalLength * textureScale + vStart;
 
-		// Рендер лучей
+
 		VertexConsumer glowConsumer = bufferSource.getBuffer(ModRenderTypes.SPELL_EFFECT.apply(BEACON_GLOW_LOCATION));
 		renderGlowBeamSides(poseStack, glowConsumer, glowRadius, vStart, vEnd, 1.0F, 1.0F, 1.0F, 1F, (float) finalLength);
 
@@ -227,14 +223,12 @@ public class BeamRenderer {
 		poseStack.popPose();
 
 		if (charged > 40) {
-			// 5. Рендер билбордов в начале и конце луча
 			Vec3 end = start.add(directionVec.scale(finalLength));
 			renderBillboardAtPosition(poseStack, bufferSource, end, cameraPos, (player.getTicksUsingItem() - 40), -f);
 		}
 	}
 
 	private static void generateBeamParticles(Player player, Vec3 start, Vec3 direction, double length) {
-
 		RandomSource random = player.level().getRandom();
 		double step = 0.5;
 
@@ -259,19 +253,19 @@ public class BeamRenderer {
 												  Vec3 worldPos, Vec3 cameraPos,
 												  int tickCount, float f) {
 		poseStack.pushPose();
-		// Перемещаемся в позицию спрайта (относительно камеры)
+
 		poseStack.translate(worldPos.x - cameraPos.x, worldPos.y - cameraPos.y, worldPos.z - cameraPos.z);
 
-		// Поворот к камере (билборд)
+
 		Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-		Vec3 direction = cameraPos.subtract(worldPos); // от спрайта к камере
+		Vec3 direction = cameraPos.subtract(worldPos);
 		double angleY = Math.atan2(direction.x, direction.z);
 		if (true) poseStack.mulPose(Axis.YP.rotation((float) angleY));
 		poseStack.mulPose(Axis.XP.rotationDegrees(-camera.getXRot()));
 		poseStack.mulPose(Axis.ZP.rotation((float) Math.toRadians(f) * 2.25F));
 		if (true) poseStack.translate(0F, 0F, 0.5F);
 
-		// Анимация кадров текстуры
+
 		int currentFrame = (tickCount / 2) % 10;
 		float frameHeight = 1.0F / 10;
 		float vMin = currentFrame * frameHeight;
@@ -286,7 +280,7 @@ public class BeamRenderer {
 
 		float halfSize = (float) 0.75 / 2.0f;
 
-		// Квад в плоскости XY (z=0)
+
 		consumer.vertex(matrix, -halfSize, -halfSize, 0.0F)
 				.color(1.0F, 1.0F, 1.0F, 1.0F)
 				.uv(0.0F, vMax)
@@ -329,7 +323,7 @@ public class BeamRenderer {
 		Matrix4f matrix4f = pose.pose();
 		Matrix3f matrix3f = pose.normal();
 
-		// Четыре грани квадрата (нижняя, верхняя, левая, правая)
+
 		renderQuadZ(matrix4f, matrix3f, consumer, r, g, b, a,
 				0.0F, length, -radius, -radius, radius, -radius, 0.0F, 1.0F, vEnd, vStart);
 		renderQuadZ(matrix4f, matrix3f, consumer, r, g, b, a,
@@ -347,17 +341,16 @@ public class BeamRenderer {
 		Matrix4f matrix4f = pose.pose();
 		Matrix3f matrix3f = pose.normal();
 
-		// Четыре грани квадрата (нижняя, верхняя, левая, правая)
-		// Нижняя грань (y = -radius, x от -radius до radius)
+
 		renderQuadZ(matrix4f, matrix3f, consumer, r, g, b, a,
 				0.0F, length, radius, -radius, -radius, -radius, 0.0F, 1.0F, vEnd, vStart);
-		// Верхняя грань (y = radius, x от -radius до radius)
+
 		renderQuadZ(matrix4f, matrix3f, consumer, r, b, b, a,
 				0.0F, length, -radius, radius, radius, radius, 0.0F, 1.0F, vEnd, vStart);
-		// Левая грань (x = -radius, y от -radius до radius)
+
 		renderQuadZ(matrix4f, matrix3f, consumer, r, g, b, a,
 				0.0F, length, -radius, -radius, -radius, radius, 0.0F, 1.0F, vEnd, vStart);
-		// Правая грань (x = radius, y от -radius до radius)
+
 		renderQuadZ(matrix4f, matrix3f, consumer, r, g, b, a,
 				0.0F, length, radius, radius, radius, -radius, 0.0F, 1.0F, vEnd, vStart);
 	}
@@ -366,8 +359,8 @@ public class BeamRenderer {
 											  int tickCount, int ticksUsingItem, float partialTick) {
 		float textureSize = 0.3F;
 		if (ticksUsingItem <= 50) {
-			float t = (ticksUsingItem + partialTick - 40) / 10; // t ∈ [0,1]
-			// ease-out quadratic: 1 - (1-t)^2 = 2t - t^2
+			float t = (ticksUsingItem + partialTick - 40) / 10;
+
 			float easeOut = 1 - (1 - t) * (1 - t);
 			textureSize += 0.3F * (1 - easeOut);
 		}
@@ -377,38 +370,38 @@ public class BeamRenderer {
 		float vMax = vMin + frameHeight;
 
 		ResourceLocation texture = new ResourceLocation(RPGworldMod.MOD_ID, "textures/entity/spells/nether.png");
-		// Используем RenderType без отсечения граней
+
 		VertexConsumer texConsumer = bufferSource.getBuffer(ModRenderTypes.SPELL_EFFECT.apply(texture));
 
 		PoseStack.Pose pose = poseStack.last();
 		Matrix4f mat = pose.pose();
 		Matrix3f norm = pose.normal();
 
-		// Сторона -Z (нормаль 0,0,-1) – исправленный порядок вершин
+
 		texConsumer.vertex(mat, -textureSize, -textureSize, 0.0F)
 				.color(1.0F, 1.0F, 1.0F, 1.0F)
-				.uv(0.0F, vMin)  // было vMax
+				.uv(0.0F, vMin)
 				.overlayCoords(OverlayTexture.NO_OVERLAY)
 				.uv2(15728880)
 				.normal(norm, 0.0F, 0.0F, -1.0F)
 				.endVertex();
 		texConsumer.vertex(mat, -textureSize, textureSize, 0.0F)
 				.color(1.0F, 1.0F, 1.0F, 1.0F)
-				.uv(0.0F, vMax)  // было vMin
+				.uv(0.0F, vMax)
 				.overlayCoords(OverlayTexture.NO_OVERLAY)
 				.uv2(15728880)
 				.normal(norm, 0.0F, 0.0F, -1.0F)
 				.endVertex();
 		texConsumer.vertex(mat, textureSize, textureSize, 0.0F)
 				.color(1.0F, 1.0F, 1.0F, 1.0F)
-				.uv(1.0F, vMax)  // было vMin
+				.uv(1.0F, vMax)
 				.overlayCoords(OverlayTexture.NO_OVERLAY)
 				.uv2(15728880)
 				.normal(norm, 0.0F, 0.0F, -1.0F)
 				.endVertex();
 		texConsumer.vertex(mat, textureSize, -textureSize, 0.0F)
 				.color(1.0F, 1.0F, 1.0F, 1.0F)
-				.uv(1.0F, vMin)  // было vMax
+				.uv(1.0F, vMin)
 				.overlayCoords(OverlayTexture.NO_OVERLAY)
 				.uv2(15728880)
 				.normal(norm, 0.0F, 0.0F, -1.0F)
@@ -426,9 +419,7 @@ public class BeamRenderer {
 		addVertexZ(pose, normal, consumer, r, g, b, a, zEnd, x2, y2, uMin, vMin);
 	}
 
-	/**
-	 * Добавляет одну вершину с заданными координатами и текстурными координатами.
-	 */
+
 	private static void addVertexZ(Matrix4f pose, Matrix3f normal, VertexConsumer consumer,
 								   float r, float g, float b, float a,
 								   float z, float x, float y,
@@ -437,15 +428,12 @@ public class BeamRenderer {
 				.color(r, g, b, a)
 				.uv(u, v)
 				.overlayCoords(OverlayTexture.NO_OVERLAY)
-				.uv2(15728880) // максимальная яркость
-				.normal(normal, 0.0F, 1.0F, 0.0F) // нормаль направлена вверх (не критично для луча)
+				.uv2(15728880)
+				.normal(normal, 0.0F, 1.0F, 0.0F)
 				.endVertex();
 	}
 
-	/**
-	 * Вычисляет мировые координаты точки, из которой должен исходить луч (дуло оружия/рука).
-	 * Учитывает режим камеры (первое/третье лицо), сторону руки и анимацию атаки.
-	 */
+
 	private static Vec3 getMuzzlePosition(Player player, float partialTick, boolean firstPerson) {
 		Minecraft mc = Minecraft.getInstance();
 		HumanoidArm mainArm = player.getMainArm();
@@ -575,24 +563,21 @@ public class BeamRenderer {
 				.endVertex();
 	}
 
-	/**
-	 * Рендерит луч от игрока к кристаллу, имитируя эффект эндер-дракона.
-	 * Теперь направление изменено: луч исходит из позиции игрока и идёт к кристаллу.
-	 */
+
 	private static void renderCrystalBeamToPlayer(PoseStack poseStack, MultiBufferSource bufferSource, float partialTick, Vec3 cameraPos,
 												  Vec3 playerPos, EndCrystal crystal, int packedLight, int tickCount) {
 		Vec3 crystalPos = crystal.getPosition(partialTick).add(0, crystal.getBbHeight(), 0);
 		float crystalYOffset = EndCrystalRenderer.getY(crystal, partialTick);
 		double dx = crystalPos.x - playerPos.x;
-		double dy = (crystalPos.y + crystalYOffset) - playerPos.y;  // добавляем смещение
+		double dy = (crystalPos.y + crystalYOffset) - playerPos.y;
 		double dz = crystalPos.z - playerPos.z;
 		float length = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
 
 		poseStack.pushPose();
-		// Перемещаемся к позиции игрока (начало луча)
+
 		poseStack.translate(playerPos.x - cameraPos.x, playerPos.y - cameraPos.y, playerPos.z - cameraPos.z);
 
-		// Повороты, чтобы ось Z указывала от игрока к кристаллу (аналогично дракону)
+
 		poseStack.mulPose(Axis.YP.rotation((float) (-Math.atan2(dz, dx)) - ((float) Math.PI / 2F)));
 		poseStack.mulPose(Axis.XP.rotation((float) (-Math.atan2(Math.sqrt(dx * dx + dz * dz), dy)) - ((float) Math.PI / 2F)));
 
@@ -612,7 +597,7 @@ public class BeamRenderer {
 			float f8 = Mth.cos((float) j * ((float) Math.PI * 2F) / 8.0F) * 0.75F;
 			float f9 = (float) j / 8.0F;
 
-			// Вершина 1 (начало луча, внутренний радиус) – белая с alphaStart
+
 			vertexconsumer.vertex(matrix4f, f4 * 0.2F, f5 * 0.2F, 0.0F)
 					.color(0, 0, 0, 0)
 					.uv(f6, f2)
@@ -621,7 +606,7 @@ public class BeamRenderer {
 					.normal(matrix3f, 0.0F, -1.0F, 0.0F)
 					.endVertex();
 
-			// Вершина 2 (конец луча, внешний радиус) – белая, непрозрачная
+
 			vertexconsumer.vertex(matrix4f, f4, f5, length)
 					.color(255, 255, 255, 255)
 					.uv(f6, f3)
@@ -630,7 +615,7 @@ public class BeamRenderer {
 					.normal(matrix3f, 0.0F, -1.0F, 0.0F)
 					.endVertex();
 
-			// Вершина 3 (конец луча, следующий сегмент) – белая, непрозрачная
+
 			vertexconsumer.vertex(matrix4f, f7, f8, length)
 					.color(255, 255, 255, 255)
 					.uv(f9, f3)
@@ -639,7 +624,7 @@ public class BeamRenderer {
 					.normal(matrix3f, 0.0F, -1.0F, 0.0F)
 					.endVertex();
 
-			// Вершина 4 (начало луча, внутренний радиус, следующий сегмент) – белая с alphaStart
+
 			vertexconsumer.vertex(matrix4f, f7 * 0.2F, f8 * 0.2F, 0.0F)
 					.color(0, 0, 0, 0)
 					.uv(f9, f2)

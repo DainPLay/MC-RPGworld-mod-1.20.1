@@ -32,13 +32,13 @@ public abstract class EntityMixin {
 	private boolean wasCalledFrom(String method) {
 		StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
 
-		// Traversing the call stack to find the calling method
+
 		for (StackTraceElement element : stackTraceElements) {
 			if (element.getMethodName().equals(method)) {
-				return true; // The method was called from load method
+				return true;
 			}
 		}
-		return false; // The method was not called from load method
+		return false;
 	}
 
 	@Inject(method = "setXRot", at = @At(value = "HEAD"), cancellable = true)
@@ -53,8 +53,7 @@ public abstract class EntityMixin {
 	@Inject(method = "isOnFire", at = @At(value = "HEAD"), cancellable = true)
 	private void isOnFireIllusion(CallbackInfoReturnable<Boolean> cir) {
 		if (entity instanceof LivingEntity livingEntity && livingEntity.hasEffect(ModEffects.BURN_ILLUSION.get()) && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity)
-				/*&& livingEntity.getAttribute(Attributes.MOVEMENT_SPEED) != null
-				&& livingEntity.getAttribute(Attributes.MOVEMENT_SPEED).getModifier(BurnIllusionEffect.MODIFIER_UUID) != null*/) {
+		) {
 			cir.setReturnValue(true);
 			cir.cancel();
 		}

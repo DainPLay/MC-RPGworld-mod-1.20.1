@@ -16,12 +16,12 @@ import net.dainplay.rpgworldmod.item.custom.EnderEyeScrollItem;
 import net.dainplay.rpgworldmod.item.custom.GasbassItem;
 import net.dainplay.rpgworldmod.item.custom.HornCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
+import net.dainplay.rpgworldmod.item.custom.PillagerScrollItem;
 import net.dainplay.rpgworldmod.item.custom.ScrollItem;
 import net.dainplay.rpgworldmod.item.custom.SculkStaffItem;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.dainplay.rpgworldmod.item.custom.WealdBladeItem;
 import net.dainplay.rpgworldmod.network.BoundEntitySyncPacket;
-import net.dainplay.rpgworldmod.network.ClientSculkStaffCDData;
 import net.dainplay.rpgworldmod.network.IllusionForceDataSyncS2CPacket;
 import net.dainplay.rpgworldmod.network.IsManaRegenBlockedDataSyncS2CPacket;
 import net.dainplay.rpgworldmod.network.ManaDataSyncS2CPacket;
@@ -34,20 +34,20 @@ import net.dainplay.rpgworldmod.network.PlayerManaProvider;
 import net.dainplay.rpgworldmod.network.PlayerSculkStaffCD;
 import net.dainplay.rpgworldmod.network.PlayerSculkStaffCDProvider;
 import net.dainplay.rpgworldmod.network.SculkStaffCDDataSyncS2CPacket;
+import net.dainplay.rpgworldmod.network.TotemEffectPacket;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.dainplay.rpgworldmod.util.BoundEntityHelper;
 import net.dainplay.rpgworldmod.util.ModTags;
 import net.dainplay.rpgworldmod.util.RemoteOpenContainerRegistry;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.CompoundContainer;
 import net.minecraft.world.Container;
@@ -66,19 +66,14 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.PlayerEnderChestContainer;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
@@ -106,14 +101,11 @@ import net.minecraftforge.event.village.WandererTradesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mod.EventBusSubscriber(modid = RPGworldMod.MOD_ID)
 public class ModEvents {
-
 	@SubscribeEvent
 	public static void addCustomTrades(VillagerTradesEvent event) {
 		if (event.getType() == VillagerProfession.FISHERMAN) {
@@ -129,7 +121,6 @@ public class ModEvents {
 
 	@SubscribeEvent
 	public static void addCustomWanderingTrades(WandererTradesEvent event) {
-
 		List<VillagerTrades.ItemListing> genericTrades = event.getGenericTrades();
 		List<VillagerTrades.ItemListing> rareTrades = event.getRareTrades();
 
@@ -156,24 +147,30 @@ public class ModEvents {
 	}
 
 	@SubscribeEvent
-	public static void onPlayerCloned(PlayerEvent.Clone event) {
-		if (event.isWasDeath()) {
-			event.getOriginal().getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(oldStore -> {
-				event.getOriginal().getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(newStore -> {
-					newStore.copyFrom(oldStore);
-				});
+	public static void onPlayerClone(PlayerEvent.Clone event) {
+		if (event.getEntity().level().isClientSide) return;
+
+		event.getOriginal().reviveCaps();
+
+		event.getOriginal().getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(oldMana -> {
+			event.getEntity().getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(newMana -> {
+				newMana.copyFrom(oldMana);
 			});
-			event.getOriginal().getCapability(PlayerIllusionForceProvider.PLAYER_ILLUSION_FORCE).ifPresent(oldStore -> {
-				event.getOriginal().getCapability(PlayerIllusionForceProvider.PLAYER_ILLUSION_FORCE).ifPresent(newStore -> {
-					newStore.copyFrom(oldStore);
-				});
+		});
+
+		event.getOriginal().getCapability(PlayerIllusionForceProvider.PLAYER_ILLUSION_FORCE).ifPresent(oldForce -> {
+			event.getEntity().getCapability(PlayerIllusionForceProvider.PLAYER_ILLUSION_FORCE).ifPresent(newForce -> {
+				newForce.copyFrom(oldForce);
 			});
-			event.getOriginal().getCapability(PlayerSculkStaffCDProvider.PLAYER_SCULK_STAFF_COOLDOWN).ifPresent(oldStore -> {
-				event.getOriginal().getCapability(PlayerSculkStaffCDProvider.PLAYER_SCULK_STAFF_COOLDOWN).ifPresent(newStore -> {
-					newStore.copyFrom(oldStore);
-				});
+		});
+
+		event.getOriginal().getCapability(PlayerSculkStaffCDProvider.PLAYER_SCULK_STAFF_COOLDOWN).ifPresent(oldCD -> {
+			event.getEntity().getCapability(PlayerSculkStaffCDProvider.PLAYER_SCULK_STAFF_COOLDOWN).ifPresent(newCD -> {
+				newCD.copyFrom(oldCD);
 			});
-		}
+		});
+
+		event.getOriginal().invalidateCaps();
 	}
 
 	@SubscribeEvent
@@ -186,14 +183,6 @@ public class ModEvents {
 	@SubscribeEvent
 	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
 		if (event.player instanceof ServerPlayer serverPlayer) {
-			/*event.player.getCapability(PlayerSculkStaffCDProvider.PLAYER_SCULK_STAFF_COOLDOWN).ifPresent(cooldown -> {
-						Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = event.player.getCooldowns().cooldowns;
-						int currentTick = event.player.getCooldowns().tickCount;
-						ItemCooldowns.CooldownInstance instance = cooldownsMap.get(ModItems.SCULK_STAFF.get());
-						int endTick = currentTick;
-						if (instance != null) endTick = instance.endTime;
-						event.player.displayClientMessage(Component.literal("Server: s:" + (endTick - currentTick) + " c: " + cooldown.getCooldown()), true);
-					});*/
 			serverPlayer.getCapability(PlayerIllusionForceProvider.PLAYER_ILLUSION_FORCE).ifPresent(illusionForce -> {
 				if (illusionForce.getIllusionForce() >= 0) {
 					illusionForce.setIllusionForce(serverPlayer, Math.max(0, illusionForce.getIllusionForce() - 1), illusionForce.getIllusionForce() > 0, illusionForce.getIsEnt());
@@ -208,17 +197,9 @@ public class ModEvents {
 					ModMessages.sendToPlayer(new SculkStaffCDDataSyncS2CPacket(0), serverPlayer);
 				}
 			});
-			/*if (serverPlayer.getAdvancements().getOrStartProgress(serverPlayer.getServer().getAdvancements().getAdvancement(DepressionDeathCheck.ID)).isDone() && !serverPlayer.isDeadOrDying()) {
-				Advancement advancement = serverPlayer.server.getAdvancements().getAdvancement(DepressionDeathCheck.ID);
-				AdvancementProgress progress = serverPlayer.getAdvancements().getOrStartProgress(advancement);
-				for (String criterion : progress.getCompletedCriteria()) {
-					serverPlayer.getAdvancements().revoke(advancement, criterion);
-				}
-			}*/
-			serverPlayer.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
 
+			serverPlayer.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
 				if (serverPlayer.isSleeping() && mana.getManaRegenBlocked() > 0) {
-					// Будим игрока
 					serverPlayer.stopSleeping();
 					serverPlayer.displayClientMessage(
 							Component.translatable("mana.rpgworldmod.paranoia_wake_up"),
@@ -230,11 +211,10 @@ public class ModEvents {
 				if (ModItems.LAPIS_CHARM.get().isEquippedBy(serverPlayer) && serverPlayer.totalExperience >= 3)
 					regenSpeed = (int) (regenSpeed * 0.6F);
 
-				// Проверяем, не заблокировано ли восстановление маны
+
 				if (event.phase == TickEvent.Phase.START && mana.getManaRegenBlocked() <= 0 &&
 						mana.getMana() > 0 && mana.getMana() < mana.getMaxMana() &&
 						serverPlayer.tickCount % regenSpeed == 0) {
-
 					if (ModItems.LAPIS_CHARM.get().isEquippedBy(serverPlayer) && mana.getMana() < mana.getMaxMana()) {
 						serverPlayer.giveExperiencePoints(-1);
 						mana.addMana(serverPlayer, 1);
@@ -246,7 +226,7 @@ public class ModEvents {
 					mana.setManaRegenBlocked(serverPlayer, mana.getManaRegenBlocked() - 1);
 
 				mana.recalculateMaxMana(serverPlayer);
-				//serverPlayer.sendSystemMessage(Component.literal("Мана: " + mana.getMana() + "/" + mana.getMaxMana()));
+
 			});
 		}
 	}
@@ -315,6 +295,7 @@ public class ModEvents {
 
 	@SubscribeEvent
 	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+		if (event.isEndConquered()) return;
 		if (event.getEntity() instanceof ServerPlayer player) {
 			player.getServer().execute(() -> {
 				player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
@@ -357,10 +338,8 @@ public class ModEvents {
 	}
 
 
-	// Отменяем возможность лечь спать при отравлении
 	@SubscribeEvent
 	public static void onPlayerTrySleep(PlayerSleepInBedEvent event) {
-
 		if (event.getEntity() instanceof ServerPlayer player) {
 			player.getServer().execute(() -> {
 				player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
@@ -378,7 +357,6 @@ public class ModEvents {
 
 	@SubscribeEvent
 	public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
-		// Проверяем, что это серверная сторона
 		if (event.getLevel().isClientSide()) {
 			return;
 		}
@@ -392,7 +370,6 @@ public class ModEvents {
 
 		if (block instanceof EntFaceBlock entFaceBlock) {
 			if (level.getBlockEntity(pos) instanceof EntFaceBlockEntity entEntity) {
-
 				if (entFaceBlock.isAsleep(state))
 					entEntity.onRelatedBlockAttacked(pos);
 
@@ -436,27 +413,25 @@ public class ModEvents {
 
 	@SubscribeEvent
 	public static void onLivingHurt(LivingHurtEvent event) {
-		// Проверяем, что урон нанесён стрелой
 		if (event.getSource().getDirectEntity() instanceof AbstractArrow arrow &&
 				arrow.getOwner() instanceof Player shooter &&
 				!arrow.level().isClientSide) {
-
 			CompoundTag arrowTag = arrow.getPersistentData();
-			// Проверяем, что это наша особенная стрела
+
 			if (arrowTag.hasUUID("BoundPlayer") && arrowTag.getBoolean("LivingWoodArrow")) {
 				LivingEntity target = event.getEntity();
 
-				// Проверяем, что цель не стрелок и не эндермен
+
 				if (target == shooter) {
 					return;
 				}
 
-				// Проверяем, что урон был действительно нанесён (значение > 0)
+
 				if (event.getAmount() <= 0) {
 					return;
 				}
 
-				// Остальной код привязки...
+
 				int knockback = arrow.getKnockback();
 				if (knockback > 0) {
 					CompoundTag mobTag = target.getPersistentData();
@@ -501,16 +476,13 @@ public class ModEvents {
 	public static void onLivingUpdate(LivingEvent.LivingTickEvent event) {
 		LivingEntity entity = event.getEntity();
 
-		// Проверяем привязанных мобов каждые 20 тиков (только на сервере)
+
 		if (!entity.level().isClientSide && entity.tickCount % 20 == 0) {
 			CompoundTag tag = entity.getPersistentData();
 			if (tag.hasUUID("BoundPlayer") && tag.getBoolean("LivingWoodBound")) {
-				// Получаем игрока по UUID
 				Player player = entity.level().getPlayerByUUID(tag.getUUID("BoundPlayer"));
 				if (player != null && !player.isRemoved()) {
-					// Проверяем расстояние
 					if (entity.distanceTo(player) > tag.getDouble("BoundPullRange")) {
-						// Удаляем привязку, если слишком далеко
 						tag.remove("BoundPlayer");
 						tag.remove("BoundTime");
 						tag.remove("LivingWoodBound");
@@ -526,7 +498,6 @@ public class ModEvents {
 								0.5F, pitch);
 					}
 				} else {
-					// Если игрок не найден (вышел из игры), удаляем привязку
 					tag.remove("BoundPlayer");
 					tag.remove("BoundTime");
 					tag.remove("LivingWoodBound");
@@ -541,14 +512,13 @@ public class ModEvents {
 			}
 		}
 
-		// Проверяем привязанных мобов каждые 5 тиков (только на сервере)
+
 		if (!entity.level().isClientSide && entity.tickCount % 5 == 0) {
 			CompoundTag tag = entity.getPersistentData();
 			if (tag.hasUUID("BoundPlayer") && tag.getBoolean("LivingWoodBound")) {
 				Player player = entity.level().getPlayerByUUID(tag.getUUID("BoundPlayer"));
 
 				if (player != null) {
-					// Отправляем пакет с данными о привязанном существе
 					ModMessages.sendToNearbyPlayers(
 							new BoundEntitySyncPacket(
 									entity.getId(),
@@ -564,7 +534,6 @@ public class ModEvents {
 							300
 					);
 				} else {
-					// Если игрок не найден, отправляем пакет удаления
 					ModMessages.sendToNearbyPlayers(
 							new BoundEntitySyncPacket(entity.getId()),
 							entity.level(),
@@ -573,7 +542,6 @@ public class ModEvents {
 					);
 				}
 			} else {
-				// Если существо не привязано, отправляем пакет удаления
 				ModMessages.sendToNearbyPlayers(
 						new BoundEntitySyncPacket(entity.getId()),
 						entity.level(),
@@ -656,20 +624,19 @@ public class ModEvents {
 
 	@SubscribeEvent
 	public void onEnderManDrown(LivingDropsEvent event) {
-		// 1. Проверяем, что умерший - эндермен
 		if (!(event.getEntity() instanceof EnderMan enderMan)) return;
 
-		// 2. Проверяем измерение (Энд)
+
 		if (enderMan.level().dimension() != Level.END) return;
 
-		// 3. Проверяем, идёт ли дождь на позиции эндермена
+
 		if (!enderMan.level().isRainingAt(enderMan.blockPosition())) return;
 
-		// 4. Проверяем тип урона (утопление)
+
 		if (!event.getSource().is(DamageTypes.DROWN)) return;
 
-		// Все условия выполнены – добавляем особый предмет
-		ItemStack specialItem = new ItemStack(ModItems.MUSIC_DISC_RAIN_A_SIDE.get(), 1); // ваш предмет
+
+		ItemStack specialItem = new ItemStack(ModItems.MUSIC_DISC_RAIN_A_SIDE.get(), 1);
 		ItemEntity drop = new ItemEntity(
 				enderMan.level(),
 				enderMan.getX(), enderMan.getY(), enderMan.getZ(),
@@ -681,18 +648,16 @@ public class ModEvents {
 	@SubscribeEvent
 	public void onServerTick(TickEvent.ServerTickEvent event) {
 		if (event.phase == TickEvent.Phase.END) {
-			// Проходим по всем серверным игрокам
 			int counter = event.getServer().getTickCount() % 20;
 			if (counter == 0) {
 				for (ServerPlayer player : event.getServer().getPlayerList().getPlayers()) {
-					// Пропускаем клиентский мир (на сервере всё серверное)
 					if (player.level().isClientSide) continue;
 
 					boolean hasContainerOpen = player.containerMenu != player.inventoryMenu;
 
 					if (!hasContainerOpen) {
 						HornCoralStaffItem.removeStaffReachModifier(player);
-						//player.sendSystemMessage(Component.literal("Тикер удалил модификатор досягаемости"));
+
 					}
 				}
 			}
@@ -707,13 +672,14 @@ public class ModEvents {
 
 		if (!player.level().isClientSide) {
 			HornCoralStaffItem.removeStaffReachModifier(player);
-			//player.sendSystemMessage(Component.literal("Закрытие контейнера удалило модификатор досягаемости"));
+
 		}
 
 		if (level.isClientSide) return;
 
-		// Определяем позицию контейнера
+
 		BlockPos pos = null;
+		BlockPos pos2 = null;
 
 		if (menu instanceof ChestMenu chestMenu) {
 			Container container = chestMenu.getContainer();
@@ -730,11 +696,19 @@ public class ModEvents {
 				if (container1 instanceof BaseContainerBlockEntity blockEntity) {
 					pos = blockEntity.getBlockPos();
 				}
+				Container container2 = compoundContainer.container2;
+				if (container2 instanceof BaseContainerBlockEntity blockEntity) {
+					pos2 = blockEntity.getBlockPos();
+				}
 			}
 		}
 
 		if (pos != null) {
 			RemoteOpenContainerRegistry.removeOpener(level, pos, player);
+		}
+
+		if (pos2 != null) {
+			RemoteOpenContainerRegistry.removeOpener(level, pos2, player);
 		}
 	}
 
@@ -753,39 +727,67 @@ public class ModEvents {
 		if (player.level().isClientSide) return;
 
 		if (!player.isUsingItem()) return;
-		ItemStack usingItem = player.getUseItem();
-		if (!(usingItem.getItem() instanceof EnderEyeScrollItem scroll)) return;
-		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), usingItem) <= 0) return;
-
-		// Проверяем наличие живого кристалла Энда в радиусе 32 блоков
-		double radius = 32.0D;
-		AABB aabb = player.getBoundingBox().inflate(radius);
-		List<EndCrystal> crystals = player.level().getEntitiesOfClass(EndCrystal.class, aabb);
-		boolean hasCrystal = crystals.stream().anyMatch(EndCrystal::isAlive);
-		if (!hasCrystal) {
-			// Нет кристалла — не спасаем игрока, он умирает
+		if (event.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
 			return;
 		}
-
-		event.setCanceled(true);
-
-		player.setHealth(1.0F);
-		player.removeAllEffects();
-		player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 225, 1));
-		player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 100, 1));
-		player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 225, 0));
-		if (player instanceof ServerPlayer serverPlayer) {
-			ModAdvancements.SPELL_RESTORATION_ENDER_EYE_TRIGGER.trigger(serverPlayer);
-		}
-
-		// Уничтожаем все кристаллы в радиусе
-		for (EndCrystal crystal : crystals) {
-			if (crystal.isAlive()) {
-				crystal.hurt(player.level().damageSources().playerAttack(player), Float.MAX_VALUE);
+		ItemStack usingItem = player.getUseItem();
+		if (usingItem.getItem() instanceof EnderEyeScrollItem
+				&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), usingItem) > 0) {
+			double radius = 32.0D;
+			AABB aabb = player.getBoundingBox().inflate(radius);
+			List<EndCrystal> crystals = player.level().getEntitiesOfClass(EndCrystal.class, aabb);
+			boolean hasCrystal = crystals.stream().anyMatch(EndCrystal::isAlive);
+			if (!hasCrystal) {
+				return;
 			}
-		}
 
-		player.getCooldowns().addCooldown(usingItem.getItem(), 15);
+			event.setCanceled(true);
+
+			player.setHealth(1.0F);
+			player.removeAllEffects();
+			player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 225, 1));
+			player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 100, 1));
+			player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 225, 0));
+			if (player instanceof ServerPlayer serverPlayer) {
+				ModAdvancements.SPELL_RESTORATION_ENDER_EYE_TRIGGER.trigger(serverPlayer);
+			}
+
+			for (EndCrystal crystal : crystals) {
+				if (crystal.isAlive()) {
+					crystal.hurt(player.level().damageSources().playerAttack(player), Float.MAX_VALUE);
+				}
+			}
+
+			player.getCooldowns().addCooldown(usingItem.getItem(), 15);
+		} else if (usingItem.getItem() instanceof PillagerScrollItem
+				&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), usingItem) > 0) {
+			AtomicBoolean hasEnoughMana = new AtomicBoolean(false);
+			player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+				if (mana.getMana() >= 100) {
+					mana.reduceMana((ServerPlayer) player, mana.getMana());
+					hasEnoughMana.set(true);
+				}
+			});
+			if (!hasEnoughMana.get()) return;
+
+			event.setCanceled(true);
+
+			player.setHealth(1.0F);
+			player.removeAllEffects();
+			player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 900, 1));
+			player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 100, 1));
+			player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 800, 0));
+			ModMessages.sendToNearbyPlayers(
+					new TotemEffectPacket(player.getId(), usingItem.copy()),
+					player.level(),
+					player.blockPosition(),
+					64.0
+			);
+			if (player instanceof ServerPlayer serverPlayer) {
+			}
+
+			player.getCooldowns().addCooldown(usingItem.getItem(), 15);
+		}
 	}
 
 	@SubscribeEvent
@@ -818,14 +820,6 @@ public class ModEvents {
 				}
 			}
 		}
-	}
-
-	private static boolean hasVibrationsEnchant(ItemStack stack) {
-		return EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), stack) > 0 ||
-				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), stack) > 0 ||
-				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) > 0 ||
-				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), stack) > 0 ||
-				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), stack) > 0;
 	}
 
 }

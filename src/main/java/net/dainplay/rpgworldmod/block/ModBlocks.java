@@ -3,6 +3,7 @@ package net.dainplay.rpgworldmod.block;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.block.custom.ArborFuelCauldron;
 import net.dainplay.rpgworldmod.block.custom.BlowerBlock;
+import net.dainplay.rpgworldmod.block.custom.BoundCampfireBlock;
 import net.dainplay.rpgworldmod.block.custom.DrillTuskBlock;
 import net.dainplay.rpgworldmod.block.custom.EntFaceBlock;
 import net.dainplay.rpgworldmod.block.custom.FairapierPlantBlock;
@@ -29,7 +30,6 @@ import net.dainplay.rpgworldmod.block.custom.ShiveralisPlantBlock;
 import net.dainplay.rpgworldmod.block.custom.SpikyIvyBlock;
 import net.dainplay.rpgworldmod.block.custom.StareblossomBlock;
 import net.dainplay.rpgworldmod.block.custom.StareblossomPotBlock;
-import net.dainplay.rpgworldmod.block.custom.BoundCampfireBlock;
 import net.dainplay.rpgworldmod.block.custom.TireBlock;
 import net.dainplay.rpgworldmod.block.custom.TreeHollowBlock;
 import net.dainplay.rpgworldmod.block.custom.TyphonBlock;
@@ -102,9 +102,11 @@ public class ModBlocks {
 
 
 	public static final RegistryObject<Block> DRILL_TUSK = registerBlock("drill_tusk",
-			() -> new DrillTuskBlock(BlockBehaviour.Properties.copy(Blocks.BONE_BLOCK).noOcclusion()));
+			() -> new DrillTuskBlock(BlockBehaviour.Properties.copy(Blocks.BONE_BLOCK)
+					.forceSolidOn().noOcclusion()));
 	public static final RegistryObject<Block> QUARTZITE_DRILL_TUSK = registerBlockWithTooltip("quartzite_drill_tusk",
-			() -> new QuartziteDrillTuskBlock(BlockBehaviour.Properties.copy(Blocks.BONE_BLOCK).mapColor(MapColor.QUARTZ).sound(SoundType.STONE).noOcclusion()));
+			() -> new QuartziteDrillTuskBlock(BlockBehaviour.Properties.copy(Blocks.BONE_BLOCK)
+					.forceSolidOn().mapColor(MapColor.QUARTZ).sound(SoundType.STONE).noOcclusion()));
 	public static final RegistryObject<Block> BLOWER = registerFuelBlockWithTooltip("blower",
 			() -> new BlowerBlock(BlockBehaviour.Properties.copy(Blocks.PISTON).sound(SoundType.WOOD).strength(2.0f).mapColor(MapColor.GLOW_LICHEN)) {
 				@Override
@@ -197,7 +199,6 @@ public class ModBlocks {
 			() -> new FlowerPotBlock(ModBlocks.SHIVERALIS.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION).noOcclusion()));
 	public static final RegistryObject<Block> RPGIROLLE = registerBlockWithoutBlockItem("rpgirolle",
 			() -> new BushBlock(BlockBehaviour.Properties.copy(Blocks.DANDELION).mapColor(MapColor.GOLD).noCollission().instabreak().sound(SoundType.FUNGUS)) {
-
 				protected static final VoxelShape SHAPE = Block.box(3.0D, 0.0D, 3.0D, 13.0D, 8.0D, 13.0D);
 
 				@Override
@@ -208,7 +209,6 @@ public class ModBlocks {
 			});
 	public static final RegistryObject<Block> WILD_FAIRAPIER = registerBlock("wild_fairapier",
 			() -> new FlowerBlock(MobEffects.DAMAGE_BOOST, 8, BlockBehaviour.Properties.copy(Blocks.DANDELION).noOcclusion()) {
-
 				protected static final VoxelShape SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 10.0D, 15.0D);
 
 				@Override
@@ -231,7 +231,6 @@ public class ModBlocks {
 			() -> new StareblossomBlock(ModEffects.PARANOIA, 16, BlockBehaviour.Properties.copy(Blocks.DANDELION).noOcclusion().offsetType(BlockBehaviour.OffsetType.NONE)));
 	public static final RegistryObject<Block> TYPHON = registerBlock("typhon",
 			() -> new TyphonBlock(MobEffects.DARKNESS, 5, BlockBehaviour.Properties.copy(Blocks.DANDELION).noOcclusion()) {
-
 				protected static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 14.0D, 12.0D);
 
 				@Override
@@ -263,7 +262,6 @@ public class ModBlocks {
 			() -> new FlowerPotBlock(ModBlocks.MOSSHROOM.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION).noOcclusion()));
 	public static final RegistryObject<Block> CHEESE_CAP = registerBlockWithoutBlockItem("cheese_cap",
 			() -> new BushBlock(BlockBehaviour.Properties.copy(Blocks.DANDELION).mapColor(MapColor.COLOR_ORANGE).noCollission().instabreak().sound(SoundType.FUNGUS)) {
-
 				protected static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 13.0D, 12.0D);
 
 				@Override
@@ -284,7 +282,6 @@ public class ModBlocks {
 			() -> new FlowerPotBlock(ModBlocks.WILD_FAIRAPIER.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION).noOcclusion()));
 	public static final RegistryObject<Block> PROJECTRUFFLE = registerBlock("projectruffle",
 			() -> new BushBlock(BlockBehaviour.Properties.copy(Blocks.DANDELION).mapColor(MapColor.COLOR_BLACK).noOcclusion()) {
-
 				protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
 
 				@Override
@@ -295,7 +292,6 @@ public class ModBlocks {
 			});
 	public static final RegistryObject<Block> SILICINA = registerBlock("silicina",
 			() -> new FlowerBlock(MobEffects.INVISIBILITY, 9, BlockBehaviour.Properties.copy(Blocks.DANDELION).mapColor(MapColor.NONE).noOcclusion()) {
-
 				protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
 
 				@Override
@@ -343,25 +339,25 @@ public class ModBlocks {
 				@Nullable
 				@Override
 				public BlockState getToolModifiedState(BlockState state, UseOnContext context, ToolAction toolAction, boolean simulate) {
-					if(context.getItemInHand().getItem() instanceof AxeItem) {
-							return ModBlocks.STRIPPED_LIVING_WOOD_WOOD.get().defaultBlockState().setValue(AXIS, state.getValue(AXIS));
+					if (context.getItemInHand().getItem() instanceof AxeItem) {
+						return ModBlocks.STRIPPED_LIVING_WOOD_WOOD.get().defaultBlockState().setValue(AXIS, state.getValue(AXIS));
 					}
 
 					return super.getToolModifiedState(state, context, toolAction, simulate);
 				}
 
-					@Override
-					public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+				@Override
+				public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
 					return Shapes.empty();
 				}
 
-					@Override
-					public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+				@Override
+				public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
 					return 1.0F;
 				}
 			});
 	public static final RegistryObject<Block> STRIPPED_LIVING_WOOD_LOG = registerBlock("stripped_living_wood_log",
-			() -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_WARPED_STEM).mapColor(MapColor.GLOW_LICHEN)){
+			() -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_WARPED_STEM).mapColor(MapColor.GLOW_LICHEN)) {
 				@Override
 				public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
 					return Shapes.empty();
@@ -373,7 +369,7 @@ public class ModBlocks {
 				}
 			});
 	public static final RegistryObject<Block> STRIPPED_LIVING_WOOD_WOOD = registerBlock("stripped_living_wood_wood",
-			() -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_WARPED_HYPHAE).mapColor(MapColor.GLOW_LICHEN)){
+			() -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_WARPED_HYPHAE).mapColor(MapColor.GLOW_LICHEN)) {
 				@Override
 				public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
 					return Shapes.empty();
@@ -535,7 +531,7 @@ public class ModBlocks {
 					.mapColor(MapColor.GOLD)
 					.requiresCorrectToolForDrops()
 					.strength(5.0F, 6.0F)
-			){
+			) {
 				@Override
 				public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
 					return Shapes.empty();

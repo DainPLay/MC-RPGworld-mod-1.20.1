@@ -1,12 +1,7 @@
 package net.dainplay.rpgworldmod.item.custom;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -68,7 +63,7 @@ public class FlintSwordItem extends SwordItem implements RPGtooltip {
 				int fireDuration = 5 + (fortuneLevel * 5);
 				target.setSecondsOnFire(fireDuration);
 			} else {
-				((ServerLevel) target.level()).sendParticles(ParticleTypes.FLAME, target.getX(), target.getY()+target.getBbHeight()*0.5f, target.getZ(), 20, target.level().getRandom().nextFloat()/5, target.level().getRandom().nextFloat()/5, target.level().getRandom().nextFloat()/5, 0.01f);
+				((ServerLevel) target.level()).sendParticles(ParticleTypes.FLAME, target.getX(), target.getY() + target.getBbHeight() * 0.5f, target.getZ(), 20, target.level().getRandom().nextFloat() / 5, target.level().getRandom().nextFloat() / 5, target.level().getRandom().nextFloat() / 5, 0.01f);
 			}
 		}
 
@@ -78,7 +73,7 @@ public class FlintSwordItem extends SwordItem implements RPGtooltip {
 	@Override
 	public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
-        ClientRPGtooltipHandler.appendHoverText(pStack, pLevel, pTooltip, pFlag, this)
-    );
+				ClientRPGtooltipHandler.appendHoverText(pStack, pLevel, pTooltip, pFlag, this)
+		);
 	}
 }

@@ -11,7 +11,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import java.util.function.Supplier;
 
 public enum ModArmorMaterials implements ArmorMaterial {
-	LIVING_WOOD("living_wood", 15, new int[]{2,5,4,1}, 25,
+	LIVING_WOOD("living_wood", 15, new int[]{2, 5, 4, 1}, 25,
 			RPGSounds.ARMOR_EQUIP_LIVING_WOOD.get(), 0F, 0F, () -> Ingredient.of(ModTags.Items.LIVING_WOOD_LOGS));
 
 	private final String name;
@@ -23,7 +23,7 @@ public enum ModArmorMaterials implements ArmorMaterial {
 	private final float knockbackResistance;
 	private final Supplier<Ingredient> repairIngredient;
 
-	private static final int[] BASE_DURABILITY = new int[] {11, 16, 16, 13};
+	private static final int[] BASE_DURABILITY = new int[]{11, 16, 16, 13};
 
 	ModArmorMaterials(String name, int durabilityMultiplier, int[] protectionAmounts, int enhantmentValue, SoundEvent equipSound, float toughness, float knockbackResistance, Supplier<Ingredient> repairIngredient) {
 		this.name = name;

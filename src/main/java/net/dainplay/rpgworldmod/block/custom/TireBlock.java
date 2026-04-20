@@ -1,19 +1,20 @@
 package net.dainplay.rpgworldmod.block.custom;
 
-import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.entity.ModEntities;
 import net.dainplay.rpgworldmod.entity.custom.TireSwingEntity;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ShearsItem;
-import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -31,11 +32,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 import javax.annotation.Nullable;
 
@@ -43,64 +39,64 @@ public class TireBlock extends Block {
 	public static final DirectionProperty FACING = net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING;
 	public static final EnumProperty<Form> FORM = EnumProperty.create("form", Form.class);
 
-	// Voxel shapes (остаются без изменений)
+
 	private static final VoxelShape SINGLE_NORTH = Shapes.or(
-			Block.box(1, 1, 10, 5, 15, 16),   // Левая часть
-			Block.box(11, 1, 10, 15, 15, 16), // Правая часть
-			Block.box(5, 1, 10, 11, 5, 16),   // Нижняя часть
-			Block.box(5, 11, 10, 11, 15, 16)  // Верхняя часть
+			Block.box(1, 1, 10, 5, 15, 16),
+			Block.box(11, 1, 10, 15, 15, 16),
+			Block.box(5, 1, 10, 11, 5, 16),
+			Block.box(5, 11, 10, 11, 15, 16)
 	);
 
 	private static final VoxelShape SINGLE_SOUTH = Shapes.or(
-			Block.box(1, 1, 0, 5, 15, 6),     // Левая часть
-			Block.box(11, 1, 0, 15, 15, 6),   // Правая часть
-			Block.box(5, 1, 0, 11, 5, 6),     // Нижняя часть
-			Block.box(5, 11, 0, 11, 15, 6)    // Верхняя часть
+			Block.box(1, 1, 0, 5, 15, 6),
+			Block.box(11, 1, 0, 15, 15, 6),
+			Block.box(5, 1, 0, 11, 5, 6),
+			Block.box(5, 11, 0, 11, 15, 6)
 	);
 
 	private static final VoxelShape SINGLE_EAST = Shapes.or(
-			Block.box(0, 1, 1, 6, 5, 15),     // Нижняя часть
-			Block.box(0, 11, 1, 6, 15, 15),   // Верхняя часть
-			Block.box(0, 5, 1, 6, 11, 5),     // Северная часть
-			Block.box(0, 5, 11, 6, 11, 15)    // Южная часть
+			Block.box(0, 1, 1, 6, 5, 15),
+			Block.box(0, 11, 1, 6, 15, 15),
+			Block.box(0, 5, 1, 6, 11, 5),
+			Block.box(0, 5, 11, 6, 11, 15)
 	);
 
 	private static final VoxelShape SINGLE_WEST = Shapes.or(
-			Block.box(10, 1, 1, 16, 5, 15),   // Нижняя часть
-			Block.box(10, 11, 1, 16, 15, 15), // Верхняя часть
-			Block.box(10, 5, 1, 16, 11, 5),   // Северная часть
-			Block.box(10, 5, 11, 16, 11, 15)  // Южная часть
+			Block.box(10, 1, 1, 16, 5, 15),
+			Block.box(10, 11, 1, 16, 15, 15),
+			Block.box(10, 5, 1, 16, 11, 5),
+			Block.box(10, 5, 11, 16, 11, 15)
 	);
 
 	private static final VoxelShape SINGLE_UP = Shapes.or(
-			Block.box(1, 0, 1, 5, 6, 15),     // Западная часть
-			Block.box(11, 0, 1, 15, 6, 15),   // Восточная часть
-			Block.box(5, 0, 1, 11, 6, 5),     // Северная часть
-			Block.box(5, 0, 11, 11, 6, 15)    // Южная часть
+			Block.box(1, 0, 1, 5, 6, 15),
+			Block.box(11, 0, 1, 15, 6, 15),
+			Block.box(5, 0, 1, 11, 6, 5),
+			Block.box(5, 0, 11, 11, 6, 15)
 	);
 
 	private static final VoxelShape SINGLE_DOWN = Shapes.or(
-			Block.box(1, 10, 1, 5, 16, 15),   // Западная часть
-			Block.box(11, 10, 1, 15, 16, 15), // Восточная часть
-			Block.box(5, 10, 1, 11, 16, 5),   // Северная часть
-			Block.box(5, 10, 11, 11, 16, 15)  // Южная часть
+			Block.box(1, 10, 1, 5, 16, 15),
+			Block.box(11, 10, 1, 15, 16, 15),
+			Block.box(5, 10, 1, 11, 16, 5),
+			Block.box(5, 10, 11, 11, 16, 15)
 	);
 
-	// DOUBLE формы: две шины с промежутком
+
 	private static final VoxelShape DOUBLE_NORTH = Shapes.or(
-			// Первая шина (северная)
+
 			Block.box(1, 1, 10, 5, 15, 16),
 			Block.box(11, 1, 10, 15, 15, 16),
 			Block.box(5, 1, 10, 11, 5, 16),
 			Block.box(5, 11, 10, 11, 15, 16),
 
-			// Промежуточная часть
+
 			Block.box(2, 2, 8, 4, 14, 10),
 			Block.box(12, 2, 8, 14, 14, 10),
 			Block.box(4, 2, 8, 12, 4, 10),
 			Block.box(4, 12, 8, 12, 14, 10),
 
-			// Вторая шина (южная)
+
 			Block.box(1, 1, 2, 5, 15, 8),
 			Block.box(11, 1, 2, 15, 15, 8),
 			Block.box(5, 1, 2, 11, 5, 8),
@@ -108,19 +104,19 @@ public class TireBlock extends Block {
 	);
 
 	private static final VoxelShape DOUBLE_SOUTH = Shapes.or(
-			// Первая шина (южная)
+
 			Block.box(1, 1, 0, 5, 15, 6),
 			Block.box(11, 1, 0, 15, 15, 6),
 			Block.box(5, 1, 0, 11, 5, 6),
 			Block.box(5, 11, 0, 11, 15, 6),
 
-			// Промежуточная часть
+
 			Block.box(2, 2, 6, 4, 14, 8),
 			Block.box(12, 2, 6, 14, 14, 8),
 			Block.box(4, 2, 6, 12, 4, 8),
 			Block.box(4, 12, 6, 12, 14, 8),
 
-			// Вторая шина (северная)
+
 			Block.box(1, 1, 8, 5, 15, 14),
 			Block.box(11, 1, 8, 15, 15, 14),
 			Block.box(5, 1, 8, 11, 5, 14),
@@ -128,19 +124,19 @@ public class TireBlock extends Block {
 	);
 
 	private static final VoxelShape DOUBLE_EAST = Shapes.or(
-			// Первая шина (восточная)
+
 			Block.box(0, 1, 1, 6, 5, 15),
 			Block.box(0, 11, 1, 6, 15, 15),
 			Block.box(0, 5, 1, 6, 11, 5),
 			Block.box(0, 5, 11, 6, 11, 15),
 
-			// Промежуточная часть
+
 			Block.box(6, 2, 2, 8, 4, 14),
 			Block.box(6, 12, 2, 8, 14, 14),
 			Block.box(6, 4, 2, 8, 12, 4),
 			Block.box(6, 4, 12, 8, 12, 14),
 
-			// Вторая шина (западная)
+
 			Block.box(8, 1, 1, 14, 5, 15),
 			Block.box(8, 11, 1, 14, 15, 15),
 			Block.box(8, 5, 1, 14, 11, 5),
@@ -148,19 +144,19 @@ public class TireBlock extends Block {
 	);
 
 	private static final VoxelShape DOUBLE_WEST = Shapes.or(
-			// Первая шина (западная)
+
 			Block.box(10, 1, 1, 16, 5, 15),
 			Block.box(10, 11, 1, 16, 15, 15),
 			Block.box(10, 5, 1, 16, 11, 5),
 			Block.box(10, 5, 11, 16, 11, 15),
 
-			// Промежуточная часть
+
 			Block.box(8, 2, 2, 10, 4, 14),
 			Block.box(8, 12, 2, 10, 14, 14),
 			Block.box(8, 4, 2, 10, 12, 4),
 			Block.box(8, 4, 12, 10, 12, 14),
 
-			// Вторая шина (восточная)
+
 			Block.box(2, 1, 1, 8, 5, 15),
 			Block.box(2, 11, 1, 8, 15, 15),
 			Block.box(2, 5, 1, 8, 11, 5),
@@ -168,19 +164,19 @@ public class TireBlock extends Block {
 	);
 
 	private static final VoxelShape DOUBLE_UP = Shapes.or(
-			// Первая шина (верхняя)
+
 			Block.box(1, 0, 1, 5, 6, 15),
 			Block.box(11, 0, 1, 15, 6, 15),
 			Block.box(5, 0, 1, 11, 6, 5),
 			Block.box(5, 0, 11, 11, 6, 15),
 
-			// Промежуточная часть
+
 			Block.box(2, 6, 2, 4, 8, 14),
 			Block.box(12, 6, 2, 14, 8, 14),
 			Block.box(4, 6, 2, 12, 8, 4),
 			Block.box(4, 6, 12, 12, 8, 14),
 
-			// Вторая шина (нижняя)
+
 			Block.box(1, 8, 1, 5, 14, 15),
 			Block.box(11, 8, 1, 15, 14, 15),
 			Block.box(5, 8, 1, 11, 14, 5),
@@ -188,52 +184,52 @@ public class TireBlock extends Block {
 	);
 
 	private static final VoxelShape DOUBLE_DOWN = Shapes.or(
-			// Первая шина (нижняя)
+
 			Block.box(1, 10, 1, 5, 16, 15),
 			Block.box(11, 10, 1, 15, 16, 15),
 			Block.box(5, 10, 1, 11, 16, 5),
 			Block.box(5, 10, 11, 11, 16, 15),
 
-			// Промежуточная часть
+
 			Block.box(2, 8, 2, 4, 10, 14),
 			Block.box(12, 8, 2, 14, 10, 14),
 			Block.box(4, 8, 2, 12, 10, 4),
 			Block.box(4, 8, 12, 12, 10, 14),
 
-			// Вторая шина (верхняя)
+
 			Block.box(1, 2, 1, 5, 8, 15),
 			Block.box(11, 2, 1, 15, 8, 15),
 			Block.box(5, 2, 1, 11, 8, 5),
 			Block.box(5, 2, 11, 11, 8, 15)
 	);
 
-	// TRIPLE формы: три шины с двумя промежутками
+
 	private static final VoxelShape TRIPLE_NORTH = Shapes.or(
-			// Первая шина (северная)
+
 			Block.box(1, 1, 10, 5, 15, 16),
 			Block.box(11, 1, 10, 15, 15, 16),
 			Block.box(5, 1, 10, 11, 5, 16),
 			Block.box(5, 11, 10, 11, 15, 16),
 
-			// Первый промежуток
+
 			Block.box(2, 2, 8, 4, 14, 10),
 			Block.box(12, 2, 8, 14, 14, 10),
 			Block.box(4, 2, 8, 12, 4, 10),
 			Block.box(4, 12, 8, 12, 14, 10),
 
-			// Вторая шина (центральная)
+
 			Block.box(1, 1, 4, 5, 15, 8),
 			Block.box(11, 1, 4, 15, 15, 8),
 			Block.box(5, 1, 4, 11, 5, 8),
 			Block.box(5, 11, 4, 11, 15, 8),
 
-			// Второй промежуток
+
 			Block.box(2, 2, 2, 4, 14, 4),
 			Block.box(12, 2, 2, 14, 14, 4),
 			Block.box(4, 2, 2, 12, 4, 4),
 			Block.box(4, 12, 2, 12, 14, 4),
 
-			// Третья шина (южная)
+
 			Block.box(1, 1, 0, 5, 15, 2),
 			Block.box(11, 1, 0, 15, 15, 2),
 			Block.box(5, 1, 0, 11, 5, 2),
@@ -241,31 +237,31 @@ public class TireBlock extends Block {
 	);
 
 	private static final VoxelShape TRIPLE_SOUTH = Shapes.or(
-			// Первая шина (южная)
+
 			Block.box(1, 1, 0, 5, 15, 6),
 			Block.box(11, 1, 0, 15, 15, 6),
 			Block.box(5, 1, 0, 11, 5, 6),
 			Block.box(5, 11, 0, 11, 15, 6),
 
-			// Первый промежуток
+
 			Block.box(2, 2, 6, 4, 14, 8),
 			Block.box(12, 2, 6, 14, 14, 8),
 			Block.box(4, 2, 6, 12, 4, 8),
 			Block.box(4, 12, 6, 12, 14, 8),
 
-			// Вторая шина (центральная)
+
 			Block.box(1, 1, 8, 5, 15, 12),
 			Block.box(11, 1, 8, 15, 15, 12),
 			Block.box(5, 1, 8, 11, 5, 12),
 			Block.box(5, 11, 8, 11, 15, 12),
 
-			// Второй промежуток
+
 			Block.box(2, 2, 12, 4, 14, 14),
 			Block.box(12, 2, 12, 14, 14, 14),
 			Block.box(4, 2, 12, 12, 4, 14),
 			Block.box(4, 12, 12, 12, 14, 14),
 
-			// Третья шина (северная)
+
 			Block.box(1, 1, 14, 5, 15, 16),
 			Block.box(11, 1, 14, 15, 15, 16),
 			Block.box(5, 1, 14, 11, 5, 16),
@@ -273,31 +269,31 @@ public class TireBlock extends Block {
 	);
 
 	private static final VoxelShape TRIPLE_EAST = Shapes.or(
-			// Первая шина (восточная)
+
 			Block.box(0, 1, 1, 6, 5, 15),
 			Block.box(0, 11, 1, 6, 15, 15),
 			Block.box(0, 5, 1, 6, 11, 5),
 			Block.box(0, 5, 11, 6, 11, 15),
 
-			// Первый промежуток
+
 			Block.box(6, 2, 2, 8, 4, 14),
 			Block.box(6, 12, 2, 8, 14, 14),
 			Block.box(6, 4, 2, 8, 12, 4),
 			Block.box(6, 4, 12, 8, 12, 14),
 
-			// Вторая шина (центральная)
+
 			Block.box(8, 1, 1, 12, 5, 15),
 			Block.box(8, 11, 1, 12, 15, 15),
 			Block.box(8, 5, 1, 12, 11, 5),
 			Block.box(8, 5, 11, 12, 11, 15),
 
-			// Второй промежуток
+
 			Block.box(12, 2, 2, 14, 4, 14),
 			Block.box(12, 12, 2, 14, 14, 14),
 			Block.box(12, 4, 2, 14, 12, 4),
 			Block.box(12, 4, 12, 14, 12, 14),
 
-			// Третья шина (западная)
+
 			Block.box(14, 1, 1, 16, 5, 15),
 			Block.box(14, 11, 1, 16, 15, 15),
 			Block.box(14, 5, 1, 16, 11, 5),
@@ -305,31 +301,31 @@ public class TireBlock extends Block {
 	);
 
 	private static final VoxelShape TRIPLE_WEST = Shapes.or(
-			// Первая шина (западная)
+
 			Block.box(10, 1, 1, 16, 5, 15),
 			Block.box(10, 11, 1, 16, 15, 15),
 			Block.box(10, 5, 1, 16, 11, 5),
 			Block.box(10, 5, 11, 16, 11, 15),
 
-			// Первый промежуток
+
 			Block.box(8, 2, 2, 10, 4, 14),
 			Block.box(8, 12, 2, 10, 14, 14),
 			Block.box(8, 4, 2, 10, 12, 4),
 			Block.box(8, 4, 12, 10, 12, 14),
 
-			// Вторая шина (центральная)
+
 			Block.box(4, 1, 1, 8, 5, 15),
 			Block.box(4, 11, 1, 8, 15, 15),
 			Block.box(4, 5, 1, 8, 11, 5),
 			Block.box(4, 5, 11, 8, 11, 15),
 
-			// Второй промежуток
+
 			Block.box(2, 2, 2, 4, 4, 14),
 			Block.box(2, 12, 2, 4, 14, 14),
 			Block.box(2, 4, 2, 4, 12, 4),
 			Block.box(2, 4, 12, 4, 12, 14),
 
-			// Третья шина (восточная)
+
 			Block.box(0, 1, 1, 2, 5, 15),
 			Block.box(0, 11, 1, 2, 15, 15),
 			Block.box(0, 5, 1, 2, 11, 5),
@@ -337,31 +333,31 @@ public class TireBlock extends Block {
 	);
 
 	private static final VoxelShape TRIPLE_UP = Shapes.or(
-			// Первая шина (верхняя)
+
 			Block.box(1, 0, 1, 5, 6, 15),
 			Block.box(11, 0, 1, 15, 6, 15),
 			Block.box(5, 0, 1, 11, 6, 5),
 			Block.box(5, 0, 11, 11, 6, 15),
 
-			// Первый промежуток
+
 			Block.box(2, 6, 2, 4, 8, 14),
 			Block.box(12, 6, 2, 14, 8, 14),
 			Block.box(4, 6, 2, 12, 8, 4),
 			Block.box(4, 6, 12, 12, 8, 14),
 
-			// Вторая шина (центральная)
+
 			Block.box(1, 8, 1, 5, 12, 15),
 			Block.box(11, 8, 1, 15, 12, 15),
 			Block.box(5, 8, 1, 11, 12, 5),
 			Block.box(5, 8, 11, 11, 12, 15),
 
-			// Второй промежуток
+
 			Block.box(2, 12, 2, 4, 14, 14),
 			Block.box(12, 12, 2, 14, 14, 14),
 			Block.box(4, 12, 2, 12, 14, 4),
 			Block.box(4, 12, 12, 12, 14, 14),
 
-			// Третья шина (нижняя)
+
 			Block.box(1, 14, 1, 5, 16, 15),
 			Block.box(11, 14, 1, 15, 16, 15),
 			Block.box(5, 14, 1, 11, 16, 5),
@@ -369,118 +365,118 @@ public class TireBlock extends Block {
 	);
 
 	private static final VoxelShape TRIPLE_DOWN = Shapes.or(
-			// Первая шина (нижняя)
+
 			Block.box(1, 10, 1, 5, 16, 15),
 			Block.box(11, 10, 1, 15, 16, 15),
 			Block.box(5, 10, 1, 11, 16, 5),
 			Block.box(5, 10, 11, 11, 16, 15),
 
-			// Первый промежуток
+
 			Block.box(2, 8, 2, 4, 10, 14),
 			Block.box(12, 8, 2, 14, 10, 14),
 			Block.box(4, 8, 2, 12, 10, 4),
 			Block.box(4, 8, 12, 12, 10, 14),
 
-			// Вторая шина (центральная)
+
 			Block.box(1, 4, 1, 5, 8, 15),
 			Block.box(11, 4, 1, 15, 8, 15),
 			Block.box(5, 4, 1, 11, 8, 5),
 			Block.box(5, 4, 11, 11, 8, 15),
 
-			// Второй промежуток
+
 			Block.box(2, 2, 2, 4, 4, 14),
 			Block.box(12, 2, 2, 14, 4, 14),
 			Block.box(4, 2, 2, 12, 4, 4),
 			Block.box(4, 2, 12, 12, 4, 14),
 
-			// Третья шина (верхняя)
+
 			Block.box(1, 0, 1, 5, 2, 15),
 			Block.box(11, 0, 1, 15, 2, 15),
 			Block.box(5, 0, 1, 11, 2, 5),
 			Block.box(5, 0, 11, 11, 2, 15)
 	);
 
-	private static final VoxelShape SINGLE_NORTH_INTERACT = Block.box(1, 1, 10, 15, 15, 16); // 14x14x6, прижата к северу (Z=10..16)
-	private static final VoxelShape SINGLE_SOUTH_INTERACT = Block.box(1, 1, 0, 15, 15, 6);   // 14x14x6, прижата к югу (Z=0..6)
-	private static final VoxelShape SINGLE_EAST_INTERACT = Block.box(0, 1, 1, 6, 15, 15);     // 6x14x14, прижата к востоку (X=0..6)
-	private static final VoxelShape SINGLE_WEST_INTERACT = Block.box(10, 1, 1, 16, 15, 15);   // 6x14x14, прижата к западу (X=10..16)
-	private static final VoxelShape SINGLE_UP_INTERACT = Block.box(1, 0, 1, 15, 6, 15);       // 14x6x14, прижата к верху (Y=0..6)
-	private static final VoxelShape SINGLE_DOWN_INTERACT = Shapes.or(Block.box(1, 10, 1, 15, 16, 15));   // 14x6x14, прижата к низу (Y=10..16)
+	private static final VoxelShape SINGLE_NORTH_INTERACT = Block.box(1, 1, 10, 15, 15, 16);
+	private static final VoxelShape SINGLE_SOUTH_INTERACT = Block.box(1, 1, 0, 15, 15, 6);
+	private static final VoxelShape SINGLE_EAST_INTERACT = Block.box(0, 1, 1, 6, 15, 15);
+	private static final VoxelShape SINGLE_WEST_INTERACT = Block.box(10, 1, 1, 16, 15, 15);
+	private static final VoxelShape SINGLE_UP_INTERACT = Block.box(1, 0, 1, 15, 6, 15);
+	private static final VoxelShape SINGLE_DOWN_INTERACT = Shapes.or(Block.box(1, 10, 1, 15, 16, 15));
 
-	// DOUBLE формы: две шины с промежутком
+
 	private static final VoxelShape DOUBLE_NORTH_INTERACT = Shapes.or(
-			Block.box(1, 1, 10, 15, 15, 16),  // Первая шина
-			Block.box(2, 2, 8, 14, 14, 10),   // Промежуточная часть
-			Block.box(1, 1, 2, 15, 15, 8)     // Вторая шина
+			Block.box(1, 1, 10, 15, 15, 16),
+			Block.box(2, 2, 8, 14, 14, 10),
+			Block.box(1, 1, 2, 15, 15, 8)
 	);
 	private static final VoxelShape DOUBLE_SOUTH_INTERACT = Shapes.or(
-			Block.box(1, 1, 0, 15, 15, 6),    // Первая шина
-			Block.box(2, 2, 6, 14, 14, 8),    // Промежуточная часть
-			Block.box(1, 1, 8, 15, 15, 14)    // Вторая шина
+			Block.box(1, 1, 0, 15, 15, 6),
+			Block.box(2, 2, 6, 14, 14, 8),
+			Block.box(1, 1, 8, 15, 15, 14)
 	);
 	private static final VoxelShape DOUBLE_EAST_INTERACT = Shapes.or(
-			Block.box(0, 1, 1, 6, 15, 15),    // Первая шина
-			Block.box(6, 2, 2, 8, 14, 14),    // Промежуточная часть
-			Block.box(8, 1, 1, 14, 15, 15)    // Вторая шина
+			Block.box(0, 1, 1, 6, 15, 15),
+			Block.box(6, 2, 2, 8, 14, 14),
+			Block.box(8, 1, 1, 14, 15, 15)
 	);
 	private static final VoxelShape DOUBLE_WEST_INTERACT = Shapes.or(
-			Block.box(10, 1, 1, 16, 15, 15),  // Первая шина
-			Block.box(8, 2, 2, 10, 14, 14),   // Промежуточная часть
-			Block.box(2, 1, 1, 8, 15, 15)     // Вторая шина
+			Block.box(10, 1, 1, 16, 15, 15),
+			Block.box(8, 2, 2, 10, 14, 14),
+			Block.box(2, 1, 1, 8, 15, 15)
 	);
 	private static final VoxelShape DOUBLE_UP_INTERACT = Shapes.or(
-			Block.box(1, 0, 1, 15, 6, 15),    // Первая шина
-			Block.box(2, 6, 2, 14, 8, 14),    // Промежуточная часть
-			Block.box(1, 8, 1, 15, 14, 15)    // Вторая шина
+			Block.box(1, 0, 1, 15, 6, 15),
+			Block.box(2, 6, 2, 14, 8, 14),
+			Block.box(1, 8, 1, 15, 14, 15)
 	);
 	private static final VoxelShape DOUBLE_DOWN_INTERACT = Shapes.or(
-			Block.box(1, 10, 1, 15, 16, 15),  // Первая шина
-			Block.box(2, 8, 2, 14, 10, 14),   // Промежуточная часть
-			Block.box(1, 2, 1, 15, 8, 15)     // Вторая шина
+			Block.box(1, 10, 1, 15, 16, 15),
+			Block.box(2, 8, 2, 14, 10, 14),
+			Block.box(1, 2, 1, 15, 8, 15)
 	);
 
-	// TRIPLE формы: три шины с двумя промежутками
+
 	private static final VoxelShape TRIPLE_NORTH_INTERACT = Shapes.or(
-			Block.box(1, 1, 10, 15, 15, 16),  // Первая шина
-			Block.box(2, 2, 8, 14, 14, 10),   // Первый промежуток
-			Block.box(1, 1, 4, 15, 15, 8),    // Вторая шина
-			Block.box(2, 2, 2, 14, 14, 4),    // Второй промежуток
-			Block.box(1, 1, 0, 15, 15, 2)     // Третья шина
+			Block.box(1, 1, 10, 15, 15, 16),
+			Block.box(2, 2, 8, 14, 14, 10),
+			Block.box(1, 1, 4, 15, 15, 8),
+			Block.box(2, 2, 2, 14, 14, 4),
+			Block.box(1, 1, 0, 15, 15, 2)
 	);
 	private static final VoxelShape TRIPLE_SOUTH_INTERACT = Shapes.or(
-			Block.box(1, 1, 0, 15, 15, 6),    // Первая шина
-			Block.box(2, 2, 6, 14, 14, 8),    // Первый промежуток
-			Block.box(1, 1, 8, 15, 15, 12),   // Вторая шина
-			Block.box(2, 2, 12, 14, 14, 14),  // Второй промежуток
-			Block.box(1, 1, 14, 15, 15, 16)   // Третья шина
+			Block.box(1, 1, 0, 15, 15, 6),
+			Block.box(2, 2, 6, 14, 14, 8),
+			Block.box(1, 1, 8, 15, 15, 12),
+			Block.box(2, 2, 12, 14, 14, 14),
+			Block.box(1, 1, 14, 15, 15, 16)
 	);
 	private static final VoxelShape TRIPLE_EAST_INTERACT = Shapes.or(
-			Block.box(0, 1, 1, 6, 15, 15),    // Первая шина
-			Block.box(6, 2, 2, 8, 14, 14),    // Первый промежуток
-			Block.box(8, 1, 1, 12, 15, 15),   // Вторая шина
-			Block.box(12, 2, 2, 14, 14, 14),  // Второй промежуток
-			Block.box(14, 1, 1, 16, 15, 15)   // Третья шина
+			Block.box(0, 1, 1, 6, 15, 15),
+			Block.box(6, 2, 2, 8, 14, 14),
+			Block.box(8, 1, 1, 12, 15, 15),
+			Block.box(12, 2, 2, 14, 14, 14),
+			Block.box(14, 1, 1, 16, 15, 15)
 	);
 	private static final VoxelShape TRIPLE_WEST_INTERACT = Shapes.or(
-			Block.box(10, 1, 1, 16, 15, 15),  // Первая шина
-			Block.box(8, 2, 2, 10, 14, 14),   // Первый промежуток
-			Block.box(4, 1, 1, 8, 15, 15),    // Вторая шина
-			Block.box(2, 2, 2, 4, 14, 14),    // Второй промежуток
-			Block.box(0, 1, 1, 2, 15, 15)     // Третья шина
+			Block.box(10, 1, 1, 16, 15, 15),
+			Block.box(8, 2, 2, 10, 14, 14),
+			Block.box(4, 1, 1, 8, 15, 15),
+			Block.box(2, 2, 2, 4, 14, 14),
+			Block.box(0, 1, 1, 2, 15, 15)
 	);
 	private static final VoxelShape TRIPLE_UP_INTERACT = Shapes.or(
-			Block.box(1, 0, 1, 15, 6, 15),    // Первая шина
-			Block.box(2, 6, 2, 14, 8, 14),    // Первый промежуток
-			Block.box(1, 8, 1, 15, 12, 15),   // Вторая шина
-			Block.box(2, 12, 2, 14, 14, 14),  // Второй промежуток
-			Block.box(1, 14, 1, 15, 16, 15)   // Третья шина
+			Block.box(1, 0, 1, 15, 6, 15),
+			Block.box(2, 6, 2, 14, 8, 14),
+			Block.box(1, 8, 1, 15, 12, 15),
+			Block.box(2, 12, 2, 14, 14, 14),
+			Block.box(1, 14, 1, 15, 16, 15)
 	);
 	private static final VoxelShape TRIPLE_DOWN_INTERACT = Shapes.or(
-			Block.box(1, 10, 1, 15, 16, 15),  // Первая шина
-			Block.box(2, 8, 2, 14, 10, 14),   // Первый промежуток
-			Block.box(1, 4, 1, 15, 8, 15),    // Вторая шина
-			Block.box(2, 2, 2, 14, 4, 14),    // Второй промежуток
-			Block.box(1, 0, 1, 15, 2, 15)     // Третья шина
+			Block.box(1, 10, 1, 15, 16, 15),
+			Block.box(2, 8, 2, 14, 10, 14),
+			Block.box(1, 4, 1, 15, 8, 15),
+			Block.box(2, 2, 2, 14, 4, 14),
+			Block.box(1, 0, 1, 15, 2, 15)
 	);
 
 	public TireBlock(Properties properties) {
@@ -503,7 +499,7 @@ public class TireBlock extends Block {
 		Level level = context.getLevel();
 		BlockState clickedState = level.getBlockState(clickedPos);
 
-		// Если кликнули на существующую шину, пытаемся соединить их
+
 		if (clickedState.is(this) && clickedState.getValue(FACING) == clickedFace) {
 			Form currentForm = clickedState.getValue(FORM);
 			if (currentForm == Form.SINGLE) {
@@ -531,16 +527,12 @@ public class TireBlock extends Block {
 
 	@Override
 	public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-		// Проверяем только направление FACING - вперед
 		if (direction == state.getValue(FACING)) {
-			// Если текущий блок DOUBLE и впереди есть шина с тем же направлением
 			if (state.getValue(FORM) == Form.DOUBLE) {
 				if (neighborState.is(this) && neighborState.getValue(FACING) == direction) {
 					return state.setValue(FORM, Form.TRIPLE);
 				}
-			}
-			// Если текущий блок TRIPLE и шина впереди исчезла
-			else if (state.getValue(FORM) == Form.TRIPLE) {
+			} else if (state.getValue(FORM) == Form.TRIPLE) {
 				if (!neighborState.is(this) || neighborState.getValue(FACING) != direction) {
 					return state.setValue(FORM, Form.DOUBLE);
 				}
@@ -553,17 +545,15 @@ public class TireBlock extends Block {
 	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
 		super.neighborChanged(state, level, pos, block, fromPos, isMoving);
 
-		// Проверяем блоки сзади (в противоположном направлении)
+
 		Direction opposite = state.getValue(FACING).getOpposite();
 		BlockPos behindPos = pos.relative(opposite);
 		BlockState behindState = level.getBlockState(behindPos);
 
-		// Если сзади стоит DOUBLE шина с тем же направлением
+
 		if (behindState.is(this) && behindState.getValue(FACING) == state.getValue(FACING)) {
 			if (behindState.getValue(FORM) == Form.DOUBLE) {
-				// Проверяем, есть ли шина впереди у этой задней шины (то есть текущая шина)
 				if (state.is(this) && state.getValue(FACING) == behindState.getValue(FACING)) {
-					// Обновляем заднюю шину в TRIPLE
 					level.setBlock(behindPos, behindState.setValue(FORM, Form.TRIPLE), 3);
 				}
 			}
@@ -691,9 +681,7 @@ public class TireBlock extends Block {
 	public void updateEntityAfterFallOn(BlockGetter pLevel, Entity pEntity) {
 		if (pEntity.isSuppressingBounce()) {
 			super.updateEntityAfterFallOn(pLevel, pEntity);
-		}/* else {
-			this.bounce(pEntity);
-		}*/
+		}
 
 	}
 
@@ -741,9 +729,9 @@ public class TireBlock extends Block {
 		return new AABB(voxelShapeAABB.minX + pos.getX(), voxelShapeAABB.minY + pos.getY(), voxelShapeAABB.minZ + pos.getZ(),
 				voxelShapeAABB.maxX + pos.getX(), voxelShapeAABB.maxY + pos.getY(), voxelShapeAABB.maxZ + pos.getZ());
 	}
+
 	@Override
 	public float getDestroyProgress(BlockState state, Player player, BlockGetter getter, BlockPos pos) {
-		// ItemShears#getDestroySpeed is really dumb and doesn't check IShearable so we have to do it this way to try to match the wool break speed with shears
 		return (player.getMainHandItem().getItem() instanceof ShearsItem) ? 1.0F : super.getDestroyProgress(state, player, getter, pos);
 	}
 
@@ -752,26 +740,24 @@ public class TireBlock extends Block {
 	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
 		ItemStack itemStack = player.getItemInHand(hand);
 
-		// Проверяем, что игрок использует поводок и у него нет другой привязанной шины
+
 		if (state.getValue(FORM) == Form.SINGLE && itemStack.is(Items.LEAD)) {
-			// Проверяем, нет ли у игрока уже привязанных качелей
 			if (!hasPlayerLeashedTireSwing(player)) {
 				if (!level.isClientSide) {
-					// Удаляем блок
 					level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
-					level.playSound(null,pos,SoundEvents.LEASH_KNOT_PLACE,SoundSource.BLOCKS, 1.0F, 1.0F);
+					level.playSound(null, pos, SoundEvents.LEASH_KNOT_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
 
-					// Создаем сущность качелей
+
 					TireSwingEntity tireSwing = new TireSwingEntity(ModEntities.TIRE_SWING.get(), level);
 					tireSwing.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 
-					// Привязываем к игроку
+
 					tireSwing.setLeashedTo(player, true);
 
-					// Добавляем в мир
+
 					level.addFreshEntity(tireSwing);
 
-					// Уменьшаем поводок в руке
+
 					if (!player.getAbilities().instabuild) {
 						itemStack.shrink(1);
 					}
@@ -783,7 +769,7 @@ public class TireBlock extends Block {
 		return super.use(state, level, pos, player, hand, hit);
 	}
 
-	// Метод для проверки, есть ли у игрока уже привязанные качели
+
 	private boolean hasPlayerLeashedTireSwing(Player player) {
 		for (Entity entity : player.level().getEntitiesOfClass(TireSwingEntity.class, player.getBoundingBox().inflate(100))) {
 			if (entity instanceof TireSwingEntity tireSwing && tireSwing.getLeashHolder() == player) {

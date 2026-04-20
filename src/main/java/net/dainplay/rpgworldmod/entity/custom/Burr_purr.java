@@ -2,10 +2,7 @@ package net.dainplay.rpgworldmod.entity.custom;
 
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.block.ModBlocks;
-import net.dainplay.rpgworldmod.data.tags.GoldenKillBurr_purrTrigger;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
-import net.dainplay.rpgworldmod.data.tags.WealdBladeGesturesTrigger;
-import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.entity.ModEntities;
 import net.dainplay.rpgworldmod.entity.projectile.BurrSpikeEntity;
 import net.dainplay.rpgworldmod.item.ModItems;
@@ -19,7 +16,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.PlayerAdvancements;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -32,26 +28,32 @@ import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.NeutralMob;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.ClimbOnTopOfPowderSnowGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MoveTowardsTargetGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.minecraft.world.entity.animal.Ocelot;
-import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.Vex;
-import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -68,10 +70,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-import java.util.function.Predicate;
 
 public class Burr_purr extends Monster implements NeutralMob {
-
 	public static final EntityDataAccessor<Boolean> DATA_IS_SPINNING = SynchedEntityData.defineId(Burr_purr.class, EntityDataSerializers.BOOLEAN);
 	public static final EntityDataAccessor<Boolean> DATA_IS_MOVING = SynchedEntityData.defineId(Burr_purr.class, EntityDataSerializers.BOOLEAN);
 	public static final EntityDataAccessor<Boolean> DATA_CAN_SEE_TARGET = SynchedEntityData.defineId(Burr_purr.class, EntityDataSerializers.BOOLEAN);
@@ -80,8 +80,8 @@ public class Burr_purr extends Monster implements NeutralMob {
 	private static final EntityDataAccessor<Integer> DATA_REMAINING_ANGER_TIME = SynchedEntityData.defineId(Burr_purr.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> DATA_REMAINING_SPIKES = SynchedEntityData.defineId(Burr_purr.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Boolean> DATA_DEALT_DAMAGE = SynchedEntityData.defineId(Burr_purr.class, EntityDataSerializers.BOOLEAN);
-	private static final int SPIN_UP_TIME = 30;  // Время, в течение которого моб ускоряется, прежде чем сделать рывок.
-	private Vec3 dashDirection = Vec3.ZERO; // Направление рывка.
+	private static final int SPIN_UP_TIME = 30;
+	private Vec3 dashDirection = Vec3.ZERO;
 	@Nullable
 	private UUID persistentAngerTarget;
 	private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
@@ -110,7 +110,7 @@ public class Burr_purr extends Monster implements NeutralMob {
 				.add(Attributes.MAX_HEALTH, 12.0D)
 				.add(Attributes.MOVEMENT_SPEED, 0.3D)
 				.add(Attributes.FOLLOW_RANGE, 16.0D)
-				.add(Attributes.ARMOR, 5) // Защита
+				.add(Attributes.ARMOR, 5)
 				.add(Attributes.ATTACK_DAMAGE, 2.0);
 	}
 
@@ -159,21 +159,21 @@ public class Burr_purr extends Monster implements NeutralMob {
 	}
 
 	public static boolean hasRieLeavesAboveBlock(LevelAccessor world, BlockPos pos) {
-		int y = pos.getY() + 1;  // Start 1 block above the given pos
+		int y = pos.getY() + 1;
 
-		while (y < world.getMaxBuildHeight()) {  // Iterate upwards till the world's build limit
+		while (y < world.getMaxBuildHeight()) {
 			BlockPos blockAbovePos = new BlockPos(pos.getX(), y, pos.getZ());
 			BlockState blockState = world.getBlockState(blockAbovePos);
 
-			if (!blockState.isAir()) {  // Check if it's not air
+			if (!blockState.isAir()) {
 				Block blockAbove = blockState.getBlock();
-				return blockAbove == ModBlocks.RIE_LEAVES.get();  // Check if it's oak leaves
+				return blockAbove == ModBlocks.RIE_LEAVES.get();
 			}
 
 			y++;
 		}
 
-		return false;  // If no non-air block was found above the initial BlockPos
+		return false;
 	}
 
 
@@ -222,18 +222,17 @@ public class Burr_purr extends Monster implements NeutralMob {
 	}
 
 	public static void spawnParticlesBehind(Entity entity, int amount, double distance) {
-		Vec3 lookVector = entity.getLookAngle(); // Get the entity's look vector
-		Vec3 oppositeVector = lookVector.scale(-1); // Get the opposite direction of the look vector.
+		Vec3 lookVector = entity.getLookAngle();
+		Vec3 oppositeVector = lookVector.scale(-1);
 
 		for (int i = 0; i < amount; i++) {
-			// Use random offsets to create particle spread.
 			double randomX = (Math.random() - 0.5) * 0.5;
 			double randomZ = (Math.random() - 0.5) * 0.5;
 
-			//Use the opposite vector to create an offset behind the entity.
+
 			Vec3 particleOffset = oppositeVector.scale(distance).add(randomX, 0.5, randomZ);
 
-			//Spawn our particle at the rotated offset of the entity.
+
 			entity.level().addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE,
 					entity.getX() + particleOffset.x,
 					entity.getY() + particleOffset.y,
@@ -266,9 +265,9 @@ public class Burr_purr extends Monster implements NeutralMob {
 
 	public boolean canEntitySeeEntity(Entity target) {
 		if (target == null) return false;
-		if (this.level() != target.level()) return false; // Different dimensions
+		if (this.level() != target.level()) return false;
 
-		// Handle invisibilty effect
+
 		if (target instanceof LivingEntity && ((LivingEntity) target).isInvisible()) return false;
 
 		Level world = this.level();
@@ -281,7 +280,7 @@ public class Burr_purr extends Monster implements NeutralMob {
 						ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this)
 		);
 
-		return blockHitResult.getType() == HitResult.Type.MISS; // If we hit nothing, the view is clear
+		return blockHitResult.getType() == HitResult.Type.MISS;
 	}
 
 	private void spinTick() {
@@ -335,7 +334,6 @@ public class Burr_purr extends Monster implements NeutralMob {
 			this.entityData.set(DATA_IS_SPINNING, false);
 			this.entityData.set(DATA_SPIN_TIMER, 0);
 		} else if (this.entityData.get(DATA_SPIN_TIMER) == SPIN_UP_TIME) {
-			// Начинаем рывок.
 			this.entityData.set(DATA_SPIN_TIMER, 0);
 			this.entityData.set(DATA_DASH_TIMER, 40);
 			this.dashDirection = this.getTarget().position().subtract(this.position()).normalize();
@@ -346,7 +344,7 @@ public class Burr_purr extends Monster implements NeutralMob {
 	private void dash() {
 		this.playSound(RPGSounds.BURR_PURR_DASH.get(), 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
 		double speedMultiplier = 3.0;
-		this.setDeltaMovement(this.dashDirection.scale(speedMultiplier)); // Рывок в направлении цели
+		this.setDeltaMovement(this.dashDirection.scale(speedMultiplier));
 		this.entityData.set(DATA_IS_SPINNING, false);
 	}
 
@@ -360,9 +358,7 @@ public class Burr_purr extends Monster implements NeutralMob {
 
 	}
 
-	/**
-	 * Sets the active target the Goal system uses for tracking
-	 */
+
 	public void setTarget(@Nullable LivingEntity pTarget) {
 		if ((pTarget instanceof Player player && player.isCreative()) || pTarget instanceof Mintobat) return;
 		super.setTarget(pTarget);
@@ -436,11 +432,6 @@ public class Burr_purr extends Monster implements NeutralMob {
 	protected SoundEvent getDeathSound() {
 		return RPGSounds.BURR_PURR_DEATH.get();
 	}
-
-	/**
-	 * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
-	 * use this to react to sunlight and start to burn.
-	 */
 
 
 	public int getRemainingPersistentAngerTime() {

@@ -9,22 +9,22 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class ModLootModifiers {
-    public static final DeferredRegister<Codec<? extends IGlobalLootModifier>> LOOT_MODIFIER_SERIALIZERS =
-            DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, RPGworldMod.MOD_ID);
+	public static final DeferredRegister<Codec<? extends IGlobalLootModifier>> LOOT_MODIFIER_SERIALIZERS =
+			DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, RPGworldMod.MOD_ID);
 
-    public static final RegistryObject<Codec<? extends IGlobalLootModifier>> ADD_ITEM =
-            LOOT_MODIFIER_SERIALIZERS.register("add_item", AddItemModifier.CODEC);
-    public static final RegistryObject<Codec<? extends IGlobalLootModifier>> REPLACE_ITEM =
-            LOOT_MODIFIER_SERIALIZERS.register("replace_item", ReplaceItemModifier.CODEC);
-    public static final RegistryObject<Codec<SmeltingModifier>> TOOL_SMELTING =
-            LOOT_MODIFIER_SERIALIZERS.register("tool_smelting", () -> SmeltingModifier.CODEC);
-    public static final RegistryObject<Codec<? extends IGlobalLootModifier>> ADD_ENCHANTED_SCROLL =
-            LOOT_MODIFIER_SERIALIZERS.register("add_enchanted_scroll", AddEnchantedScrollModifier.CODEC);
-    public static final RegistryObject<Codec<NetherStarScrollPickaxeModifier>> NETHER_STAR_PICKAXE =
-            LOOT_MODIFIER_SERIALIZERS.register("nether_star_pickaxe", () -> NetherStarScrollPickaxeModifier.CODEC);
+	public static final RegistryObject<Codec<? extends IGlobalLootModifier>> ADD_ITEM =
+			LOOT_MODIFIER_SERIALIZERS.register("add_item", AddItemModifier.CODEC);
+	public static final RegistryObject<Codec<? extends IGlobalLootModifier>> REPLACE_ITEM =
+			LOOT_MODIFIER_SERIALIZERS.register("replace_item", ReplaceItemModifier.CODEC);
+	public static final RegistryObject<Codec<SmeltingModifier>> TOOL_SMELTING =
+			LOOT_MODIFIER_SERIALIZERS.register("tool_smelting", () -> SmeltingModifier.CODEC);
+	public static final RegistryObject<Codec<? extends IGlobalLootModifier>> ADD_ENCHANTED_SCROLL =
+			LOOT_MODIFIER_SERIALIZERS.register("add_enchanted_scroll", AddEnchantedScrollModifier.CODEC);
+	public static final RegistryObject<Codec<NetherStarScrollPickaxeModifier>> NETHER_STAR_PICKAXE =
+			LOOT_MODIFIER_SERIALIZERS.register("nether_star_pickaxe", () -> NetherStarScrollPickaxeModifier.CODEC);
 
 
-    public static void register(IEventBus eventBus) {
-        LOOT_MODIFIER_SERIALIZERS.register(eventBus);
-    }
+	public static void register(IEventBus eventBus) {
+		LOOT_MODIFIER_SERIALIZERS.register(eventBus);
+	}
 }

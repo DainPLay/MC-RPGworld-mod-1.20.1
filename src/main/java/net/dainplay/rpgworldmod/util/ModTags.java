@@ -3,9 +3,7 @@ package net.dainplay.rpgworldmod.util;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BannerPatternTags;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
@@ -14,46 +12,46 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerPattern;
 
 public class ModTags {
-    public static class Blocks {
-        public static final TagKey<Block> STICKY_FOR_MOSQUITOS = forgeTag("sticky_for_mosquitos");
-        public static final TagKey<Block> SWEET_FOOD = forgeTag("sweet_food");
-        private static TagKey<Block> forgeTag (String name) {
-            return BlockTags.create(new ResourceLocation("forge", name));
-        }
-    }
-    public static class Entity {
-        public static final TagKey<EntityType<?>> SOULLESS = forgeTag("soulless");
-        private static TagKey<EntityType<?>> forgeTag (String name) {
-            return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("forge", name));
-        }
-    }
-    public static class BannerPatterns {
-        public static final TagKey<BannerPattern> PATTERN_ITEM_RIE_WEALD = forgeTag("pattern_item/rie_weald");
-        private static TagKey<BannerPattern> forgeTag (String name) {
-            return TagKey.create(Registries.BANNER_PATTERN, RPGworldMod.prefix(name));
-        }
-    }
+	public static class Blocks {
+		public static final TagKey<Block> STICKY_FOR_MOSQUITOS = forgeTag("sticky_for_mosquitos");
+		public static final TagKey<Block> SWEET_FOOD = forgeTag("sweet_food");
 
-    public static class Items {
+		private static TagKey<Block> forgeTag(String name) {
+			return BlockTags.create(new ResourceLocation("forge", name));
+		}
+	}
 
-        public static final TagKey<Item> EXTINGUISH_RAZORLEAF = forgeTag("extinguish_razorleaf");
-        public static final TagKey<Item> WIDOWEED_CONSUMABLE = forgeTag("widoweed_consumable");
-        public static final TagKey<Item> BRAMBLEFOX_FOOD = forgeTag("bramblefox_food");
-        public static final TagKey<Item> LIVING_WOOD_LOGS = modTag("living_wood_logs");
-        public static final TagKey<Item> SWEET_FOOD = forgeTag("sweet_food");
-        private static TagKey<Item> forgeTag (String name) {
-            return ItemTags.create(new ResourceLocation("forge", name));
-        }
-        private static TagKey<Item> modTag (String name) {
-            return ItemTags.create(new ResourceLocation(RPGworldMod.MOD_ID, name));
-        }
-    }
+	public static class Entity {
+		public static final TagKey<EntityType<?>> SOULLESS = forgeTag("soulless");
 
-   //public static class Entities {
+		private static TagKey<EntityType<?>> forgeTag(String name) {
+			return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("forge", name));
+		}
+	}
 
-   //    public static final TagKey<EntityType<?>> WIDOWEED_CONSUMABLE = forgeTag("widoweed_consumable");
-   //    private static TagKey<EntityType<?>> forgeTag (String name) {
-   //        return EntityTypeTags.create(new ResourceLocation("forge", name));
-   //    }
-   //}
+	public static class BannerPatterns {
+		public static final TagKey<BannerPattern> PATTERN_ITEM_RIE_WEALD = forgeTag("pattern_item/rie_weald");
+
+		private static TagKey<BannerPattern> forgeTag(String name) {
+			return TagKey.create(Registries.BANNER_PATTERN, RPGworldMod.prefix(name));
+		}
+	}
+
+	public static class Items {
+		public static final TagKey<Item> EXTINGUISH_RAZORLEAF = forgeTag("extinguish_razorleaf");
+		public static final TagKey<Item> WIDOWEED_CONSUMABLE = forgeTag("widoweed_consumable");
+		public static final TagKey<Item> BRAMBLEFOX_FOOD = forgeTag("bramblefox_food");
+		public static final TagKey<Item> LIVING_WOOD_LOGS = modTag("living_wood_logs");
+		public static final TagKey<Item> SWEET_FOOD = forgeTag("sweet_food");
+
+		private static TagKey<Item> forgeTag(String name) {
+			return ItemTags.create(new ResourceLocation("forge", name));
+		}
+
+		private static TagKey<Item> modTag(String name) {
+			return ItemTags.create(new ResourceLocation(RPGworldMod.MOD_ID, name));
+		}
+	}
+
+
 }

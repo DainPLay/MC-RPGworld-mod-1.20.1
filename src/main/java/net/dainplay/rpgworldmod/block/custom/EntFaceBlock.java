@@ -4,8 +4,6 @@ import net.dainplay.rpgworldmod.block.entity.custom.EntFaceBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -58,13 +56,13 @@ public class EntFaceBlock extends BaseEntityBlock {
 				.setValue(DESTROY_STAGE, 0));
 	}
 
-		@Override
-		public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+	@Override
+	public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
 		return Shapes.empty();
 	}
 
-		@Override
-		public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+	@Override
+	public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
 		return 1.0F;
 	}
 
@@ -73,7 +71,7 @@ public class EntFaceBlock extends BaseEntityBlock {
 		if (!state.is(newState.getBlock())) {
 			BlockEntity blockEntity = level.getBlockEntity(pos);
 			if (blockEntity instanceof EntFaceBlockEntity) {
-				EntFaceBlockEntity.destroyEntBlocks(level,pos);
+				EntFaceBlockEntity.destroyEntBlocks(level, pos);
 			}
 		}
 		super.onRemove(state, level, pos, newState, isMoving);
@@ -108,7 +106,7 @@ public class EntFaceBlock extends BaseEntityBlock {
 
 		BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
 		if (blockEntity instanceof EntFaceBlockEntity) {
-			EntFaceBlockEntity.scanAndSaveRelatedBlocks(pLevel,pPos);
+			EntFaceBlockEntity.scanAndSaveRelatedBlocks(pLevel, pPos);
 		}
 	}
 
@@ -138,8 +136,8 @@ public class EntFaceBlock extends BaseEntityBlock {
 	public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer,
 								 InteractionHand pHand, BlockHitResult pHit) {
 		if (pHit.getDirection() == pState.getValue(FACING) && pState.getValue(ASLEEP)) {
-			if(!pLevel.isClientSide) {
-				if(pLevel.getBlockEntity(pPos) instanceof EntFaceBlockEntity be) be.wakeUp();
+			if (!pLevel.isClientSide) {
+				if (pLevel.getBlockEntity(pPos) instanceof EntFaceBlockEntity be) be.wakeUp();
 			}
 			return InteractionResult.SUCCESS;
 		}

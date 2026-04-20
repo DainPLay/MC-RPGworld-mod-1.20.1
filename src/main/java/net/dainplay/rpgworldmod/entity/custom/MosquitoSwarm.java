@@ -18,7 +18,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -37,7 +36,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -50,7 +48,6 @@ import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -65,22 +62,17 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.Skeleton;
-import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.MultifaceBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -100,10 +92,10 @@ import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -122,9 +114,9 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 	private static final int MERGE_CHECK_INTERVAL = 10;
 	private int mergeCheckTimer = 0;
 	private LivingEntity cachedOwner = null;
-	private static final int MAX_OWNER_TIMER = 200; // 30 секунд (600 тиков)
-	private static final int TELEPORT_DISTANCE_THRESHOLD = 20; // 20 блоков
-	private static final int FAR_DISTANCE_THRESHOLD = 45; // 100 блоков
+	private static final int MAX_OWNER_TIMER = 200;
+	private static final int TELEPORT_DISTANCE_THRESHOLD = 20;
+	private static final int FAR_DISTANCE_THRESHOLD = 45;
 	private int pathCheckTimer = 0;
 	private int ownerCheckTimer = 0;
 	private static final int PATH_CHECK_INTERVAL = 5;
@@ -139,7 +131,6 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 	@Nullable
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
-
 		RandomSource randomsource = pLevel.getRandom();
 
 		if (pLevel.getDifficulty() == Difficulty.HARD && randomsource.nextFloat() < 0.1F * pDifficulty.getSpecialMultiplier()) {
@@ -162,28 +153,27 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 	private void checkOwnerHasThimble() {
 		LivingEntity owner = this.getOwner();
 
-		// Если владелец отсутствует (вышел, умер) – трансформируем
+
 		if (owner == null) {
-			if (this.getOwnerUUID() != null) { // был владелец, но сейчас недоступен
+			if (this.getOwnerUUID() != null) {
 				transformIntoBlock(this.getSize());
 			}
 			return;
 		}
 
-		// Владелец должен быть игроком
+
 		if (!(owner instanceof Player player)) {
 			transformIntoBlock(this.getSize());
 			return;
 		}
 
-		// Проверяем, надет ли ChitinThimble в слоты Curios
+
 		Optional<SlotResult> slotResult = CuriosApi.getCuriosHelper().findFirstCurio(
 				player,
 				stack -> stack.getItem() instanceof ChitinThimbleItem
 		);
 
 		if (slotResult.isEmpty()) {
-			// Напёрсток не надет – трансформируем стаю
 			transformIntoBlock(this.getSize());
 		}
 	}
@@ -223,29 +213,26 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		BlockPos currentPos = this.blockPosition();
 		RandomSource random = this.getRandom();
 
-		// Пытаемся найти подходящее место (до 20 попыток)
+
 		for (int attempt = 0; attempt < 20; attempt++) {
-			int dx = random.nextInt(11) - 5; // -5..5
-			int dy = random.nextInt(7) - 3;  // -3..3
+			int dx = random.nextInt(11) - 5;
+			int dy = random.nextInt(7) - 3;
 			int dz = random.nextInt(11) - 5;
 
 			BlockPos targetPos = currentPos.offset(dx, dy, dz);
 			BlockState targetState = level.getBlockState(targetPos);
 			BlockState aboveState = level.getBlockState(targetPos.above());
 
-			// Проверяем, что блок и блок над ним — воздух (или заменяемые), не жидкость, и нет коллизий с сущностью
+
 			if (targetState.isAir() && aboveState.isAir() &&
 					!targetState.liquid() && !aboveState.liquid() &&
 					level.noCollision(this, new AABB(targetPos).inflate(0.1))) {
-
-				// Проверяем прямую видимость (нет ли блоков на пути)
 				Vec3 from = new Vec3(currentPos.getX() + 0.5, currentPos.getY() + 0.5, currentPos.getZ() + 0.5);
 				Vec3 to = new Vec3(targetPos.getX() + 0.5, targetPos.getY() + 0.5, targetPos.getZ() + 0.5);
 				ClipContext ctx = new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this);
 				BlockHitResult result = level.clip(ctx);
 
 				if (result.getType() == HitResult.Type.MISS) {
-					// Путь свободен — телепортируемся
 					this.teleportTo(targetPos.getX() + 0.5, targetPos.getY(), targetPos.getZ() + 0.5);
 
 					if (level instanceof ServerLevel serverLevel) {
@@ -262,7 +249,6 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 	}
 
 	private void checkCollisionWithBurningEntity() {
-		// Получаем всех живых существ, пересекающихся с текущим хитбоксом
 		List<Entity> collidingEntities = this.level().getEntitiesOfClass(
 				Entity.class,
 				this.getBoundingBox(),
@@ -270,7 +256,6 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		);
 
 		if (!collidingEntities.isEmpty()) {
-			// При пересечении с любым горящим существом трансформируем стаю
 			this.setSecondsOnFire(1);
 		}
 	}
@@ -280,7 +265,6 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		super.tick();
 
 		if (!this.level().isClientSide) {
-
 			checkCollisionWithBurningEntity();
 
 			if (++ownerCheckTimer >= 20) {
@@ -288,27 +272,22 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				checkOwnerHasThimble();
 			}
 
-			// Проверка пути к цели каждые PATH_CHECK_INTERVAL тиков
+
 			if (++pathCheckTimer >= PATH_CHECK_INTERVAL) {
 				pathCheckTimer = 0;
 				checkPathToTarget();
 			}
 
-			// Проверка таймера владельца
+
 			checkOwnerTimer();
 
-			// Проверка слияния каждые MERGE_CHECK_INTERVAL тиков
+
 			if (++mergeCheckTimer >= MERGE_CHECK_INTERVAL) {
 				mergeCheckTimer = 0;
 				checkMerge();
 			}
 
-			/*if (this.getOwner() != null) {
-				this.level().getServer().getPlayerList().broadcastSystemMessage(Component.literal(String.format("Distance to owner: %.1f", this.getOwner().distanceToSqr(this))), false);
-				this.level().getServer().getPlayerList().broadcastSystemMessage(Component.literal(String.format("Timer: " + this.entityData.get(DATA_OWNER_TIMER))), false);
-			}*/
 
-			// Проверка трансформации каждые 5 тиков
 			if (++transformationCheckTimer >= 5) {
 				transformationCheckTimer = 0;
 				if (this.level() instanceof ServerLevel serverLevel) {
@@ -325,17 +304,17 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				this.proceedKill();
 			}
 
-			// Проверка атаки на игрока
+
 			if (attackCooldown > 0) {
 				attackCooldown--;
 			}
 
-			// Проверяем, есть ли цель для атаки и достаточно ли близко
+
 			LivingEntity target = this.getTarget();
 			if (target != null && attackCooldown == 0) {
 				double distance = this.distanceTo(target);
 
-				// Если очень близко к цели (вплотную), накладываем эффект отравления
+
 				if (distance < 1.5) {
 					applyEffect(target);
 
@@ -379,61 +358,61 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		return false;
 	}
 
-	// Новый метод для проверки пути к цели
+
 	private void checkPathToTarget() {
 		LivingEntity target = this.getTarget();
 		LivingEntity owner = this.getOwner();
 
-		// Проверяем путь к текущей цели
+
 		if (target != null) {
 			if (isPathBlocked(target.position())) {
-				this.setTarget(null); // Сбрасываем цель, если путь заблокирован
+				this.setTarget(null);
 			}
 		}
 
-		// Проверяем путь к владельцу, если он есть
+
 		if (owner != null && this.getNavigation().getTargetPos() != null) {
 			BlockPos targetPos = this.getNavigation().getTargetPos();
 			Vec3 targetVec = new Vec3(targetPos.getX() + 0.5, targetPos.getY(), targetPos.getZ() + 0.5);
 			if (isPathBlocked(targetVec)) {
-				this.getNavigation().stop(); // Останавливаем навигацию к владельцу
+				this.getNavigation().stop();
 			}
 		}
 	}
 
-	// Проверяет, заблокирован ли путь к указанной позиции
+
 	private boolean isPathBlocked(Vec3 targetPos) {
 		Vec3 currentPos = this.position();
 		Vec3 direction = targetPos.subtract(currentPos);
 		double distance = direction.length();
 
 		if (distance < 1.0) {
-			return false; // Цель уже близко
+			return false;
 		}
 
-		// Нормализуем направление
+
 		direction = direction.normalize();
 
-		// Проверяем точки вдоль пути
+
 		int steps = (int) Math.ceil(distance);
 		for (int i = 1; i <= steps; i++) {
 			Vec3 checkPos = currentPos.add(direction.scale(i));
 			BlockPos blockPos = BlockPos.containing(checkPos);
 
-			// Проверяем блок в этой позиции
+
 			BlockState state = this.level().getBlockState(blockPos);
 
-			// Проверяем жидкости
+
 			if (!state.getFluidState().isEmpty()) {
 				return true;
 			}
 
-			// Проверяем огонь
+
 			if (state.is(BlockTags.FIRE)) {
 				return true;
 			}
 
-			// Проверяем липкие блоки
+
 			if (state.is(ModTags.Blocks.STICKY_FOR_MOSQUITOS)) {
 				return true;
 			}
@@ -442,49 +421,46 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		return false;
 	}
 
-	// Новый метод для проверки таймера владельца
+
 	private void checkOwnerTimer() {
 		LivingEntity owner = this.getOwner();
 		boolean shouldTickTimer = false;
 
-		// Условия для тикания таймера:
-		// 1. Москиты преследуют владельца (следуют к нему)
+
 		if (this.isFollowingOwner()) {
 			shouldTickTimer = true;
 		}
 
-		// 2. Владелец в другом измерении
+
 		if (owner != null && !this.level().dimension().equals(owner.level().dimension())) {
 			shouldTickTimer = true;
 		}
 
-		// 3. Владелец дальше 100 блоков
+
 		if (owner != null && this.distanceToSqr(owner) > FAR_DISTANCE_THRESHOLD * FAR_DISTANCE_THRESHOLD) {
 			this.entityData.set(DATA_OWNER_TIMER, MAX_OWNER_TIMER);
 			shouldTickTimer = true;
 		}
 
-		// 4. Владелец мёртв
+
 		if (owner != null && !owner.isAlive()) {
 			shouldTickTimer = true;
 		}
 
-		// 5. Владельца нет на сервере
+
 		if (owner == null && this.getOwnerUUID() != null) {
 			shouldTickTimer = true;
 		}
 
-		// Если условия выполнены, увеличиваем таймер
+
 		if (shouldTickTimer) {
 			int currentTimer = this.entityData.get(DATA_OWNER_TIMER);
 			if (currentTimer < MAX_OWNER_TIMER) {
 				this.entityData.set(DATA_OWNER_TIMER, currentTimer + 1);
 			} else {
-				// Таймер достиг максимума, обрабатываем
 				handleOwnerTimerMax();
 			}
 		} else {
-			// Сбрасываем таймер если условия не выполнены
 			this.resetOwnerTimer();
 		}
 	}
@@ -494,9 +470,6 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		return this.getOwner() == null;
 	}
 
-	/**
-	 * Makes the entity despawn if requirements are reached
-	 */
 
 	@Override
 	public void checkDespawn() {
@@ -511,72 +484,64 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		}
 	}
 
-	// Проверяет, преследует ли моб владельца
+
 	private boolean isFollowingOwner() {
 		LivingEntity owner = this.getOwner();
 		if (owner == null) return false;
 
-		// Проверяем, является ли владелец текущей целью навигации
+
 		return this.getNavigation().getTargetPos() != null &&
 				owner.blockPosition().distSqr(this.getNavigation().getTargetPos()) < 9.0;
 	}
 
-	// Обработка достижения максимума таймера
+
 	private void handleOwnerTimerMax() {
 		LivingEntity owner = this.getOwner();
 
 		if (owner != null && owner.isAlive()) {
-			// Проверяем, в каком измерении владелец
 			if (owner.level().dimension() == Level.NETHER) {
-				// Владелец в Незере, убиваем москитов
 				this.proceedKill();
 			} else if (this.level().dimension().equals(owner.level().dimension())) {
-				// Владелец в том же измерении, телепортируемся
 				this.teleportToOwner();
 			} else {
-				// Владелец в другом измерении (но не в Незере), можем попытаться телепортировать
-				// Для этого нужно перенести моба в измерение владельца
 				this.proceedKill();
 			}
 		} else {
-			// Владельца нет или он мёртв, убиваем москитов
 			this.proceedKill();
 		}
 
-		// Сбрасываем таймер после обработки
+
 		this.resetOwnerTimer();
 	}
 
-	// Сброс таймера владельца
+
 	private void resetOwnerTimer() {
 		this.entityData.set(DATA_OWNER_TIMER, 0);
 	}
 
-	// Метод телепортации к владельцу
+
 	private void teleportToOwner() {
 		LivingEntity owner = this.getOwner();
 		if (owner != null && owner.isAlive()) {
-			// Проверяем, не в Незере ли владелец
 			if (owner.level().dimension() == Level.NETHER) {
 				this.proceedKill();
 				return;
 			}
 
-			// Ищем безопасное место рядом с владельцем
+
 			Vec3 ownerPos = owner.position();
 			BlockPos targetPos = owner.blockPosition();
 
-			// Пытаемся найти место для телепортации
+
 			for (int y = 0; y <= 3; y++) {
 				for (int x = -1; x <= 1; x++) {
 					for (int z = -1; z <= 1; z++) {
 						BlockPos checkPos = targetPos.offset(x, y, z);
 						if (this.level().isEmptyBlock(checkPos) &&
 								this.level().isEmptyBlock(checkPos.above())) {
-							// Нашли безопасное место
 							this.teleportTo(checkPos.getX() + 0.5, checkPos.getY(), checkPos.getZ() + 0.5);
 
-							// Эффекты телепортации
+
 							if (this.level() instanceof ServerLevel serverLevel) {
 								serverLevel.sendParticles(ModParticles.MOSQUITOS.get(),
 										this.getX(), this.getY() + 0.5, this.getZ(),
@@ -589,17 +554,17 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				}
 			}
 
-			// Если не нашли безопасное место, телепортируемся прямо к владельцу
+
 			this.teleportTo(ownerPos.x(), ownerPos.y() + 1.0, ownerPos.z());
 		}
 	}
 
-	// Новый метод для проверки слияния с другим мобом
+
 	private void checkMerge() {
 		UUID ownerUUID = this.getOwnerUUID();
 		if (ownerUUID == null) return;
 
-		// Ищем рядом мобов того же класса с тем же владельцем
+
 		List<MosquitoSwarm> nearbySwarms = this.level().getEntitiesOfClass(
 				MosquitoSwarm.class,
 				this.getBoundingBox().inflate(6.0),
@@ -610,43 +575,43 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		);
 
 		if (!nearbySwarms.isEmpty()) {
-			MosquitoSwarm other = nearbySwarms.get(0); // Берем первого найденного
+			MosquitoSwarm other = nearbySwarms.get(0);
 
-			// Проверяем, не заблокирован ли путь к другому мобу
+
 			if (isPathBlocked(other.position())) {
-				return; // Не сливаемся, если путь заблокирован
+				return;
 			}
 
-			// Летим к другому мобу
+
 			this.getNavigation().moveTo(other, 1.5);
 
-			// Проверяем расстояние для слияния
+
 			if (this.distanceToSqr(other) < 1.0) {
 				int totalSize = this.getSize() + other.getSize();
 				int extraPowder = 0;
 				if (totalSize > 3) {
-					extraPowder = totalSize-3;
+					extraPowder = totalSize - 3;
 					totalSize = 3;
 				}
 
-				// Создаем новую стаю
+
 				MosquitoSwarm newSwarm = new MosquitoSwarm(ModEntities.MOSQUITO_SWARM.get(), this.level());
 				newSwarm.setOwnerUUID(ownerUUID);
 				newSwarm.setSize(totalSize);
 				newSwarm.moveTo(this.position());
 				newSwarm.setTame(this.isTame());
 
-				// Добавляем в мир
+
 				this.level().addFreshEntity(newSwarm);
 				if (extraPowder > 0) {
 					newSwarm.giveOrDropChitinPowderToOwner(extraPowder);
 				}
 
-				// Удаляем старых мобов
+
 				this.proceedKill();
 				other.proceedKill();
 
-				// Эффекты слияния
+
 				if (this.level() instanceof ServerLevel serverLevel) {
 					serverLevel.sendParticles(ModParticles.MOSQUITOS.get(),
 							this.getX(), this.getY() + 0.5, this.getZ(),
@@ -659,9 +624,9 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 	private void applyEffect(LivingEntity target) {
 		if (target.hasEffect(ModEffects.MOSQUITOING.get())) {
-			int amp = this.getSize(); //1
-			amp += target.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier() + 1; //1+0+1
-			amp -= 1; //2-1
+			int amp = this.getSize();
+			amp += target.getEffect(ModEffects.MOSQUITOING.get()).getAmplifier() + 1;
+			amp -= 1;
 			if (amp > 2) amp = 2;
 			MobEffectInstance effect = new MobEffectInstance(ModEffects.MOSQUITOING.get(), 2401, amp);
 			effect.setCurativeItems(new ArrayList<>());
@@ -676,23 +641,22 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 			target.addEffect(effect);
 		}
 
-		// Сохраняем UUID владельца москитов в тег сущности
+
 		UUID ownerUUID = this.getOwnerUUID();
 		if (ownerUUID != null) {
 			target.getPersistentData().putUUID("MosquitoSwarmOwner", ownerUUID);
 		} else {
-			// Если москиты дикие, удаляем тег, если он был
 			target.getPersistentData().remove("MosquitoSwarmOwner");
 		}
 
-		// Визуальные эффекты
+
 		if (this.level() instanceof ServerLevel serverLevel) {
 			serverLevel.sendParticles(ModParticles.MOSQUITOS.get(),
 					this.getX(), this.getY() + 0.5, this.getZ(),
 					20, 0.35f + 0.05f * this.getSize(), 0.35f + 0.05f * this.getSize(), 0.35f + 0.05f * this.getSize(), 0.05);
 		}
 
-		// Звук атаки
+
 		this.playSound(RPGSounds.MOSQUITO_SWARM_ATTACK.get(), 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
 	}
 
@@ -705,7 +669,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		}
 		AttributeInstance damageAttribute = getAttribute(Attributes.ARMOR);
 		if (damageAttribute != null) {
-			AttributeModifier modifier = new AttributeModifier(INVULNERABILITY_MODIFIER_UUID, INVULNERABILITY_MODIFIER_NAME, 20, AttributeModifier.Operation.ADDITION); // a lot of armor
+			AttributeModifier modifier = new AttributeModifier(INVULNERABILITY_MODIFIER_UUID, INVULNERABILITY_MODIFIER_NAME, 20, AttributeModifier.Operation.ADDITION);
 			damageAttribute.addTransientModifier(modifier);
 		}
 	}
@@ -724,7 +688,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		return true;
 	}
 
-	// Класс цели для преследования владельца когда он далеко (высокий приоритет)
+
 	private class FollowOwnerFarGoal extends Goal {
 		private final MosquitoSwarm mosquito;
 		private LivingEntity owner;
@@ -745,17 +709,17 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				return false;
 			}
 
-			// Не преследуем если владелец в другом измерении
+
 			if (!mosquito.level().dimension().equals(owner.level().dimension())) {
 				return false;
 			}
 
-			// Проверяем, не заблокирован ли путь к владельцу
+
 			if (mosquito.isPathBlocked(owner.position())) {
 				return false;
 			}
 
-			// Если владелец дальше 20 блоков, это высший приоритет
+
 			if (owner.distanceToSqr(mosquito) < TELEPORT_DISTANCE_THRESHOLD * TELEPORT_DISTANCE_THRESHOLD) {
 				return false;
 			}
@@ -770,18 +734,18 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				return false;
 			}
 
-			// Прекращаем если владелец в другом измерении
+
 			if (!mosquito.level().dimension().equals(owner.level().dimension())) {
 				return false;
 			}
 
-			// Проверяем, не заблокирован ли путь к владельцу
+
 			if (mosquito.isPathBlocked(owner.position())) {
 				return false;
 			}
 
-			// Продолжаем пока владелец далеко
-			return owner.distanceToSqr(mosquito) >= 9.0; // Не останавливаемся пока не подойдем близко
+
+			return owner.distanceToSqr(mosquito) >= 9.0;
 		}
 
 		@Override
@@ -806,11 +770,11 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 		@Override
 		public boolean isInterruptable() {
-			return false; // Не прерывается другими целями
+			return false;
 		}
 	}
 
-	// Класс цели для преследования владельца когда нет цели (низкий приоритет)
+
 	private class FollowOwnerWhenIdleGoal extends Goal {
 		private final MosquitoSwarm mosquito;
 		private LivingEntity owner;
@@ -831,12 +795,12 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				return false;
 			}
 
-			// Не преследуем если владелец в другом измерении
+
 			if (!mosquito.level().dimension().equals(owner.level().dimension())) {
 				return false;
 			}
 
-			// Проверяем, не заблокирован ли путь к владельцу
+
 			if (mosquito.isPathBlocked(owner.position())) {
 				return false;
 			}
@@ -860,12 +824,12 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				return false;
 			}
 
-			// Прекращаем если владелец в другом измерении
+
 			if (!mosquito.level().dimension().equals(owner.level().dimension())) {
 				return false;
 			}
 
-			// Проверяем, не заблокирован ли путь к владельцу
+
 			if (mosquito.isPathBlocked(owner.position())) {
 				return false;
 			}
@@ -897,16 +861,16 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		ClipContext context = new ClipContext(
 				from,
 				to,
-				ClipContext.Block.COLLIDER, // Проверяем коллизии блоков
+				ClipContext.Block.COLLIDER,
 				ClipContext.Fluid.NONE,
 				null
 		);
 
 		BlockHitResult result = level.clip(context);
-		return result.getType() == HitResult.Type.MISS; // Если нет столкновения с блоками
+		return result.getType() == HitResult.Type.MISS;
 	}
 
-	// Класс цели для атаки того, кого атаковал владелец
+
 	private class OwnerHurtTargetGoal extends TargetGoal {
 		private final MosquitoSwarm mosquito;
 		private LivingEntity ownerLastHurt;
@@ -941,20 +905,20 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				return false;
 			}
 
-			// Не атакуем если владелец в другом измерении
+
 			if (!mosquito.level().dimension().equals(owner.level().dimension())) {
 				return false;
 			}
 
-			// Проверяем, не заблокирован ли путь к цели
+
 			if (mosquito.isPathBlocked(this.ownerLastHurt.position())) {
 				return false;
 			}
 
-			// Проверяем, можно ли атаковать эту цель
+
 			return mosquito.canAttack(this.ownerLastHurt) &&
 					!mosquito.isAlliedTo(this.ownerLastHurt) &&
-					!this.ownerLastHurt.equals(owner); // Не атакуем владельца самого себя
+					!this.ownerLastHurt.equals(owner);
 		}
 
 		@Override
@@ -979,12 +943,12 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				return false;
 			}
 
-			// Проверяем, не заблокирован ли путь к цели
+
 			if (mosquito.isPathBlocked(this.ownerLastHurt.position())) {
 				return false;
 			}
 
-			// Если прошло больше MAX_AGGRO_TIME тиков, прекращаем преследование
+
 			if (mosquito.tickCount - this.setTime > MAX_AGGRO_TIME) {
 				return false;
 			}
@@ -1000,7 +964,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		private LivingEntity ownerLastHurtBy;
 		private int timestamp;
 		private int setTime;
-		private static final int MAX_AGGRO_TIME = 300; // 15 секунд (20 тиков/сек)
+		private static final int MAX_AGGRO_TIME = 300;
 
 		public OwnerHurtByTargetGoal(MosquitoSwarm mosquito) {
 			super(mosquito, false);
@@ -1029,17 +993,17 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				return false;
 			}
 
-			// Не атакуем если владелец в другом измерении
+
 			if (!mosquito.level().dimension().equals(owner.level().dimension())) {
 				return false;
 			}
 
-			// Проверяем, не заблокирован ли путь к цели
+
 			if (mosquito.isPathBlocked(this.ownerLastHurtBy.position())) {
 				return false;
 			}
 
-			// Проверяем, можно ли атаковать эту цель
+
 			return mosquito.canAttack(this.ownerLastHurtBy) &&
 					!mosquito.isAlliedTo(this.ownerLastHurtBy);
 		}
@@ -1051,7 +1015,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 			if (owner != null) {
 				this.timestamp = owner.getLastHurtByMobTimestamp();
 			}
-			this.setTime = this.mosquito.tickCount; // запоминаем время начала агрессии
+			this.setTime = this.mosquito.tickCount;
 			super.start();
 		}
 
@@ -1066,12 +1030,12 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				return false;
 			}
 
-			// Проверяем, не заблокирован ли путь к цели
+
 			if (mosquito.isPathBlocked(this.ownerLastHurtBy.position())) {
 				return false;
 			}
 
-			// Если прошло больше MAX_AGGRO_TIME тиков, прекращаем преследование
+
 			if (mosquito.tickCount - this.setTime > MAX_AGGRO_TIME) {
 				return false;
 			}
@@ -1081,7 +1045,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		}
 	}
 
-	// Метод для установки цели без проверки на владельца (используется в OwnerHurtByTargetGoal)
+
 	public void setTargetIgnoringOwnerCheck(@Nullable LivingEntity target) {
 		super.setTarget(target);
 		if (target != null) {
@@ -1089,7 +1053,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		}
 	}
 
-	// Класс цели для атаки врагов владельца
+
 	private class AttackOwnerEnemiesGoal extends TargetGoal {
 		private final MosquitoSwarm mosquito;
 		private LivingEntity owner;
@@ -1108,19 +1072,14 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				return false;
 			}
 
-			// Не атакуем если владелец в другом измерении
 			if (!mosquito.level().dimension().equals(owner.level().dimension())) {
 				return false;
 			}
 
-			// Не атакуем врагов если владелец слишком далеко
 			if (owner.distanceToSqr(mosquito) > TELEPORT_DISTANCE_THRESHOLD * TELEPORT_DISTANCE_THRESHOLD) {
 				return false;
 			}
 
-			// Ищем цели в следующем порядке приоритета:
-
-			// 1. Враждебные мобы (Monster)
 			List<Monster> monsters = mosquito.level().getEntitiesOfClass(
 					Monster.class,
 					mosquito.getBoundingBox().inflate(24.0),
@@ -1129,6 +1088,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 							!entity.is(mosquito) &&
 							!(entity instanceof MosquitoSwarm) &&
 							!(entity instanceof NeutralMob) &&
+							!(entity instanceof FriendlyRavager) &&
 							(canSeeEntity(mosquito.level(), mosquito.getEyePosition(), entity.getBoundingBox().getCenter())) &&
 							entity.distanceToSqr(mosquito) <= 400 &&
 							mosquito.canAttack(entity)
@@ -1136,14 +1096,13 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 			if (!monsters.isEmpty()) {
 				this.toAttack = monsters.get(mosquito.random.nextInt(monsters.size()));
-				// Проверяем, не заблокирован ли путь к цели
 				if (mosquito.isPathBlocked(this.toAttack.position())) {
 					return false;
 				}
 				return true;
 			}
 
-			// 2. Мобы, чья цель - владелец
+
 			List<Mob> mobsTargetingOwner = mosquito.level().getEntitiesOfClass(
 					Mob.class,
 					mosquito.getBoundingBox().inflate(24.0),
@@ -1157,7 +1116,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 			if (!mobsTargetingOwner.isEmpty()) {
 				this.toAttack = mobsTargetingOwner.get(mosquito.random.nextInt(mobsTargetingOwner.size()));
-				// Проверяем, не заблокирован ли путь к цели
+
 				if (mosquito.isPathBlocked(this.toAttack.position())) {
 					return false;
 				}
@@ -1177,34 +1136,13 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 			if (!cows.isEmpty()) {
 				this.toAttack = cows.get(mosquito.random.nextInt(cows.size()));
-				// Проверяем, не заблокирован ли путь к цели
+
 				if (mosquito.isPathBlocked(this.toAttack.position())) {
 					return false;
 				}
 				return true;
 			}
 
-			// 3. Игроки, которых атаковал владелец
-//			List<Player> players = mosquito.level().getEntitiesOfClass(
-//					Player.class,
-//					mosquito.getBoundingBox().inflate(24.0),
-//					entity -> entity.isAlive() &&
-//							!entity.is(owner) &&
-//							!entity.isAlliedTo(owner) &&
-//							!entity.is(mosquito) &&
-//							(canSeeEntity(mosquito.level(), mosquito.getEyePosition(), entity.getBoundingBox().getCenter())) &&
-//							entity.distanceToSqr(mosquito) <= 400 &&
-//							mosquito.canAttack(entity)
-//			);
-//
-//			if (!players.isEmpty()) {
-//				this.toAttack = players.get(mosquito.random.nextInt(players.size()));
-//				// Проверяем, не заблокирован ли путь к цели
-//				if (mosquito.isPathBlocked(this.toAttack.position())) {
-//					return false;
-//				}
-//				return true;
-//			}
 
 			return false;
 		}
@@ -1225,17 +1163,17 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				return false;
 			}
 
-			// Прекращаем если владелец в другом измерении
+
 			if (!mosquito.level().dimension().equals(this.owner.level().dimension())) {
 				return false;
 			}
 
-			// Также прекращаем если владелец стал слишком далеко
+
 			if (this.owner.distanceToSqr(mosquito) > TELEPORT_DISTANCE_THRESHOLD * TELEPORT_DISTANCE_THRESHOLD) {
 				return false;
 			}
 
-			// Проверяем, не заблокирован ли путь к цели
+
 			if (mosquito.isPathBlocked(this.toAttack.position())) {
 				return false;
 			}
@@ -1244,7 +1182,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		}
 	}
 
-	// Модифицированный класс цели для атаки с проверкой пути
+
 	private class SafeMeleeAttackGoal extends MeleeAttackGoal {
 		public SafeMeleeAttackGoal() {
 			super(MosquitoSwarm.this, 1.0D, false);
@@ -1253,7 +1191,6 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		@Override
 		public boolean canUse() {
 			if (MosquitoSwarm.this.getTarget() != null) {
-				// Проверяем, не заблокирован ли путь к цели
 				if (MosquitoSwarm.this.isPathBlocked(MosquitoSwarm.this.getTarget().position())) {
 					return false;
 				}
@@ -1264,7 +1201,6 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		@Override
 		public boolean canContinueToUse() {
 			if (MosquitoSwarm.this.getTarget() != null) {
-				// Проверяем, не заблокирован ли путь к цели
 				if (MosquitoSwarm.this.isPathBlocked(MosquitoSwarm.this.getTarget().position())) {
 					return false;
 				}
@@ -1274,7 +1210,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 		@Override
 		protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-			return 2.0D; // Увеличиваем радиус атаки
+			return 2.0D;
 		}
 	}
 
@@ -1291,18 +1227,16 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 	@Override
 	protected void registerGoals() {
-		this.goalSelector.addGoal(0, new FollowOwnerFarGoal(this, 40D)); // Высший приоритет - владелец далеко
-		this.goalSelector.addGoal(1, new SafeMeleeAttackGoal()); // Используем безопасную цель атаки
+		this.goalSelector.addGoal(0, new FollowOwnerFarGoal(this, 40D));
+		this.goalSelector.addGoal(1, new SafeMeleeAttackGoal());
 		this.goalSelector.addGoal(5, new MoveTowardsRestrictionGoal(this, 1.0D));
 		this.goalSelector.addGoal(7, new WaterAvoidingRandomFlyingGoal(this, 1.0D));
-		this.goalSelector.addGoal(8, new FollowOwnerWhenIdleGoal(this, 1.0D)); // Низкий приоритет - владелец близко, нет цели
+		this.goalSelector.addGoal(8, new FollowOwnerWhenIdleGoal(this, 1.0D));
 
-		// Добавляем цель для атаки врагов владельца
 		this.targetSelector.addGoal(2, new OwnerHurtByTargetGoal(this));
 		this.targetSelector.addGoal(1, new OwnerHurtTargetGoal(this));
 		this.targetSelector.addGoal(2, new AttackOwnerEnemiesGoal(this));
 
-		// Обычная цель (только если нет владельца)
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, true) {
 			@Override
 			public boolean canUse() {
@@ -1312,7 +1246,6 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 			@Override
 			public boolean canContinueToUse() {
 				if (MosquitoSwarm.this.getTarget() != null) {
-					// Проверяем, не заблокирован ли путь к цели
 					if (MosquitoSwarm.this.isPathBlocked(MosquitoSwarm.this.getTarget().position())) {
 						return false;
 					}
@@ -1321,7 +1254,6 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 			}
 		});
 
-		// Обычная цель (только если нет владельца)
 		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Cow.class, true) {
 			@Override
 			public boolean canUse() {
@@ -1331,7 +1263,6 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 			@Override
 			public boolean canContinueToUse() {
 				if (MosquitoSwarm.this.getTarget() != null) {
-					// Проверяем, не заблокирован ли путь к цели
 					if (MosquitoSwarm.this.isPathBlocked(MosquitoSwarm.this.getTarget().position())) {
 						return false;
 					}
@@ -1344,7 +1275,6 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 			@Override
 			public boolean canUse() {
 				if (MosquitoSwarm.this.getTarget() != null) {
-					// Проверяем, не заблокирован ли путь к цели
 					if (MosquitoSwarm.this.isPathBlocked(MosquitoSwarm.this.getTarget().position())) {
 						return false;
 					}
@@ -1355,7 +1285,6 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 			@Override
 			public boolean canContinueToUse() {
 				if (MosquitoSwarm.this.getTarget() != null) {
-					// Проверяем, не заблокирован ли путь к цели
 					if (MosquitoSwarm.this.isPathBlocked(MosquitoSwarm.this.getTarget().position())) {
 						return false;
 					}
@@ -1368,17 +1297,14 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 	private void checkTransformationConditions() {
 		boolean shouldTransform = false;
 
-		// Условие 1: Касается любой жидкости
 		if (this.isInWater() || this.isInLava() || this.isInFluidType((fluidType, height) -> height > 0)) {
 			shouldTransform = true;
 		}
 
-		// Условие 2: Горит
 		if (this.isOnFire()) {
 			shouldTransform = true;
 		}
 
-		// Условие 3: Рядом есть блок с тегом STICKY_FOR_MOSQUITOS в радиусе 1 блока
 		if (hasStickyBlockNearby()) {
 			shouldTransform = true;
 		}
@@ -1401,12 +1327,12 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		BlockPos centerPos = this.blockPosition();
 
 		BlockPos[] directions = {
-				centerPos.above(),    // +Y
-				centerPos.below(),    // -Y
-				centerPos.north(),    // -Z
-				centerPos.south(),    // +Z
-				centerPos.west(),     // -X
-				centerPos.east()      // +X
+				centerPos.above(),
+				centerPos.below(),
+				centerPos.north(),
+				centerPos.south(),
+				centerPos.west(),
+				centerPos.east()
 		};
 
 		for (BlockPos checkPos : directions) {
@@ -1424,20 +1350,19 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 			Level level = entity.level();
 			BlockPos pos = entity.blockPosition();
 
-			// Если это москит с владельцем
+
 			if (entity instanceof MosquitoSwarm swarm && swarm.getOwner() != null) {
-				// предполагаем, что amp – количество порошка (аналог размера)
 				swarm.giveOrDropChitinPowderToOwner(amp);
 				swarm.proceedKill();
 				return;
 			}
 
-			if(ownerId != null) {
+			if (ownerId != null) {
 				giveOrDropChitinPowderToOwner(entity.level(), ownerId, amp);
 				return;
 			}
 
-			// Старая логика
+
 			boolean placed = placeMosquitoBlockAtPosition(entity, pos);
 
 			if (placed) {
@@ -1452,7 +1377,8 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 						entity.spawnAtLocation(ModItems.CHITIN_POWDER.get());
 						entity.spawnAtLocation(ModItems.CHITIN_POWDER.get());
 					}
-					default -> {}
+					default -> {
+					}
 				}
 			} else {
 				switch (amp) {
@@ -1470,25 +1396,24 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 			}
 			if (entity instanceof MosquitoSwarm swarm && swarm.canMakeSound())
 				entity.playSound(RPGSounds.MOSQUITO_SWARM_DEATH.get(), 1.0F, 1.0F);
-			// Примечание: удаление сущности, вероятно, происходит в вызывающем коде, поэтому здесь не добавляем discard
+
 		}
 	}
 
 	public void transformIntoBlock(int size) {
 		if (this.level().isClientSide) return;
 
-		// Всегда проигрываем звук и частицы (proceedKill тоже отправит частицы, но это допустимо)
+
 		if (canMakeSound()) this.playSound(RPGSounds.MOSQUITO_SWARM_DEATH.get(), 1.0F, 1.0F);
 
 		LivingEntity owner = this.getOwner();
 		if (owner != null) {
-			// Есть владелец – даём порошок ему (полное количество, как при неудачной установке блока)
-			giveOrDropChitinPowderToOwner(size); // size от 1 до 3
+			giveOrDropChitinPowderToOwner(size);
 			this.proceedKill();
 			return;
 		}
 
-		// Старая логика для диких москитов
+
 		boolean placed = placeMosquitoBlockAtPosition(this.blockPosition());
 
 		if (placed) {
@@ -1503,7 +1428,8 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 					this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
 					this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
 				}
-				default -> {}
+				default -> {
+				}
 			}
 		} else {
 			switch (size) {
@@ -1520,7 +1446,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 			}
 		}
 
-		// Ачивки для диких москитов
+
 		if (this.getOwner() == null) {
 			for (ServerPlayer serverplayer : this.level().getEntitiesOfClass(ServerPlayer.class, new AABB(this.getOnPos()).inflate(10.0D, 15.0D, 10.0D))) {
 				if (!this.entityData.get(DATA_DEALT_DAMAGE) && serverplayer.getLastDamageSource() == null) {
@@ -1695,7 +1621,6 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 		if (canAttachTo(level, face, mosquitoBlockPos.relative(face),
 				level.getBlockState(mosquitoBlockPos.relative(face)))) {
-
 			level.setBlock(mosquitoBlockPos, mosquitoBlockState, 3);
 			return true;
 		}
@@ -1719,7 +1644,6 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 		if (canAttachTo(level, face, mosquitoBlockPos.relative(face),
 				level.getBlockState(mosquitoBlockPos.relative(face)))) {
-
 			level.setBlock(mosquitoBlockPos, mosquitoBlockState, 3);
 			return true;
 		}
@@ -1781,7 +1705,6 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 	@Override
 	public void setTarget(@Nullable LivingEntity target) {
-		// Предотвращаем установку цели-игрока, если есть владелец
 		if (this.getOwnerUUID() != null && target instanceof Player) {
 			return;
 		}
@@ -1816,8 +1739,8 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 	public void setOwnerUUID(@Nullable UUID pUuid) {
 		this.entityData.set(DATA_OWNERUUID_ID, Optional.ofNullable(pUuid));
-		this.cachedOwner = null; // Сбрасываем кэш при изменении владельца
-		this.resetOwnerTimer(); // Сбрасываем таймер при изменении владельца
+		this.cachedOwner = null;
+		this.resetOwnerTimer();
 	}
 
 	@Nullable
@@ -1857,8 +1780,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				return livingentity.isAlliedTo(pEntity);
 			}
 		}
-
-		return super.isAlliedTo(pEntity);
+		return super.isAlliedTo(pEntity) || Objects.equals(this.getOwnerUUID(), pEntity.getUUID());
 	}
 
 	public boolean isTame() {
@@ -1938,8 +1860,6 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 
 	@Override
 	public boolean isPickable() {
-		// На сервере всегда возвращаем true (или то, что нужно по умолчанию)
-		// Используем DistExecutor для безопасного выполнения клиентского кода
 		return DistExecutor.unsafeRunForDist(
 				(Supplier<Supplier<Boolean>>) () -> () -> clientIsPickable(),
 				(Supplier<Supplier<Boolean>>) () -> () -> true
@@ -1949,7 +1869,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 	@OnlyIn(Dist.CLIENT)
 	private boolean clientIsPickable() {
 		Player player = Minecraft.getInstance().player;
-		if (player == null) return false; // защита от null на случай, если игрок ещё не загружен
+		if (player == null) return false;
 		return player.isShiftKeyDown() ||
 				player.getMainHandItem().is(Items.GLASS_BOTTLE) ||
 				player.getOffhandItem().is(Items.GLASS_BOTTLE);
@@ -1964,7 +1884,6 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 		if (count <= 0) return;
 		LivingEntity owner = this.getOwner();
 		if (owner == null) {
-			// Нет владельца – спавним на месте этой сущности
 			for (int i = 0; i < count; i++) {
 				this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
 			}
@@ -1977,14 +1896,13 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 			}
 		}
 		count -= penalty;
-		if(count <= 0) return;
+		if (count <= 0) return;
 		if (owner instanceof Player player) {
 			ItemStack stack = new ItemStack(ModItems.CHITIN_POWDER.get(), count);
 			if (!player.addItem(stack)) {
 				player.drop(stack, false);
 			}
 		} else {
-			// Владелец не игрок (маловероятно) – спавним на месте
 			for (int i = 0; i < count; i++) {
 				this.spawnAtLocation(ModItems.CHITIN_POWDER.get());
 			}
@@ -2010,12 +1928,11 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 			}
 		}
 		count -= penalty;
-		if(count <= 0) return;
-		// Если владелец – игрок, пытаемся добавить в инвентарь
+		if (count <= 0) return;
+
 		if (owner instanceof Player player) {
 			ItemStack stack = new ItemStack(ModItems.CHITIN_POWDER.get(), count);
 			if (!player.addItem(stack)) {
-				// Если не влезло, выбрасываем рядом с игроком
 				player.drop(stack, false);
 			}
 		}
@@ -2155,7 +2072,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				if (teleportNearby()) {
 					return InteractionResult.sidedSuccess(this.level().isClientSide);
 				}
-				// Если не удалось найти место (например, всё заблокировано), просто съедаем клик
+
 				return InteractionResult.CONSUME;
 			}
 			return super.mobInteract(pPlayer, pHand);

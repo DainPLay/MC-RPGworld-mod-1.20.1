@@ -2,29 +2,19 @@ package net.dainplay.rpgworldmod.block.custom;
 
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.entity.ModEntities;
-import net.dainplay.rpgworldmod.entity.custom.MosquitoSwarm;
 import net.dainplay.rpgworldmod.entity.custom.Razorleaf;
-import net.dainplay.rpgworldmod.particle.ModParticles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BushBlock;
-import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-import java.util.UUID;
 
 public class YoungRazorleafBlock extends BushBlock {
 	protected static final VoxelShape SHAPE = Shapes.or(
@@ -44,6 +34,7 @@ public class YoungRazorleafBlock extends BushBlock {
 	public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
 		return SHAPE;
 	}
+
 	@Override
 	public void randomTick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
 		float f = 0.25F;
@@ -51,7 +42,7 @@ public class YoungRazorleafBlock extends BushBlock {
 		if (!pLevel.isDay()) return;
 
 		if (!net.minecraftforge.common.ForgeHooks.onCropsGrowPre(
-				pLevel, pPos, pState, pRandom.nextInt((int)(25.0F / f) + 1) == 0)) {
+				pLevel, pPos, pState, pRandom.nextInt((int) (25.0F / f) + 1) == 0)) {
 			return;
 		}
 
@@ -61,7 +52,7 @@ public class YoungRazorleafBlock extends BushBlock {
 					if (dx == 0 && dz == 0 && dy == 0) continue;
 
 					BlockPos checkPos = pPos.offset(dx, dy, dz);
-					if (!canBeReplacedBy(pLevel,pLevel.getBlockState(checkPos),checkPos)) {
+					if (!canBeReplacedBy(pLevel, pLevel.getBlockState(checkPos), checkPos)) {
 						return;
 					}
 				}
@@ -81,12 +72,12 @@ public class YoungRazorleafBlock extends BushBlock {
 			}
 		}
 
-		// Создаем сущность
+
 		Razorleaf razorleaf = new Razorleaf(ModEntities.RAZORLEAF.get(), pLevel);
 		razorleaf.setPos(pPos.getX() + 0.5, pPos.getY(), pPos.getZ() + 0.5);
 		pLevel.addFreshEntityWithPassengers(razorleaf);
 
-		// Вызываем пост-обработку
+
 		net.minecraftforge.common.ForgeHooks.onCropsGrowPost(pLevel, pPos, pState);
 	}
 

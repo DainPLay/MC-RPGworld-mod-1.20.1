@@ -38,7 +38,7 @@ public class EnderEyeViewEntity extends Entity implements ItemSupplier {
 	private int life;
 	private UUID ownerUUID;
 
-	// Для интерполяции углов
+
 	private float prevYaw;
 	private float prevPitch;
 
@@ -78,7 +78,7 @@ public class EnderEyeViewEntity extends Entity implements ItemSupplier {
 		return this.getEntityData().get(DATA_PITCH);
 	}
 
-	// Интерполированные углы для плавной камеры
+
 	public float getViewYRot(float partialTicks) {
 		return Mth.lerp(partialTicks, prevYaw, getYaw());
 	}
@@ -135,9 +135,9 @@ public class EnderEyeViewEntity extends Entity implements ItemSupplier {
 
 	@Override
 	public void tick() {
-		super.tick(); // Сохранит старые углы в yRotO/xRotO
+		super.tick();
 
-		// Обновляем интерполяционные поля
+
 		prevYaw = getYaw();
 		prevPitch = getPitch();
 
@@ -176,7 +176,7 @@ public class EnderEyeViewEntity extends Entity implements ItemSupplier {
 				d7 = 0;
 			int OSCILLATION_START = 60;
 			float MAX_AMPLITUDE = 0.05f;
-			float FREQUENCY = 0.4f; // радиан на тик
+			float FREQUENCY = 0.4f;
 			float amplitude = 0;
 			float sinValue = 0;
 			if (life >= OSCILLATION_START) {
@@ -216,7 +216,7 @@ public class EnderEyeViewEntity extends Entity implements ItemSupplier {
 			}
 		} else {
 			this.setPos(d0, d1, d2);
-			// Проверяем выход по Shift на клиенте
+
 			if (ClientEyeViewHandler.isActive() && ClientEyeViewHandler.getActiveEye() == this) {
 				Minecraft mc = Minecraft.getInstance();
 				if (mc.options.keyShift.isDown()) {
@@ -250,7 +250,6 @@ public class EnderEyeViewEntity extends Entity implements ItemSupplier {
 
 	@Override
 	public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
-		// Разрешаем обновление углов всегда
 		super.onSyncedDataUpdated(key);
 	}
 }

@@ -38,11 +38,9 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CrossbowItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.properties.WoodType;
@@ -59,7 +57,6 @@ import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = RPGworldMod.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class RPGworldClient {
-
 	@SubscribeEvent
 	public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
 		CurioLayers.register(event);
@@ -67,7 +64,6 @@ public class RPGworldClient {
 
 	@SubscribeEvent
 	public static void guiSetup(final RegisterGuiOverlaysEvent event) {
-		//Register Armor Renderer for events
 		event.registerAbove(VanillaGuiOverlay.PLAYER_HEALTH.id(), RPGworldMod.MOD_ID + "_hearts_overlay", new HealthOverlayEventHandler());
 		event.registerAbove(VanillaGuiOverlay.FOOD_LEVEL.id(), RPGworldMod.MOD_ID + "_mana_overlay", new ManaOverlayEventHandler());
 		event.registerAbove(VanillaGuiOverlay.CROSSHAIR.id(), RPGworldMod.MOD_ID + "_crosshair_overlay", new ChargesOverlayEventHandler());
@@ -75,7 +71,6 @@ public class RPGworldClient {
 
 	@SubscribeEvent
 	public static void bakeModels(final ModelEvent.ModifyBakingResult e) {
-
 		Map<ResourceLocation, BakedModel> map = e.getModels();
 		BakedModel alterationScrollModel = null;
 		BakedModel destructionScrollModel = null;
@@ -111,6 +106,13 @@ public class RPGworldClient {
 		BakedModel illusionNetherStarScrollModel = null;
 		BakedModel conjurationNetherStarScrollModel = null;
 		BakedModel necromancyNetherStarScrollModel = null;
+
+		BakedModel alterationPillagerScrollModel = null;
+		BakedModel destructionPillagerScrollModel = null;
+		BakedModel restorationPillagerScrollModel = null;
+		BakedModel illusionPillagerScrollModel = null;
+		BakedModel conjurationPillagerScrollModel = null;
+		BakedModel necromancyPillagerScrollModel = null;
 
 		BakedModel boundCampfireModel = null;
 		BakedModel conjuredPickaxeModel = null;
@@ -244,6 +246,30 @@ public class RPGworldClient {
 				necromancyNetherStarScrollModel = new ScrollGlintItemModelSupport(originalModel);
 			}
 
+			if (idString.contains("rpgworldmod:item/pillager_scroll_alteration")) {
+				alterationPillagerScrollModel = new ScrollGlintItemModelSupport(originalModel);
+			}
+
+			if (idString.contains("rpgworldmod:item/pillager_scroll_destruction")) {
+				destructionPillagerScrollModel = new ScrollGlintItemModelSupport(originalModel);
+			}
+
+			if (idString.contains("rpgworldmod:item/pillager_scroll_restoration")) {
+				restorationPillagerScrollModel = new ScrollGlintItemModelSupport(originalModel);
+			}
+
+			if (idString.contains("rpgworldmod:item/pillager_scroll_illusion")) {
+				illusionPillagerScrollModel = new ScrollGlintItemModelSupport(originalModel);
+			}
+
+			if (idString.contains("rpgworldmod:item/pillager_scroll_conjuration")) {
+				conjurationPillagerScrollModel = new ScrollGlintItemModelSupport(originalModel);
+			}
+
+			if (idString.contains("rpgworldmod:item/pillager_scroll_necromancy")) {
+				necromancyPillagerScrollModel = new ScrollGlintItemModelSupport(originalModel);
+			}
+
 			if (idString.contains("rpgworldmod:item/bound_campfire")) {
 				boundCampfireModel = new ScrollGlintItemModelSupport(originalModel);
 			}
@@ -253,7 +279,6 @@ public class RPGworldClient {
 			}
 		}
 
-		// Отдельный цикл для свитков, если нужно явное разделение логики
 		for (ResourceLocation id : map.keySet()) {
 			String idString = id.toString();
 			BakedModel originalModel = map.get(id);
@@ -317,12 +342,23 @@ public class RPGworldClient {
 						conjuredPickaxeModel == null ? originalModel : conjuredPickaxeModel
 				));
 			}
+			if (idString.contains("rpgworldmod:pillager_scroll")) {
+				map.put(id, new ScrollGlintItemModel(
+						originalModel,
+						alterationPillagerScrollModel == null ? originalModel : alterationPillagerScrollModel,
+						restorationPillagerScrollModel == null ? originalModel : restorationPillagerScrollModel,
+						destructionPillagerScrollModel == null ? originalModel : destructionPillagerScrollModel,
+						illusionPillagerScrollModel == null ? originalModel : illusionPillagerScrollModel,
+						conjurationPillagerScrollModel == null ? originalModel : conjurationPillagerScrollModel,
+						necromancyPillagerScrollModel == null ? originalModel : necromancyPillagerScrollModel,
+						originalModel
+				));
+			}
 		}
 	}
 
 	@SubscribeEvent
 	public static void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
-		// Регистрируем модели свитков, которые используются в override
 		event.register(new ResourceLocation("rpgworldmod:item/scroll_restoration"));
 		event.register(new ResourceLocation("rpgworldmod:item/scroll_destruction"));
 		event.register(new ResourceLocation("rpgworldmod:item/scroll_illusion"));
@@ -353,6 +389,12 @@ public class RPGworldClient {
 		event.register(new ResourceLocation("rpgworldmod:item/nether_star_scroll_alteration"));
 		event.register(new ResourceLocation("rpgworldmod:item/nether_star_scroll_conjuration"));
 		event.register(new ResourceLocation("rpgworldmod:item/nether_star_scroll_necromancy"));
+		event.register(new ResourceLocation("rpgworldmod:item/pillager_scroll_restoration"));
+		event.register(new ResourceLocation("rpgworldmod:item/pillager_scroll_destruction"));
+		event.register(new ResourceLocation("rpgworldmod:item/pillager_scroll_illusion"));
+		event.register(new ResourceLocation("rpgworldmod:item/pillager_scroll_alteration"));
+		event.register(new ResourceLocation("rpgworldmod:item/pillager_scroll_conjuration"));
+		event.register(new ResourceLocation("rpgworldmod:item/pillager_scroll_necromancy"));
 		event.register(new ResourceLocation("rpgworldmod:item/bound_campfire"));
 		event.register(new ResourceLocation("rpgworldmod:item/conjured_pickaxe"));
 	}
@@ -438,7 +480,6 @@ public class RPGworldClient {
 
 
 		event.enqueueWork(() -> {
-
 			ItemProperties.register(ModItems.EMBER_SCROLL.get().asItem(), new ResourceLocation("summoned_object"), (stack, world, entity, seed) -> {
 				if (stack.isEmpty()) {
 					return 0.0F;
@@ -616,11 +657,11 @@ public class RPGworldClient {
 							boolean hasVibration = false;
 							ItemStack temp1 = player.getUseItem().copy();
 							ItemStack temp2 = stack.copy();
-							if(temp1.hasTag()  && temp1.getTag().contains("caughtVibration") && temp1.getTag().getInt("caughtVibration") > 0) {
+							if (temp1.hasTag() && temp1.getTag().contains("caughtVibration") && temp1.getTag().getInt("caughtVibration") > 0) {
 								hasVibration = true;
 								temp1.getTag().remove("caughtVibration");
 							}
-							if(temp2.hasTag()  && temp2.getTag().contains("caughtVibration") && temp2.getTag().getInt("caughtVibration") > 0) {
+							if (temp2.hasTag() && temp2.getTag().contains("caughtVibration") && temp2.getTag().getInt("caughtVibration") > 0) {
 								hasVibration = true;
 								temp2.getTag().remove("caughtVibration");
 							}

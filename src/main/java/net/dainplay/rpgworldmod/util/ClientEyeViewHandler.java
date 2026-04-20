@@ -14,11 +14,11 @@ public class ClientEyeViewHandler {
 		activeEye = eye;
 		Minecraft mc = Minecraft.getInstance();
 
-		// Запоминаем текущий тип камеры
+
 		previousCameraType = mc.options.getCameraType();
 
 		mc.setCameraEntity(eye);
-		// Принудительно устанавливаем вид от первого лица
+
 		mc.options.setCameraType(CameraType.FIRST_PERSON);
 
 		mc.player.displayClientMessage(

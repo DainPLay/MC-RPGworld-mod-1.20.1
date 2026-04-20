@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class FireproofSkirtItem extends Item implements Equipable, RPGtooltip {
-
 	public FireproofSkirtItem(Properties pProperties) {
 		super(pProperties);
 		DispenserBlock.registerBehavior(this, ArmorItem.DISPENSE_ITEM_BEHAVIOR);
@@ -48,8 +47,8 @@ public class FireproofSkirtItem extends Item implements Equipable, RPGtooltip {
 	@Override
 	public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
-        ClientRPGtooltipHandler.appendHoverText(pStack, pLevel, pTooltip, pFlag, this)
-    );
+				ClientRPGtooltipHandler.appendHoverText(pStack, pLevel, pTooltip, pFlag, this)
+		);
 	}
 
 	@Override
@@ -73,7 +72,6 @@ public class FireproofSkirtItem extends Item implements Equipable, RPGtooltip {
 	}
 
 	public static ResourceLocation getTextureLocation() {
-		// Верните ResourceLocation текстуры для юбки
 		return new ResourceLocation(RPGworldMod.MOD_ID, "textures/models/armor/fireproof_skirt.png");
 	}
 

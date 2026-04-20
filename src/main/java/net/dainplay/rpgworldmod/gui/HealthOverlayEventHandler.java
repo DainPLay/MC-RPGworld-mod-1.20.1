@@ -25,7 +25,7 @@ public class HealthOverlayEventHandler implements IGuiOverlay {
 	static int regen = -1;
 	static int[] randomOffsets = new int[1024];
 
-	// Переменные для мигания пустых сердец (как в ManaOverlayEventHandler)
+
 	private static long lastHighlightTime = 0;
 	private static float highlightAlpha = 1.0f;
 	private static boolean highlightIncreasing = false;
@@ -39,7 +39,7 @@ public class HealthOverlayEventHandler implements IGuiOverlay {
 	}
 
 	public static void drawBurnoutHeart(GuiGraphics stack, int x, int y, int textureX, int textureY, int width, int height) {
-		stack.blit(ICONS, x, y, textureX + ((mc.player.tickCount/16) % 2)*9, textureY + ((mc.player.tickCount % 16) * 12), width, height);
+		stack.blit(ICONS, x, y, textureX + ((mc.player.tickCount / 16) % 2) * 9, textureY + ((mc.player.tickCount % 16) * 12), width, height);
 	}
 
 	public static void setRenderHeartY(int value) {
@@ -68,7 +68,7 @@ public class HealthOverlayEventHandler implements IGuiOverlay {
 		if (!mc.options.hideGui && gui.shouldDrawSurvivalElements()) {
 			gui.setupOverlayRenderState(true, false);
 
-			// Проверяем наличие эффектов
+
 			boolean hasMossiosis = mc.player != null && mc.player.hasEffect(ModEffects.MOSSIOSIS.get());
 			boolean hasMosquitoing = mc.player != null && mc.player.hasEffect(ModEffects.MOSQUITOING.get());
 			boolean hasBurnout = mc.player != null && mc.player.hasEffect(ModEffects.BURNOUT.get());
@@ -97,7 +97,7 @@ public class HealthOverlayEventHandler implements IGuiOverlay {
 				}
 			}
 
-			// Рендерим бары в зависимости от наличия эффектов
+
 			if (hasMossiosis) {
 				renderMossBar(gui, guiGraphics, screenWidth, screenHeight);
 			}
@@ -108,7 +108,7 @@ public class HealthOverlayEventHandler implements IGuiOverlay {
 				renderBurnoutBar(gui, guiGraphics, screenWidth, screenHeight);
 			}
 
-			// Рендерим пустые сердца (стоимость здоровья)
+
 			if (hasHealthCostItem) {
 				renderHealthCostHearts(gui, guiGraphics, screenWidth, screenHeight, healthCost);
 			}
@@ -137,7 +137,7 @@ public class HealthOverlayEventHandler implements IGuiOverlay {
 	public static void renderMossBar(ForgeGui gui, GuiGraphics stack, int screenWidth, int screenHeight) {
 		int currentMossValue = calculateMossValue();
 
-		// Если эффекта нет, не рисуем ничего
+
 		if (currentMossValue <= 0) {
 			return;
 		}
@@ -150,30 +150,29 @@ public class HealthOverlayEventHandler implements IGuiOverlay {
 			previousMossValue = currentMossValue;
 		}
 
-		// Проверяем, что массив проинициализирован
+
 		if (heartIcons == null || heartIcons.length == 0) {
 			return;
 		}
 
-		// Ограничиваем количество сердец 10
+
 		int heartsToDraw = (currentMossValue + 1) / 2 + (currentMossValue + 1) % 2;
 
-		// Определяем позицию Y в зависимости от наличия mossBar
+
 		int yPosition = renderHeartY;
 
 		if (health > 0) {
 			for (int i = heartsToDraw - 1; i >= 0; i--) {
 				int xPosition = xStart + (i % 10) * 8;
-				int currentY = yPosition - max(3, (11 - (Mth.ceil(mc.player.getMaxHealth())+Mth.ceil(mc.player.getAbsorptionAmount())-2)/ 20)) * (i / 10);
+				int currentY = yPosition - max(3, (11 - (Mth.ceil(mc.player.getMaxHealth()) + Mth.ceil(mc.player.getAbsorptionAmount()) - 2) / 20)) * (i / 10);
 
 				if (health + mc.player.getAbsorptionAmount() <= 4) {
 					currentY = randomOffsets[i];
-				}
-				else if (i == regen) {
+				} else if (i == regen) {
 					currentY -= 2;
 				}
 
-				// Безопасный доступ к массиву
+
 				if (i < heartIcons.length) {
 					switch (heartIcons[i].heartIconType) {
 						case NONE:
@@ -199,110 +198,99 @@ public class HealthOverlayEventHandler implements IGuiOverlay {
 		if (mc.player == null) return;
 		int currentBurnoutValue = calculateBurnoutValue();
 
-		// Если эффекта нет, не рисуем ничего
+
 		if (currentBurnoutValue <= 0) {
 			return;
 		}
 
-		// Получаем текущее здоровье игрока
+
 		int currentHealth = Mth.ceil(mc.player.getHealth());
 		int maxHealth = Mth.ceil(mc.player.getMaxHealth());
-		int totalHearts = (maxHealth + Mth.ceil(mc.player.getAbsorptionAmount()) + 1) / 2; // Округляем вверх
+		int totalHearts = (maxHealth + Mth.ceil(mc.player.getAbsorptionAmount()) + 1) / 2;
 
-		// Определяем позицию для отрисовки
+
 		int xStart = screenWidth / 2 - 91;
 		int yPosition = renderHeartY;
 
-		// Устанавливаем прозрачность для мигания
+
 		color4f(1, 1, 1, 1);
-		// БЕЛАЯ ОБВОДКА: отрисовываем с правого конца текущего здоровья
+
 		int heartsToDraw = currentBurnoutValue;
 		int currentFullHearts = currentHealth / 2;
 		boolean hasHalfHeart = (currentHealth % 2 == 1);
 
-		// Начинаем с самого правого сердца текущего здоровья
-		// Индекс самого правого сердца
+
 		int rightmostHeartIndex;
 		if (hasHalfHeart) {
-			rightmostHeartIndex = currentFullHearts; // Индекс половины сердца
+			rightmostHeartIndex = currentFullHearts;
 		} else {
-			rightmostHeartIndex = currentFullHearts - 1; // Индекс последнего полного сердца
+			rightmostHeartIndex = currentFullHearts - 1;
 		}
 
 		for (int offset = 0; offset < totalHearts; offset++) {
 			if (heartsToDraw <= 0) break;
 
-			// Идем справа налево
+
 			int heartIndex = rightmostHeartIndex - offset;
 			if (heartIndex < 0) {
-				// Если вышли за пределы, берем из предыдущей строки
 				int rowsToAdd = (-heartIndex + 9) / 10;
 				heartIndex = 9 - ((-heartIndex - 1) % 10);
 			}
 
-			// Вычисляем позицию сердца
+
 			int row = heartIndex / 10;
 			int column = heartIndex % 10;
 			int x = xStart + column * 8;
 			int y = yPosition - Math.max(3, (11 - totalHearts / 10)) * row;
 
-			// Эффект дрожания при низком здоровье
+
 			if (currentHealth + mc.player.getAbsorptionAmount() <= 4) {
 				y = randomOffsets[heartIndex];
-			}
-			else if (heartIndex == regen) {
+			} else if (heartIndex == regen) {
 				y -= 2;
 			}
 			y -= 4;
 
-			// Определяем, сколько здоровья в этом сердце (исходя из текущего здоровья)
+
 			int heartHealth;
 			if (heartIndex == currentFullHearts && hasHalfHeart) {
-				heartHealth = 1; // Это половина сердца
+				heartHealth = 1;
 			} else if (heartIndex < currentFullHearts) {
-				heartHealth = 2; // Полное сердце в текущем здоровье
+				heartHealth = 2;
 			} else {
-				heartHealth = 0; // Сердце за пределами текущего здоровья
+				heartHealth = 0;
 			}
 
-			// Пропускаем сердца с 0 здоровьем (они не отображаются)
+
 			if (heartHealth == 0) {
-				offset--; // Пробуем следующее сердце
-				rightmostHeartIndex--; // Сдвигаем правую границу
+				offset--;
+				rightmostHeartIndex--;
 				if (rightmostHeartIndex < 0) break;
 				continue;
 			}
 
-			// Определяем, сколько здоровья нужно обвести в этом сердце
+
 			int healthToDrawInHeart = Math.min(heartsToDraw, heartHealth);
 
-			// Определяем, какую половину обводить
+
 			boolean isRightHalf = false;
 			if (healthToDrawInHeart == 1 && heartHealth == 2) {
-				// Нужно обвести только одну половину полного сердца
-				// Если это самое правое обводимое сердце - обводим правую половину
-				// Иначе - определяем по смещению
 				if (offset == 0 && heartsToDraw == 1) {
 					isRightHalf = true;
 				} else if (heartsToDraw == 1) {
-					// Последняя единица здоровья - обводим правую половину
 					isRightHalf = true;
 				}
 			}
 
-			// Отрисовываем обводку
+
 			if (healthToDrawInHeart == 2) {
-				// Полное сердце
 				drawBurnoutHeart(stack, x, y, 0, 27, 9, 12);
 			} else if (healthToDrawInHeart == 1) {
 				if (heartHealth == 1) {
-					// Половина сердца (левая)
 					drawBurnoutHeart(stack, x, y, 36, 27, 9, 12);
 				} else if (isRightHalf) {
-					// Правая половина полного сердца
 					drawBurnoutHeart(stack, x, y, 18, 27, 9, 12);
 				} else {
-					// Левая половина полного сердца
 					drawBurnoutHeart(stack, x, y, 36, 27, 9, 12);
 				}
 			}
@@ -314,83 +302,79 @@ public class HealthOverlayEventHandler implements IGuiOverlay {
 	public static void renderMosquitoBar(ForgeGui gui, GuiGraphics stack, int screenWidth, int screenHeight) {
 		int currentMosquitoValue = calculateMosquitoValue();
 
-		// Если эффекта нет, не рисуем ничего
+
 		if (currentMosquitoValue <= 0 || mc.player == null) {
 			return;
 		}
 
 		int xStart = screenWidth / 2 - 91;
 
-		// Получаем здоровье игрока
+
 		int health = Mth.ceil(mc.player.getHealth());
 		int maxHealth = Mth.ceil(mc.player.getMaxHealth());
 		int absorption = Mth.ceil(mc.player.getAbsorptionAmount());
 
-		// Общее количество здоровья (включая абсорбцию)
+
 		int totalHealth = health + absorption;
 
-		// Рассчитываем количество заполненных и пустых сердец
-		int totalRegularHearts = (maxHealth + 1) / 2; // Все обычные сердца
-		int absorptionHearts = (absorption + 1) / 2; // Абсорбционные сердца
 
-		// Общее количество сердец для расчета отступа
+		int totalRegularHearts = (maxHealth + 1) / 2;
+		int absorptionHearts = (absorption + 1) / 2;
+
+
 		int totalHeartsToDraw = totalRegularHearts + absorptionHearts;
 
-		// Обновляем mosquitoIcons если значение изменилось
+
 		if (currentMosquitoValue != previousMosquitoValue) {
 			mosquitoIcons = HeartsBar.calculateHeartIcons(currentMosquitoValue);
 			previousMosquitoValue = currentMosquitoValue;
 		}
 
-		// Проверяем, что массив проинициализирован
+
 		if (mosquitoIcons == null || mosquitoIcons.length == 0) {
 			return;
 		}
 
-		// Сколько москитных сердец нужно нарисовать (в единицах иконок)
+
 		int mosquitoHeartsToDraw = mosquitoIcons.length;
 
-		// Определяем позицию Y
+
 		int yPosition = renderHeartY;
 
 		if (currentMosquitoValue > 0) {
-			int drawnHearts = 0; // Сколько москитных иконок мы уже нарисовали
-			int remainingHealth = currentMosquitoValue; // Сколько москитного здоровья осталось распределить
+			int drawnHearts = 0;
+			int remainingHealth = currentMosquitoValue;
 
-			// Проходим по всем позициям сердец
+
 			for (int heartIndex = 0; heartIndex < totalHeartsToDraw && drawnHearts < mosquitoHeartsToDraw && remainingHealth > 0; heartIndex++) {
-				// Определяем, является ли это сердце заполненным и сколько здоровья в нем
 				int healthInThisHeart = 0;
 
 				if (heartIndex < totalRegularHearts) {
-					// Это обычное сердце
-					// Вычисляем, сколько здоровья в этом сердце у игрока
 					int heartStartHealth = heartIndex * 2;
 					healthInThisHeart = Math.max(0, Math.min(2, health - heartStartHealth));
 				} else {
-					// Это абсорбционное сердце
 					int absorptionHeartIndex = heartIndex - totalRegularHearts;
 					int absorptionStart = absorptionHeartIndex * 2;
 					healthInThisHeart = Math.max(0, Math.min(2, absorption - absorptionStart));
 				}
 
-				// Если в этом сердце нет здоровья у игрока, пропускаем
+
 				if (healthInThisHeart <= 0) {
 					continue;
 				}
 
-				// Определяем, сколько москитного здоровья должно быть в этом сердце
+
 				int mosquitoHealthInThisHeart = Math.min(healthInThisHeart, remainingHealth);
 
-				// Если москитного здоровья для этого сердца нет, переходим к следующему
+
 				if (mosquitoHealthInThisHeart <= 0) {
 					continue;
 				}
 
-				// Вычисляем позицию для рисования
+
 				int xPosition = xStart + (heartIndex % 10) * 8;
 
-				// Динамический отступ для рядов
+
 				int currentY = yPosition - max(3, (11 - (totalHeartsToDraw - 1) / 10)) * (heartIndex / 10);
 
 				if (totalHealth <= 4) {
@@ -399,18 +383,16 @@ public class HealthOverlayEventHandler implements IGuiOverlay {
 					currentY -= 2;
 				}
 
-				// Определяем тип иконки на основе количества москитного здоровья в этом сердце
+
 				if (mosquitoHealthInThisHeart == 2) {
-					// Полное москитное сердце
 					drawMosquitoHeart(stack, xPosition, currentY, 0, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
 				} else if (mosquitoHealthInThisHeart == 1) {
-					// Половинчатое москитное сердце
 					drawMosquitoHeart(stack, xPosition, currentY, 9, (mc.player.level().getLevelData().isHardcore() ? 9 : 0), 9, 9);
 				}
 
-				// Увеличиваем счетчик нарисованных иконок
+
 				drawnHearts++;
-				// Уменьшаем остаток москитного здоровья
+
 				remainingHealth -= mosquitoHealthInThisHeart;
 			}
 		}
@@ -418,9 +400,7 @@ public class HealthOverlayEventHandler implements IGuiOverlay {
 		color4f(1, 1, 1, 1);
 	}
 
-	/**
-	 * Обновление состояния мигания пустых сердец (стоимости здоровья)
-	 */
+
 	private static void updateHealthCostHighlight() {
 		if (mc.player == null) return;
 
@@ -433,170 +413,151 @@ public class HealthOverlayEventHandler implements IGuiOverlay {
 	public static void renderHealthCostHearts(ForgeGui gui, GuiGraphics stack, int screenWidth, int screenHeight, int healthCost) {
 		if (mc.player == null) return;
 
-		// Получаем стоимость здоровья
+
 		healthCost += ClientAdditionalHealthCostData.get();
 		if (healthCost <= 0) return;
 
-		// Получаем текущее здоровье игрока
+
 		int currentHealth = Mth.ceil(mc.player.getHealth());
 		int maxHealth = Mth.ceil(mc.player.getMaxHealth());
-		int totalHearts = (maxHealth + Mth.ceil(mc.player.getAbsorptionAmount()) + 1) / 2; // Округляем вверх
+		int totalHearts = (maxHealth + Mth.ceil(mc.player.getAbsorptionAmount()) + 1) / 2;
 
-		// Определяем, нужно ли использовать красную обводку
+
 		boolean useRedOutline = healthCost >= currentHealth;
 
-		// Определяем базовую текстуру
-		int baseY = 18; // Y координата для обводки сердец
 
-		// Определяем позицию для отрисовки
+		int baseY = 18;
+
+
 		int xStart = screenWidth / 2 - 91;
 		int yPosition = renderHeartY;
 
-		// Обновляем состояние мигания
+
 		updateHealthCostHighlight();
 
-		// Устанавливаем прозрачность для мигания
+
 		color4f(1, 1, 1, highlightAlpha);
 
 		if (useRedOutline) {
-			// КРАСНАЯ ОБВОДКА: отрисовываем с левого конца всего здоровья
-			// Ограничиваем healthCost максимальным здоровьем для отрисовки
 			int heartsToOutline = Math.min(healthCost, maxHealth);
 
 			for (int i = 0; i < totalHearts; i++) {
 				if (heartsToOutline <= 0) break;
 
-				// Вычисляем позицию сердца
+
 				int row = i / 10;
 				int column = i % 10;
 				int x = xStart + column * 8;
-				int y = yPosition - Math.max(3, (11 - (totalHearts-1) / 10)) * row;
+				int y = yPosition - Math.max(3, (11 - (totalHearts - 1) / 10)) * row;
 
-				// Эффект дрожания при низком здоровье
+
 				if (currentHealth + mc.player.getAbsorptionAmount() <= 4) {
 					y = randomOffsets[i];
-				}
-				else if (i == regen) {
+				} else if (i == regen) {
 					y -= 2;
 				}
 
-				// Определяем, сколько здоровья в этом сердце
+
 				int heartHealth;
 				if (i == totalHearts - 1 && maxHealth % 2 == 1) {
-					heartHealth = 1; // Последнее сердце - половина
+					heartHealth = 1;
 				} else {
 					heartHealth = 2;
 				}
 
-				// Определяем, сколько здоровья нужно обвести в этом сердце
+
 				int healthToOutlineInHeart = Math.min(heartsToOutline, heartHealth);
 
-				// Отрисовываем обводку в зависимости от количества здоровья
+
 				if (healthToOutlineInHeart == 2) {
-					// Полное сердце
-					stack.blit(ICONS, x, y, 45, baseY, 9, 9); // Красная обводка полного сердца
+					stack.blit(ICONS, x, y, 45, baseY, 9, 9);
 				} else if (healthToOutlineInHeart == 1) {
-					// Половина сердца
 					if (heartHealth == 1) {
-						// Это уже половина сердца (левая)
-						stack.blit(ICONS, x, y, 54, baseY, 9, 9); // Красная обводка левой половины
+						stack.blit(ICONS, x, y, 54, baseY, 9, 9);
 					} else {
-						// Полное сердце, но обводим только левую половину (так как идем слева)
-						stack.blit(ICONS, x, y, 54, baseY, 9, 9); // Красная обводка левой половины
+						stack.blit(ICONS, x, y, 54, baseY, 9, 9);
 					}
 				}
 
 				heartsToOutline -= healthToOutlineInHeart;
 			}
 		} else {
-			// БЕЛАЯ ОБВОДКА: отрисовываем с правого конца текущего здоровья
 			int heartsToOutline = healthCost;
 			int currentFullHearts = currentHealth / 2;
 			boolean hasHalfHeart = (currentHealth % 2 == 1);
 
-			// Начинаем с самого правого сердца текущего здоровья
-			// Индекс самого правого сердца
+
 			int rightmostHeartIndex;
 			if (hasHalfHeart) {
-				rightmostHeartIndex = currentFullHearts; // Индекс половины сердца
+				rightmostHeartIndex = currentFullHearts;
 			} else {
-				rightmostHeartIndex = currentFullHearts - 1; // Индекс последнего полного сердца
+				rightmostHeartIndex = currentFullHearts - 1;
 			}
 
 			for (int offset = 0; offset < totalHearts; offset++) {
 				if (heartsToOutline <= 0) break;
 
-				// Идем справа налево
+
 				int heartIndex = rightmostHeartIndex - offset;
 				if (heartIndex < 0) {
-					// Если вышли за пределы, берем из предыдущей строки
 					int rowsToAdd = (-heartIndex + 9) / 10;
 					heartIndex = 9 - ((-heartIndex - 1) % 10);
 				}
 
-				// Вычисляем позицию сердца
+
 				int row = heartIndex / 10;
 				int column = heartIndex % 10;
 				int x = xStart + column * 8;
-				int y = yPosition - Math.max(3, (11 - (totalHearts-1) / 10)) * row;
+				int y = yPosition - Math.max(3, (11 - (totalHearts - 1) / 10)) * row;
 
-				// Эффект дрожания при низком здоровье
+
 				if (currentHealth + mc.player.getAbsorptionAmount() <= 4) {
 					y = randomOffsets[heartIndex];
-				}
-				else if (heartIndex == regen) {
+				} else if (heartIndex == regen) {
 					y -= 2;
 				}
 
-				// Определяем, сколько здоровья в этом сердце (исходя из текущего здоровья)
+
 				int heartHealth;
 				if (heartIndex == currentFullHearts && hasHalfHeart) {
-					heartHealth = 1; // Это половина сердца
+					heartHealth = 1;
 				} else if (heartIndex < currentFullHearts) {
-					heartHealth = 2; // Полное сердце в текущем здоровье
+					heartHealth = 2;
 				} else {
-					heartHealth = 0; // Сердце за пределами текущего здоровья
+					heartHealth = 0;
 				}
 
-				// Пропускаем сердца с 0 здоровьем (они не отображаются)
+
 				if (heartHealth == 0) {
-					offset--; // Пробуем следующее сердце
-					rightmostHeartIndex--; // Сдвигаем правую границу
+					offset--;
+					rightmostHeartIndex--;
 					if (rightmostHeartIndex < 0) break;
 					continue;
 				}
 
-				// Определяем, сколько здоровья нужно обвести в этом сердце
+
 				int healthToOutlineInHeart = Math.min(heartsToOutline, heartHealth);
 
-				// Определяем, какую половину обводить
+
 				boolean isRightHalf = false;
 				if (healthToOutlineInHeart == 1 && heartHealth == 2) {
-					// Нужно обвести только одну половину полного сердца
-					// Если это самое правое обводимое сердце - обводим правую половину
-					// Иначе - определяем по смещению
 					if (offset == 0 && heartsToOutline == 1) {
 						isRightHalf = true;
 					} else if (heartsToOutline == 1) {
-						// Последняя единица здоровья - обводим правую половину
 						isRightHalf = true;
 					}
 				}
 
-				// Отрисовываем обводку
+
 				if (healthToOutlineInHeart == 2) {
-					// Полное сердце
-					stack.blit(ICONS, x, y, 18, baseY, 9, 9); // Белая обводка полного сердца
+					stack.blit(ICONS, x, y, 18, baseY, 9, 9);
 				} else if (healthToOutlineInHeart == 1) {
 					if (heartHealth == 1) {
-						// Половина сердца (левая)
-						stack.blit(ICONS, x, y, 27, baseY, 9, 9); // Белая обводка левой половины
+						stack.blit(ICONS, x, y, 27, baseY, 9, 9);
 					} else if (isRightHalf) {
-						// Правая половина полного сердца
-						stack.blit(ICONS, x, y, 36, baseY, 9, 9); // Белая обводка правой половины
+						stack.blit(ICONS, x, y, 36, baseY, 9, 9);
 					} else {
-						// Левая половина полного сердца
-						stack.blit(ICONS, x, y, 27, baseY, 9, 9); // Белая обводка левой половины
+						stack.blit(ICONS, x, y, 27, baseY, 9, 9);
 					}
 				}
 

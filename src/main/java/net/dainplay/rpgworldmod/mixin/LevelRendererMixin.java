@@ -20,14 +20,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(LevelRenderer.class) // Target the LevelRenderer class
+@Mixin(LevelRenderer.class)
 public class LevelRendererMixin {
-
 	@Shadow
 	private ClientLevel level;
 
 	@Unique
-	private BlockPos currentRainCheckPos; // Последняя позиция, для которой запрашивался биом
+	private BlockPos currentRainCheckPos;
 
 	@Redirect(
 			method = {"renderSnowAndRain", "tickRain"},
@@ -39,17 +38,17 @@ public class LevelRendererMixin {
 		return Math.max(original, ours);
 	}
 
-	// Сохраняем позицию при вызове getBiome (это происходит перед hasPrecipitation)
+
 	@Redirect(
 			method = "renderSnowAndRain",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")
 	)
 	private Holder<Biome> onGetBiome(Level instance, BlockPos blockPos) {
-		this.currentRainCheckPos = blockPos.immutable(); // сохраняем
-		return instance.getBiome(blockPos); // возвращаем оригинальное значение
+		this.currentRainCheckPos = blockPos.immutable();
+		return instance.getBiome(blockPos);
 	}
 
-	// Подменяем hasPrecipitation, используя сохранённую позицию
+
 	@Redirect(
 			method = "renderSnowAndRain",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;hasPrecipitation()Z")
@@ -63,9 +62,7 @@ public class LevelRendererMixin {
 		else return biome.hasPrecipitation();
 	}
 
-	/**
-	 * Заставляет Biome.getPrecipitationAt() возвращать RAIN для блоков в дождевых чанках.
-	 */
+
 	@Redirect(
 			method = "renderSnowAndRain",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitationAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/biome/Biome$Precipitation;")
@@ -79,9 +76,7 @@ public class LevelRendererMixin {
 		else return biome.getPrecipitationAt(pos);
 	}
 
-	/**
-	 * То же самое для метода tickRain (звуки и частицы дождя).
-	 */
+
 	@Redirect(
 			method = "tickRain",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitationAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/biome/Biome$Precipitation;")
@@ -96,9 +91,7 @@ public class LevelRendererMixin {
 		else return biome.getPrecipitationAt(pos);
 	}
 
-	/**
-	 * Проверка, находится ли блок в дождевом чанке.
-	 */
+
 	private boolean isRainyChunk(ClientLevel level, BlockPos pos) {
 		int chunkX = pos.getX() >> 4;
 		int chunkZ = pos.getZ() >> 4;
@@ -115,7 +108,7 @@ public class LevelRendererMixin {
 				|| level.getBlockState(pos.below()).is(blockType);
 	}
 
-	// Helper function to check if block is water
+
 	boolean isAnyAdjacentWater(Level level, BlockPos pos) {
 		return level.getBlockState(pos).getFluidState().is(FluidTags.WATER)
 				|| level.getBlockState(pos.south()).getFluidState().is(FluidTags.WATER)
@@ -126,7 +119,7 @@ public class LevelRendererMixin {
 				|| level.getBlockState(pos.below()).getFluidState().is(FluidTags.WATER);
 	}
 
-	// Helper function to check if block is fuel block
+
 	boolean isAnyAdjacentFuelBlock(Level level, BlockPos pos) {
 		return isAnyAdjacentBlockOfType(level, pos, ModBlocks.ARBOR_FUEL_BLOCK.get());
 	}

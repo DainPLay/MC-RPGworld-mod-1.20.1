@@ -12,7 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PlayerSculkStaffCDProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
-	public static Capability<PlayerSculkStaffCD> PLAYER_SCULK_STAFF_COOLDOWN = CapabilityManager.get(new CapabilityToken<PlayerSculkStaffCD>() {});
+	public static Capability<PlayerSculkStaffCD> PLAYER_SCULK_STAFF_COOLDOWN = CapabilityManager.get(new CapabilityToken<PlayerSculkStaffCD>() {
+	});
 
 	private PlayerSculkStaffCD cooldown = null;
 	private final LazyOptional<PlayerSculkStaffCD> optional = LazyOptional.of(this::createPlayerSculkStaffCD);

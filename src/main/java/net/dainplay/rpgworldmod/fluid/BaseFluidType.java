@@ -12,63 +12,61 @@ import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
-import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class BaseFluidType extends FluidType {
-    private final ResourceLocation stillTexture;
-    private final ResourceLocation flowingTexture;
-    private final ResourceLocation renderOverlayTexture;
-    private final int tintColor;
-    private final Vector3f fogColor;
+	private final ResourceLocation stillTexture;
+	private final ResourceLocation flowingTexture;
+	private final ResourceLocation renderOverlayTexture;
+	private final int tintColor;
+	private final Vector3f fogColor;
 
-    public BaseFluidType(final ResourceLocation stillTexture, final ResourceLocation flowingTexture, final ResourceLocation overlayTexture,
-                         final int tintColor, final Vector3f fogColor, final Properties properties) {
-        super(properties);
-        this.stillTexture = stillTexture;
-        this.flowingTexture = flowingTexture;
-        this.tintColor = tintColor;
-        this.fogColor = fogColor;
-        this.renderOverlayTexture = overlayTexture;
-    }
+	public BaseFluidType(final ResourceLocation stillTexture, final ResourceLocation flowingTexture, final ResourceLocation overlayTexture,
+						 final int tintColor, final Vector3f fogColor, final Properties properties) {
+		super(properties);
+		this.stillTexture = stillTexture;
+		this.flowingTexture = flowingTexture;
+		this.tintColor = tintColor;
+		this.fogColor = fogColor;
+		this.renderOverlayTexture = overlayTexture;
+	}
 
-    @Override
-    public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
-        consumer.accept(new IClientFluidTypeExtensions() {
-            @Override
-            public ResourceLocation getStillTexture() {
-                return stillTexture;
-            }
+	@Override
+	public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
+		consumer.accept(new IClientFluidTypeExtensions() {
+			@Override
+			public ResourceLocation getStillTexture() {
+				return stillTexture;
+			}
 
-            @Override
-            public ResourceLocation getFlowingTexture() {
-                return flowingTexture;
-            }
+			@Override
+			public ResourceLocation getFlowingTexture() {
+				return flowingTexture;
+			}
 
-            @Override
-            public ResourceLocation getRenderOverlayTexture(Minecraft mc)
-            {
-                return renderOverlayTexture;
-            }
+			@Override
+			public ResourceLocation getRenderOverlayTexture(Minecraft mc) {
+				return renderOverlayTexture;
+			}
 
-            @Override
-            public int getTintColor() {
-                return tintColor;
-            }
+			@Override
+			public int getTintColor() {
+				return tintColor;
+			}
 
-            @Override
-            public @NotNull Vector3f modifyFogColor(Camera camera, float partialTick, ClientLevel level,
-                                                    int renderDistance, float darkenWorldAmount, Vector3f fluidFogColor) {
-                return fogColor;
-            }
+			@Override
+			public @NotNull Vector3f modifyFogColor(Camera camera, float partialTick, ClientLevel level,
+													int renderDistance, float darkenWorldAmount, Vector3f fluidFogColor) {
+				return fogColor;
+			}
 
-            @Override
-            public void modifyFogRender(Camera camera, FogRenderer.FogMode mode, float renderDistance, float partialTick,
-                                        float nearDistance, float farDistance, FogShape shape) {
-                RenderSystem.setShaderFogStart(0.5f);
-                RenderSystem.setShaderFogEnd(1f); // distance when the fog starts
-            }
-        });
-    }
+			@Override
+			public void modifyFogRender(Camera camera, FogRenderer.FogMode mode, float renderDistance, float partialTick,
+										float nearDistance, float farDistance, FogShape shape) {
+				RenderSystem.setShaderFogStart(0.5f);
+				RenderSystem.setShaderFogEnd(1f);
+			}
+		});
+	}
 
 }

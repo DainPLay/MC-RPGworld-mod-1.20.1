@@ -18,7 +18,6 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Dolphin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
@@ -75,20 +74,19 @@ public class ConjuredDolphin extends Dolphin {
 		float currentTick = livedTicks + partialTick;
 		float progress = currentTick / totalTicks;
 
-		// Анимация: быстро увеличиваем до 1, затем плавно уменьшаем до 0
+
 		if (progress < 0.25f) {
-			// Быстрое появление: 0 → 1 за 0.5 секунды (10 тиков)
 			return progress * 4f;
 		} else {
-			// Плавное исчезновение: 1 → 0 за 1.5 секунды (30 тиков)
 			return 1f - ((progress - 0.25f) / 0.75f);
 		}
 	}
+
 	public float getBeamRotationAngle(float partialTick) {
 		if (livedTicks > 40) return 0f;
 
 		float currentTick = livedTicks + partialTick;
-		// Один полный оборот за 2 секунды (40 тиков)
+
 		return (currentTick / 40f) * 360f;
 	}
 
@@ -126,8 +124,7 @@ public class ConjuredDolphin extends Dolphin {
 		if (!level().isClientSide) {
 			if (source.getEntity() instanceof Player player) {
 				if (player.getUUID().equals(getOwnerUUID())) {
-					// Проверяем, что в основной руке игрока каменный меч
-					if (player.getMainHandItem().is(ModItems.HEART_OF_THE_SEA_SCROLL.get()) && player.getMainHandItem().getEnchantmentLevel(ModEnchantments.CONJURATION.get())>0) {
+					if (player.getMainHandItem().is(ModItems.HEART_OF_THE_SEA_SCROLL.get()) && player.getMainHandItem().getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0) {
 						vanishWithEffects();
 						return true;
 					}
@@ -139,7 +136,6 @@ public class ConjuredDolphin extends Dolphin {
 
 	@Override
 	public void die(DamageSource source) {
-		// Отменяем стандартную смерть, чтобы не было дропа и звуков смерти
 		if (!level().isClientSide && !isRemoved()) {
 			vanishWithEffects();
 		}
@@ -157,7 +153,7 @@ public class ConjuredDolphin extends Dolphin {
 		discard();
 	}
 
-	// Цель следования за владельцем и дарения эффекта грации дельфина
+
 	static class DolphinFollowOwnerGoal extends Goal {
 		private final ConjuredDolphin dolphin;
 		private final double speedModifier;

@@ -1,20 +1,17 @@
 package net.dainplay.rpgworldmod.item.custom;
 
 import net.dainplay.rpgworldmod.biome.BiomeRegistry;
-import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.entity.ModEntities;
 import net.dainplay.rpgworldmod.entity.custom.MosquitoSwarm;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.util.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -41,7 +38,7 @@ public class ChitinThimbleItem extends CurioItem {
 			}
 
 		for (MosquitoSwarm swarm : player.level().getEntitiesOfClass(MosquitoSwarm.class, new AABB(player.blockPosition()).inflate(100.0F))) {
-			if(swarm.getOwner() != null && swarm.getOwner() == player && swarm.getSize() >= 3) swarmIsNear = true;
+			if (swarm.getOwner() != null && swarm.getOwner() == player && swarm.getSize() >= 3) swarmIsNear = true;
 		}
 		BlockState playerState = level.getBlockState(player.blockPosition());
 
@@ -79,18 +76,17 @@ public class ChitinThimbleItem extends CurioItem {
 	}
 
 
-
 	public boolean hasStickyBlockNearby(LivingEntity entity) {
 		Level level = entity.level();
 		BlockPos centerPos = entity.blockPosition();
 
 		BlockPos[] directions = {
-				centerPos.above(),    // +Y
-				centerPos.below(),    // -Y
-				centerPos.north(),    // -Z
-				centerPos.south(),    // +Z
-				centerPos.west(),     // -X
-				centerPos.east()      // +X
+				centerPos.above(),
+				centerPos.below(),
+				centerPos.north(),
+				centerPos.south(),
+				centerPos.west(),
+				centerPos.east()
 		};
 
 		for (BlockPos checkPos : directions) {

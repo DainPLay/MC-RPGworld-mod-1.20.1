@@ -16,7 +16,6 @@ import net.minecraft.world.item.armortrim.TrimMaterial;
 import java.util.Map;
 
 public class ModTrimMaterials {
-
 	public static final ResourceKey<TrimMaterial> MINTAL = registerKey("mintal");
 
 	private static ResourceKey<TrimMaterial> registerKey(String name) {

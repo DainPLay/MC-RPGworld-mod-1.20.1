@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class EntityExcludedDamageSource extends DamageSource {
-
 	protected final List<EntityType<?>> entities;
 
 	public EntityExcludedDamageSource(Holder<DamageType> type, EntityType<?>... entities) {

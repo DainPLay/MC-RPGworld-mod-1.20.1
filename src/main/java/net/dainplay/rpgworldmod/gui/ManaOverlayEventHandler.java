@@ -25,7 +25,6 @@ import static java.lang.Math.max;
 public class ManaOverlayEventHandler implements IGuiOverlay {
 	public static final ResourceLocation ICONS = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/icons.png");
 
-	// Переменные для мигания
 	private static long lastManaTime = 0;
 	private static long manaBlinkTime = 0;
 	private static int lastMana = -1;
@@ -40,7 +39,6 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 	private static long fullManaBlinkEndTime = 0;
 	private static int manaBeforeSpend = -1;
 
-	// Новые переменные для подсветки требуемой маны
 	private static int manaCostToShow = 0;
 	private static long lastHighlightTime = 0;
 	private static float highlightAlpha = 1.0f;
@@ -84,7 +82,6 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 	private static int[] createHappinessOffset(int maxMana, int tickCount) {
 		int[] offset = new int[maxMana];
 		if (maxMana > 0) {
-			// Вычисляем позицию единицы: двигаемся по массиву с каждым тиком
 			int position = tickCount % maxMana;
 			offset[position] = -2;
 		}
@@ -97,7 +94,6 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 
 			int maxMana = ClientMaxManaData.get();
 
-			// Проверяем, держит ли игрок предмет, требующий ману
 			boolean hasManaCostItem = false;
 			manaCostToShow = 0;
 
@@ -105,34 +101,32 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 				ItemStack mainHandItem = mc.player.getMainHandItem();
 				ItemStack offHandItem = mc.player.getOffhandItem();
 
-				// Проверяем обе руки
 				if (mainHandItem.getItem() instanceof ManaCostItem manaCostItem) {
-					if(mainHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(mainHandItem, mc.player) && !manaCostItem.usesHealthInsteadOfMana(mainHandItem);
+					if (mainHandItem.getItem() instanceof OrbitingItem orbitingItem)
+						hasManaCostItem = orbitingItem.shouldOrbit(mainHandItem, mc.player) && !manaCostItem.usesHealthInsteadOfMana(mainHandItem);
 					else hasManaCostItem = !manaCostItem.usesHealthInsteadOfMana(mainHandItem);
-					if (hasManaCostItem) manaCostToShow = ((ManaCostItem) mainHandItem.getItem()).getManaCost(mainHandItem, mc.player);
+					if (hasManaCostItem)
+						manaCostToShow = ((ManaCostItem) mainHandItem.getItem()).getManaCost(mainHandItem, mc.player);
 				} else if (offHandItem.getItem() instanceof ManaCostItem manaCostItem) {
-					if(offHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(offHandItem, mc.player) && !manaCostItem.usesHealthInsteadOfMana(offHandItem);
+					if (offHandItem.getItem() instanceof OrbitingItem orbitingItem)
+						hasManaCostItem = orbitingItem.shouldOrbit(offHandItem, mc.player) && !manaCostItem.usesHealthInsteadOfMana(offHandItem);
 					else hasManaCostItem = !manaCostItem.usesHealthInsteadOfMana(offHandItem);
-					if (hasManaCostItem) manaCostToShow = ((ManaCostItem) offHandItem.getItem()).getManaCost(offHandItem, mc.player);
+					if (hasManaCostItem)
+						manaCostToShow = ((ManaCostItem) offHandItem.getItem()).getManaCost(offHandItem, mc.player);
 				}
 			}
 
 			if (shouldRenderMana() && mc.player != null) {
 				int[] randomOffset;
-				if(mc.player.hasEffect(ModEffects.HAPPINESS.get()))
-					randomOffset = createHappinessOffset(maxMana/3, mc.player.tickCount);
+				if (mc.player.hasEffect(ModEffects.HAPPINESS.get()))
+					randomOffset = createHappinessOffset(maxMana / 3, mc.player.tickCount);
 				else randomOffset = new Random(mc.player.tickCount).ints(0, 2).limit(maxMana).toArray();
 
-				// Обновляем состояние мигания
 				updateManaBlink();
-				// Обновляем состояние подсветки требуемой маны
 				updateManaCostHighlight();
 
-				// Рисуем фон (максимальную ману)
 				renderManaBG(gui, guiGraphics, screenWidth, screenHeight, randomOffset);
-				// Рисуем текущую ману поверх фона
 				renderManaBar(gui, guiGraphics, screenWidth, screenHeight, randomOffset);
-				// Рисуем подсветку требуемой маны
 				if (hasManaCostItem && manaCostToShow > 0) {
 					renderManaCostHighlight(guiGraphics, screenWidth, screenHeight, randomOffset);
 				}
@@ -140,20 +134,23 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		}
 	}
 
-	public static boolean shouldRenderMana()
-	{
+	public static boolean shouldRenderMana() {
 		if (mc.player == null) return false;
 		boolean hasManaCostItem = false;
 		ItemStack mainHandItem = mc.player.getMainHandItem();
 		ItemStack offHandItem = mc.player.getOffhandItem();
 		if (mainHandItem.getItem() instanceof ManaCostItem manaCostItem) {
-			if(mainHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(mainHandItem, mc.player) && !manaCostItem.usesHealthInsteadOfMana(mainHandItem);
-			else hasManaCostItem =  !manaCostItem.usesHealthInsteadOfMana(mainHandItem);
-			if (hasManaCostItem) manaCostToShow = ((ManaCostItem) mainHandItem.getItem()).getManaCost(mainHandItem, mc.player);
+			if (mainHandItem.getItem() instanceof OrbitingItem orbitingItem)
+				hasManaCostItem = orbitingItem.shouldOrbit(mainHandItem, mc.player) && !manaCostItem.usesHealthInsteadOfMana(mainHandItem);
+			else hasManaCostItem = !manaCostItem.usesHealthInsteadOfMana(mainHandItem);
+			if (hasManaCostItem)
+				manaCostToShow = ((ManaCostItem) mainHandItem.getItem()).getManaCost(mainHandItem, mc.player);
 		} else if (offHandItem.getItem() instanceof ManaCostItem manaCostItem) {
-			if(offHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(offHandItem, mc.player) && !manaCostItem.usesHealthInsteadOfMana(offHandItem);
-			else hasManaCostItem =  !manaCostItem.usesHealthInsteadOfMana(offHandItem);
-			if (hasManaCostItem) manaCostToShow = ((ManaCostItem) offHandItem.getItem()).getManaCost(offHandItem, mc.player);
+			if (offHandItem.getItem() instanceof OrbitingItem orbitingItem)
+				hasManaCostItem = orbitingItem.shouldOrbit(offHandItem, mc.player) && !manaCostItem.usesHealthInsteadOfMana(offHandItem);
+			else hasManaCostItem = !manaCostItem.usesHealthInsteadOfMana(offHandItem);
+			if (hasManaCostItem)
+				manaCostToShow = ((ManaCostItem) offHandItem.getItem()).getManaCost(offHandItem, mc.player);
 		}
 		return ClientManaData.get() < ClientMaxManaData.get() ||
 				System.currentTimeMillis() < fullManaDisplayTime ||
@@ -168,49 +165,40 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 
 		long currentTime = System.currentTimeMillis();
 
-		// Проверяем изменение маны
 		if (currentMana != lastMana) {
 			if (currentMana > lastMana) {
-				// Восстановление
 				int restored = currentMana - lastMana;
 
-				// Проверяем восстановление кратной 5 маны
 				if (currentMana % 5 == 0 && restored > 0) {
 					restoreBlink = true;
-					// Индекс последней восстановленной звезды
 					blinkStarIndex = (currentMana - 1) / 5;
 					lastManaTime = currentTime;
 					manaBlinkTime = currentTime + 200;
 				}
 
-				// Проверяем полное восстановление
 				if (currentMana == maxMana && lastMana < maxMana) {
 					fullManaBlink = true;
-					fullManaDisplayTime = currentTime + 1000; // Показываем ману еще 1 секунду
-					fullManaBlinkEndTime = currentTime + 200; // Мигание длится 200 мс
+					fullManaDisplayTime = currentTime + 1000;
+					fullManaBlinkEndTime = currentTime + 200;
 					manaBlinkTime = Math.max(manaBlinkTime, currentTime + 200);
 					showManaBar = true;
 				}
 			} else if (currentMana < lastMana) {
-				// Трата маны
 				spentManaAmount = lastMana - currentMana;
 				spendBlink = true;
-				// Запоминаем ману до траты
 				manaBeforeSpend = lastMana;
 				lastManaTime = currentTime;
 				manaBlinkTime = currentTime + 200;
 
-				// Сбрасываем таймер полной маны при трате
 				fullManaDisplayTime = 0;
 				fullManaBlink = false;
 				fullManaBlinkEndTime = 0;
-				showManaBar = true; // Показываем ману при трате
+				showManaBar = true;
 			}
 
 			lastMana = currentMana;
 		}
 
-		// Сбрасываем мигание по истечении времени
 		if (currentTime > manaBlinkTime) {
 			restoreBlink = false;
 			spendBlink = false;
@@ -219,22 +207,21 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 			manaBeforeSpend = -1;
 		}
 
-		// Сбрасываем мигание полной маны после 200 мс
 		if (currentTime > fullManaBlinkEndTime) {
 			fullManaBlink = false;
 		}
 
-		// Скрываем ману через секунду после полного восстановления
-		// Но не скрываем, если игрок держит предмет, требующий ману
 		boolean hasManaCostItem = false;
 		if (mc.player != null) {
 			ItemStack mainHandItem = mc.player.getMainHandItem();
 			ItemStack offHandItem = mc.player.getOffhandItem();
 			if (mainHandItem.getItem() instanceof ManaCostItem manaCostItem) {
-				if(mainHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(mainHandItem, mc.player) && !manaCostItem.usesHealthInsteadOfMana(mainHandItem);
+				if (mainHandItem.getItem() instanceof OrbitingItem orbitingItem)
+					hasManaCostItem = orbitingItem.shouldOrbit(mainHandItem, mc.player) && !manaCostItem.usesHealthInsteadOfMana(mainHandItem);
 				else hasManaCostItem = !manaCostItem.usesHealthInsteadOfMana(mainHandItem);
 			} else if (offHandItem.getItem() instanceof ManaCostItem manaCostItem) {
-				if(offHandItem.getItem() instanceof OrbitingItem orbitingItem) hasManaCostItem = orbitingItem.shouldOrbit(offHandItem, mc.player) && !manaCostItem.usesHealthInsteadOfMana(offHandItem);
+				if (offHandItem.getItem() instanceof OrbitingItem orbitingItem)
+					hasManaCostItem = orbitingItem.shouldOrbit(offHandItem, mc.player) && !manaCostItem.usesHealthInsteadOfMana(offHandItem);
 				else hasManaCostItem = !manaCostItem.usesHealthInsteadOfMana(offHandItem);
 			}
 		}
@@ -243,15 +230,11 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 			showManaBar = false;
 		}
 
-		// Если displayMana еще не инициализирован, устанавливаем текущее значение
 		if (displayMana < 0) {
 			displayMana = currentMana;
 		}
 	}
 
-	/**
-	 * Обновление состояния подсветки требуемой маны
-	 */
 	private static void updateManaCostHighlight() {
 		if (mc.player == null) return;
 
@@ -283,7 +266,6 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		int xStart = screenWidth / 2 + 10;
 		int mana = ClientManaData.get();
 
-		// Обновляем иконки для текущей маны
 		if (currentManaValue != previousManaValue) {
 			manaIcons = StarsBar.calculateStarsIcons(currentManaValue);
 			previousManaValue = currentManaValue;
@@ -293,35 +275,30 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 			return;
 		}
 
-		// Количество звезд для текущей маны
-		int starsToDraw = (currentManaValue + 4) / 5; // Округляем вверх
+		int starsToDraw = (currentManaValue + 4) / 5;
 
 		int yPosition = screenHeight - 50 - isAirRender();
 		long currentTime = System.currentTimeMillis();
 		boolean isBlinking = (currentTime / 100) % 2 == 0;
 
 		for (int i = starsToDraw - 1; i >= 0; i--) {
-			// ИЗМЕНЕНИЕ: Изменяем расчет X для отрисовки справа налево
-			int xPosition = xStart + ((9 - (i % 10)) * 8); // 9 - обратный порядок
+			int xPosition = xStart + ((9 - (i % 10)) * 8);
 			int currentY = yPosition - max(3, (12 - ClientMaxManaData.get() / 50)) * (i / 10);
 
 			if (mana <= 10 || ClientIsManaRegenBlockedData.get() > 0 || mc.player.hasEffect(ModEffects.HAPPINESS.get())) {
 				currentY += randomOffset[i];
 			}
 
-			// Определяем смещение по Y для текстуры
 			int textureYOffset = 0;
 
-			// Если восстановление маны заблокировано, используем другой Y-сдвиг (20)
 			if (ClientIsManaRegenBlockedData.get() > 0) {
-				textureYOffset = 20; // Используем текстуры с Y=20
+				textureYOffset = 20;
 				if (restoreBlink && isBlinking) {
 					textureYOffset = 60;
 				} else if (fullManaBlink && currentTime < fullManaBlinkEndTime && isBlinking) {
 					textureYOffset = 60;
 				}
 			} else {
-				// Оригинальная логика для мигания
 				if (restoreBlink && isBlinking) {
 					textureYOffset = 10;
 				} else if (fullManaBlink && currentTime < fullManaBlinkEndTime && isBlinking) {
@@ -368,7 +345,6 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		int currentMana = ClientManaData.get();
 		int mana = currentMana;
 
-		// Обновляем иконки для максимальной маны
 		if (maxManaValue != previousMaxManaValue) {
 			maxManaIcons = StarsBar.calculateStarsIcons(maxManaValue);
 			previousMaxManaValue = maxManaValue;
@@ -378,15 +354,12 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 			return;
 		}
 
-		// Количество звезд для максимальной маны
-		int maxStarsToDraw = (maxManaValue + 4) / 5; // Округляем вверх
+		int maxStarsToDraw = (maxManaValue + 4) / 5;
 
-		// Вычисляем количество строк (по 10 звезд в строке)
-		int totalRows = (maxStarsToDraw + 9) / 10; // Округляем вверх
+		int totalRows = (maxStarsToDraw + 9) / 10;
 
-		// Определяем, какие строки пустые (без текущей маны)
 		boolean[] emptyRows = new boolean[totalRows];
-		int currentStars = (currentMana + 4) / 5; // Звезд текущей маны
+		int currentStars = (currentMana + 4) / 5;
 
 		for (int row = 0; row < totalRows; row++) {
 			int starsInCurrentRow = Math.min(10, maxStarsToDraw - row * 10);
@@ -395,15 +368,12 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 				continue;
 			}
 
-			// Проверяем, есть ли в этой строке текущая мана
 			int firstStarInRow = row * 10;
 			int lastStarInRow = Math.min(firstStarInRow + 9, maxStarsToDraw - 1);
 
-			// Строка считается пустой, если в ней нет ни одной звезды текущей маны
 			emptyRows[row] = true;
 			for (int starIndex = firstStarInRow; starIndex <= lastStarInRow; starIndex++) {
 				if (starIndex < currentStars) {
-					// В этой строке есть хотя бы одна звезда текущей маны
 					emptyRows[row] = false;
 					break;
 				}
@@ -414,7 +384,6 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		long currentTime = System.currentTimeMillis();
 		boolean isBlinking = (currentTime / 100) % 2 == 0;
 
-		// Рассчитываем отступы между строками с учетом пустых строк
 		int rowHeight = max(3, (12 - maxManaValue / 50));
 		int[] rowOffsets = new int[totalRows];
 
@@ -422,7 +391,6 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 			if (row == 0) {
 				rowOffsets[row] = 0;
 			} else {
-				// Если текущая строка или предыдущая строка пустые, используем минимальный отступ (3)
 				if (emptyRows[row] || emptyRows[row - 1]) {
 					rowOffsets[row] = rowOffsets[row - 1] + Math.min(5, (12 - maxManaValue / 50));
 				} else {
@@ -432,56 +400,39 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		}
 
 		for (int i = maxStarsToDraw - 1; i >= 0; i--) {
-			// ИЗМЕНЕНИЕ: Изменяем расчет X для отрисовки справа налево
-			int xPosition = xStart + ((9 - (i % 10)) * 8); // 9 - обратный порядок
-			int rowIndex = i / 10; // Определяем строку (0 - нижняя)
+			int xPosition = xStart + ((9 - (i % 10)) * 8);
+			int rowIndex = i / 10;
 			int currentY = yPosition - rowOffsets[rowIndex];
 
 			if (mana <= 10 || ClientIsManaRegenBlockedData.get() > 0 || mc.player.hasEffect(ModEffects.HAPPINESS.get())) {
-				// Убедимся, что индекс не выходит за пределы массива
 				if (i < randomOffset.length) {
 					currentY += randomOffset[i];
 				}
 			}
 
-			// Определяем обводку в зависимости от типа мигания
-			int bgTextureY = 0; // Стандартная обводка по умолчанию (Y=0)
+			int bgTextureY = 0;
 
-			// Проверяем, является ли строка пустой
 			boolean isEmptyRow = emptyRows[rowIndex];
 
-			// Если строка пустая И это НЕ самая нижняя строка (rowIndex > 0), используем Y=60
 			if (isEmptyRow && rowIndex > 0) {
 				bgTextureY = 60;
 			} else if (rowIndex == 0) {
-				// Самая нижняя строка всегда использует стандартные спрайты (Y=0)
 				bgTextureY = 0;
-			}
-			// Подсветка при трате маны (темно-синяя обводка нескольких иконок, которые были полными ДО траты)
-			else if (spendBlink && isBlinking && spentManaAmount > 0 && manaBeforeSpend > 0) {
-				// Вычисляем количество иконок, которые были полными ДО траты
+			} else if (spendBlink && isBlinking && spentManaAmount > 0 && manaBeforeSpend > 0) {
 				int starsBeforeSpend = (manaBeforeSpend + 4) / 5;
 
-				// Вычисляем сколько иконок нужно подсветить (новый алгоритм)
 				int iconsToHighlight = calculateAffectedIcons(manaBeforeSpend, spentManaAmount);
 
-				// Проверяем, что текущая иконка была полной до траты
 				if (i < starsBeforeSpend) {
-					// Определяем индекс текущей иконки от конца ДО траты
 					int indexFromEndBeforeSpend = starsBeforeSpend - 1 - i;
-					// Подсвечиваем последние iconsToHighlight иконок, которые были полными ДО траты
 					if (indexFromEndBeforeSpend < iconsToHighlight) {
-						bgTextureY = 20; // Темно-синяя обводка (Y=20)
+						bgTextureY = 20;
 					}
 				}
-			}
-			// Мигание при полном восстановлении (только 200 мс, белая обводка)
-			else if (fullManaBlink && currentTime < fullManaBlinkEndTime && isBlinking) {
-				bgTextureY = 10; // Белая обводка (Y=10)
-			}
-			// Подсветка фона только у последней восстановленной иконки
-			else if (restoreBlink && isBlinking && i == blinkStarIndex) {
-				bgTextureY = 10; // Белая обводка (Y=10)
+			} else if (fullManaBlink && currentTime < fullManaBlinkEndTime && isBlinking) {
+				bgTextureY = 10;
+			} else if (restoreBlink && isBlinking && i == blinkStarIndex) {
+				bgTextureY = 10;
 			}
 
 			if (i < maxManaIcons.length) {
@@ -512,9 +463,6 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		color4f(1, 1, 1, 1);
 	}
 
-	/**
-	 * Рисует подсветку требуемой маны для предмета в руках
-	 */
 	private static void renderManaCostHighlight(GuiGraphics stack, int screenWidth, int screenHeight, int[] randomOffset) {
 		int currentManaValue = calculateManaValue();
 		int maxManaValue = calculateMaxManaValue();
@@ -524,61 +472,74 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		}
 
 		int xStart = screenWidth / 2 + 10;
+		int currentStarsToDraw = (currentManaValue + 4) / 5;
+		int maxStarsToDraw = (maxManaValue + 4) / 5;
+		int totalRows = (maxStarsToDraw + 9) / 10;
 
-		// Количество звезд для текущей маны
-		int currentStarsToDraw = (currentManaValue + 4) / 5; // Округляем вверх
+
+		boolean[] emptyRows = new boolean[totalRows];
+		for (int row = 0; row < totalRows; row++) {
+			int starsInCurrentRow = Math.min(10, maxStarsToDraw - row * 10);
+			if (starsInCurrentRow <= 0) {
+				emptyRows[row] = true;
+				continue;
+			}
+			int firstStarInRow = row * 10;
+			int lastStarInRow = Math.min(firstStarInRow + 9, maxStarsToDraw - 1);
+			emptyRows[row] = true;
+			for (int starIndex = firstStarInRow; starIndex <= lastStarInRow; starIndex++) {
+				if (starIndex < currentStarsToDraw) {
+					emptyRows[row] = false;
+					break;
+				}
+			}
+		}
+
+		int rowHeight = max(3, (12 - maxManaValue / 50));
+		int[] rowOffsets = new int[totalRows];
+		for (int row = 0; row < totalRows; row++) {
+			if (row == 0) {
+				rowOffsets[row] = 0;
+			} else {
+				if (emptyRows[row] || emptyRows[row - 1]) {
+					rowOffsets[row] = rowOffsets[row - 1] + Math.min(5, (12 - maxManaValue / 50));
+				} else {
+					rowOffsets[row] = rowOffsets[row - 1] + rowHeight;
+				}
+			}
+		}
 
 		int yPosition = screenHeight - 50 - isAirRender();
 
-		// Устанавливаем альфа-канал для плавного мигания
 		color4f(1, 1, 1, highlightAlpha);
 
-		// ПРОВЕРКА: если стоимость маны >= текущей мане игрока
 		boolean costExceedsMana = manaCostToShow >= currentManaValue;
 
 		if (costExceedsMana) {
-			// Отображаем полную стоимость сначала с тёмно-синей обводкой без фона (Y=50)
-			renderFullCostWithDarkBlueOutline(stack, screenWidth, screenHeight, xStart, yPosition, maxManaValue, randomOffset);
+			renderFullCostWithDarkBlueOutline(stack, xStart, yPosition, maxManaValue, randomOffset, rowOffsets);
 		} else {
-			// Оригинальная логика для случая, когда маны достаточно
 			renderPartialCostHighlight(stack, xStart, yPosition, currentManaValue, maxManaValue, currentStarsToDraw, randomOffset);
 		}
 
-		// Сбрасываем цвет
 		color4f(1, 1, 1, 1);
 	}
 
-	/**
-	 * Рендерит полную стоимость маны с тёмно-синей обводкой без фона (Y=50)
-	 * когда стоимость маны >= текущей мане игрока
-	 */
-	private static void renderFullCostWithDarkBlueOutline(GuiGraphics stack, int screenWidth, int screenHeight,
-														  int xStart, int yPosition, int maxManaValue, int[] randomOffset) {
-		// Количество иконок для отображения полной стоимости
-		int costStars = (manaCostToShow + 4) / 5; // Округляем вверх
+	private static void renderFullCostWithDarkBlueOutline(GuiGraphics stack, int xStart, int yPosition,
+														  int maxManaValue, int[] randomOffset, int[] rowOffsets) {
+		int costStars = (manaCostToShow + 4) / 5;
 		int remainder = manaCostToShow % 5;
 		if (remainder == 0) remainder = 5;
 
-		// Отображаем все иконки стоимости с самого начала (справа налево)
 		for (int i = 0; i < costStars; i++) {
-			// Определяем координаты для текущей иконки (справа налево)
-			int xPosition = xStart + ((9 - (i % 10)) * 8); // ИЗМЕНЕНИЕ: рисуем справа налево
-			int currentY = yPosition - max(3, (12 - maxManaValue / 50)) * (i / 10);
+			int rowIndex = i / 10;
+			int xPosition = xStart + ((9 - (i % 10)) * 8);
+			int currentY = yPosition - rowOffsets[rowIndex];
 
 			if (calculateManaValue() <= 10 || ClientIsManaRegenBlockedData.get() > 0 || mc.player.hasEffect(ModEffects.HAPPINESS.get())) {
 				currentY += randomOffset[i];
 			}
-			// Определяем количество маны в текущей иконке
-			int manaInThisIcon;
-			if (i == costStars - 1) {
-				// Последняя иконка (может быть частичной)
-				manaInThisIcon = remainder;
-			} else {
-				// Все предыдущие иконки полные
-				manaInThisIcon = 5;
-			}
+			int manaInThisIcon = (i == costStars - 1) ? remainder : 5;
 
-			// Используем Y=50 (тёмно-синяя обводка без фона)
 			switch (manaInThisIcon) {
 				case 1:
 					drawStar(stack, xPosition, currentY, 243, 30, 9, 10);
@@ -599,52 +560,38 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		}
 	}
 
-	/**
-	 * Оригинальная логика подсветки частичной стоимости (когда маны достаточно)
-	 */
 	private static void renderPartialCostHighlight(GuiGraphics stack, int xStart, int yPosition,
 												   int currentManaValue, int maxManaValue,
 												   int currentStarsToDraw, int[] randomOffset) {
-		// Вычисляем остаток маны в последней иконке
 		int lastIconRemainder = currentManaValue % 5;
 		if (lastIconRemainder == 0) lastIconRemainder = 5;
 
 		int remainingCost = manaCostToShow;
 		int iconsToHighlightFromEnd = 0;
 
-		// Сначала определяем, сколько иконок с конца нужно подсветить
 		if (remainingCost <= lastIconRemainder) {
-			// Вся стоимость помещается в последнюю частичную иконку
 			iconsToHighlightFromEnd = 1;
 		} else {
-			// Вычитаем ману из последней иконки
 			remainingCost -= lastIconRemainder;
 			iconsToHighlightFromEnd = 1;
 
-			// Добавляем полные иконки с конца
 			while (remainingCost > 0 && iconsToHighlightFromEnd < currentStarsToDraw) {
 				remainingCost -= 5;
 				iconsToHighlightFromEnd++;
 			}
 
-			// Если после использования всех текущих иконок стоимость еще осталась
 			if (remainingCost > 0) {
-				// Добавляем дополнительные иконки слева
-				iconsToHighlightFromEnd += (remainingCost + 4) / 5; // Округляем вверх
+				iconsToHighlightFromEnd += (remainingCost + 4) / 5;
 			}
 		}
 
-		// Пересчитываем оставшуюся стоимость для определения типа крайней левой иконки
 		remainingCost = manaCostToShow;
 		int[] manaInIcons = new int[iconsToHighlightFromEnd];
 
-		// Заполняем массив количеством маны в каждой подсвечиваемой иконке
 		for (int i = 0; i < iconsToHighlightFromEnd; i++) {
-			// Начинаем с последней иконки
 			int iconIndexFromEnd = iconsToHighlightFromEnd - 1 - i;
 
 			if (i == 0) {
-				// Последняя иконка (самая правая)
 				if (remainingCost <= lastIconRemainder) {
 					manaInIcons[iconIndexFromEnd] = remainingCost;
 					remainingCost = 0;
@@ -653,16 +600,13 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 					remainingCost -= lastIconRemainder;
 				}
 			} else {
-				// Проверяем, является ли эта иконка существующей или дополнительной
 				boolean isExistingIcon = (iconIndexFromEnd >= currentStarsToDraw - iconsToHighlightFromEnd + i);
 
 				if (isExistingIcon && i < currentStarsToDraw) {
-					// Существующая промежуточная иконка (полная)
 					int takeFromThisIcon = Math.min(5, remainingCost);
 					manaInIcons[iconIndexFromEnd] = takeFromThisIcon;
 					remainingCost -= takeFromThisIcon;
 				} else {
-					// Дополнительная иконка слева
 					int takeFromThisIcon = Math.min(5, remainingCost);
 					manaInIcons[iconIndexFromEnd] = takeFromThisIcon;
 					remainingCost -= takeFromThisIcon;
@@ -670,24 +614,19 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 			}
 		}
 
-		// Теперь отрисовываем все подсвечиваемые иконки
 		for (int i = 0; i < iconsToHighlightFromEnd; i++) {
-			// Индекс иконки с конца текущей маны
 			int iconIndex = currentStarsToDraw - 1 - i;
 			boolean isAdditionalIcon = (i == iconsToHighlightFromEnd - 1) && i != 0;
 			int manaInThisIcon = manaInIcons[iconsToHighlightFromEnd - i - 1];
 
 			if (isAdditionalIcon) {
-				// Это дополнительная иконка слева от текущей маны
-				// Вычисляем абсолютный индекс для позиционирования
-				int xPosition = xStart + ((9 - (iconIndex % 10)) * 8); // ИЗМЕНЕНИЕ: справа налево
+				int xPosition = xStart + ((9 - (iconIndex % 10)) * 8);
 				int currentY = yPosition - max(3, (12 - maxManaValue / 50)) * (iconIndex / 10);
 
 				if (calculateManaValue() <= 10 || ClientIsManaRegenBlockedData.get() > 0 || mc.player.hasEffect(ModEffects.HAPPINESS.get())) {
 					currentY += randomOffset[iconIndex];
 				}
 
-				// Используем Y=40 для дополнительных иконок
 				switch (manaInThisIcon) {
 					case 1:
 						drawStar(stack, xPosition, currentY, 198, 40, 9, 10);
@@ -706,17 +645,14 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 						break;
 				}
 			} else {
-				// Это существующая иконка текущей маны
-				int xPosition = xStart + ((9 - (iconIndex % 10)) * 8); // ИЗМЕНЕНИЕ: справа налево
+				int xPosition = xStart + ((9 - (iconIndex % 10)) * 8);
 				int currentY = yPosition - max(3, (12 - maxManaValue / 50)) * (iconIndex / 10);
 
 				if (calculateManaValue() <= 10 || ClientIsManaRegenBlockedData.get() > 0 || mc.player.hasEffect(ModEffects.HAPPINESS.get())) {
 					currentY += randomOffset[iconIndex];
 				}
 
-				// Проверяем, что текущая иконка существует в массиве manaIcons
 				if (iconIndex < manaIcons.length && manaInThisIcon > 0) {
-					// Используем текстуру с Y=30 (белая обводка без фона)
 					switch (manaInThisIcon) {
 						case 1:
 							if (manaCostToShow < calculateRigtestStar())
@@ -793,43 +729,27 @@ public class ManaOverlayEventHandler implements IGuiOverlay {
 		}
 	}
 
-	static int calculateRigtestStar()
-	{
-		if (calculateManaValue()%5 == 0) return 5;
-		return calculateManaValue()%5;
+	static int calculateRigtestStar() {
+		if (calculateManaValue() % 5 == 0) return 5;
+		return calculateManaValue() % 5;
 	}
 
-	/**
-	 * Вычисляет количество затронутых иконок при трате маны
-	 *
-	 * @param manaBefore  Маня до траты
-	 * @param spentAmount Потраченное количество маны
-	 * @return Количество иконок, которые нужно подсветить
-	 */
 	private static int calculateAffectedIcons(int manaBefore, int spentAmount) {
-		// Количество полных иконок до траты (округляем вверх)
 		int fullIconsBefore = (manaBefore + 4) / 5;
 
-		// Остаток в последней иконке (от 1 до 5)
-		// Если остаток 0, значит последняя иконка полная (5)
 		int lastIconValue = manaBefore % 5;
 		if (lastIconValue == 0) {
 			lastIconValue = 5;
 		}
 
-		// Если тратим меньше, чем содержимое последней иконки
 		if (spentAmount <= lastIconValue) {
-			return 1; // Затронута только последняя иконка
+			return 1;
 		}
 
-		// Вычисляем, сколько маны нужно вычесть из предыдущих иконок
 		int remainingToSpend = spentAmount - lastIconValue;
 
-		// Вычисляем, сколько предыдущих иконок нужно затронуть
-		// (remainingToSpend - 1) / 5 + 1 дает количество иконок, которые нужно затронуть
-		int previousIconsAffected = (remainingToSpend + 4) / 5; // Округляем вверх
+		int previousIconsAffected = (remainingToSpend + 4) / 5;
 
-		// Общее количество затронутых иконок = последняя + предыдущие
 		return 1 + previousIconsAffected;
 	}
 

@@ -28,7 +28,6 @@ import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.Vanishable;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -134,7 +133,7 @@ public class LivingWoodBowItem extends BowItem implements RPGtooltip {
 
 		if (player.isShiftKeyDown()) {
 			if (!level.isClientSide) {
-				if (BoundEntityHelper.hasBoundEntities(player,50 + EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.STRETCH.get(), stack) * 50)) {
+				if (BoundEntityHelper.hasBoundEntities(player, 50 + EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.STRETCH.get(), stack) * 50)) {
 					pullBoundEntities(player, (ServerLevel) level, stack, hand);
 					level.playSound(null, player.getX(), player.getY(), player.getZ(),
 							RPGSounds.LIVING_WOOD_BOW_PULL.get(), SoundSource.PLAYERS,
@@ -160,7 +159,6 @@ public class LivingWoodBowItem extends BowItem implements RPGtooltip {
 
 	@Override
 	public AbstractArrow customArrow(AbstractArrow arrow) {
-		// Устанавливаем привязку к стрелку для всех стрел, выпущенных из этого лука
 		if (arrow.getOwner() != null && !arrow.level().isClientSide && arrow.getOwner() instanceof Player) {
 			Player player = (Player) arrow.getOwner();
 			BoundEntityHelper.bindArrowToPlayer(arrow, player);
@@ -174,20 +172,18 @@ public class LivingWoodBowItem extends BowItem implements RPGtooltip {
 		boolean pulledSomething = false;
 		int arrowsCollected = 0;
 
-		// Получаем уровень зачарования "Отдача" на луке
+
 		int punchLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PUNCH_ARROWS, bowStack);
 
-		// Сначала соберём все стрелы в список
+
 		List<AbstractArrow> arrowsToCollect = new ArrayList<>();
 
 		for (AbstractArrow arrow : level.getEntitiesOfClass(AbstractArrow.class,
 				player.getBoundingBox().inflate(50 + EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.STRETCH.get(), bowStack) * 50))) {
-
 			CompoundTag tag = arrow.getPersistentData();
 			if (tag.hasUUID("BoundPlayer") &&
 					tag.getUUID("BoundPlayer").equals(player.getUUID()) &&
 					tag.getBoolean("LivingWoodArrow")) {
-
 				if (arrow.distanceTo(player) > tag.getDouble("BoundPullRange")) {
 					continue;
 				}
@@ -196,7 +192,7 @@ public class LivingWoodBowItem extends BowItem implements RPGtooltip {
 			}
 		}
 
-		// Обрабатываем собранные стрелы
+
 		for (AbstractArrow arrow : arrowsToCollect) {
 			pulledSomething = true;
 			arrowsCollected++;
@@ -215,15 +211,13 @@ public class LivingWoodBowItem extends BowItem implements RPGtooltip {
 			arrow.discard();
 		}
 
-		// Притягиваем мобов
+
 		for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class,
 				player.getBoundingBox().inflate(50 + EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.STRETCH.get(), bowStack) * 50))) {
-
 			CompoundTag tag = entity.getPersistentData();
 			if (tag.hasUUID("BoundPlayer") &&
 					tag.getUUID("BoundPlayer").equals(player.getUUID()) &&
 					tag.getBoolean("LivingWoodBound")) {
-
 				if (entity.distanceTo(player) > tag.getDouble("BoundPullRange")) {
 					continue;
 				}
@@ -236,36 +230,30 @@ public class LivingWoodBowItem extends BowItem implements RPGtooltip {
 				Vec3 direction = playerPos.subtract(entityPos).normalize();
 				Vec3 pullMotion = direction.scale(pullForce);
 
-				// Если это другой игрок
+
 				if (entity instanceof ServerPlayer targetPlayer && targetPlayer != player) {
-					// Отправляем пакет целевому игроку
 					ModMessages.sendToPlayer(new PullPlayerPacket(pullMotion, targetPlayer.getId()), targetPlayer);
 
-					// Также обновляем движение на сервере для корректной работы
+
 					targetPlayer.setDeltaMovement(targetPlayer.getDeltaMovement().add(pullMotion));
 					targetPlayer.fallDistance = 0;
 
-					// Убираем привязку после притягивания
+
 					tag.remove("BoundPlayer");
 					tag.remove("BoundTime");
 					tag.remove("LivingWoodBound");
 
-					// Синхронизируем с клиентами
+
 					ModMessages.sendToNearbyPlayers(
 							new BoundEntitySyncPacket(targetPlayer.getId()),
 							targetPlayer.level(),
 							targetPlayer.blockPosition(),
 							300
 					);
-				}
-				// Если это текущий игрок (себя самого)
-				else if (entity == player) {
-					// Просто применяем движение на сервере
+				} else if (entity == player) {
 					player.setDeltaMovement(player.getDeltaMovement().add(pullMotion));
 					player.fallDistance = 0;
-				}
-				// Если это моб
-				else {
+				} else {
 					entity.setDeltaMovement(entity.getDeltaMovement().add(pullMotion));
 					entity.fallDistance = 0;
 
@@ -283,13 +271,13 @@ public class LivingWoodBowItem extends BowItem implements RPGtooltip {
 			}
 		}
 
-		// Наносим урон луку
+
 		if (pulledSomething && !player.getAbilities().instabuild) {
 			int durabilityDamage = Math.max(1, Math.min(arrowsCollected, 3));
 			bowStack.hurtAndBreak(durabilityDamage, player, p -> p.broadcastBreakEvent(hand));
 		}
 
-		// Проигрываем звуки
+
 		if (arrowsCollected > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS,

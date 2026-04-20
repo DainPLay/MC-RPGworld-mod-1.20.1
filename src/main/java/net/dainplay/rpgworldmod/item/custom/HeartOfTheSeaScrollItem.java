@@ -30,7 +30,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
@@ -70,8 +69,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class HeartOfTheSeaScrollItem extends ScrollItem {
-
-	// Хранилище для отслеживания использования игроком с привязкой к уровню
 	private static final Map<Level, Map<UUID, PlayerUseData>> playerUseData = new HashMap<>();
 
 	public HeartOfTheSeaScrollItem(Properties pProperties) {
@@ -139,6 +136,7 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 		}
 		return 0.05F;
 	}
+
 	@Override
 	public float getZ(ItemStack stack, Entity entity) {
 		if (entity instanceof Player player && player.isUsingItem() && player.getUseItem() == stack) {
@@ -224,11 +222,10 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
 		consumer.accept(new IClientItemExtensions() {
-
 			private static final HumanoidModel.ArmPose DESTRUCTION_POSE = HumanoidModel.ArmPose.create("DESTRUCTION", false, (model, entity, arm) -> {
 				float xOffset = 0F;
-				if(model.crouching) xOffset = -0.6f;
-				if(model.swimAmount > 0.0F) xOffset = -1.185f;
+				if (model.crouching) xOffset = -0.6f;
+				if (model.swimAmount > 0.0F) xOffset = -1.185f;
 				if (arm == HumanoidArm.RIGHT) {
 					model.rightArm.xRot = (-(float) Math.PI / 2F) + model.head.xRot + xOffset;
 					model.rightArm.yRot = -0.1F + model.head.yRot;
@@ -359,7 +356,6 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 		}
 
 		if (!level.isClientSide) {
-			// Специальные случаи, не требующие удержания
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), itemstack) > 0) {
 				return InteractionResultHolder.pass(itemstack);
 			}
@@ -378,7 +374,7 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 				);
 			}
 
-			// Общая проверка маны
+
 			if (!canUse(player, itemstack)) {
 				getPlayerUseData(level).remove(player.getUUID());
 				ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), false, itemstack),
@@ -386,15 +382,14 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 				return InteractionResultHolder.fail(itemstack);
 			}
 
-			// Создаём данные использования
+
 			getPlayerUseData(level).put(player.getUUID(), new PlayerUseData(player.getUUID(), level.getGameTime()));
 
-			// Запускаем звуки начала и цикл
+
 			startEnchantmentSounds(level, player, itemstack);
 
 			player.startUsingItem(hand);
 		} else {
-			// Клиент
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), itemstack) > 0) {
 				return InteractionResultHolder.pass(itemstack);
 			}
@@ -463,7 +458,7 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 				player.hurt(ModDamageTypes.getDamageSource(player.level(), ModDamageTypes.NECROSIS), amp);
 				if (player.hasEffect(ModEffects.NECROSIS.get()))
 					amp += 1 + player.getEffect(ModEffects.NECROSIS.get()).getAmplifier();
-				MobEffectInstance necrosis = new MobEffectInstance(ModEffects.NECROSIS.get(), 1200, amp-1);
+				MobEffectInstance necrosis = new MobEffectInstance(ModEffects.NECROSIS.get(), 1200, amp - 1);
 				necrosis.setCurativeItems(new ArrayList<>());
 				player.addEffect(necrosis);
 			}
@@ -476,14 +471,14 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 		player.gameEvent(GameEvent.ENTITY_DAMAGE, player);
 		if (player instanceof ServerPlayer serverPlayer) {
 			ModAdvancements.SPELL_NECROMANCY_HEART_OF_THE_SEA_TRIGGER.trigger(serverPlayer);
-			if(serverPlayer.level().dimension() == Level.END)
+			if (serverPlayer.level().dimension() == Level.END)
 				ModAdvancements.USE_RAIN_SPELL_IN_END_TRIGGER.trigger(serverPlayer);
 		}
 		if (!level.isClientSide) {
 			ServerLevel serverLevel = (ServerLevel) level;
 			int centerChunkX = player.chunkPosition().x;
 			int centerChunkZ = player.chunkPosition().z;
-			long expiryTime = serverLevel.getGameTime() + 300; // 15 секунд = 300 тиков
+			long expiryTime = serverLevel.getGameTime() + 300;
 
 			RainyChunkManager manager = RainyChunkManager.get(serverLevel);
 			for (int dx = -2; dx <= 2; dx++) {
@@ -553,7 +548,6 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 		ItemStack itemstack = context.getItemInHand();
 
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), itemstack) > 0) {
-			// Логика призыва дельфина (без изменений)
 			return handleConjuration(context, level, player, itemstack);
 		}
 		return InteractionResult.PASS;
@@ -641,14 +635,13 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 			if (!level.isClientSide) {
 				PlayerUseData useData = getPlayerUseData(level).remove(playerId);
 				if (useData != null && useData.currentTargetUUID != null) {
-					// Если была активна цель, отправляем клиенту сигнал остановки
 					ModMessages.sendToNearbyPlayers(
 							new S2CGuardianAttackData(playerIdInt, 0, 0, false, false),
 							(ServerLevel) level, player.blockPosition(), 64.0
 					);
 				}
 
-				// Останавливаем звуки
+
 				stopEnchantmentSounds(level, player, stack);
 			} else {
 				ModMessages.sendToServer(new UpdateItemTagMessage(player.getId(), stack));
@@ -710,18 +703,18 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 		player.stopUsingItem();
 		getPlayerUseData(level).remove(player.getUUID());
 
-		// Останавливаем звуки
+
 		if (usingItem.getItem() instanceof HeartOfTheSeaScrollItem scroll) {
 			scroll.stopEnchantmentSounds(level, player, usingItem);
 		}
 
-		// Отправляем сигнал остановки луча
+
 		ModMessages.sendToNearbyPlayers(
 				new S2CGuardianAttackData(player.getId(), 0, 0, false, damageDealt),
 				level, player.blockPosition(), 64.0
 		);
 
-		// Ставим кулдаун
+
 		player.getCooldowns().addCooldown(usingItem.getItem(), 15);
 	}
 
@@ -759,7 +752,7 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 				continue;
 			}
 
-			// Проверка наличия зачарований
+
 			if (!hasAnyEnchantForContinuation(usingItem)) {
 				levelPlayerUseData.remove(playerId);
 				stopPlayerUse(level, player, usingItem, false);
@@ -768,7 +761,7 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 
 			useData.tick();
 
-			// Потребление маны
+
 			if (useData.shouldConsumeMana(usingItem, useData.currentTargetUUID)) {
 				if (!player.getAbilities().instabuild) {
 					AtomicBoolean hasMana = new AtomicBoolean(true);
@@ -793,7 +786,7 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 				}
 			}
 
-			// Обработка Alteration
+
 			if (!player.isShiftKeyDown() && EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), usingItem) > 0) {
 				processWaterAlteration(level, player);
 			}
@@ -801,7 +794,7 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 				removeNearestWater(level, player);
 			}
 
-			// Обработка Destruction
+
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), usingItem) > 0) {
 				processDestructionAttack(level, player, useData, usingItem);
 			}
@@ -814,11 +807,10 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), stack) > 0;
 	}
 
-	// ==================== НОВАЯ ЛОГИКА АТАКИ DESTRUCTION ====================
 
 	private static final double ATTACK_RANGE = 64.0D;
 	private static final double CONE_ANGLE_DEGREES = 15.0D;
-	private static final int ATTACK_DURATION = 80;          // тиков до выстрела (как у стража)
+	private static final int ATTACK_DURATION = 80;
 	private static final float ATTACK_DAMAGE = 10.0F;
 
 	public static class PlayerUseData {
@@ -826,7 +818,7 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 		private long startTime;
 		private int useTicks;
 		private int lastManaTick;
-		// Данные для Destruction
+
 		public UUID currentTargetUUID = null;
 		public int attackTime = 0;
 
@@ -863,25 +855,21 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 		}
 	}
 
-	/**
-	 * Проверяет, находится ли фиксированная цель в конусе атаки, на дистанции и с прямой видимостью.
-	 */
+
 	private static boolean isTargetValid(ServerLevel level, Player player, LivingEntity target) {
 		if (target == null || !target.isAlive()) return false;
 		double distSq = player.distanceToSqr(target);
 		if (distSq > ATTACK_RANGE * ATTACK_RANGE) return false;
 
-		// Проверка угла с использованием bounding box цели (как в клиентском миксине)
+
 		double minAngle = TargetHelper.getMinAngleToBoundingBox(player, target, ATTACK_RANGE);
 		if (minAngle > CONE_ANGLE_DEGREES) return false;
 
-		// Проверка прямой видимости
+
 		return TargetHelper.hasLineOfSightToBoundingBox(player, target, player.getEyePosition(1.0F), ATTACK_RANGE);
 	}
 
-	/**
-	 * Обрабатывает атаку Destruction: поиск цели, накопление времени, нанесение урона.
-	 */
+
 	private static void processDestructionAttack(ServerLevel level, Player player, PlayerUseData useData, ItemStack stack) {
 		if (useData.currentTargetUUID == null) return;
 
@@ -894,9 +882,9 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 
 		useData.attackTime++;
 
-		// Отправляем клиенту данные для рендера луча
+
 		ModMessages.sendToNearbyPlayers(
-				new S2CGuardianAttackData(player.getId(), target.getId(), useData.attackTime, true,false),
+				new S2CGuardianAttackData(player.getId(), target.getId(), useData.attackTime, true, false),
 				level, player.blockPosition(), 64.0
 		);
 
@@ -929,13 +917,11 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 				);
 				player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 				stopPlayerUse(level, player, stack, true);
-			}
-			else
+			} else
 				stopPlayerUse(level, player, stack, false);
 		}
 	}
 
-	// ==================== ОСТАЛЬНЫЕ МЕТОДЫ (Alteration, Illusion и т.д.) ====================
 
 	private static void removeNearestWater(ServerLevel level, Player player) {
 		BlockPos playerPos = player.blockPosition();
@@ -986,25 +972,20 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 		BlockState state = level.getBlockState(pos);
 
 		if (state.is(Blocks.WATER)) {
-			// Это непосредственно блок воды – убираем его полностью
 			level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
 		} else {
-			// Это waterlogged блок – пробуем снять флаг WATERLOGGED
-
 			if (state.getBlock() instanceof SimpleWaterloggedBlock) {
-				if(state.hasProperty(BlockStateProperties.WATERLOGGED))
+				if (state.hasProperty(BlockStateProperties.WATERLOGGED))
 					level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.WATERLOGGED, false));
-			}
-			else if (state.getBlock() instanceof LiquidBlockContainer) {
-				level.destroyBlock(pos,true);
+			} else if (state.getBlock() instanceof LiquidBlockContainer) {
+				level.destroyBlock(pos, true);
 				level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
-			}
-			else if (state.getBlock() instanceof BubbleColumnBlock) {
+			} else if (state.getBlock() instanceof BubbleColumnBlock) {
 				level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
 			}
 		}
 
-		// Частицы всё равно отправляем для визуального эффекта
+
 		level.sendParticles(ParticleTypes.BUBBLE_POP,
 				pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
 				5, 0.2, 0.2, 0.2, 0.05);

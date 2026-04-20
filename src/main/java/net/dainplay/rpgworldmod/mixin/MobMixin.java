@@ -12,11 +12,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Mob.class)
 public abstract class MobMixin {
-    Mob entity = (Mob) (Object) this;
-    @Inject(method = "canReplaceCurrentItem", at = @At(value = "HEAD"), cancellable = true)
-    private void canReplaceCurrentItemParalysisCheck(ItemStack pCandidate, ItemStack pExisting, CallbackInfoReturnable<Boolean> info) {
-        if (!(entity instanceof AbstractSkeleton) && entity.getAttribute(Attributes.MOVEMENT_SPEED).getModifier(ParalysisEffect.MODIFIER_UUID) != null && !pExisting.isEmpty()) {
-            info.setReturnValue(false);
-        }
-    }
+	Mob entity = (Mob) (Object) this;
+
+	@Inject(method = "canReplaceCurrentItem", at = @At(value = "HEAD"), cancellable = true)
+	private void canReplaceCurrentItemParalysisCheck(ItemStack pCandidate, ItemStack pExisting, CallbackInfoReturnable<Boolean> info) {
+		if (!(entity instanceof AbstractSkeleton) && entity.getAttribute(Attributes.MOVEMENT_SPEED).getModifier(ParalysisEffect.MODIFIER_UUID) != null && !pExisting.isEmpty()) {
+			info.setReturnValue(false);
+		}
+	}
 }

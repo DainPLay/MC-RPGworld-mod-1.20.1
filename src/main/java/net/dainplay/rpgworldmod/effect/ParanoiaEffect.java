@@ -3,17 +3,11 @@ package net.dainplay.rpgworldmod.effect;
 
 import net.dainplay.rpgworldmod.network.PlayerManaProvider;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-
-import java.util.UUID;
 
 public class ParanoiaEffect extends MobEffect {
-
 	public ParanoiaEffect(MobEffectCategory mobEffectCategory, int color) {
 		super(mobEffectCategory, color);
 	}

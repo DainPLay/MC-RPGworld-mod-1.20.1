@@ -250,6 +250,12 @@ public class ModMessages {
 				.encoder(SculkStaffCDDataSyncS2CPacket::toBytes)
 				.consumerMainThread(SculkStaffCDDataSyncS2CPacket::handle)
 				.add();
+
+		net.messageBuilder(TotemEffectPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(TotemEffectPacket::new)
+				.encoder(TotemEffectPacket::toBytes)
+				.consumerMainThread(TotemEffectPacket::handle)
+				.add();
 	}
 
 	public static <MSG> void sendToServer(MSG message) {
@@ -264,7 +270,7 @@ public class ModMessages {
 		INSTANCE.send(PacketDistributor.ALL.noArg(), message);
 	}
 
-	// Новый метод для отправки пакета конкретному игроку
+
 	public static <MSG> void sendToNearbyPlayers(MSG message, Level level, BlockPos pos, double radius) {
 		INSTANCE.send(PacketDistributor.NEAR.with(
 				() -> new PacketDistributor.TargetPoint(pos.getX(), pos.getY(), pos.getZ(), radius, level.dimension())

@@ -10,28 +10,26 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 public class SpellDestructionHeartOfTheSeaTrigger extends SimpleCriterionTrigger<SpellDestructionHeartOfTheSeaTrigger.Instance> {
+	public static final ResourceLocation ID = RPGworldMod.prefix("spell_destruction_heart_of_the_sea");
 
-    public static final ResourceLocation ID = RPGworldMod.prefix("spell_destruction_heart_of_the_sea");
+	@Override
+	public ResourceLocation getId() {
+		return ID;
+	}
 
-    @Override
-    public ResourceLocation getId() {
-        return ID;
-    }
-
-    @Override
-    public Instance createInstance(JsonObject json, ContextAwarePredicate player, DeserializationContext condition) {
+	@Override
+	public Instance createInstance(JsonObject json, ContextAwarePredicate player, DeserializationContext condition) {
 		return new SpellDestructionHeartOfTheSeaTrigger.Instance(player);
-    }
+	}
 
-    public void trigger(ServerPlayer player) {
-       this.trigger(player, (instance) -> true);
-    }
+	public void trigger(ServerPlayer player) {
+		this.trigger(player, (instance) -> true);
+	}
 
-    public static class Instance extends AbstractCriterionTriggerInstance {
+	public static class Instance extends AbstractCriterionTriggerInstance {
+		public Instance(ContextAwarePredicate player) {
+			super(SpellDestructionHeartOfTheSeaTrigger.ID, player);
+		}
 
-        public Instance(ContextAwarePredicate player) {
-            super(SpellDestructionHeartOfTheSeaTrigger.ID, player);
-        }
-
-    }
+	}
 }

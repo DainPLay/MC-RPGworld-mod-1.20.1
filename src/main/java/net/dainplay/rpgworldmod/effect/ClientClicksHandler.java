@@ -12,21 +12,23 @@ import net.dainplay.rpgworldmod.item.custom.HeartOfTheSeaScrollItem;
 import net.dainplay.rpgworldmod.item.custom.HornCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.LivingWoodStaffItem;
 import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
+import net.dainplay.rpgworldmod.item.custom.PillagerScrollItem;
 import net.dainplay.rpgworldmod.item.custom.TubeCoralStaffItem;
 import net.dainplay.rpgworldmod.network.ClientAdditionalHealthCostData;
+import net.dainplay.rpgworldmod.network.ClientAnimateTargetData;
 import net.dainplay.rpgworldmod.network.ClientItemTargetData;
 import net.dainplay.rpgworldmod.network.ClientStorageTargetData;
 import net.dainplay.rpgworldmod.network.IgniteSelfPacket;
 import net.dainplay.rpgworldmod.network.LeftClickWhileRightClickUsePacket;
+import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.UseBeaconSpellPacket;
 import net.dainplay.rpgworldmod.network.UseOnAnimateTargetPacket;
-import net.dainplay.rpgworldmod.network.ClientAnimateTargetData;
-import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.UseOnItemStorageBlockTargetPacket;
 import net.dainplay.rpgworldmod.network.UseOnItemStorageEntityTargetPacket;
 import net.dainplay.rpgworldmod.network.UseOnItemTargetPacket;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
-import net.dainplay.rpgworldmod.util.StarMenuHandler;
+import net.dainplay.rpgworldmod.util.BeaconSpellStarMenuHandler;
+import net.dainplay.rpgworldmod.util.RecolorWoolMenuHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
@@ -53,7 +55,6 @@ import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = RPGworldMod.MOD_ID, value = Dist.CLIENT)
 public class ClientClicksHandler {
-
 	private static boolean wasAttackKeyPressed = false;
 
 	@SubscribeEvent
@@ -61,9 +62,8 @@ public class ClientClicksHandler {
 		Player player = Minecraft.getInstance().player;
 		if (player != null) {
 			if (hasParalysisEffect(player)) {
-
 				Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(RPGSounds.PARALISED.get(), 1.0F, 0.1F));
-				event.setCanceled(true); // Cancel the mouse scroll event
+				event.setCanceled(true);
 			}
 		}
 	}
@@ -84,64 +84,52 @@ public class ClientClicksHandler {
 
 	@SubscribeEvent
 	public static void onKeyInput(InputEvent.Key event) {
-
 		handleAttackKey();
 		Player player = Minecraft.getInstance().player;
 		if (player != null && hasParalysisEffect(player)) {
 			if (Minecraft.getInstance().options.keyHotbarSlots[0].consumeClick()) {
-
 				Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(RPGSounds.PARALISED.get(), 1.0F, 0.1F));
 				Minecraft.getInstance().options.keyHotbarSlots[0].setDown(false);
 				Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(RPGSounds.PARALISED.get(), 1.0F, 0.1F));
 			}
 			if (Minecraft.getInstance().options.keyHotbarSlots[1].consumeClick()) {
-
 				Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(RPGSounds.PARALISED.get(), 1.0F, 0.1F));
 				Minecraft.getInstance().options.keyHotbarSlots[1].setDown(false);
 				Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(RPGSounds.PARALISED.get(), 1.0F, 0.1F));
 			}
 			if (Minecraft.getInstance().options.keyHotbarSlots[2].consumeClick()) {
-
 				Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(RPGSounds.PARALISED.get(), 1.0F, 0.1F));
 				Minecraft.getInstance().options.keyHotbarSlots[2].setDown(false);
 			}
 			if (Minecraft.getInstance().options.keyHotbarSlots[3].consumeClick()) {
-
 				Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(RPGSounds.PARALISED.get(), 1.0F, 0.1F));
 				Minecraft.getInstance().options.keyHotbarSlots[3].setDown(false);
 			}
 			if (Minecraft.getInstance().options.keyHotbarSlots[4].consumeClick()) {
-
 				Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(RPGSounds.PARALISED.get(), 1.0F, 0.1F));
 				Minecraft.getInstance().options.keyHotbarSlots[4].setDown(false);
 			}
 			if (Minecraft.getInstance().options.keyHotbarSlots[5].consumeClick()) {
-
 				Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(RPGSounds.PARALISED.get(), 1.0F, 0.1F));
 				Minecraft.getInstance().options.keyHotbarSlots[5].setDown(false);
 			}
 			if (Minecraft.getInstance().options.keyHotbarSlots[6].consumeClick()) {
-
 				Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(RPGSounds.PARALISED.get(), 1.0F, 0.1F));
 				Minecraft.getInstance().options.keyHotbarSlots[6].setDown(false);
 			}
 			if (Minecraft.getInstance().options.keyHotbarSlots[7].consumeClick()) {
-
 				Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(RPGSounds.PARALISED.get(), 1.0F, 0.1F));
 				Minecraft.getInstance().options.keyHotbarSlots[7].setDown(false);
 			}
 			if (Minecraft.getInstance().options.keyHotbarSlots[8].consumeClick()) {
-
 				Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(RPGSounds.PARALISED.get(), 1.0F, 0.1F));
 				Minecraft.getInstance().options.keyHotbarSlots[8].setDown(false);
 			}
 			if (Minecraft.getInstance().options.keySwapOffhand.consumeClick()) {
-
 				Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(RPGSounds.PARALISED.get(), 1.0F, 0.1F));
 				Minecraft.getInstance().options.keySwapOffhand.setDown(false);
 			}
 			if (Minecraft.getInstance().options.keyDrop.consumeClick()) {
-
 				Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(RPGSounds.PARALISED.get(), 1.0F, 0.1F));
 				Minecraft.getInstance().options.keyDrop.setDown(false);
 			}
@@ -155,7 +143,7 @@ public class ClientClicksHandler {
 			if (hasParalysisEffect(player) && Minecraft.getInstance().screen instanceof AbstractContainerScreen) {
 				if (event.getAction() == GLFW.GLFW_PRESS)
 					Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(RPGSounds.PARALISED.get(), 1.0F, 0.1F));
-				event.setCanceled(true); // Cancel the mouse scroll event
+				event.setCanceled(true);
 			}
 		}
 	}
@@ -177,9 +165,8 @@ public class ClientClicksHandler {
 					|| Minecraft.getInstance().options.keyHotbarSlots[6].getKey().getValue() == event.getKey()
 					|| Minecraft.getInstance().options.keyHotbarSlots[7].getKey().getValue() == event.getKey()
 					|| Minecraft.getInstance().options.keyHotbarSlots[8].getKey().getValue() == event.getKey())) {
-
 				Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(RPGSounds.PARALISED.get(), 1.0F, 0.1F));
-				//event.isCanceled();
+
 			}
 		}
 	}
@@ -204,14 +191,21 @@ public class ClientClicksHandler {
 
 		boolean isAttackKeyPressed = mc.options.keyAttack.isDown();
 
-		// Проверяем, была ли нажата кнопка атаки
+
 		if (isAttackKeyPressed && !wasAttackKeyPressed) {
 			if (player.isUsingItem()) {
 				ItemStack useItem = player.getUseItem();
 
 				if (useItem.getItem() instanceof NetherStarScrollItem scroll) {
-					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), useItem) > 0 && StarMenuHandler.isActive()) {
-						ModMessages.sendToServer(new UseBeaconSpellPacket(player.getId(), StarMenuHandler.getSelecetdSegment()));
+					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), useItem) > 0 && BeaconSpellStarMenuHandler.isActive()) {
+						ModMessages.sendToServer(new UseBeaconSpellPacket(player.getId(), BeaconSpellStarMenuHandler.getSelectedSegment()));
+						player.swing(player.getUsedItemHand());
+					}
+				}
+
+				if (useItem.getItem() instanceof PillagerScrollItem scroll) {
+					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), useItem) > 0 && RecolorWoolMenuHandler.isActive()) {
+						//ModMessages.sendToServer(new UseRecolorWoolSpellPacket(player.getId(), RecolorWoolMenuHandler.getSelectedSegment()));
 						player.swing(player.getUsedItemHand());
 					}
 				}
@@ -281,8 +275,7 @@ public class ClientClicksHandler {
 					if (ClientStorageTargetData.getEntityTarget() != null) {
 						ModMessages.sendToServer(new UseOnItemStorageEntityTargetPacket(player.getId(), ClientStorageTargetData.getEntityTarget().getId()));
 						player.swing(player.getUsedItemHand());
-					}
-					else if (ClientStorageTargetData.getBlockTarget() != null) {
+					} else if (ClientStorageTargetData.getBlockTarget() != null) {
 						ModMessages.sendToServer(new UseOnItemStorageBlockTargetPacket(player.getId(), ClientStorageTargetData.getBlockTarget()));
 						player.swing(player.getUsedItemHand());
 					}

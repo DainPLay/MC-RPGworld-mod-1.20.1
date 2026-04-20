@@ -12,6 +12,7 @@ public class ClientIllusionForceData {
 	public static int getIllusionForce() {
 		return ClientIllusionForceData.illusionForce;
 	}
+
 	public static boolean isEnt() {
 		return ClientIllusionForceData.isEnt;
 	}

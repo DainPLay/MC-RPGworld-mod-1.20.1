@@ -4,8 +4,8 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
-import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.dainplay.rpgworldmod.item.custom.SculkStaffItem;
+import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.dainplay.rpgworldmod.network.ClientSculkStaffCDData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -134,16 +134,16 @@ public class ChargesOverlayEventHandler implements IGuiOverlay {
 
 		ItemStack temp1 = mc.player.getUseItem().copy();
 		ItemStack temp2 = stack.copy();
-		if(temp1.hasTag()  && temp1.getTag().contains("caughtVibration") && temp1.getTag().getInt("caughtVibration") > 0) {
+		if (temp1.hasTag() && temp1.getTag().contains("caughtVibration") && temp1.getTag().getInt("caughtVibration") > 0) {
 			temp1.getTag().remove("caughtVibration");
 		}
-		if(temp2.hasTag()  && temp2.getTag().contains("caughtVibration") && temp2.getTag().getInt("caughtVibration") > 0) {
+		if (temp2.hasTag() && temp2.getTag().contains("caughtVibration") && temp2.getTag().getInt("caughtVibration") > 0) {
 			temp2.getTag().remove("caughtVibration");
 		}
-		if(temp1.hasTag()  && temp1.getTag().contains("startingCooldown") && temp1.getTag().getInt("startingCooldown") > 0) {
+		if (temp1.hasTag() && temp1.getTag().contains("startingCooldown") && temp1.getTag().getInt("startingCooldown") > 0) {
 			temp1.getTag().remove("startingCooldown");
 		}
-		if(temp2.hasTag()  && temp2.getTag().contains("startingCooldown") && temp2.getTag().getInt("startingCooldown") > 0) {
+		if (temp2.hasTag() && temp2.getTag().contains("startingCooldown") && temp2.getTag().getInt("startingCooldown") > 0) {
 			temp2.getTag().remove("startingCooldown");
 		}
 		if (mc.player.isUsingItem() && ItemStack.isSameItemSameTags(temp1, temp2) && staff.isOffCooldown(stack, mc.player)) {
@@ -151,8 +151,7 @@ public class ChargesOverlayEventHandler implements IGuiOverlay {
 			if (stack.getTag() != null && stack.getTag().contains("startingCooldown", Tag.TAG_INT) && stack.getOrCreateTag().getInt("startingCooldown") > 0) {
 				currentTicks += stack.getTag().getInt("startingCooldown");
 			}
-		}
-		else {
+		} else {
 			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = Minecraft.getInstance().player.getCooldowns().cooldowns;
 			int currentTick = Minecraft.getInstance().player.getCooldowns().tickCount;
 			ItemCooldowns.CooldownInstance instance = cooldownsMap.get(stack.getItem());

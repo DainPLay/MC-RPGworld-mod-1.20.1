@@ -7,19 +7,15 @@ import net.dainplay.rpgworldmod.item.custom.HornCoralStaffItem;
 import net.dainplay.rpgworldmod.network.ClientStorageTargetData;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.ContainerEntity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
@@ -39,16 +35,15 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class StorageHighlightHandler {
+	private static final double SEARCH_RADIUS = 64.0;
+	private static final double ANGLE_THRESHOLD = 15.0;
 
-	private static final double SEARCH_RADIUS = 64.0;          // дальность поиска хранилищ
-	private static final double ANGLE_THRESHOLD = 15.0;       // конус 15 градусов
 
-	// Вспомогательный класс для кандидатов
 	private static class Candidate {
 		enum Type {BLOCK, ENTITY}
 
 		Type type;
-		Object target; // BlockEntity или ContainerEntity
+		Object target;
 		double angle;
 		double distanceToPlayer;
 
@@ -75,7 +70,7 @@ public class StorageHighlightHandler {
 			BlockHitResult target = event.getTarget();
 			BlockEntity be = level.getBlockEntity(target.getBlockPos());
 			if (HornCoralStaffItem.isStorage(be)) {
-				event.setCanceled(true); // отменяем стандартную обводку
+				event.setCanceled(true);
 			}
 		}
 	}
@@ -91,22 +86,21 @@ public class StorageHighlightHandler {
 				player.getUseItemRemainingTicks() > 0 &&
 				player.getUseItem().getItem() instanceof ChooseTargetItem catItem
 				&& catItem.highlightItemStorages(player.getUseItem(), player)) {
-
-			Vec3 eyePos = player.getEyePosition(); // используем глаза игрока
+			Vec3 eyePos = player.getEyePosition();
 			Vec3 lookVec = player.getLookAngle();
 
 			AABB searchArea = player.getBoundingBox().inflate(SEARCH_RADIUS);
 
-			// Блоки
+
 			List<BlockEntity> storages = getStoragesInAABB(level, searchArea);
 
-			// Сущности
+
 			List<Entity> containerEntities = level.getEntitiesOfClass(Entity.class, searchArea,
 					e -> e instanceof ContainerEntity && isContainerEntityVisible(player, e));
 
 			List<Candidate> candidates = new ArrayList<>();
 
-			// Блоки
+
 			for (BlockEntity be : storages) {
 				BlockPos pos = be.getBlockPos();
 				AABB blockBox = getBlockAABB(level, pos);
@@ -117,7 +111,7 @@ public class StorageHighlightHandler {
 				}
 			}
 
-			// Сущности
+
 			for (Entity entity : containerEntities) {
 				AABB entityBox = entity.getBoundingBox();
 				double angle = getMinAngleToAABB(eyePos, lookVec, entityBox, SEARCH_RADIUS);
@@ -127,15 +121,15 @@ public class StorageHighlightHandler {
 				}
 			}
 
-			// Выбираем лучшего кандидата (минимальный угол, при равенстве — ближайший по расстоянию)
+
 			Candidate best = null;
 			for (Candidate c : candidates) {
 				if (best == null) {
 					best = c;
 				} else {
-					if (c.angle < best.angle - 1e-6) { // угол значительно меньше
+					if (c.angle < best.angle - 1e-6) {
 						best = c;
-					} else if (Math.abs(c.angle - best.angle) < 1e-6) { // углы примерно равны
+					} else if (Math.abs(c.angle - best.angle) < 1e-6) {
 						if (c.distanceToPlayer < best.distanceToPlayer) {
 							best = c;
 						}
@@ -143,7 +137,7 @@ public class StorageHighlightHandler {
 				}
 			}
 
-			// Сохраняем цель и рисуем обводку
+
 			if (best != null) {
 				if (best.type == Candidate.Type.BLOCK) {
 					BlockEntity be = (BlockEntity) best.target;
@@ -159,7 +153,7 @@ public class StorageHighlightHandler {
 		}
 	}
 
-	// === Поиск всех блоков-хранилищ внутри AABB ===
+
 	private static List<BlockEntity> getStoragesInAABB(Level level, AABB area) {
 		List<BlockEntity> storages = new ArrayList<>();
 		int minX = (int) Math.floor(area.minX) >> 4;
@@ -185,14 +179,14 @@ public class StorageHighlightHandler {
 		return storages;
 	}
 
-	// Вспомогательная проверка видимости сущности
+
 	private static boolean isContainerEntityVisible(Player player, Entity entity) {
 		if (entity.isInvisible() || entity.isSpectator()) return false;
 		if (entity.level() != player.level()) return false;
 		return true;
 	}
 
-	// === Отрисовка обводки блока ===
+
 	private static void renderBlockOutline(RenderLevelStageEvent event, Level level, BlockPos pos,
 										   PoseStack poseStack, MultiBufferSource bufferSource, Camera camera) {
 		BlockState state = level.getBlockState(pos);
@@ -211,11 +205,10 @@ public class StorageHighlightHandler {
 				pos.getX() - camX,
 				pos.getY() - camY,
 				pos.getZ() - camZ,
-				1.0f, 1.0f, 1.0f, 1.0f  // белый цвет (RGBA), полностью непрозрачный
+				1.0f, 1.0f, 1.0f, 1.0f
 		);
 	}
 
-	// === Вспомогательные методы для геометрии и видимости ===
 
 	private static AABB getBlockAABB(Level level, BlockPos pos) {
 		BlockState state = level.getBlockState(pos);
@@ -245,7 +238,7 @@ public class StorageHighlightHandler {
 
 	private static boolean hasLineOfSightToAABB(Player player, Level level, Vec3 startPos, AABB box, double maxDistance) {
 		List<Vec3> points = generateTestPoints(box);
-		// сначала центр
+
 		if (hasLineOfSightToPoint(player, level, startPos, box.getCenter(), maxDistance)) {
 			return true;
 		}
@@ -271,7 +264,7 @@ public class StorageHighlightHandler {
 		if (blockHit.getType() != HitResult.Type.MISS) {
 			double blockDist = blockHit.getLocation().distanceTo(start);
 			double pointDist = distance;
-			if (blockDist < pointDist - 0.3) { // небольшой допуск
+			if (blockDist < pointDist - 0.3) {
 				return false;
 			}
 		}

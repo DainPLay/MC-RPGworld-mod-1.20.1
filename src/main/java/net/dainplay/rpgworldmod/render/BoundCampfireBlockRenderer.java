@@ -23,7 +23,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 public class BoundCampfireBlockRenderer implements BlockEntityRenderer<BoundCampfireBlockEntity> {
-	private static final float HALF_SQRT_3 = (float)(Math.sqrt(3.0D) / 2.0D);
+	private static final float HALF_SQRT_3 = (float) (Math.sqrt(3.0D) / 2.0D);
 	private static final float ITEM_SIZE = 0.375F;
 	static Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
 	private final ItemRenderer itemRenderer;
@@ -40,9 +40,9 @@ public class BoundCampfireBlockRenderer implements BlockEntityRenderer<BoundCamp
 	public void render(BoundCampfireBlockEntity pBlockEntity, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
 		Direction direction = pBlockEntity.getBlockState().getValue(CampfireBlock.FACING);
 		NonNullList<ItemStack> nonnulllist = pBlockEntity.getItems();
-		int i = (int)pBlockEntity.getBlockPos().asLong();
+		int i = (int) pBlockEntity.getBlockPos().asLong();
 
-		for(int j = 0; j < nonnulllist.size(); ++j) {
+		for (int j = 0; j < nonnulllist.size(); ++j) {
 			ItemStack itemstack = nonnulllist.get(j);
 			if (!itemstack.isEmpty()) {
 				pPoseStack.pushPose();
@@ -120,7 +120,7 @@ public class BoundCampfireBlockRenderer implements BlockEntityRenderer<BoundCamp
 			float beamWidth = 0.6F * beamProgress;
 
 			Matrix4f matrix4f = pPoseStack.last().pose();
-			int alpha = (int)(200 * beamProgress);
+			int alpha = (int) (200 * beamProgress);
 
 			vertex01(vertexconsumer, matrix4f, alpha, 0, 0, 255);
 			vertex3(vertexconsumer, matrix4f, beamLength, beamWidth, 0, 0, 255);
@@ -134,7 +134,7 @@ public class BoundCampfireBlockRenderer implements BlockEntityRenderer<BoundCamp
 		pPoseStack.popPose();
 	}
 
-	// Обновленные методы с поддержкой синего цвета
+
 	private static void vertex01(VertexConsumer pConsumer, Matrix4f pMatrix, int pAlpha, int r, int g, int b) {
 		pConsumer.vertex(pMatrix, 0.0F, 0.0F, 0.0F).color(r, g, b, pAlpha).endVertex();
 	}

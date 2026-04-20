@@ -21,7 +21,10 @@
                 "rpgworldmod:tempo",
                 "rpgworldmod:crescendo",
                 "rpgworldmod:soundproof",
-                "rpgworldmod:stereo"
+                "rpgworldmod:stereo",
+                "rpgworldmod:collection",
+                "rpgworldmod:blowing",
+                "rpgworldmod:stretch"
               ],
               "function": "minecraft:enchant_randomly"
             }

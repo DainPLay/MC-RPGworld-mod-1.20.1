@@ -20,7 +20,6 @@ import javax.imageio.ImageIO;
 import java.io.IOException;
 
 public class LayerMoss extends RenderLayer {
-
 	private RenderLayerParent parent;
 
 	public LayerMoss(RenderLayerParent parent) {

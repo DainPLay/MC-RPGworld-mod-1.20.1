@@ -15,24 +15,26 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import java.util.concurrent.CompletableFuture;
 
 public class DamageTypeTagGenerator extends TagsProvider<DamageType> {
-
 	public static final TagKey<DamageType> IS_SOUND = create("is_sound");
+
 	public DamageTypeTagGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> future, ExistingFileHelper helper) {
 		super(output, Registries.DAMAGE_TYPE, future, RPGworldMod.MOD_ID, helper);
 	}
 
 	protected void addTags(HolderLookup.Provider provider) {
-		this.tag(DamageTypeTags.BYPASSES_ARMOR).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS, ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS);
+		this.tag(DamageTypeTags.BYPASSES_ARMOR).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS, ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS, ModDamageTypes.CORRUPTED_BEACON);
 		this.tag(DamageTypeTags.BYPASSES_ENCHANTMENTS).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS, ModDamageTypes.MOSQUITOS);
-		this.tag(DamageTypeTags.BYPASSES_COOLDOWN).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS, ModDamageTypes.SWALLOW,ModDamageTypes.ENT_SNAP);
+		this.tag(DamageTypeTags.BYPASSES_COOLDOWN).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS, ModDamageTypes.SWALLOW, ModDamageTypes.ENT_SNAP);
 		this.tag(DamageTypeTags.IS_FIRE).add(ModDamageTypes.SWALLOW);
 		this.tag(DamageTypeTags.BYPASSES_INVULNERABILITY).add(ModDamageTypes.SWALLOW, ModDamageTypes.NECROSIS);
 		this.tag(DamageTypeTags.BYPASSES_EFFECTS).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS);
 		this.tag(DamageTypeTags.BYPASSES_RESISTANCE).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS);
-		this.tag(DamageTypeTags.BYPASSES_SHIELD).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS, ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS, ModDamageTypes.SWALLOW,ModDamageTypes.ENT_ROOTS);
+		this.tag(DamageTypeTags.BYPASSES_SHIELD).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS, ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS, ModDamageTypes.SWALLOW, ModDamageTypes.ENT_ROOTS);
 		this.tag(DamageTypeTags.DAMAGES_HELMET).add(ModDamageTypes.SCREAM, ModDamageTypes.DING);
-		this.tag(DamageTypeTags.IS_PROJECTILE).add(ModDamageTypes.FAIRAPIER_SEED,ModDamageTypes.BURR_SPIKE,ModDamageTypes.PRISMARINE_SHARD,ModDamageTypes.ENT_RIE_FRUIT,ModDamageTypes.ENT_ROOTS);
-		this.tag(DamageTypeTags.AVOIDS_GUARDIAN_THORNS).add(ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS,ModDamageTypes.FAIRAPIER_SEED,ModDamageTypes.BURR_SPIKE,ModDamageTypes.PRISMARINE_SHARD,ModDamageTypes.ENT_RIE_FRUIT);
+		this.tag(DamageTypeTags.IS_PROJECTILE).add(ModDamageTypes.FAIRAPIER_SEED, ModDamageTypes.BURR_SPIKE, ModDamageTypes.PRISMARINE_SHARD, ModDamageTypes.ENT_RIE_FRUIT, ModDamageTypes.ENT_ROOTS);
+		this.tag(DamageTypeTags.AVOIDS_GUARDIAN_THORNS).add(ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS, ModDamageTypes.FAIRAPIER_SEED, ModDamageTypes.BURR_SPIKE, ModDamageTypes.PRISMARINE_SHARD, ModDamageTypes.ENT_RIE_FRUIT, ModDamageTypes.CORRUPTED_BEACON);
+		this.tag(DamageTypeTags.WITCH_RESISTANT_TO).add(ModDamageTypes.CORRUPTED_BEACON);
+		this.tag(DamageTypeTags.ALWAYS_TRIGGERS_SILVERFISH).add(ModDamageTypes.CORRUPTED_BEACON);
 		this.tag(IS_SOUND).add(ModDamageTypes.SCREAM, ModDamageTypes.DING, DamageTypes.SONIC_BOOM);
 	}
 

@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 @Mixin(EnchantRandomlyFunction.class)
 public abstract class EnchantRandomlyFunctionMixin extends LootItemConditionalFunction {
-
 	@Shadow
 	@Final
 	List<Enchantment> enchantments;
@@ -33,22 +32,18 @@ public abstract class EnchantRandomlyFunctionMixin extends LootItemConditionalFu
 		super(conditions);
 	}
 
-	/**
-	 * @author YourName
-	 * @reason Исключаем модовые чары из случайного зачарования в луте
-	 */
+
 	@Overwrite
 	public ItemStack run(ItemStack pStack, LootContext pContext) {
 		RandomSource randomsource = pContext.getRandom();
 		Enchantment enchantment;
 
 		if (this.enchantments.isEmpty()) {
-			// Собираем все доступные чары, которые можно применить
 			boolean flag = pStack.is(Items.BOOK);
 			List<Enchantment> list = BuiltInRegistries.ENCHANTMENT.stream()
 					.filter(Enchantment::isDiscoverable)
 					.filter(e -> flag || e.canEnchant(pStack))
-					// Исключаем запрещённые чары
+
 					.filter(e -> !isForbiddenEnchantment(e))
 					.collect(Collectors.toList());
 
@@ -59,7 +54,6 @@ public abstract class EnchantRandomlyFunctionMixin extends LootItemConditionalFu
 
 			enchantment = list.get(randomsource.nextInt(list.size()));
 		} else {
-			// Фильтруем явно указанный список чар
 			List<Enchantment> filtered = this.enchantments.stream()
 					.filter(e -> !isForbiddenEnchantment(e))
 					.collect(Collectors.toList());
@@ -75,7 +69,7 @@ public abstract class EnchantRandomlyFunctionMixin extends LootItemConditionalFu
 		return enchantItem(pStack, enchantment, randomsource);
 	}
 
-	// Вспомогательный метод для проверки запрещённых чар
+
 	private static boolean isForbiddenEnchantment(Enchantment e) {
 		return e == ModEnchantments.DESTRUCTION.get() ||
 				e == ModEnchantments.RESTORATION.get() ||
@@ -87,7 +81,6 @@ public abstract class EnchantRandomlyFunctionMixin extends LootItemConditionalFu
 
 	@Shadow
 	private static ItemStack enchantItem(ItemStack pStack, Enchantment pEnchantment, RandomSource pRandom) {
-		// shadow method – реализация не нужна, она будет взята из оригинального класса
 		throw new AssertionError();
 	}
 }

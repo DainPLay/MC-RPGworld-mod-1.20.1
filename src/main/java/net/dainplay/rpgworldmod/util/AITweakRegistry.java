@@ -22,8 +22,8 @@ public class AITweakRegistry {
 
 	public void initializeTweaks() {
 		tweakMap.clear();
-				registerTweak(new AttackNearestTweak(EntityType.CAT, ModEntities.MINTOBAT.get(), 2, true));
-				registerTweak(new AttackNearestTweak(EntityType.OCELOT, ModEntities.MINTOBAT.get(), 2, true));
+		registerTweak(new AttackNearestTweak(EntityType.CAT, ModEntities.MINTOBAT.get(), 2, true));
+		registerTweak(new AttackNearestTweak(EntityType.OCELOT, ModEntities.MINTOBAT.get(), 2, true));
 	}
 
 	public void registerTweak(ITweak event) {

@@ -3,9 +3,52 @@ package net.dainplay.rpgworldmod.item;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.entity.ModEntities;
-import net.dainplay.rpgworldmod.fluid.ModFluids;
-import net.dainplay.rpgworldmod.item.custom.*;
 import net.dainplay.rpgworldmod.entity.custom.ModBoat;
+import net.dainplay.rpgworldmod.fluid.ModFluids;
+import net.dainplay.rpgworldmod.item.custom.BlazeStaffItem;
+import net.dainplay.rpgworldmod.item.custom.BrainCoralStaffItem;
+import net.dainplay.rpgworldmod.item.custom.BubbleCoralStaffItem;
+import net.dainplay.rpgworldmod.item.custom.CheeseItem;
+import net.dainplay.rpgworldmod.item.custom.ChitinThimbleItem;
+import net.dainplay.rpgworldmod.item.custom.CurioItem;
+import net.dainplay.rpgworldmod.item.custom.DoubleSidedRecordItem;
+import net.dainplay.rpgworldmod.item.custom.DriedWidoweedItem;
+import net.dainplay.rpgworldmod.item.custom.DrillSpearItem;
+import net.dainplay.rpgworldmod.item.custom.EmberGemItem;
+import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
+import net.dainplay.rpgworldmod.item.custom.EmptyScrollItem;
+import net.dainplay.rpgworldmod.item.custom.EnderEyeScrollItem;
+import net.dainplay.rpgworldmod.item.custom.EntSpawnEggItem;
+import net.dainplay.rpgworldmod.item.custom.ExtinguishingItem;
+import net.dainplay.rpgworldmod.item.custom.FairapierSeedItem;
+import net.dainplay.rpgworldmod.item.custom.FairapierSwordItem;
+import net.dainplay.rpgworldmod.item.custom.FairapierSwordWiltedItem;
+import net.dainplay.rpgworldmod.item.custom.FireCatcherItem;
+import net.dainplay.rpgworldmod.item.custom.FireCoralStaffItem;
+import net.dainplay.rpgworldmod.item.custom.FireproofSkirtItem;
+import net.dainplay.rpgworldmod.item.custom.FlintAxeItem;
+import net.dainplay.rpgworldmod.item.custom.FlintHoeItem;
+import net.dainplay.rpgworldmod.item.custom.FlintPickaxeItem;
+import net.dainplay.rpgworldmod.item.custom.FlintShovelItem;
+import net.dainplay.rpgworldmod.item.custom.FlintSwordItem;
+import net.dainplay.rpgworldmod.item.custom.FuelBucketItem;
+import net.dainplay.rpgworldmod.item.custom.GasbassItem;
+import net.dainplay.rpgworldmod.item.custom.GuitarAxItem;
+import net.dainplay.rpgworldmod.item.custom.HeartOfTheSeaScrollItem;
+import net.dainplay.rpgworldmod.item.custom.HornCoralStaffItem;
+import net.dainplay.rpgworldmod.item.custom.LivingWoodArmorItem;
+import net.dainplay.rpgworldmod.item.custom.LivingWoodBowItem;
+import net.dainplay.rpgworldmod.item.custom.LivingWoodStaffItem;
+import net.dainplay.rpgworldmod.item.custom.LongFoodItem;
+import net.dainplay.rpgworldmod.item.custom.MintalTriangleItem;
+import net.dainplay.rpgworldmod.item.custom.ModBoatItem;
+import net.dainplay.rpgworldmod.item.custom.MosquitoBottleItem;
+import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
+import net.dainplay.rpgworldmod.item.custom.PillagerScrollItem;
+import net.dainplay.rpgworldmod.item.custom.ProjectruffleArrowItem;
+import net.dainplay.rpgworldmod.item.custom.SculkStaffItem;
+import net.dainplay.rpgworldmod.item.custom.TubeCoralStaffItem;
+import net.dainplay.rpgworldmod.item.custom.WealdBladeItem;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.dainplay.rpgworldmod.util.ModTags;
 import net.minecraft.ChatFormatting;
@@ -13,7 +56,26 @@ import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.BannerPatternItem;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.HangingSignItem;
+import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemNameBlockItem;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.MobBucketItem;
+import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.PlaceOnWaterBlockItem;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.RecordItem;
+import net.minecraft.world.item.ShovelItem;
+import net.minecraft.world.item.SignItem;
+import net.minecraft.world.item.SmithingTemplateItem;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -24,215 +86,216 @@ import net.minecraftforge.registries.RegistryObject;
 import java.util.List;
 
 public class ModItems {
-    public static final DeferredRegister<Item> ITEMS =
-            DeferredRegister.create(ForgeRegistries.ITEMS, RPGworldMod.MOD_ID);
-    public static final RegistryObject<Item> WEALD_BLADE = ITEMS.register("weald_blade",
-            () -> new WealdBladeItem(ModTiers.BURR, 3, -2.4f, new Item.Properties().rarity(Rarity.RARE)));
-    public static final RegistryObject<Item> DRILL_SPEAR = ITEMS.register("drill_spear",
-            () -> new DrillSpearItem((new Item.Properties()).durability(90).rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<Item> MASKONITE_SWORD = ITEMS.register("maskonite_sword",
-            () -> new SwordItem(ModTiers.MASKONITE, 3, -2.4f, new Item.Properties()));
-    public static final RegistryObject<Item> MASKONITE_PICKAXE = ITEMS.register("maskonite_pickaxe",
-            () -> new PickaxeItem(ModTiers.MASKONITE, 1, -2.8f, new Item.Properties()));
-    public static final RegistryObject<Item> MASKONITE_AXE = ITEMS.register("maskonite_axe",
-            () -> new AxeItem(ModTiers.MASKONITE, 7, -3.2f, new Item.Properties()));
-    public static final RegistryObject<Item> GUITAR_AX = ITEMS.register("guitar_ax",
-            () -> new GuitarAxItem(Tiers.NETHERITE, 3, -3f, new Item.Properties().rarity(Rarity.RARE).stacksTo(1)));
-    public static final RegistryObject<Item> MASKONITE_SHOVEL = ITEMS.register("maskonite_shovel",
-            () -> new ShovelItem(ModTiers.MASKONITE, 1.5f, -3f, new Item.Properties()));
-    public static final RegistryObject<Item> MASKONITE_HOE = ITEMS.register("maskonite_hoe",
-            () -> new HoeItem(ModTiers.MASKONITE, -1, -2f, new Item.Properties()));
-    public static final RegistryObject<Item> FAIRAPIER_SWORD = ITEMS.register("fairapier_sword",
-            () -> new FairapierSwordItem(ModTiers.FAIRAPIER, 3, -1.9f, new Item.Properties().rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<Item> FAIRAPIER_SWORD_WILTED = ITEMS.register("fairapier_sword_wilted",
-            () -> new FairapierSwordWiltedItem(ModBlocks.FAIRAPIER_WILTED_PLANT.get(), new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(1)));
-    public static final RegistryObject<Item> FLINT_SWORD = ITEMS.register("flint_sword",
-            () -> new FlintSwordItem(ModTiers.FLINT, 3, -2.4F, new Item.Properties()));
-    public static final RegistryObject<Item> FLINT_PICKAXE = ITEMS.register("flint_pickaxe",
-            () -> new FlintPickaxeItem(ModTiers.FLINT, 1, -2.8F, new Item.Properties()));
-    public static final RegistryObject<Item> FLINT_AXE = ITEMS.register("flint_axe",
-            () -> new FlintAxeItem(ModTiers.FLINT, 7.0F, -3.2F, new Item.Properties()));
-    public static final RegistryObject<Item> FLINT_SHOVEL = ITEMS.register("flint_shovel",
-            () -> new FlintShovelItem(ModTiers.FLINT, 1.5F, -3.0F, new Item.Properties()));
-    public static final RegistryObject<Item> FLINT_HOE = ITEMS.register("flint_hoe",
-            () -> new FlintHoeItem(ModTiers.FLINT, -1, -2.0F, new Item.Properties()));
-    public static final RegistryObject<ArmorItem> LIVING_WOOD_HELMET = ITEMS.register("living_wood_helmet",
-            () -> new LivingWoodArmorItem(ModArmorMaterials.LIVING_WOOD, ArmorItem.Type.HELMET, new Item.Properties().rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<ArmorItem> LIVING_WOOD_CHESTPLATE = ITEMS.register("living_wood_chestplate",
-            () -> new LivingWoodArmorItem(ModArmorMaterials.LIVING_WOOD, ArmorItem.Type.CHESTPLATE, new Item.Properties().rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<ArmorItem> LIVING_WOOD_LEGGINGS = ITEMS.register("living_wood_leggings",
-            () -> new LivingWoodArmorItem(ModArmorMaterials.LIVING_WOOD, ArmorItem.Type.LEGGINGS, new Item.Properties().rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<ArmorItem> LIVING_WOOD_BOOTS = ITEMS.register("living_wood_boots",
-            () -> new LivingWoodArmorItem(ModArmorMaterials.LIVING_WOOD, ArmorItem.Type.BOOTS, new Item.Properties().rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<Item> FIREPROOF_SKIRT = ITEMS.register("fireproof_skirt",
-            () -> new FireproofSkirtItem(new Item.Properties().durability(432).rarity(Rarity.UNCOMMON).fireResistant()));
-    public static final RegistryObject<Item> LIVING_WOOD_BOW = ITEMS.register("living_wood_bow",
-            () -> new LivingWoodBowItem(new Item.Properties().durability(384).rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<Item> LIVING_WOOD_STAFF = ITEMS.register("living_wood_staff",
-            () -> new LivingWoodStaffItem(new Item.Properties().durability(128).rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<Item> BLAZE_STAFF = ITEMS.register("blaze_staff",
-            () -> new BlazeStaffItem(new Item.Properties().durability(384).rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<Item> FIRE_CORAL_STAFF = ITEMS.register("fire_coral_staff",
-            () -> new FireCoralStaffItem(new Item.Properties().durability(256).rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<Item> BRAIN_CORAL_STAFF = ITEMS.register("brain_coral_staff",
-            () -> new BrainCoralStaffItem(new Item.Properties().durability(256).rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<Item> HORN_CORAL_STAFF = ITEMS.register("horn_coral_staff",
-            () -> new HornCoralStaffItem(new Item.Properties().durability(256).rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<Item> TUBE_CORAL_STAFF = ITEMS.register("tube_coral_staff",
-            () -> new TubeCoralStaffItem(new Item.Properties().durability(256).rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<Item> BUBBLE_CORAL_STAFF = ITEMS.register("bubble_coral_staff",
-            () -> new BubbleCoralStaffItem(new Item.Properties().durability(256).rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<Item> SCULK_STAFF = ITEMS.register("sculk_staff",
-            () -> new SculkStaffItem(new Item.Properties().durability(128).rarity(Rarity.UNCOMMON)));
+	public static final DeferredRegister<Item> ITEMS =
+			DeferredRegister.create(ForgeRegistries.ITEMS, RPGworldMod.MOD_ID);
+	public static final RegistryObject<Item> WEALD_BLADE = ITEMS.register("weald_blade",
+			() -> new WealdBladeItem(ModTiers.BURR, 3, -2.4f, new Item.Properties().rarity(Rarity.RARE)));
+	public static final RegistryObject<Item> DRILL_SPEAR = ITEMS.register("drill_spear",
+			() -> new DrillSpearItem((new Item.Properties()).durability(90).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> MASKONITE_SWORD = ITEMS.register("maskonite_sword",
+			() -> new SwordItem(ModTiers.MASKONITE, 3, -2.4f, new Item.Properties()));
+	public static final RegistryObject<Item> MASKONITE_PICKAXE = ITEMS.register("maskonite_pickaxe",
+			() -> new PickaxeItem(ModTiers.MASKONITE, 1, -2.8f, new Item.Properties()));
+	public static final RegistryObject<Item> MASKONITE_AXE = ITEMS.register("maskonite_axe",
+			() -> new AxeItem(ModTiers.MASKONITE, 7, -3.2f, new Item.Properties()));
+	public static final RegistryObject<Item> GUITAR_AX = ITEMS.register("guitar_ax",
+			() -> new GuitarAxItem(Tiers.NETHERITE, 3, -3f, new Item.Properties().rarity(Rarity.RARE).stacksTo(1)));
+	public static final RegistryObject<Item> MASKONITE_SHOVEL = ITEMS.register("maskonite_shovel",
+			() -> new ShovelItem(ModTiers.MASKONITE, 1.5f, -3f, new Item.Properties()));
+	public static final RegistryObject<Item> MASKONITE_HOE = ITEMS.register("maskonite_hoe",
+			() -> new HoeItem(ModTiers.MASKONITE, -1, -2f, new Item.Properties()));
+	public static final RegistryObject<Item> FAIRAPIER_SWORD = ITEMS.register("fairapier_sword",
+			() -> new FairapierSwordItem(ModTiers.FAIRAPIER, 3, -1.9f, new Item.Properties().rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> FAIRAPIER_SWORD_WILTED = ITEMS.register("fairapier_sword_wilted",
+			() -> new FairapierSwordWiltedItem(ModBlocks.FAIRAPIER_WILTED_PLANT.get(), new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(1)));
+	public static final RegistryObject<Item> FLINT_SWORD = ITEMS.register("flint_sword",
+			() -> new FlintSwordItem(ModTiers.FLINT, 3, -2.4F, new Item.Properties()));
+	public static final RegistryObject<Item> FLINT_PICKAXE = ITEMS.register("flint_pickaxe",
+			() -> new FlintPickaxeItem(ModTiers.FLINT, 1, -2.8F, new Item.Properties()));
+	public static final RegistryObject<Item> FLINT_AXE = ITEMS.register("flint_axe",
+			() -> new FlintAxeItem(ModTiers.FLINT, 7.0F, -3.2F, new Item.Properties()));
+	public static final RegistryObject<Item> FLINT_SHOVEL = ITEMS.register("flint_shovel",
+			() -> new FlintShovelItem(ModTiers.FLINT, 1.5F, -3.0F, new Item.Properties()));
+	public static final RegistryObject<Item> FLINT_HOE = ITEMS.register("flint_hoe",
+			() -> new FlintHoeItem(ModTiers.FLINT, -1, -2.0F, new Item.Properties()));
+	public static final RegistryObject<ArmorItem> LIVING_WOOD_HELMET = ITEMS.register("living_wood_helmet",
+			() -> new LivingWoodArmorItem(ModArmorMaterials.LIVING_WOOD, ArmorItem.Type.HELMET, new Item.Properties().rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<ArmorItem> LIVING_WOOD_CHESTPLATE = ITEMS.register("living_wood_chestplate",
+			() -> new LivingWoodArmorItem(ModArmorMaterials.LIVING_WOOD, ArmorItem.Type.CHESTPLATE, new Item.Properties().rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<ArmorItem> LIVING_WOOD_LEGGINGS = ITEMS.register("living_wood_leggings",
+			() -> new LivingWoodArmorItem(ModArmorMaterials.LIVING_WOOD, ArmorItem.Type.LEGGINGS, new Item.Properties().rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<ArmorItem> LIVING_WOOD_BOOTS = ITEMS.register("living_wood_boots",
+			() -> new LivingWoodArmorItem(ModArmorMaterials.LIVING_WOOD, ArmorItem.Type.BOOTS, new Item.Properties().rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> FIREPROOF_SKIRT = ITEMS.register("fireproof_skirt",
+			() -> new FireproofSkirtItem(new Item.Properties().durability(432).rarity(Rarity.UNCOMMON).fireResistant()));
+	public static final RegistryObject<Item> LIVING_WOOD_BOW = ITEMS.register("living_wood_bow",
+			() -> new LivingWoodBowItem(new Item.Properties().durability(384).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> LIVING_WOOD_STAFF = ITEMS.register("living_wood_staff",
+			() -> new LivingWoodStaffItem(new Item.Properties().durability(128).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> BLAZE_STAFF = ITEMS.register("blaze_staff",
+			() -> new BlazeStaffItem(new Item.Properties().durability(384).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> FIRE_CORAL_STAFF = ITEMS.register("fire_coral_staff",
+			() -> new FireCoralStaffItem(new Item.Properties().durability(256).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> BRAIN_CORAL_STAFF = ITEMS.register("brain_coral_staff",
+			() -> new BrainCoralStaffItem(new Item.Properties().durability(256).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> HORN_CORAL_STAFF = ITEMS.register("horn_coral_staff",
+			() -> new HornCoralStaffItem(new Item.Properties().durability(256).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> TUBE_CORAL_STAFF = ITEMS.register("tube_coral_staff",
+			() -> new TubeCoralStaffItem(new Item.Properties().durability(256).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> BUBBLE_CORAL_STAFF = ITEMS.register("bubble_coral_staff",
+			() -> new BubbleCoralStaffItem(new Item.Properties().durability(256).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> SCULK_STAFF = ITEMS.register("sculk_staff",
+			() -> new SculkStaffItem(new Item.Properties().durability(128).rarity(Rarity.UNCOMMON)));
 
-    public static final RegistryObject<Item> DRIED_WIDOWEED = ITEMS.register("dried_widoweed",
-            () -> new DriedWidoweedItem(new Item.Properties()));
-    public static final RegistryObject<Item> SAMARAGUARD = ITEMS.register("samaraguard",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> MINTAL_INGOT = ITEMS.register("mintal_ingot",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> MINTAL_NUGGET = ITEMS.register("mintal_nugget",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> MINTAL_TRIANGLE = ITEMS.register("mintal_triangle",
-            () -> new MintalTriangleItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON).durability(121)));
-    public static final RegistryObject<Item> STEELPORK = ITEMS.register("steelpork",
-            () -> new LongFoodItem(new Item.Properties().food(ModFoods.STEELPORK)));
-    public static final RegistryObject<Item> COOKED_STEELPORK = ITEMS.register("cooked_steelpork",
-            () -> new LongFoodItem(new Item.Properties().food(ModFoods.COOKED_STEELPORK)));
-    public static final RegistryObject<Item> RIE_FRUIT = ITEMS.register("rie_fruit",
-            () -> new Item(new Item.Properties().food(ModFoods.RIE_FRUIT)));
-    public static final RegistryObject<Item> MINT_RIE_FRUIT = ITEMS.register("mint_rie_fruit",
-            () -> new ExtinguishingItem(new Item.Properties().food(ModFoods.MINT_RIE_FRUIT)));
-    public static final RegistryObject<Item> BRAMBLEFOX_BERRIES = ITEMS.register("bramblefox_berries",
-            () -> new Item(new Item.Properties().food(ModFoods.BRAMBLEFOX_BERRIES)));
-    public static final RegistryObject<Item> FAIRAPIER_SEED = ITEMS.register("fairapier_seed",
-            () -> new FairapierSeedItem(ModBlocks.FAIRAPIER_PLANT.get(), new Item.Properties().stacksTo(16)));
-    public static final RegistryObject<Item> BURR_SPIKE = ITEMS.register("burr_spike",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> CHITIN_POWDER = ITEMS.register("chitin_powder",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> EMBER_GEM = ITEMS.register("ember_gem",
-            () -> new EmberGemItem(new Item.Properties().fireResistant().rarity(Rarity.UNCOMMON).stacksTo(1), 1, -65536, "textures/entity/spells/spark", 2, 6));
-    public static final RegistryObject<Item> FIREPROOF_PETALS = ITEMS.register("fireproof_petals",
-            () -> new Item(new Item.Properties().fireResistant()));
-    public static final RegistryObject<Item> MOSQUITO_BOTTLE = ITEMS.register("mosquito_bottle",
-            () -> new MosquitoBottleItem(new Item.Properties()));
-    public static final RegistryObject<Item> SHIVERALIS_BERRIES = ITEMS.register("shiveralis_berries",
-            () -> new ItemNameBlockItem(ModBlocks.SHIVERALIS.get(), new Item.Properties().food(ModFoods.SHIVERALIS_BERRIES)));
-    public static final RegistryObject<Item> PARALILY = ITEMS.register("paralily",
-            () -> new PlaceOnWaterBlockItem(ModBlocks.PARALILY.get(), new Item.Properties()));
-    public static final RegistryObject<Item> PARALILY_BERRY = ITEMS.register("paralily_berry",
-            () -> new Item(new Item.Properties().food(ModFoods.PARALILY_BERRY)));
-    public static final RegistryObject<Item> RPGIROLLE_ITEM = ITEMS.register("rpgirolle_item",
-            () -> new ItemNameBlockItem(ModBlocks.RPGIROLLE.get(), new Item.Properties().food(ModFoods.RPGIROLLE)));
-    public static final RegistryObject<Item> CHEESE_CAP = ITEMS.register("cheese_cap",
-            () -> new CheeseItem(ModBlocks.CHEESE_CAP.get(), new Item.Properties().food(ModFoods.CHEESE_CAP)));
-    public static final RegistryObject<Item> MASKONITE_UPGRADE_SMITHING_TEMPLATE = ITEMS.register("maskonite_upgrade_smithing_template",
-            () -> new SmithingTemplateItem(
-                    Component.translatable(Util.makeDescriptionId("item", new ResourceLocation("smithing_template.maskonite_upgrade.applies_to"))).withStyle(ChatFormatting.BLUE),
-                    Component.translatable(Util.makeDescriptionId("item", new ResourceLocation("smithing_template.maskonite_upgrade.ingredients"))).withStyle(ChatFormatting.BLUE),
-                    Component.translatable(Util.makeDescriptionId("upgrade", new ResourceLocation("maskonite_upgrade"))).withStyle(ChatFormatting.GRAY),
-                    Component.translatable(Util.makeDescriptionId("item", new ResourceLocation("smithing_template.maskonite_upgrade.base_slot_description"))),
-                    Component.translatable(Util.makeDescriptionId("item", new ResourceLocation("smithing_template.maskonite_upgrade.additions_slot_description"))),
-                    List.of(
-                            new ResourceLocation("item/empty_slot_sword"),
-                            new ResourceLocation("item/empty_slot_pickaxe"),
-                            new ResourceLocation("item/empty_slot_axe"),
-                            new ResourceLocation("item/empty_slot_hoe"),
-                            new ResourceLocation("item/empty_slot_shovel")
-                    ),
-                    List.of(
-                            new ResourceLocation("item/empty_slot_block")
-                    )
-            ));
-    public static final RegistryObject<Item> LEAVES_ARMOR_TRIM_SMITHING_TEMPLATE = ITEMS.register("leaves_armor_trim_smithing_template",
-            () -> SmithingTemplateItem.createArmorTrimTemplate(new ResourceLocation(RPGworldMod.MOD_ID, "leaves")));
-    public static final RegistryObject<Item> PROJECTRUFFLE_ITEM = ITEMS.register("projectruffle_item",
-            () -> new ProjectruffleArrowItem(new Item.Properties()));
-    public static final RegistryObject<Item> TYPHON_DYE = ITEMS.register("typhon_dye",
-            () -> new DyeItem(DyeColor.LIGHT_GRAY, new Item.Properties()));
-    public static final RegistryObject<Item> RIE_SIGN = ITEMS.register("rie_sign",
-            () -> new SignItem(new Item.Properties().stacksTo(16),
-                    ModBlocks.RIE_SIGN.get(), ModBlocks.RIE_WALL_SIGN.get()));
-    public static final RegistryObject<Item> RIE_HANGING_SIGN = ITEMS.register("rie_hanging_sign",
-            () -> new HangingSignItem(ModBlocks.RIE_HANGING_SIGN.get(), ModBlocks.RIE_WALL_HANGING_SIGN.get(), new Item.Properties().stacksTo(16)));
-    public static final RegistryObject<Item> RIE_BOAT = ITEMS.register("rie_boat",
-            () -> new ModBoatItem(false, ModBoat.Type.RIE, (new Item.Properties()).stacksTo(1)));
-    public static final RegistryObject<Item> RIE_CHEST_BOAT = ITEMS.register("rie_chest_boat",
-            () -> new ModBoatItem(true, ModBoat.Type.RIE, (new Item.Properties()).stacksTo(1)));
-    public static final RegistryObject<Item> BRAMBLEFOX_SPAWN_EGG = ITEMS.register("bramblefox_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.BRAMBLEFOX, 0x18693F, 0xE27C21, new Item.Properties()));
-    public static final RegistryObject<Item> MINTOBAT_SPAWN_EGG = ITEMS.register("mintobat_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.MINTOBAT, 0x14B485, 0x263C47, new Item.Properties()));
-    public static final RegistryObject<Item> FIREFLANTERN_SPAWN_EGG = ITEMS.register("fireflantern_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.FIREFLANTERN, 0x734029, 0xFFFF00, new Item.Properties()));
-    public static final RegistryObject<Item> BURR_PURR_SPAWN_EGG = ITEMS.register("burr_purr_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.BURR_PURR, 0x176649, 0x5A9038, new Item.Properties()));
-    public static final RegistryObject<Item> DRILLHOG_SPAWN_EGG = ITEMS.register("drillhog_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.DRILLHOG, 0x835853, 0xEBE1BE, new Item.Properties()));
-    public static final RegistryObject<Item> MOSQUITO_SWARM_SPAWN_EGG = ITEMS.register("mosquito_swarm_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.MOSQUITO_SWARM, 0x4D7575, 0x648C8C, new Item.Properties()));
-    public static final RegistryObject<Item> RAZORLEAF_SPAWN_EGG = ITEMS.register("razorleaf_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.RAZORLEAF, 0xD2443F, 0x587E3C, new Item.Properties()));
-    public static final RegistryObject<Item> ENT_SPAWN_EGG = ITEMS.register("ent_spawn_egg",
-            () -> new EntSpawnEggItem(0x37352A, 0x319966, new Item.Properties()));
-    public static final RegistryObject<Item> BIBBIT_SPAWN_EGG = ITEMS.register("bibbit_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.BIBBIT, 0x0D3821, 0xFFFF00, new Item.Properties()));
-    public static final RegistryObject<CurioItem> LAPIS_CHARM = ITEMS.register("lapis_charm",
-            () -> new CurioItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<CurioItem> BRAMBLEFOX_SCARF = ITEMS.register("bramblefox_scarf", () -> new CurioItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<CurioItem> FIG_LEAF = ITEMS.register("fig_leaf", () -> new CurioItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<CurioItem> PORTABLE_TURRET = ITEMS.register("portable_turret", () -> new CurioItem(new Item.Properties().rarity(Rarity.RARE)));
-    public static final RegistryObject<ChitinThimbleItem> CHITIN_THIMBLE = ITEMS.register("chitin_thimble", () -> new ChitinThimbleItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<Item> MUSIC_DISC_HOWLING = ITEMS.register("music_disc_howling", () -> new RecordItem(12, RPGSounds.MUSIC_DISC_HOWLING.get(), new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 184 * 20));
-    public static final RegistryObject<Item> MUSIC_DISC_TIRE = ITEMS.register("music_disc_tire", () -> new RecordItem(9, RPGSounds.MUSIC_DISC_TIRE.get(), new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 164 * 20));
-    public static final RegistryObject<Item> MUSIC_DISC_RAIN_A_SIDE = ITEMS.register("music_disc_rain_a_side", () -> new DoubleSidedRecordItem(1, RPGSounds.MUSIC_DISC_RAIN_A_SIDE.get(), new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 174 * 20));
-    public static final RegistryObject<Item> MUSIC_DISC_RAIN_B_SIDE = ITEMS.register("music_disc_rain_b_side", () -> new DoubleSidedRecordItem(2, RPGSounds.MUSIC_DISC_RAIN_B_SIDE.get(), new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 178 * 20));
-    public static final RegistryObject<Item> RIE_WEALD_BANNER_PATTERN = ITEMS.register("rie_weald_banner_pattern",  () -> new BannerPatternItem(ModTags.BannerPatterns.PATTERN_ITEM_RIE_WEALD, (new Item.Properties()).stacksTo(1).rarity(Rarity.EPIC)));
-    public static final RegistryObject<Item> EMPTY_SCROLL = ITEMS.register("empty_scroll",  () -> new EmptyScrollItem((new Item.Properties()).stacksTo(16)));
-    public static final RegistryObject<Item> EMBER_SCROLL = ITEMS.register("ember_scroll",  () -> new EmberScrollItem((new Item.Properties()).stacksTo(1).rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<Item> HEART_OF_THE_SEA_SCROLL = ITEMS.register("heart_of_the_sea_scroll",  () -> new HeartOfTheSeaScrollItem((new Item.Properties()).stacksTo(1).rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<Item> ENDER_EYE_SCROLL = ITEMS.register("ender_eye_scroll",  () -> new EnderEyeScrollItem((new Item.Properties()).stacksTo(1).rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<Item> NETHER_STAR_SCROLL = ITEMS.register("nether_star_scroll",  () -> new NetherStarScrollItem((new Item.Properties()).stacksTo(1).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> DRIED_WIDOWEED = ITEMS.register("dried_widoweed",
+			() -> new DriedWidoweedItem(new Item.Properties()));
+	public static final RegistryObject<Item> SAMARAGUARD = ITEMS.register("samaraguard",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> MINTAL_INGOT = ITEMS.register("mintal_ingot",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> MINTAL_NUGGET = ITEMS.register("mintal_nugget",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> MINTAL_TRIANGLE = ITEMS.register("mintal_triangle",
+			() -> new MintalTriangleItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON).durability(121)));
+	public static final RegistryObject<Item> STEELPORK = ITEMS.register("steelpork",
+			() -> new LongFoodItem(new Item.Properties().food(ModFoods.STEELPORK)));
+	public static final RegistryObject<Item> COOKED_STEELPORK = ITEMS.register("cooked_steelpork",
+			() -> new LongFoodItem(new Item.Properties().food(ModFoods.COOKED_STEELPORK)));
+	public static final RegistryObject<Item> RIE_FRUIT = ITEMS.register("rie_fruit",
+			() -> new Item(new Item.Properties().food(ModFoods.RIE_FRUIT)));
+	public static final RegistryObject<Item> MINT_RIE_FRUIT = ITEMS.register("mint_rie_fruit",
+			() -> new ExtinguishingItem(new Item.Properties().food(ModFoods.MINT_RIE_FRUIT)));
+	public static final RegistryObject<Item> BRAMBLEFOX_BERRIES = ITEMS.register("bramblefox_berries",
+			() -> new Item(new Item.Properties().food(ModFoods.BRAMBLEFOX_BERRIES)));
+	public static final RegistryObject<Item> FAIRAPIER_SEED = ITEMS.register("fairapier_seed",
+			() -> new FairapierSeedItem(ModBlocks.FAIRAPIER_PLANT.get(), new Item.Properties().stacksTo(16)));
+	public static final RegistryObject<Item> BURR_SPIKE = ITEMS.register("burr_spike",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> CHITIN_POWDER = ITEMS.register("chitin_powder",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> EMBER_GEM = ITEMS.register("ember_gem",
+			() -> new EmberGemItem(new Item.Properties().fireResistant().rarity(Rarity.UNCOMMON).stacksTo(1), 1, -65536, "textures/entity/spells/spark", 2, 6));
+	public static final RegistryObject<Item> FIREPROOF_PETALS = ITEMS.register("fireproof_petals",
+			() -> new Item(new Item.Properties().fireResistant()));
+	public static final RegistryObject<Item> MOSQUITO_BOTTLE = ITEMS.register("mosquito_bottle",
+			() -> new MosquitoBottleItem(new Item.Properties()));
+	public static final RegistryObject<Item> SHIVERALIS_BERRIES = ITEMS.register("shiveralis_berries",
+			() -> new ItemNameBlockItem(ModBlocks.SHIVERALIS.get(), new Item.Properties().food(ModFoods.SHIVERALIS_BERRIES)));
+	public static final RegistryObject<Item> PARALILY = ITEMS.register("paralily",
+			() -> new PlaceOnWaterBlockItem(ModBlocks.PARALILY.get(), new Item.Properties()));
+	public static final RegistryObject<Item> PARALILY_BERRY = ITEMS.register("paralily_berry",
+			() -> new Item(new Item.Properties().food(ModFoods.PARALILY_BERRY)));
+	public static final RegistryObject<Item> RPGIROLLE_ITEM = ITEMS.register("rpgirolle_item",
+			() -> new ItemNameBlockItem(ModBlocks.RPGIROLLE.get(), new Item.Properties().food(ModFoods.RPGIROLLE)));
+	public static final RegistryObject<Item> CHEESE_CAP = ITEMS.register("cheese_cap",
+			() -> new CheeseItem(ModBlocks.CHEESE_CAP.get(), new Item.Properties().food(ModFoods.CHEESE_CAP)));
+	public static final RegistryObject<Item> MASKONITE_UPGRADE_SMITHING_TEMPLATE = ITEMS.register("maskonite_upgrade_smithing_template",
+			() -> new SmithingTemplateItem(
+					Component.translatable(Util.makeDescriptionId("item", new ResourceLocation("smithing_template.maskonite_upgrade.applies_to"))).withStyle(ChatFormatting.BLUE),
+					Component.translatable(Util.makeDescriptionId("item", new ResourceLocation("smithing_template.maskonite_upgrade.ingredients"))).withStyle(ChatFormatting.BLUE),
+					Component.translatable(Util.makeDescriptionId("upgrade", new ResourceLocation("maskonite_upgrade"))).withStyle(ChatFormatting.GRAY),
+					Component.translatable(Util.makeDescriptionId("item", new ResourceLocation("smithing_template.maskonite_upgrade.base_slot_description"))),
+					Component.translatable(Util.makeDescriptionId("item", new ResourceLocation("smithing_template.maskonite_upgrade.additions_slot_description"))),
+					List.of(
+							new ResourceLocation("item/empty_slot_sword"),
+							new ResourceLocation("item/empty_slot_pickaxe"),
+							new ResourceLocation("item/empty_slot_axe"),
+							new ResourceLocation("item/empty_slot_hoe"),
+							new ResourceLocation("item/empty_slot_shovel")
+					),
+					List.of(
+							new ResourceLocation("item/empty_slot_block")
+					)
+			));
+	public static final RegistryObject<Item> LEAVES_ARMOR_TRIM_SMITHING_TEMPLATE = ITEMS.register("leaves_armor_trim_smithing_template",
+			() -> SmithingTemplateItem.createArmorTrimTemplate(new ResourceLocation(RPGworldMod.MOD_ID, "leaves")));
+	public static final RegistryObject<Item> PROJECTRUFFLE_ITEM = ITEMS.register("projectruffle_item",
+			() -> new ProjectruffleArrowItem(new Item.Properties()));
+	public static final RegistryObject<Item> TYPHON_DYE = ITEMS.register("typhon_dye",
+			() -> new DyeItem(DyeColor.LIGHT_GRAY, new Item.Properties()));
+	public static final RegistryObject<Item> RIE_SIGN = ITEMS.register("rie_sign",
+			() -> new SignItem(new Item.Properties().stacksTo(16),
+					ModBlocks.RIE_SIGN.get(), ModBlocks.RIE_WALL_SIGN.get()));
+	public static final RegistryObject<Item> RIE_HANGING_SIGN = ITEMS.register("rie_hanging_sign",
+			() -> new HangingSignItem(ModBlocks.RIE_HANGING_SIGN.get(), ModBlocks.RIE_WALL_HANGING_SIGN.get(), new Item.Properties().stacksTo(16)));
+	public static final RegistryObject<Item> RIE_BOAT = ITEMS.register("rie_boat",
+			() -> new ModBoatItem(false, ModBoat.Type.RIE, (new Item.Properties()).stacksTo(1)));
+	public static final RegistryObject<Item> RIE_CHEST_BOAT = ITEMS.register("rie_chest_boat",
+			() -> new ModBoatItem(true, ModBoat.Type.RIE, (new Item.Properties()).stacksTo(1)));
+	public static final RegistryObject<Item> BRAMBLEFOX_SPAWN_EGG = ITEMS.register("bramblefox_spawn_egg",
+			() -> new ForgeSpawnEggItem(ModEntities.BRAMBLEFOX, 0x18693F, 0xE27C21, new Item.Properties()));
+	public static final RegistryObject<Item> MINTOBAT_SPAWN_EGG = ITEMS.register("mintobat_spawn_egg",
+			() -> new ForgeSpawnEggItem(ModEntities.MINTOBAT, 0x14B485, 0x263C47, new Item.Properties()));
+	public static final RegistryObject<Item> FIREFLANTERN_SPAWN_EGG = ITEMS.register("fireflantern_spawn_egg",
+			() -> new ForgeSpawnEggItem(ModEntities.FIREFLANTERN, 0x734029, 0xFFFF00, new Item.Properties()));
+	public static final RegistryObject<Item> BURR_PURR_SPAWN_EGG = ITEMS.register("burr_purr_spawn_egg",
+			() -> new ForgeSpawnEggItem(ModEntities.BURR_PURR, 0x176649, 0x5A9038, new Item.Properties()));
+	public static final RegistryObject<Item> DRILLHOG_SPAWN_EGG = ITEMS.register("drillhog_spawn_egg",
+			() -> new ForgeSpawnEggItem(ModEntities.DRILLHOG, 0x835853, 0xEBE1BE, new Item.Properties()));
+	public static final RegistryObject<Item> MOSQUITO_SWARM_SPAWN_EGG = ITEMS.register("mosquito_swarm_spawn_egg",
+			() -> new ForgeSpawnEggItem(ModEntities.MOSQUITO_SWARM, 0x4D7575, 0x648C8C, new Item.Properties()));
+	public static final RegistryObject<Item> RAZORLEAF_SPAWN_EGG = ITEMS.register("razorleaf_spawn_egg",
+			() -> new ForgeSpawnEggItem(ModEntities.RAZORLEAF, 0xD2443F, 0x587E3C, new Item.Properties()));
+	public static final RegistryObject<Item> ENT_SPAWN_EGG = ITEMS.register("ent_spawn_egg",
+			() -> new EntSpawnEggItem(0x37352A, 0x319966, new Item.Properties()));
+	public static final RegistryObject<Item> BIBBIT_SPAWN_EGG = ITEMS.register("bibbit_spawn_egg",
+			() -> new ForgeSpawnEggItem(ModEntities.BIBBIT, 0x0D3821, 0xFFFF00, new Item.Properties()));
+	public static final RegistryObject<CurioItem> LAPIS_CHARM = ITEMS.register("lapis_charm",
+			() -> new CurioItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<CurioItem> BRAMBLEFOX_SCARF = ITEMS.register("bramblefox_scarf", () -> new CurioItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<CurioItem> FIG_LEAF = ITEMS.register("fig_leaf", () -> new CurioItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<CurioItem> PORTABLE_TURRET = ITEMS.register("portable_turret", () -> new CurioItem(new Item.Properties().rarity(Rarity.RARE)));
+	public static final RegistryObject<ChitinThimbleItem> CHITIN_THIMBLE = ITEMS.register("chitin_thimble", () -> new ChitinThimbleItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> MUSIC_DISC_HOWLING = ITEMS.register("music_disc_howling", () -> new RecordItem(12, RPGSounds.MUSIC_DISC_HOWLING.get(), new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 184 * 20));
+	public static final RegistryObject<Item> MUSIC_DISC_TIRE = ITEMS.register("music_disc_tire", () -> new RecordItem(9, RPGSounds.MUSIC_DISC_TIRE.get(), new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 164 * 20));
+	public static final RegistryObject<Item> MUSIC_DISC_RAIN_A_SIDE = ITEMS.register("music_disc_rain_a_side", () -> new DoubleSidedRecordItem(1, RPGSounds.MUSIC_DISC_RAIN_A_SIDE.get(), new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 174 * 20));
+	public static final RegistryObject<Item> MUSIC_DISC_RAIN_B_SIDE = ITEMS.register("music_disc_rain_b_side", () -> new DoubleSidedRecordItem(2, RPGSounds.MUSIC_DISC_RAIN_B_SIDE.get(), new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 178 * 20));
+	public static final RegistryObject<Item> RIE_WEALD_BANNER_PATTERN = ITEMS.register("rie_weald_banner_pattern", () -> new BannerPatternItem(ModTags.BannerPatterns.PATTERN_ITEM_RIE_WEALD, (new Item.Properties()).stacksTo(1).rarity(Rarity.EPIC)));
+	public static final RegistryObject<Item> EMPTY_SCROLL = ITEMS.register("empty_scroll", () -> new EmptyScrollItem((new Item.Properties()).stacksTo(16)));
+	public static final RegistryObject<Item> EMBER_SCROLL = ITEMS.register("ember_scroll", () -> new EmberScrollItem((new Item.Properties()).stacksTo(1).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> HEART_OF_THE_SEA_SCROLL = ITEMS.register("heart_of_the_sea_scroll", () -> new HeartOfTheSeaScrollItem((new Item.Properties()).stacksTo(1).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> ENDER_EYE_SCROLL = ITEMS.register("ender_eye_scroll", () -> new EnderEyeScrollItem((new Item.Properties()).stacksTo(1).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> NETHER_STAR_SCROLL = ITEMS.register("nether_star_scroll", () -> new NetherStarScrollItem((new Item.Properties()).stacksTo(1).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> PILLAGER_SCROLL = ITEMS.register("pillager_scroll", () -> new PillagerScrollItem((new Item.Properties()).stacksTo(1).rarity(Rarity.UNCOMMON)));
 
-    public static final RegistryObject<Item> FIRE_CATCHER_ITEM = ITEMS.register("fire_catcher",
-            () -> new FireCatcherItem(ModBlocks.FIRE_CATCHER.get(),new Item.Properties().fireResistant()));
+	public static final RegistryObject<Item> FIRE_CATCHER_ITEM = ITEMS.register("fire_catcher",
+			() -> new FireCatcherItem(ModBlocks.FIRE_CATCHER.get(), new Item.Properties().fireResistant()));
 
-    public static final RegistryObject<Item> ARBOR_FUEL_BUCKET = ITEMS.register("arbor_fuel_bucket", () -> new FuelBucketItem(ModFluids.SOURCE_ARBOR_FUEL, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
-    public static final RegistryObject<Item> PLATINUMFISH = ITEMS.register("platinumfish",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> PLATINUMFISH_BUCKET = ITEMS.register("platinumfish_bucket",
-            () -> new MobBucketItem(ModEntities.PLATINUMFISH, () -> Fluids.WATER, () -> SoundEvents.BUCKET_EMPTY_FISH, (new Item.Properties()).stacksTo(1)));
-    public static final RegistryObject<Item> PLATINUMFISH_SPAWN_EGG = ITEMS.register("platinumfish_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.PLATINUMFISH, 0x8097B8, 0xF6D8EB, new Item.Properties()));
-    public static final RegistryObject<Item> BHLEE = ITEMS.register("bhlee",
-            () -> new Item(new Item.Properties().food(ModFoods.BHLEE)));
-    public static final RegistryObject<Item> COOKED_BHLEE = ITEMS.register("cooked_bhlee",
-            () -> new Item(new Item.Properties().food(ModFoods.COOKED_BHLEE)));
-    public static final RegistryObject<Item> BHLEE_BUCKET = ITEMS.register("bhlee_bucket",
-            () -> new MobBucketItem(ModEntities.BHLEE, () -> Fluids.WATER, () -> SoundEvents.BUCKET_EMPTY_FISH, (new Item.Properties()).stacksTo(1)));
-    public static final RegistryObject<Item> BHLEE_SPAWN_EGG = ITEMS.register("bhlee_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.BHLEE, 0xB0B0B0, 0x788DE1, new Item.Properties()));
-    public static final RegistryObject<Item> MOSSFRONT = ITEMS.register("mossfront",
-            () -> new Item(new Item.Properties().food(ModFoods.MOSSFRONT)));
-    public static final RegistryObject<Item> MOSSFRONT_BUCKET = ITEMS.register("mossfront_bucket",
-            () -> new MobBucketItem(ModEntities.MOSSFRONT, () -> Fluids.WATER, () -> SoundEvents.BUCKET_EMPTY_FISH, (new Item.Properties()).stacksTo(1)));
-    public static final RegistryObject<Item> MOSSFRONT_SPAWN_EGG = ITEMS.register("mossfront_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.MOSSFRONT, 0x689043, 0x0F4434, new Item.Properties()));
-    public static final RegistryObject<Item> SHEENTROUT = ITEMS.register("sheentrout",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SHEENTROUT_BUCKET = ITEMS.register("sheentrout_bucket",
-            () -> new MobBucketItem(ModEntities.SHEENTROUT, () -> Fluids.WATER, () -> SoundEvents.BUCKET_EMPTY_FISH, (new Item.Properties()).stacksTo(1)));
-    public static final RegistryObject<Item> SHEENTROUT_SPAWN_EGG = ITEMS.register("sheentrout_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.SHEENTROUT, 0xE5D9BB, 0xF9F9F9, new Item.Properties()));
-    public static final RegistryObject<Item> GASBASS = ITEMS.register("gasbass",
-            () -> new GasbassItem(new Item.Properties().stacksTo(1).food(ModFoods.GASBASS)));
-    public static final RegistryObject<Item> GASBASS_BUCKET = ITEMS.register("gasbass_bucket",
-            () -> new MobBucketItem(ModEntities.GASBASS, () -> Fluids.WATER, () -> SoundEvents.BUCKET_EMPTY_FISH, (new Item.Properties()).stacksTo(1)));
-    public static final RegistryObject<Item> GASBASS_SPAWN_EGG = ITEMS.register("gasbass_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.GASBASS, 0x516574, 0x2E404B, new Item.Properties()));
+	public static final RegistryObject<Item> ARBOR_FUEL_BUCKET = ITEMS.register("arbor_fuel_bucket", () -> new FuelBucketItem(ModFluids.SOURCE_ARBOR_FUEL, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
+	public static final RegistryObject<Item> PLATINUMFISH = ITEMS.register("platinumfish",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> PLATINUMFISH_BUCKET = ITEMS.register("platinumfish_bucket",
+			() -> new MobBucketItem(ModEntities.PLATINUMFISH, () -> Fluids.WATER, () -> SoundEvents.BUCKET_EMPTY_FISH, (new Item.Properties()).stacksTo(1)));
+	public static final RegistryObject<Item> PLATINUMFISH_SPAWN_EGG = ITEMS.register("platinumfish_spawn_egg",
+			() -> new ForgeSpawnEggItem(ModEntities.PLATINUMFISH, 0x8097B8, 0xF6D8EB, new Item.Properties()));
+	public static final RegistryObject<Item> BHLEE = ITEMS.register("bhlee",
+			() -> new Item(new Item.Properties().food(ModFoods.BHLEE)));
+	public static final RegistryObject<Item> COOKED_BHLEE = ITEMS.register("cooked_bhlee",
+			() -> new Item(new Item.Properties().food(ModFoods.COOKED_BHLEE)));
+	public static final RegistryObject<Item> BHLEE_BUCKET = ITEMS.register("bhlee_bucket",
+			() -> new MobBucketItem(ModEntities.BHLEE, () -> Fluids.WATER, () -> SoundEvents.BUCKET_EMPTY_FISH, (new Item.Properties()).stacksTo(1)));
+	public static final RegistryObject<Item> BHLEE_SPAWN_EGG = ITEMS.register("bhlee_spawn_egg",
+			() -> new ForgeSpawnEggItem(ModEntities.BHLEE, 0xB0B0B0, 0x788DE1, new Item.Properties()));
+	public static final RegistryObject<Item> MOSSFRONT = ITEMS.register("mossfront",
+			() -> new Item(new Item.Properties().food(ModFoods.MOSSFRONT)));
+	public static final RegistryObject<Item> MOSSFRONT_BUCKET = ITEMS.register("mossfront_bucket",
+			() -> new MobBucketItem(ModEntities.MOSSFRONT, () -> Fluids.WATER, () -> SoundEvents.BUCKET_EMPTY_FISH, (new Item.Properties()).stacksTo(1)));
+	public static final RegistryObject<Item> MOSSFRONT_SPAWN_EGG = ITEMS.register("mossfront_spawn_egg",
+			() -> new ForgeSpawnEggItem(ModEntities.MOSSFRONT, 0x689043, 0x0F4434, new Item.Properties()));
+	public static final RegistryObject<Item> SHEENTROUT = ITEMS.register("sheentrout",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHEENTROUT_BUCKET = ITEMS.register("sheentrout_bucket",
+			() -> new MobBucketItem(ModEntities.SHEENTROUT, () -> Fluids.WATER, () -> SoundEvents.BUCKET_EMPTY_FISH, (new Item.Properties()).stacksTo(1)));
+	public static final RegistryObject<Item> SHEENTROUT_SPAWN_EGG = ITEMS.register("sheentrout_spawn_egg",
+			() -> new ForgeSpawnEggItem(ModEntities.SHEENTROUT, 0xE5D9BB, 0xF9F9F9, new Item.Properties()));
+	public static final RegistryObject<Item> GASBASS = ITEMS.register("gasbass",
+			() -> new GasbassItem(new Item.Properties().stacksTo(1).food(ModFoods.GASBASS)));
+	public static final RegistryObject<Item> GASBASS_BUCKET = ITEMS.register("gasbass_bucket",
+			() -> new MobBucketItem(ModEntities.GASBASS, () -> Fluids.WATER, () -> SoundEvents.BUCKET_EMPTY_FISH, (new Item.Properties()).stacksTo(1)));
+	public static final RegistryObject<Item> GASBASS_SPAWN_EGG = ITEMS.register("gasbass_spawn_egg",
+			() -> new ForgeSpawnEggItem(ModEntities.GASBASS, 0x516574, 0x2E404B, new Item.Properties()));
 
-    public static void register(IEventBus eventbus) {
-        ITEMS.register(eventbus);
-    }
+	public static void register(IEventBus eventbus) {
+		ITEMS.register(eventbus);
+	}
 }
