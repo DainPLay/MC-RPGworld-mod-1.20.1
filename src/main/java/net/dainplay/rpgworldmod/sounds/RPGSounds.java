@@ -183,4 +183,5 @@ public class RPGSounds {
 	public static RegistryObject<SoundEvent> SPELL_DESTRUCTION_PILLAGER;
 	public static RegistryObject<SoundEvent> SPELL_CONJURATION_PILLAGER_PREPARE;
 	public static RegistryObject<SoundEvent> SPELL_CONJURATION_PILLAGER;
+	public static RegistryObject<SoundEvent> SPELL_ALTERATION_PILLAGER;
 }

@@ -4,6 +4,7 @@ package net.dainplay.rpgworldmod.data;
 import com.google.gson.JsonObject;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.data.craft.SpellRecipe;
+import net.dainplay.rpgworldmod.data.craft.WoolDyeingScrollRecipe;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -19,6 +20,8 @@ public class ModRecipeSerializers {
 	public static final RegistryObject<RecipeSerializer<SpellRecipe>> SPELL_RECIPE =
 			RECIPE_SERIALIZERS.register("spell", SpellRecipe.Serializer::new);
 
+	public static final RegistryObject<RecipeSerializer<WoolDyeingScrollRecipe>> WOOL_DYEING_SCROLL_RECIPE =
+			RECIPE_SERIALIZERS.register("wool_dyeing_scroll", WoolDyeingScrollRecipe.Serializer::new);
 
 	public static class Serializer implements RecipeSerializer<SpellRecipe> {
 		private final ShapelessRecipe.Serializer baseSerializer = new ShapelessRecipe.Serializer();

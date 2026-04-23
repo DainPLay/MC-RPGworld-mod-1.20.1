@@ -1416,5 +1416,14 @@
       }
     ],
     "subtitle": "subtitles.rpgworldmod.spell.conjuration_pillager"
+  },
+  "rpgworldmod.spell.alteration_pillager": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.evoker.cast_spell"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.alteration_pillager"
   }
 }

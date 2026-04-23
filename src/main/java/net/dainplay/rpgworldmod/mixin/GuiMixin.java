@@ -1,8 +1,10 @@
 package net.dainplay.rpgworldmod.mixin;
 
+import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.gui.HealthOverlayEventHandler;
 import net.dainplay.rpgworldmod.gui.ManaOverlayEventHandler;
 import net.dainplay.rpgworldmod.item.ModItems;
+import net.dainplay.rpgworldmod.item.custom.PillagerScrollItem;
 import net.dainplay.rpgworldmod.network.ClientMaxManaData;
 import net.dainplay.rpgworldmod.util.BeaconSpellStarMenuHandler;
 import net.dainplay.rpgworldmod.util.RecolorWoolMenuHandler;
@@ -11,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -48,15 +51,15 @@ public abstract class GuiMixin {
 			return;
 		}
 
-
 		if (this.lastToolHighlight.getItem() != ModItems.BRAIN_CORAL_STAFF.get()
 				&& this.lastToolHighlight.getItem() != ModItems.TUBE_CORAL_STAFF.get()
 				&& this.lastToolHighlight.getItem() != ModItems.BUBBLE_CORAL_STAFF.get()
 				&& this.lastToolHighlight.getItem() != ModItems.HORN_CORAL_STAFF.get()
-				&& this.lastToolHighlight.getItem() != ModItems.FIRE_CORAL_STAFF.get()) {
+				&& this.lastToolHighlight.getItem() != ModItems.FIRE_CORAL_STAFF.get()
+				&& !(this.lastToolHighlight.getItem() == ModItems.PILLAGER_SCROLL.get()
+				&& this.lastToolHighlight.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0)) {
 			return;
 		}
-
 
 		MutableComponent mutablecomponent = Component.empty()
 				.append(this.lastToolHighlight.getHoverName())
@@ -69,16 +72,19 @@ public abstract class GuiMixin {
 
 		String firstLineText = highlightTip.getString();
 		Style baseStyle = highlightTip.getStyle();
-		int color = 16777215;
+		int color = PillagerScrollItem.getSelectedColor(this.lastToolHighlight).getColor();
 		if (this.lastToolHighlight.getItem() == ModItems.BRAIN_CORAL_STAFF.get()) color = 0xE47EB9;
 		if (this.lastToolHighlight.getItem() == ModItems.TUBE_CORAL_STAFF.get()) color = 0x405CE2;
 		if (this.lastToolHighlight.getItem() == ModItems.BUBBLE_CORAL_STAFF.get()) color = 0xC819BA;
 		if (this.lastToolHighlight.getItem() == ModItems.HORN_CORAL_STAFF.get()) color = 0xEDEC4C;
 		if (this.lastToolHighlight.getItem() == ModItems.FIRE_CORAL_STAFF.get()) color = 0xC62A37;
 
-		String key = this.lastToolHighlight.getDescriptionId() + ".target";
+		String key =
+				this.lastToolHighlight.getItem() == ModItems.PILLAGER_SCROLL.get()
+				? Component.translatable("tooltip.rpgworldmod.selected_color." + PillagerScrollItem.getSelectedColor(this.lastToolHighlight).getName()).getString()
+				: this.lastToolHighlight.getDescriptionId() + ".target";
 		int finalColor = color;
-		Component secondLineComponent = Component.translatable("tooltip.rpgworldmod.target")
+		Component secondLineComponent = Component.translatable(this.lastToolHighlight.getItem() == ModItems.PILLAGER_SCROLL.get() ? "tooltip.rpgworldmod.selected_color" : "tooltip.rpgworldmod.target")
 				.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC)
 				.append(Component.literal(" ").withStyle(ChatFormatting.ITALIC))
 				.append(Component.translatable(key).withStyle(ChatFormatting.ITALIC).withStyle(style -> style.withColor(finalColor)));
@@ -98,12 +104,17 @@ public abstract class GuiMixin {
 		int secondWidth = font.width(secondLineComponent);
 		int maxWidth = Math.max(firstWidth, secondWidth);
 
+		if (ManaOverlayEventHandler.shouldRenderMana()) {
+			int currentMana = ClientMaxManaData.get();
+			int manaRows = (currentMana + 49) / 50;
+			if (ManaOverlayEventHandler.isAirRender() == 0) yShift -= 10;
+			yShift += (manaRows * 10);
+		}
 
 		int baseY = this.screenHeight - Math.max(yShift, 59);
 		if (!Minecraft.getInstance().gameMode.canHurtPlayer()) {
 			baseY += 14;
 		}
-
 
 		int alpha = (int) ((float) this.toolHighlightTimer * 256.0F / 10.0F);
 		if (alpha > 255) alpha = 255;
@@ -112,7 +123,6 @@ public abstract class GuiMixin {
 		int lineHeight = font.lineHeight;
 
 		int startY = baseY - lineHeight;
-
 
 		int bgColor = Minecraft.getInstance().options.getBackgroundColor(0);
 		int bgX = (this.screenWidth - maxWidth) / 2;

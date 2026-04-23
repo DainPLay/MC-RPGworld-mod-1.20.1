@@ -1342,6 +1342,7 @@ public class NetherStarScrollItem extends ScrollItem {
 				} else {
 					target.hurt(ModDamageTypes.getEntityDamageSource(level, ModDamageTypes.CORRUPTED_BEACON, player), (float) damage);
 				}
+				hitPositions.add(targetCenter);
 			}
 		}
 		return hitPositions;

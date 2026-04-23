@@ -24,6 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -55,6 +56,7 @@ public class ClientModEvents {
 					player.getUseItemRemainingTicks() > 0 &&
 					player.getUseItem().getItem() instanceof ChooseTargetItem) {
 				ChooseTargetItem catItem = (ChooseTargetItem) player.getUseItem().getItem();
+				ClientAnimateTargetData.set(null);
 				if (catItem.highlightAnimateTarget(player.getUseItem(), player) && catItem.canHighlightYourself(player.getUseItem(), player)) {
 					LivingEntity target = null;
 					if (player.isShiftKeyDown())
@@ -84,7 +86,7 @@ public class ClientModEvents {
 					ItemEntity randomItem = getRandomItemInRadius(player, 64.0);
 					ItemEntity anotherRandomItem = randomItem;
 					ClientItemTargetData.clear();
-					ClientItemTargetData.addTarget(randomItem);
+					if (randomItem != null && player.distanceToSqr(randomItem) <= 64.0 * 64.0) ClientItemTargetData.addTarget(randomItem);
 					if (player.tickCount % 20 == 0 || (anotherRandomItem != null && player.distanceToSqr(anotherRandomItem) > 64.0 * 64.0)) {
 						anotherRandomItem = getRandomItemInRadius(player, 64.0);
 						ClientItemTargetData.set(anotherRandomItem);

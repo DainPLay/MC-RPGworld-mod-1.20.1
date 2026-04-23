@@ -49,6 +49,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.CompoundContainer;
 import net.minecraft.world.Container;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -66,6 +67,7 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.PlayerEnderChestContainer;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -817,6 +819,22 @@ public class ModEvents {
 						|| usedItem.getItem() instanceof StaffItem
 						|| usedItem.getItem() instanceof ScrollItem) {
 					event.setCanceled(true);
+				}
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
+		if (event.getCrafting().getItem() instanceof BlockItem blockItem && event.getInventory().countItem(ModItems.PILLAGER_SCROLL.get()) == 1) {
+			if (blockItem.getDefaultInstance().is(ItemTags.WOOL) || blockItem.getDefaultInstance().is(ItemTags.WOOL_CARPETS)) {
+				Player player = event.getEntity();
+				if (!player.getAbilities().instabuild) {
+					player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+						if (mana.getMana() >= 1) {
+							mana.reduceMana((ServerPlayer) player, 1);
+						}
+					});
 				}
 			}
 		}

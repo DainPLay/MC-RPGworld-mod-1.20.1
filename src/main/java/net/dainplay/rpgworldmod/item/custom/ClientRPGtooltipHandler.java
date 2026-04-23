@@ -26,6 +26,10 @@ public class ClientRPGtooltipHandler {
 			pTooltip.addAll(getDisplayTargetWithLineBreaks(pStack, tooltipItem));
 		}
 
+		if (tooltipItem.hasSelectedColor(pStack)) {
+			pTooltip.addAll(getDisplaySelectedColorWithLineBreaks(pStack, tooltipItem));
+		}
+
 		if (pStack.getItem() instanceof ManaCostItem item) {
 			MutableComponent costText = Component.translatable("tooltip.rpgworldmod.cost_text").withStyle(ChatFormatting.WHITE);
 			if (item.usesHealthInsteadOfMana(pStack))
@@ -112,6 +116,43 @@ public class ClientRPGtooltipHandler {
 		} else {
 			color = 0xC62A37;
 		}
+
+		List<String> wrappedLines = wrapText(fullText, maxLineLength);
+
+		if (!wrappedLines.isEmpty()) {
+			String firstLine = wrappedLines.get(0);
+			int headerEndIndex = firstLine.indexOf(header) + header.length();
+			if (headerEndIndex <= firstLine.length()) {
+				String whitePart = firstLine.substring(0, Math.min(headerEndIndex, firstLine.length()));
+				String coloredPart = firstLine.substring(Math.min(headerEndIndex, firstLine.length()));
+
+				MutableComponent firstLineComponent = Component.literal(whitePart).withStyle(ChatFormatting.WHITE);
+				if (!coloredPart.isEmpty()) {
+					firstLineComponent.append(Component.literal(coloredPart)
+							.withStyle(style -> style.withColor(color)));
+				}
+				result.add(firstLineComponent);
+			} else {
+				result.add(Component.literal(firstLine).withStyle(ChatFormatting.WHITE));
+			}
+
+			for (int i = 1; i < wrappedLines.size(); i++) {
+				result.add(Component.literal(wrappedLines.get(i))
+						.withStyle(style -> style.withColor(color)));
+			}
+		}
+
+		return result;
+	}
+
+	private static List<Component> getDisplaySelectedColorWithLineBreaks(ItemStack item, RPGtooltip tooltipItem) {
+		List<Component> result = new ArrayList<>();
+		int maxLineLength = getMaxLineLength(item, tooltipItem, 0);
+
+		String header = Component.translatable("tooltip.rpgworldmod.selected_color").getString();
+		String targetText = Component.translatable("tooltip.rpgworldmod.selected_color." + PillagerScrollItem.getSelectedColor(item).getName()).getString();
+		String fullText = header + " " + targetText;
+		int color = PillagerScrollItem.getSelectedColor(item).getColor();
 
 		List<String> wrappedLines = wrapText(fullText, maxLineLength);
 
@@ -295,7 +336,7 @@ public class ClientRPGtooltipHandler {
 	private static int getMaxLineLength(ItemStack stack, RPGtooltip tooltipItem, int additional) {
 		String displayName = stack.getHoverName().getString();
 		int nameLength = displayName.length();
-		return Math.max(25 + additional, nameLength);
+		return Math.max(tooltipItem.textLength(stack) + additional, nameLength);
 	}
 
 	private static List<String> wrapText(String text, int maxLineLength) {

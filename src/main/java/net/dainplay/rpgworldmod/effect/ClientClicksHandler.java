@@ -26,6 +26,7 @@ import net.dainplay.rpgworldmod.network.UseOnAnimateTargetPacket;
 import net.dainplay.rpgworldmod.network.UseOnItemStorageBlockTargetPacket;
 import net.dainplay.rpgworldmod.network.UseOnItemStorageEntityTargetPacket;
 import net.dainplay.rpgworldmod.network.UseOnItemTargetPacket;
+import net.dainplay.rpgworldmod.network.UseRecolorWoolSpellPacket;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.dainplay.rpgworldmod.util.BeaconSpellStarMenuHandler;
 import net.dainplay.rpgworldmod.util.RecolorWoolMenuHandler;
@@ -34,6 +35,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -204,8 +206,16 @@ public class ClientClicksHandler {
 				}
 
 				if (useItem.getItem() instanceof PillagerScrollItem scroll) {
-					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), useItem) > 0 && RecolorWoolMenuHandler.isActive()) {
-						//ModMessages.sendToServer(new UseRecolorWoolSpellPacket(player.getId(), RecolorWoolMenuHandler.getSelectedSegment()));
+					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), useItem) > 0 && (useItem.getTag() != null
+							&& useItem.getTag().contains("isSelectingColor", Tag.TAG_BYTE)
+							&& useItem.getTag().getBoolean("isSelectingColor")) && RecolorWoolMenuHandler.isActive()) {
+						ModMessages.sendToServer(new UseRecolorWoolSpellPacket(player.getId(), RecolorWoolMenuHandler.getSelectedSegment()));
+						player.swing(player.getUsedItemHand());
+					}
+					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), useItem) > 0 && !(useItem.getTag() != null
+							&& useItem.getTag().contains("isSelectingColor", Tag.TAG_BYTE)
+							&& useItem.getTag().getBoolean("isSelectingColor")) && ClientAnimateTargetData.get() != null) {
+						ModMessages.sendToServer(new UseOnAnimateTargetPacket(player.getId(), ClientAnimateTargetData.get().getId()));
 						player.swing(player.getUsedItemHand());
 					}
 				}

@@ -17,6 +17,7 @@ import net.minecraft.sounds.Music;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.ContainerEntity;
@@ -90,10 +91,10 @@ public abstract class MinecraftMixin {
 			ChooseTargetItem catItem = (ChooseTargetItem) this.player.getUseItem().getItem();
 
 			if (catItem.highlightAnimateTarget(this.player.getUseItem(), this.player)) {
+				LivingEntity target = null;
 				if (!(entity instanceof LivingEntity)) {
 					return;
 				}
-				LivingEntity target = null;
 				if (player.isShiftKeyDown() && catItem.canHighlightYourself(this.player.getUseItem(), this.player))
 					target = player;
 				else
@@ -112,6 +113,27 @@ public abstract class MinecraftMixin {
 				ClientAnimateTargetData.set(target);
 
 				if (target != null && target.getId() == entity.getId()) {
+					cir.setReturnValue(true);
+					cir.cancel();
+				}
+			}
+			else if (catItem.highlightSheep(this.player.getUseItem(), this.player)) {
+				LivingEntity target = null;
+				if (!(entity instanceof Sheep)) {
+					return;
+				}
+				target = findVisibleAnimateTargetInSight(this.player, 64.0, 15.0);
+
+				if (target != null && target.getItemBySlot(EquipmentSlot.HEAD).isEnderMask(player, null))
+					target = null;
+
+				if (!(target instanceof Sheep)) {
+					return;
+				}
+
+				ClientAnimateTargetData.set(target);
+
+				if (target.getId() == entity.getId()) {
 					cir.setReturnValue(true);
 					cir.cancel();
 				}

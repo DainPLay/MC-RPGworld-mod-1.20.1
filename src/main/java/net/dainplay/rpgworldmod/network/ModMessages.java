@@ -233,6 +233,12 @@ public class ModMessages {
 				.consumerMainThread(UseBeaconSpellPacket::handle)
 				.add();
 
+		net.messageBuilder(UseRecolorWoolSpellPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+				.decoder(UseRecolorWoolSpellPacket::new)
+				.encoder(UseRecolorWoolSpellPacket::toBytes)
+				.consumerMainThread(UseRecolorWoolSpellPacket::handle)
+				.add();
+
 		net.messageBuilder(S2CBeamUpdatePacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
 				.encoder(S2CBeamUpdatePacket::encode)
 				.decoder(S2CBeamUpdatePacket::decode)

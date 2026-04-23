@@ -1,6 +1,7 @@
-// 1.20.1	2026-02-15T01:35:23.6341761	Tags for minecraft:damage_type mod id rpgworldmod
-78f2b8dbdf625664b1b72938e2f0acc0bbf9e44f data/minecraft/tags/damage_type/avoids_guardian_thorns.json
-e277ee1cd9a2df3dcf81dd96f4df83490f360913 data/minecraft/tags/damage_type/bypasses_armor.json
+// 1.20.1	2026-04-23T00:30:41.4931596	Tags for minecraft:damage_type mod id rpgworldmod
+ff08fab59b861c211655bf27b78a4f5ba96738b0 data/minecraft/tags/damage_type/always_triggers_silverfish.json
+40aea76bd301737aea28f9b0737232054d5fc839 data/minecraft/tags/damage_type/avoids_guardian_thorns.json
+797e2f2bad03c3760bbaea8d2851b1adcb83d121 data/minecraft/tags/damage_type/bypasses_armor.json
 49b31e9e4fc23f83ba92b5e3ecc2eaa8437699ef data/minecraft/tags/damage_type/bypasses_cooldown.json
 c342e9d28e3068cd03c6a06a9729dd91f337b104 data/minecraft/tags/damage_type/bypasses_effects.json
 8788b3e36143323867bec3fa3c1537f0baed5cd9 data/minecraft/tags/damage_type/bypasses_enchantments.json
@@ -10,4 +11,5 @@ c342e9d28e3068cd03c6a06a9729dd91f337b104 data/minecraft/tags/damage_type/bypasse
 e858d4e8b24dabf8f29c179fbbae38abedc82bc2 data/minecraft/tags/damage_type/damages_helmet.json
 5ca7958aae909dd9a679a64ae46e89e494e3d05c data/minecraft/tags/damage_type/is_fire.json
 69d1dacd1db48861bda5a7969c92ca37080b9977 data/minecraft/tags/damage_type/is_projectile.json
+ff08fab59b861c211655bf27b78a4f5ba96738b0 data/minecraft/tags/damage_type/witch_resistant_to.json
 6ca3fe58ffab7eb72436773d37ff6fba11e7b788 data/rpgworldmod/tags/damage_type/is_sound.json

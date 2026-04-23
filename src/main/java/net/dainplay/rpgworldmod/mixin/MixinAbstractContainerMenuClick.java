@@ -71,6 +71,8 @@ public abstract class MixinAbstractContainerMenuClick implements ITriggerChestSt
 			return;
 		}
 
+		if (slot < 0 || slot >= menu.slots.size()) return;
+
 		if (menu.slots.get(slot).container instanceof Inventory) return;
 		if (menu.slots.get(slot) instanceof CreativeModeInventoryScreen.CustomCreativeSlot) return;
 		ModMessages.sendToServer(new C2SCheckItemForTempNBTPacket(slot));

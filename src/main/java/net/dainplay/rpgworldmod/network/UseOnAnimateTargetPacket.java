@@ -5,6 +5,7 @@ import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
 import net.dainplay.rpgworldmod.item.custom.EnderEyeScrollItem;
 import net.dainplay.rpgworldmod.item.custom.HeartOfTheSeaScrollItem;
 import net.dainplay.rpgworldmod.item.custom.LivingWoodStaffItem;
+import net.dainplay.rpgworldmod.item.custom.PillagerScrollItem;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -178,6 +179,36 @@ public class UseOnAnimateTargetPacket {
 					}
 
 					staff.cast(player, target, itemInHand);
+				}
+
+				if (itemInHand.getItem() instanceof PillagerScrollItem scroll) {
+					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), itemInHand) > 0) {
+						player.stopUsingItem();
+
+						var levelUseData = PillagerScrollItem.getPlayerUseData(player.level());
+						levelUseData.remove(player.getUUID());
+
+						player.level().playSound(null,
+								player.getX(), player.getY(), player.getZ(),
+								RPGSounds.SPELL_ALTERATION_PILLAGER.get(),
+								SoundSource.PLAYERS, 1.0F, 1.0F
+						);
+
+						ModMessages.sendToNearbyPlayers(
+								new LoopSoundPacket(player.getId(), false, itemInHand),
+								player.serverLevel(),
+								player.blockPosition(),
+								64.0
+						);
+
+						LivingEntity target = null;
+						Entity entity = player.level().getEntity(msg.targetId);
+						if (entity instanceof LivingEntity livingEntity) {
+							target = livingEntity;
+						}
+
+						scroll.recolorSheep(player, target, itemInHand);
+					}
 				}
 			}
 		});

@@ -63,4 +63,12 @@ public interface RPGtooltip {
 	default boolean hasTarget(ItemStack item) {
 		return false;
 	}
+
+	default int textLength(ItemStack item) {
+		return 25;
+	}
+
+	default boolean hasSelectedColor(ItemStack item) {
+		return false;
+	}
 }

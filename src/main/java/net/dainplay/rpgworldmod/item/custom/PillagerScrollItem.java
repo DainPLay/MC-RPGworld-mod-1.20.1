@@ -23,12 +23,14 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -39,8 +41,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.EvokerFangs;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -100,12 +104,23 @@ public class PillagerScrollItem extends ScrollItem {
 	@Override
 	public PoseStack getUsingPose(ItemStack stack, Player player, PoseStack poseStack, float flip) {
 		if (stack.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0) {
-			poseStack.mulPose(Axis.ZP.rotationDegrees(flip * 36.0F));
-			poseStack.mulPose(Axis.XP.rotationDegrees(-7.0F));
-			poseStack.mulPose(Axis.YP.rotationDegrees((-(float) Math.PI / 6F)));
-			poseStack.translate(0F, 0.4F, 0F);
-			float shakeRotY = (float) (Math.cos(player.getTicksUsingItem() * 1.5) * 0.3F);
-			poseStack.mulPose(Axis.YP.rotationDegrees(shakeRotY));
+			if (stack.getTag() != null
+					&& stack.getTag().contains("isSelectingColor", Tag.TAG_BYTE)
+					&& stack.getTag().getBoolean("isSelectingColor")) {
+				poseStack.mulPose(Axis.ZP.rotationDegrees(flip * 36.0F));
+				poseStack.mulPose(Axis.XP.rotationDegrees(-7.0F));
+				poseStack.mulPose(Axis.YP.rotationDegrees((-(float) Math.PI / 6F)));
+				poseStack.translate(0F, 0.4F, 0F);
+				float shakeRotY = (float) (Math.cos(player.getTicksUsingItem() * 1.5) * 0.3F);
+				poseStack.mulPose(Axis.YP.rotationDegrees(shakeRotY));
+
+			} else {
+				poseStack.mulPose(Axis.ZP.rotationDegrees(flip * -10.0F));
+				poseStack.mulPose(Axis.YP.rotationDegrees((-(float) Math.PI / 6F)));
+				poseStack.translate(0F, 0.25F, 0F);
+				float shakeRotY = (float) (Math.cos(player.getTicksUsingItem() * 1.5) * 0.3F);
+				poseStack.mulPose(Axis.YP.rotationDegrees(shakeRotY));
+			}
 		}
 		if (stack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0) {
 			poseStack.mulPose(Axis.ZP.rotationDegrees(flip * 36.0F));
@@ -156,6 +171,19 @@ public class PillagerScrollItem extends ScrollItem {
 				}
 			});
 
+			private static final HumanoidModel.ArmPose DESTRUCTION_POSE = HumanoidModel.ArmPose.create("DESTRUCTION", false, (model, entity, arm) -> {
+				float xOffset = 0F;
+				if (model.crouching) xOffset = -0.6f;
+				if (model.swimAmount > 0.0F) xOffset = -1.185f;
+				if (arm == HumanoidArm.RIGHT) {
+					model.rightArm.xRot = (-(float) Math.PI / 2F) + model.head.xRot + xOffset;
+					model.rightArm.yRot = -0.1F + model.head.yRot;
+				} else {
+					model.leftArm.xRot = (-(float) Math.PI / 2F) + model.head.xRot + xOffset;
+					model.leftArm.yRot = 0.1F + model.head.yRot;
+				}
+			});
+
 			@Override
 			public HumanoidModel.ArmPose getArmPose(LivingEntity entityLiving, InteractionHand hand, ItemStack itemStack) {
 				if (!itemStack.isEmpty() && itemStack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0) {
@@ -165,7 +193,13 @@ public class PillagerScrollItem extends ScrollItem {
 				}
 				if (!itemStack.isEmpty() && itemStack.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0) {
 					if (entityLiving.isUsingItem() && entityLiving.getUseItemRemainingTicks() > 0 && entityLiving.getUsedItemHand() == hand) {
-						return ACTIVE_USE_POSE;
+						if (itemStack.getTag() != null
+								&& itemStack.getTag().contains("isSelectingColor", Tag.TAG_BYTE)
+								&& itemStack.getTag().getBoolean("isSelectingColor")) {
+							return ACTIVE_USE_POSE;
+						} else {
+							return DESTRUCTION_POSE;
+						}
 					}
 				}
 				if (!itemStack.isEmpty() && itemStack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0) {
@@ -226,7 +260,16 @@ public class PillagerScrollItem extends ScrollItem {
 			}
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), item) > 0) {
-			return 1;
+			if (player.isUsingItem()
+					&& player.getUseItem() == item
+					&& item.getTag() != null
+					&& item.getTag().contains("isSelectingColor", Tag.TAG_BYTE)
+					&& item.getTag().getBoolean("isSelectingColor")) {
+				return 0;
+			} else {
+				if (!player.isUsingItem() && player.isShiftKeyDown()) return 0;
+				return 1;
+			}
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), item) > 0) {
 			return 20;
@@ -245,6 +288,21 @@ public class PillagerScrollItem extends ScrollItem {
 			return Component.translatable("tooltip.rpgworldmod.cost_minimum", 100).withStyle(ChatFormatting.BLUE);
 		}
 		return Component.literal("");
+	}
+
+	@Override
+	public boolean highlightSheep(ItemStack stack, Player player) {
+		if (stack.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0
+				&& player.isUsingItem()
+				&& player.getUseItemRemainingTicks() > 0
+				&& player.getUseItem() == stack) {
+			if (stack.getTag() != null
+					&& stack.getTag().contains("isSelectingColor", Tag.TAG_BYTE)
+					&& stack.getTag().getBoolean("isSelectingColor")) {
+				return false;
+			} else return true;
+		}
+		return false;
 	}
 
 	public static ItemStack createForEnchantment(EnchantmentInstance pInstance) {
@@ -272,11 +330,14 @@ public class PillagerScrollItem extends ScrollItem {
 			return InteractionResultHolder.fail(itemstack);
 		}
 
+		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), itemstack) > 0) {
+			CompoundTag nbtData = itemstack.getOrCreateTag();
+			nbtData.putBoolean("isSelectingColor", player.isShiftKeyDown());
+			itemstack.setTag(nbtData);
+		}
+
 		if (!level.isClientSide) {
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), itemstack) > 0) {
-				return InteractionResultHolder.pass(itemstack);
-			}
-			if (!player.isShiftKeyDown() && EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), itemstack) > 0) {
 				return InteractionResultHolder.pass(itemstack);
 			}
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), itemstack) > 0) {
@@ -306,10 +367,6 @@ public class PillagerScrollItem extends ScrollItem {
 
 			player.startUsingItem(hand);
 		} else {
-			if (!player.isShiftKeyDown() && EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), itemstack) > 0) {
-				return InteractionResultHolder.pass(itemstack);
-			}
-
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), itemstack) > 0) {
 				return InteractionResultHolder.pass(itemstack);
 			}
@@ -489,13 +546,21 @@ public class PillagerScrollItem extends ScrollItem {
 	}
 
 	private InteractionResult handleAlteration(UseOnContext context, Level level, Player player, ItemStack stack) {
+		BlockPos clickedPos = context.getClickedPos();
+		BlockState state = level.getBlockState(clickedPos);
+
+		boolean isWool = state.is(BlockTags.WOOL);
+		boolean isCarpet = state.is(BlockTags.WOOL_CARPETS);
+
 		if (level.isClientSide) {
 			if (player != null && !player.getAbilities().instabuild && ClientManaData.get() < getManaCost(stack, player)) {
 				return InteractionResult.FAIL;
 			}
-			return InteractionResult.SUCCESS;
+			return (isWool || isCarpet) ? InteractionResult.SUCCESS : InteractionResult.PASS;
 		}
-		if (player == null) return InteractionResult.FAIL;
+
+		if (player == null) return InteractionResult.PASS;
+		if (!isWool && !isCarpet) return InteractionResult.PASS;
 
 		if (!player.getAbilities().instabuild) {
 			AtomicBoolean hasMana = new AtomicBoolean(true);
@@ -508,7 +573,57 @@ public class PillagerScrollItem extends ScrollItem {
 			});
 			if (!hasMana.get()) return InteractionResult.FAIL;
 		}
-		return InteractionResult.CONSUME;
+
+		if (isWool) {
+			Block woolBlock = switch (getSelectedColor(stack)) {
+				case WHITE -> Blocks.WHITE_WOOL;
+				case LIGHT_GRAY -> Blocks.LIGHT_GRAY_WOOL;
+				case GRAY -> Blocks.GRAY_WOOL;
+				case BLACK -> Blocks.BLACK_WOOL;
+				case BROWN -> Blocks.BROWN_WOOL;
+				case RED -> Blocks.RED_WOOL;
+				case ORANGE -> Blocks.ORANGE_WOOL;
+				case YELLOW -> Blocks.YELLOW_WOOL;
+				case LIME -> Blocks.LIME_WOOL;
+				case GREEN -> Blocks.GREEN_WOOL;
+				case CYAN -> Blocks.CYAN_WOOL;
+				case LIGHT_BLUE -> Blocks.LIGHT_BLUE_WOOL;
+				case BLUE -> Blocks.BLUE_WOOL;
+				case PURPLE -> Blocks.PURPLE_WOOL;
+				case MAGENTA -> Blocks.MAGENTA_WOOL;
+				case PINK -> Blocks.PINK_WOOL;
+			};
+			level.setBlock(clickedPos, woolBlock.defaultBlockState(), Block.UPDATE_ALL);
+		}
+		if (isCarpet) {
+			Block carpetBlock = switch (getSelectedColor(stack)) {
+				case WHITE -> Blocks.WHITE_CARPET;
+				case LIGHT_GRAY -> Blocks.LIGHT_GRAY_CARPET;
+				case GRAY -> Blocks.GRAY_CARPET;
+				case BLACK -> Blocks.BLACK_CARPET;
+				case BROWN -> Blocks.BROWN_CARPET;
+				case RED -> Blocks.RED_CARPET;
+				case ORANGE -> Blocks.ORANGE_CARPET;
+				case YELLOW -> Blocks.YELLOW_CARPET;
+				case LIME -> Blocks.LIME_CARPET;
+				case GREEN -> Blocks.GREEN_CARPET;
+				case CYAN -> Blocks.CYAN_CARPET;
+				case LIGHT_BLUE -> Blocks.LIGHT_BLUE_CARPET;
+				case BLUE -> Blocks.BLUE_CARPET;
+				case PURPLE -> Blocks.PURPLE_CARPET;
+				case MAGENTA -> Blocks.MAGENTA_CARPET;
+				case PINK -> Blocks.PINK_CARPET;
+			};
+			level.setBlock(clickedPos, carpetBlock.defaultBlockState(), Block.UPDATE_ALL);
+		}
+
+		level.playSound(null, clickedPos, SoundEvents.DYE_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
+
+		if (player instanceof ServerPlayer serverPlayer) {
+			ModAdvancements.SPELL_ILLUSION_HEART_OF_THE_SEA_TRIGGER.trigger(serverPlayer);
+		}
+
+		return InteractionResult.SUCCESS;
 	}
 
 	private InteractionResult handleNecromancy(UseOnContext context, Level level, Player player, ItemStack stack) {
@@ -609,7 +724,69 @@ public class PillagerScrollItem extends ScrollItem {
 		return true;
 	}
 
-	public void cast(Player player, LivingEntity target, ItemStack item) {
+	public void selectColor(Player player, ItemStack item, int colorId) {
+		if (item.getItem() instanceof PillagerScrollItem scroll) {
+			player.getCooldowns().addCooldown(item.getItem(), 15);
+			player.swing(player.getUsedItemHand());
+			switch (colorId) {
+				case 0:
+					setSelectedColor(item, Color.WHITE);
+					break;
+				case 1:
+					setSelectedColor(item, Color.LIGHT_GRAY);
+					break;
+				case 2:
+					setSelectedColor(item, Color.GRAY);
+					break;
+				case 3:
+					setSelectedColor(item, Color.BLACK);
+					break;
+				case 4:
+					setSelectedColor(item, Color.BROWN);
+					break;
+				case 5:
+					setSelectedColor(item, Color.RED);
+					break;
+				case 6:
+					setSelectedColor(item, Color.ORANGE);
+					break;
+				case 7:
+					setSelectedColor(item, Color.YELLOW);
+					break;
+				case 8:
+					setSelectedColor(item, Color.LIME);
+					break;
+				case 9:
+					setSelectedColor(item, Color.GREEN);
+					break;
+				case 10:
+					setSelectedColor(item, Color.CYAN);
+					break;
+				case 11:
+					setSelectedColor(item, Color.LIGHT_BLUE);
+					break;
+				case 12:
+					setSelectedColor(item, Color.BLUE);
+					break;
+				case 13:
+					setSelectedColor(item, Color.PURPLE);
+					break;
+				case 14:
+					setSelectedColor(item, Color.MAGENTA);
+					break;
+				case 15:
+					setSelectedColor(item, Color.PINK);
+					break;
+				default:
+					setSelectedColor(item, Color.RED);
+			}
+			if (player instanceof ServerPlayer serverPlayer)
+				ModAdvancements.SPELL_RESTORATION_NETHER_STAR_TRIGGER.trigger(serverPlayer);
+			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
+		}
+	}
+
+	public void recolorSheep(Player player, LivingEntity target, ItemStack item) {
 		AtomicBoolean hasEnoughMana = new AtomicBoolean(true);
 		if (!player.getAbilities().instabuild) {
 			player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
@@ -622,18 +799,27 @@ public class PillagerScrollItem extends ScrollItem {
 		}
 		player.getCooldowns().addCooldown(item.getItem(), 15);
 		player.swing(player.getUsedItemHand());
-		if (hasEnoughMana.get()) {
-			MobEffectInstance mobeffectinstance = new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 1200, 2);
-			if (target instanceof ServerPlayer serverPlayer)
-				serverPlayer.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.GUARDIAN_ELDER_EFFECT, 1.0F));
-			target.addEffect(mobeffectinstance);
+		if (hasEnoughMana.get() && target instanceof Sheep sheep) {
+			switch (getSelectedColor(item)) {
+				case WHITE -> sheep.setColor(DyeColor.WHITE);
+				case LIGHT_GRAY -> sheep.setColor(DyeColor.LIGHT_GRAY);
+				case GRAY -> sheep.setColor(DyeColor.GRAY);
+				case BLACK -> sheep.setColor(DyeColor.BLACK);
+				case BROWN -> sheep.setColor(DyeColor.BROWN);
+				case RED -> sheep.setColor(DyeColor.RED);
+				case ORANGE -> sheep.setColor(DyeColor.ORANGE);
+				case YELLOW -> sheep.setColor(DyeColor.YELLOW);
+				case LIME -> sheep.setColor(DyeColor.LIME);
+				case GREEN -> sheep.setColor(DyeColor.GREEN);
+				case CYAN -> sheep.setColor(DyeColor.CYAN);
+				case LIGHT_BLUE -> sheep.setColor(DyeColor.LIGHT_BLUE);
+				case BLUE -> sheep.setColor(DyeColor.BLUE);
+				case PURPLE -> sheep.setColor(DyeColor.PURPLE);
+				case MAGENTA -> sheep.setColor(DyeColor.MAGENTA);
+				case PINK -> sheep.setColor(DyeColor.PINK);
+			}
 			if (player instanceof ServerPlayer serverPlayer)
 				ModAdvancements.SPELL_ILLUSION_HEART_OF_THE_SEA_TRIGGER.trigger(serverPlayer);
-			player.level().playSound(null,
-					player.getX(), player.getY(), player.getZ(),
-					RPGSounds.SPELL_ILLUSION_CAST.get(),
-					SoundSource.PLAYERS, 1.0F, 1.0F
-			);
 		}
 	}
 
@@ -792,7 +978,7 @@ public class PillagerScrollItem extends ScrollItem {
 
 	private static boolean hasAnyEnchantForContinuation(ItemStack stack, Player player) {
 		return EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), stack) > 0 ||
-				(EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) > 0 && player.isShiftKeyDown()) ||
+				(EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) > 0) ||
 				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), stack) > 0;
 	}
 
@@ -823,6 +1009,143 @@ public class PillagerScrollItem extends ScrollItem {
 	}
 
 	public boolean hasControls(ItemStack item) {
+		return item.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0;
+	}
+
+	public int textLength(ItemStack item) {
+		if (item.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0) return 35;
+		else return super.textLength(item);
+	}
+
+	public enum Color {
+		WHITE("white"),
+		LIGHT_GRAY("light_gray"),
+		GRAY("gray"),
+		BLACK("black"),
+		BROWN("brown"),
+		RED("red"),
+		ORANGE("orange"),
+		YELLOW("yellow"),
+		LIME("lime"),
+		GREEN("green"),
+		CYAN("cyan"),
+		LIGHT_BLUE("light_blue"),
+		BLUE("blue"),
+		PURPLE("purple"),
+		MAGENTA("magenta"),
+		PINK("pink");
+
+		private final String name;
+
+		Color(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public int getColor() {
+			return switch (this) {
+				case WHITE -> 0xFFEAEAEA;
+				case LIGHT_GRAY -> 0xFFC8C8C8;
+				case GRAY -> 0xFF767676;
+				case BLACK -> 0xFF27263D;
+				case BROWN -> 0xFF995D33;
+				case RED -> 0xFFD2443F;
+				case ORANGE -> 0xFFDB8B2A;
+				case YELLOW -> 0xFFE7E72A;
+				case LIME -> 0xFF83D41C;
+				case GREEN -> 0xFF4A6B18;
+				case CYAN -> 0xFF2D7C9D;
+				case LIGHT_BLUE -> 0xFF8FB9F4;
+				case BLUE -> 0xFF345EC3;
+				case PURPLE -> 0xFFA453CE;
+				case MAGENTA -> 0xFFCB69C5;
+				case PINK -> 0xFFEDA7CB;
+			};
+		}
+
+		public int getGradientColor() {
+			return switch (this) {
+				case WHITE -> 0x00EAEAEA;
+				case LIGHT_GRAY -> 0x00C8C8C8;
+				case GRAY -> 0x00767676;
+				case BLACK -> 0x0027263D;
+				case BROWN -> 0x00995D33;
+				case RED -> 0x00D2443F;
+				case ORANGE -> 0x00DB8B2A;
+				case YELLOW -> 0x00E7E72A;
+				case LIME -> 0x0083D41C;
+				case GREEN -> 0x004A6B18;
+				case CYAN -> 0x002D7C9D;
+				case LIGHT_BLUE -> 0x008FB9F4;
+				case BLUE -> 0x00345EC3;
+				case PURPLE -> 0x00A453CE;
+				case MAGENTA -> 0x00CB69C5;
+				case PINK -> 0x00EDA7CB;
+			};
+		}
+
+		public int getIndex() {
+			return switch (this) {
+				case WHITE -> 0;
+				case LIGHT_GRAY -> 1;
+				case GRAY -> 2;
+				case BLACK -> 3;
+				case BROWN -> 4;
+				case RED -> 5;
+				case ORANGE -> 6;
+				case YELLOW -> 7;
+				case LIME -> 8;
+				case GREEN -> 9;
+				case CYAN -> 10;
+				case LIGHT_BLUE -> 11;
+				case BLUE -> 12;
+				case PURPLE -> 13;
+				case MAGENTA -> 14;
+				case PINK -> 15;
+			};
+		}
+
+		public static Color fromName(String name) {
+			for (Color type : values()) {
+				if (type.name.equals(name)) {
+					return type;
+				}
+			}
+			return RED;
+		}
+	}
+
+	public static Color getSelectedColor(ItemStack stack) {
+		if (stack.hasTag()) {
+			CompoundTag tag = stack.getTag();
+			if (tag.contains("SelectedColor")) {
+				return Color.fromName(tag.getString("SelectedColor"));
+			}
+		}
+		return Color.RED;
+	}
+
+	public static void setSelectedColor(ItemStack stack, Color color) {
+		CompoundTag tag = stack.getOrCreateTag();
+		tag.putString("SelectedColor", color.getName());
+	}
+
+	@Override
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+		if (ItemStack.isSameItem(oldStack, newStack)) {
+			boolean enchantmentsEqual = EnchantmentHelper.getEnchantments(oldStack).equals(EnchantmentHelper.getEnchantments(newStack));
+			boolean colorsEqual = getSelectedColor(oldStack) == getSelectedColor(newStack);
+			return !(enchantmentsEqual && colorsEqual);
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public boolean hasSelectedColor(ItemStack item) {
 		return item.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0;
 	}
 }

@@ -2,19 +2,25 @@ package net.dainplay.rpgworldmod.mixin;
 
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.custom.BlazeStaffItem;
+import net.dainplay.rpgworldmod.item.custom.PillagerScrollItem;
 import net.dainplay.rpgworldmod.item.custom.SculkStaffItem;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.dainplay.rpgworldmod.network.ClientSculkStaffCDData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
 
@@ -65,5 +71,14 @@ public abstract class GuiGraphicsMixin {
 			return Math.min(1F, (float) (endTick - currentTick) / (staff.getMaxCooldown(pStack) * 3));
 		}
 		return current;
+	}
+
+	@Inject(method = "renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;IIII)V", at = @At("HEAD"))
+	private void onRenderItem(LivingEntity entity, Level level, ItemStack stack, int x, int y, int seed, int guiOffset, CallbackInfo ci) {
+		if (stack.getItem() instanceof PillagerScrollItem
+				&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) > 0) {
+			GuiGraphics graphics = (GuiGraphics) (Object) this;
+			graphics.fillGradient(x, y, x + 16, y + 16, 0, PillagerScrollItem.getSelectedColor(stack).getGradientColor(), PillagerScrollItem.getSelectedColor(stack).getColor());
+		}
 	}
 }

@@ -35,11 +35,18 @@ public class C2SCheckItemForTempNBTPacket {
 
 	public static void encode(C2SCheckItemForTempNBTPacket msg, FriendlyByteBuf buf) {
 		buf.writeInt(msg.slotId);
-		buf.writeEnum(msg.clickType);
+		boolean hasClickType = msg.clickType != null;
+		buf.writeBoolean(hasClickType);
+		if (hasClickType) {
+			buf.writeEnum(msg.clickType);
+		}
 	}
 
 	public static C2SCheckItemForTempNBTPacket decode(FriendlyByteBuf buf) {
-		return new C2SCheckItemForTempNBTPacket(buf.readInt(), buf.readEnum(ClickType.class));
+		int slotId = buf.readInt();
+		boolean hasClickType = buf.readBoolean();
+		ClickType clickType = hasClickType ? buf.readEnum(ClickType.class) : null;
+		return new C2SCheckItemForTempNBTPacket(slotId, clickType);
 	}
 
 	public void handle(Supplier<NetworkEvent.Context> ctx) {

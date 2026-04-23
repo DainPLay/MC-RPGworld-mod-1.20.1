@@ -953,6 +953,8 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				return false;
 			}
 
+			if(this.ownerLastHurt.isAlliedTo(owner)) return false;
+
 			return mosquito.canAttack(this.ownerLastHurt) &&
 					!mosquito.isAlliedTo(this.ownerLastHurt) &&
 					!this.ownerLastHurt.equals(owner);
@@ -1002,6 +1004,8 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 			if (mosquito.isPathBlocked(this.ownerLastHurtBy.position())) {
 				return false;
 			}
+
+			if(this.ownerLastHurtBy.isAlliedTo(owner)) return false;
 
 
 			return mosquito.canAttack(this.ownerLastHurtBy) &&
@@ -1108,6 +1112,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 					mosquito.getBoundingBox().inflate(24.0),
 					entity -> entity.isAlive() &&
 							entity.getTarget() == owner &&
+							!entity.isAlliedTo(owner) &&
 							!(entity instanceof MosquitoSwarm) &&
 							(canSeeEntity(mosquito.level(), mosquito.getEyePosition(), entity.getBoundingBox().getCenter())) &&
 							entity.distanceToSqr(mosquito) <= 400 &&

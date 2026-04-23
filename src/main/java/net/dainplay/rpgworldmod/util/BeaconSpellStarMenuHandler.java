@@ -29,7 +29,7 @@ public class BeaconSpellStarMenuHandler {
 	private static final int RADIUS = 30;
 	private static final int SIZE = 32;
 	private static final int MAX_RADIUS = RADIUS;
-	private static final int ARROW_SIZE = 15;
+	private static final int ARROW_SIZE = 16;
 	private static final int STAR_MENU_SIZE = 128;
 
 	private static final ResourceLocation STAR_MENU = new ResourceLocation(RPGworldMod.MOD_ID, "textures/gui/star_menu.png");
