@@ -55,6 +55,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -63,6 +65,7 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -138,6 +141,14 @@ public class PillagerScrollItem extends ScrollItem {
 			float shakeRotY = (float) (Math.cos(player.getTicksUsingItem() * 1.5) * 0.3F);
 			poseStack.mulPose(Axis.YP.rotationDegrees(shakeRotY));
 		}
+		if (stack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0) {
+			poseStack.mulPose(Axis.ZP.rotationDegrees(flip * 36.0F));
+			poseStack.mulPose(Axis.XP.rotationDegrees(-7.0F));
+			poseStack.mulPose(Axis.YP.rotationDegrees((-(float) Math.PI / 6F)));
+			poseStack.translate(0F, 0.4F, 0F);
+			float shakeRotY = (float) (Math.cos(player.getTicksUsingItem() * 1.5) * 0.3F);
+			poseStack.mulPose(Axis.YP.rotationDegrees(shakeRotY));
+		}
 		return poseStack;
 	}
 
@@ -191,6 +202,11 @@ public class PillagerScrollItem extends ScrollItem {
 						return ACTIVE_USE_POSE;
 					}
 				}
+				if (!itemStack.isEmpty() && itemStack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0) {
+					if (entityLiving.isUsingItem() && entityLiving.getUseItemRemainingTicks() > 0 && entityLiving.getUsedItemHand() == hand) {
+						return ACTIVE_USE_POSE;
+					}
+				}
 				if (!itemStack.isEmpty() && itemStack.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0) {
 					if (entityLiving.isUsingItem() && entityLiving.getUseItemRemainingTicks() > 0 && entityLiving.getUsedItemHand() == hand) {
 						if (itemStack.getTag() != null
@@ -226,7 +242,7 @@ public class PillagerScrollItem extends ScrollItem {
 			return "1";
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), item) > 0) {
-			return "20";
+			return "25";
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), item) > 0) {
 			return "MAX";
@@ -272,7 +288,7 @@ public class PillagerScrollItem extends ScrollItem {
 			}
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), item) > 0) {
-			return 20;
+			return 25;
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), item) > 0) {
 			return 35;
@@ -347,11 +363,12 @@ public class PillagerScrollItem extends ScrollItem {
 					} else {
 						performDestructionLine(level, player, itemstack);
 					}
+					if (player instanceof ServerPlayer serverPlayer) {
+						ModAdvancements.SPELL_DESTRUCTION_PILLAGER_TRIGGER.trigger(serverPlayer);
+					}
+					player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 				}
 				return InteractionResultHolder.consume(itemstack);
-			}
-			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), itemstack) > 0) {
-				return handleIllusion(level, player, itemstack);
 			}
 
 			if (!canUse(player, itemstack)) {
@@ -373,10 +390,6 @@ public class PillagerScrollItem extends ScrollItem {
 
 			if (!canUseClient(player, itemstack)) {
 				return InteractionResultHolder.fail(itemstack);
-			}
-
-			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), itemstack) > 0) {
-				return InteractionResultHolder.success(itemstack);
 			}
 
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), itemstack) > 0) {
@@ -477,10 +490,6 @@ public class PillagerScrollItem extends ScrollItem {
 				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), stack) > 0;
 	}
 
-	private InteractionResultHolder<ItemStack> handleIllusion(Level level, Player player, ItemStack stack) {
-		return InteractionResultHolder.success(stack);
-	}
-
 	private boolean canUse(Player player, ItemStack stack) {
 		if (player.getAbilities().instabuild) return true;
 		if (usesHealthInsteadOfMana(stack)) {
@@ -491,6 +500,7 @@ public class PillagerScrollItem extends ScrollItem {
 				if (mana.getMana() >= getManaCost(stack, player)) {
 					if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), stack) <= 0
 							&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), stack) <= 0
+							&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), stack) <= 0
 							&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) <= 0) {
 						mana.reduceMana((ServerPlayer) player, getManaCost(stack, player));
 					}
@@ -514,19 +524,26 @@ public class PillagerScrollItem extends ScrollItem {
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_ALTERATION_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
-			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack),
 					level, player.blockPosition(), 64.0);
+			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_RESTORATION_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack),
 					level, player.blockPosition(), 64.0);
+			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), stack) > 0) {
 			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack),
 					level, player.blockPosition(), 64.0);
+			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
+		}
+		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), stack) > 0) {
+			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack),
+					level, player.blockPosition(), 64.0);
+			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 		}
 	}
 
@@ -620,7 +637,7 @@ public class PillagerScrollItem extends ScrollItem {
 		level.playSound(null, clickedPos, SoundEvents.DYE_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
 
 		if (player instanceof ServerPlayer serverPlayer) {
-			ModAdvancements.SPELL_ILLUSION_HEART_OF_THE_SEA_TRIGGER.trigger(serverPlayer);
+			ModAdvancements.SPELL_ALTERATION_PILLAGER_TRIGGER.trigger(serverPlayer);
 		}
 
 		return InteractionResult.SUCCESS;
@@ -688,7 +705,9 @@ public class PillagerScrollItem extends ScrollItem {
 			);
 			player.gameEvent(GameEvent.ENTITY_DAMAGE, player);
 
+
 			if (player instanceof ServerPlayer serverPlayer) {
+				ModAdvancements.SPELL_NECROMANCY_PILLAGER_TRIGGER.trigger(serverPlayer);
 			}
 		}
 
@@ -780,8 +799,6 @@ public class PillagerScrollItem extends ScrollItem {
 				default:
 					setSelectedColor(item, Color.RED);
 			}
-			if (player instanceof ServerPlayer serverPlayer)
-				ModAdvancements.SPELL_RESTORATION_NETHER_STAR_TRIGGER.trigger(serverPlayer);
 			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 		}
 	}
@@ -818,8 +835,11 @@ public class PillagerScrollItem extends ScrollItem {
 				case MAGENTA -> sheep.setColor(DyeColor.MAGENTA);
 				case PINK -> sheep.setColor(DyeColor.PINK);
 			}
-			if (player instanceof ServerPlayer serverPlayer)
-				ModAdvancements.SPELL_ILLUSION_HEART_OF_THE_SEA_TRIGGER.trigger(serverPlayer);
+
+			if (player instanceof ServerPlayer serverPlayer) {
+				ModAdvancements.SPELL_ALTERATION_PILLAGER_TRIGGER.trigger(serverPlayer);
+			}
+			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 		}
 	}
 
@@ -851,7 +871,6 @@ public class PillagerScrollItem extends ScrollItem {
 	@Override
 	public int getUseDuration(ItemStack stack) {
 		if (stack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0) return 0;
-		if (stack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0) return 0;
 		if (stack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0) return 0;
 		return 72000;
 	}
@@ -879,7 +898,7 @@ public class PillagerScrollItem extends ScrollItem {
 		return playerUseData.computeIfAbsent(level, k -> new HashMap<>());
 	}
 
-	private static void stopPlayerUse(ServerLevel level, Player player, ItemStack usingItem, boolean damageDealt) {
+	public static void stopPlayerUse(ServerLevel level, Player player, ItemStack usingItem, boolean damageDealt) {
 		if (player == null) return;
 		player.stopUsingItem();
 		getPlayerUseData(level).remove(player.getUUID());
@@ -967,8 +986,45 @@ public class PillagerScrollItem extends ScrollItem {
 								}
 							}
 							player.gameEvent(GameEvent.ENTITY_PLACE, player);
+
+							if (player instanceof ServerPlayer serverPlayer) {
+								ModAdvancements.SPELL_CONJURATION_PILLAGER_TRIGGER.trigger(serverPlayer);
+							}
+						}
+					});
+				}
+			}
+
+
+			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), usingItem) > 0 && useData.useTicks > 40) {
+				if (usingItem.getItem() instanceof PillagerScrollItem pillagerScrollItem) {
+					player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+						int cost = pillagerScrollItem.getManaCost(usingItem, player);
+						if (mana.getMana() >= cost || player.getAbilities().instabuild) {
+							if (!player.getAbilities().instabuild) mana.reduceMana((ServerPlayer) player, cost);
+							useData.active = false;
+							stopPlayerUse(level, player, usingItem, false);
+							player.getCooldowns().addCooldown(ModItems.PILLAGER_SCROLL.get(), 15);
+							level.playSound(null, player.getX(), player.getY(), player.getZ(),
+									RPGSounds.SPELL_ILLUSION_PILLAGER.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+							player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 1200, 0));
+							player.addEffect(new MobEffectInstance(ModEffects.MIRRORING.get(), 1200, 3));
+							double radius = 15.0;
+							AABB aabb = player.getBoundingBox().inflate(radius);
+							List<LivingEntity> nearbyEntities = level.getEntitiesOfClass(LivingEntity.class, aabb,
+									p -> p != player && p.isAlive() && !p.isSpectator());
+
+							for (LivingEntity target : nearbyEntities) {
+								if (canSeePlayer(target, player)) {
+									Vec3 eyePos = player.getEyePosition();
+									Vec3 playerEyePos = target.getEyePosition();
+									double distance = Math.max(0,15D-eyePos.distanceTo(playerEyePos));
+									target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, (int)(400D*(distance/15D)), 0));
+								}
+							}
+							player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 							if (player instanceof ServerPlayer serverPlayer)
-								ModAdvancements.SPELL_CONJURATION_NETHER_STAR_TRIGGER.trigger(serverPlayer);
+								ModAdvancements.SPELL_ILLUSION_PILLAGER_TRIGGER.trigger(serverPlayer);
 						}
 					});
 				}
@@ -976,9 +1032,39 @@ public class PillagerScrollItem extends ScrollItem {
 		}
 	}
 
+	private static boolean canSeePlayer(LivingEntity entity, Player owner) {
+		if (entity instanceof Player player && player.isCreative()) return false;
+		if (entity.isSpectator()) return false;
+		Vec3 eyePos = owner.getEyePosition();
+
+		Vec3 playerEyePos = entity.getEyePosition();
+
+		double distance = eyePos.distanceTo(playerEyePos);
+		if (distance > 40D) {
+			return false;
+		}
+
+		ClipContext context = new ClipContext(eyePos, playerEyePos,
+				ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null);
+
+		BlockHitResult hitResult = entity.level().clip(context);
+
+		if (hitResult.getType() != HitResult.Type.MISS) {
+			double distanceToHit = hitResult.getLocation().distanceTo(eyePos);
+			double distanceToPlayer = playerEyePos.distanceTo(eyePos);
+
+			if (distanceToHit < distanceToPlayer - 0.1) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	private static boolean hasAnyEnchantForContinuation(ItemStack stack, Player player) {
 		return EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), stack) > 0 ||
 				(EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) > 0) ||
+				(EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), stack) > 0) ||
 				EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), stack) > 0;
 	}
 

@@ -48,6 +48,9 @@ public class ModEffects {
 	public static final RegistryObject<MobEffect> AMPHIBIOSIS = MOB_EFFECTS.register("amphibiosis",
 			() -> new AmphibiosisEffect(MobEffectCategory.NEUTRAL, 0x1F96B1));
 
+	public static final RegistryObject<MobEffect> MIRRORING = MOB_EFFECTS.register("mirroring",
+			() -> new MirroringEffect(MobEffectCategory.BENEFICIAL, 0x769EC0));
+
 	public static void register(IEventBus eventBus) {
 		MOB_EFFECTS.register(eventBus);
 	}

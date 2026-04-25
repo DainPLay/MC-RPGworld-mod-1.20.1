@@ -1,0 +1,12 @@
+{
+  "type": "rpgworldmod:replace_item_chance",
+  "chance": 0.4,
+  "conditions": [
+    {
+      "condition": "forge:loot_table_id",
+      "loot_table_id": "minecraft:entities/evoker"
+    }
+  ],
+  "replacement": "rpgworldmod:pillager_scroll",
+  "target": "minecraft:totem_of_undying"
+}

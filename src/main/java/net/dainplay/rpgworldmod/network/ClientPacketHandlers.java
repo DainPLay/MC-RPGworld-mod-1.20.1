@@ -287,6 +287,8 @@ public class ClientPacketHandlers {
 					soundEvent = RPGSounds.SPELL_ALTERATION_LOOP.get();
 				if (itemStack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0)
 					soundEvent = RPGSounds.SPELL_CONJURATION_PILLAGER_PREPARE.get();
+				if (itemStack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0)
+					soundEvent = RPGSounds.SPELL_ILLUSION_PILLAGER_PREPARE.get();
 			}
 			if (itemStack.getItem() instanceof StaffItem) {
 				soundEvent = RPGSounds.STAFF_LOOP.get();

@@ -417,7 +417,7 @@
   "item.rpgworldmod.pillager_scroll.desc": "With a Green Gem",
   "item.rpgworldmod.pillager_scroll.illusion": "Mirror Image Spell",
   "item.rpgworldmod.pillager_scroll.illusion.desc": "More effective if you're ugly",
-  "item.rpgworldmod.pillager_scroll.illusion.features": "___",
+  "item.rpgworldmod.pillager_scroll.illusion.features": "Briefly blinds everyone in a certain radius around the caster, giving him invisibility for a minute, which even hides equipment. Creates 4 visible mirror images of the caster that will change their positions over time and each time the caster takes damage.",
   "item.rpgworldmod.pillager_scroll.destruction": "Fangs Spell",
   "item.rpgworldmod.pillager_scroll.destruction.desc": "Chomp-chomp",
   "item.rpgworldmod.pillager_scroll.destruction.features": "Summons from the ground a row of damaging fangs that spread from the caster in the direction they're looking. Using while holding [%1$s] will summon fangs around the caster instead.",
@@ -599,6 +599,8 @@
   "effect.rpgworldmod.burnout.description": "Target and some of its hearts are ignited. Extinguishing also extinguishes hearts. The next time target receives damage from an entity, all ignited hearts get burnt, turning them into damage to that entity.",
   "effect.rpgworldmod.amphibiosis": "Amphibiosis",
   "effect.rpgworldmod.amphibiosis.description": "Target breathes water instead of air.",
+  "effect.rpgworldmod.mirroring": "Mirroring",
+  "effect.rpgworldmod.mirroring.description": "Target has imaginary mirror images. Their number depends on the level of the effect.",
 
   "item.minecraft.potion.effect.paralysis_potion": "Nerve Paralysis Potion",
   "item.minecraft.potion.effect.long_paralysis_potion": "Nerve Paralysis Potion",
@@ -934,6 +936,8 @@
   "subtitles.rpgworldmod.spell.destruction_pillager": "Fangs rise",
   "subtitles.rpgworldmod.spell.conjuration_pillager": "Object summoned",
   "subtitles.rpgworldmod.spell.alteration_pillager": "Reality altered",
+  "subtitles.rpgworldmod.spell.illusion_pillager": "Illusion enforced",
+  "subtitles.rpgworldmod.spell.illusion_pillager_move": "Mirror images shuffle",
 
   "subtitles.rpgworldmod.staff.start": "Staff charges",
   "subtitles.rpgworldmod.staff.stop": "Staff discharges",

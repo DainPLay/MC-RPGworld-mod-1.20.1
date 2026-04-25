@@ -262,6 +262,18 @@ public class ModMessages {
 				.encoder(TotemEffectPacket::toBytes)
 				.consumerMainThread(TotemEffectPacket::handle)
 				.add();
+
+		net.messageBuilder(MirroringEffectSyncPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(MirroringEffectSyncPacket::new)
+				.encoder(MirroringEffectSyncPacket::toBytes)
+				.consumerMainThread(MirroringEffectSyncPacket::handle)
+				.add();
+
+		net.messageBuilder(MirroringSeedSyncPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(MirroringSeedSyncPacket::new)
+				.encoder(MirroringSeedSyncPacket::toBytes)
+				.consumerMainThread(MirroringSeedSyncPacket::handle)
+				.add();
 	}
 
 	public static <MSG> void sendToServer(MSG message) {

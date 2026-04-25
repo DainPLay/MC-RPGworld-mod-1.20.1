@@ -6,7 +6,9 @@
     "rpgworldmod:tool_smelting",
     "rpgworldmod:rie_weald_fog_fish1",
     "rpgworldmod:scrolls_in_library",
-    "rpgworldmod:necromancy_scrolls_in_ancient_city"
+    "rpgworldmod:necromancy_scrolls_in_ancient_city",
+    "rpgworldmod:scroll_from_evoker",
+    "rpgworldmod:pillager_scrolls_in_woodland_mansion"
   ],
   "replace": false
 }

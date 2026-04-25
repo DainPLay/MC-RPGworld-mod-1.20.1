@@ -1,0 +1,25 @@
+{
+  "type": "rpgworldmod:add_enchanted_scroll",
+  "conditions": [
+    {
+      "condition": "forge:loot_table_id",
+      "loot_table_id": "minecraft:chests/woodland_mansion"
+    },
+    {
+      "chance": 0.5,
+      "condition": "minecraft:random_chance"
+    }
+  ],
+  "enchantChance": 0.1,
+  "enchantments": [
+    "rpgworldmod:destruction",
+    "rpgworldmod:restoration",
+    "rpgworldmod:alteration",
+    "rpgworldmod:illusion",
+    "rpgworldmod:conjuration",
+    "rpgworldmod:necromancy"
+  ],
+  "item": "rpgworldmod:pillager_scroll",
+  "maxCount": 1,
+  "minCount": 1
+}

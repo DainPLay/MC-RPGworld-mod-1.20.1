@@ -417,7 +417,7 @@
   "item.rpgworldmod.pillager_scroll.desc": "С зелёным самоцветом",
   "item.rpgworldmod.pillager_scroll.illusion": "Заклинание отражений",
   "item.rpgworldmod.pillager_scroll.illusion.desc": "Эффективнее, если Вы уродливы",
-  "item.rpgworldmod.pillager_scroll.illusion.features": "___",
+  "item.rpgworldmod.pillager_scroll.illusion.features": "Ненадолго ослепляет всех в некотором радиусе вокруг чтеца, на минуту наделяя его невидимостью, которая скрывает даже снаряжение. Создаëт 4 видимых отражения чтеца, которые будут менять свои позиции со временем и каждый раз, когда чтец получает урон.",
   "item.rpgworldmod.pillager_scroll.destruction": "Заклинание клыков",
   "item.rpgworldmod.pillager_scroll.destruction.desc": "Кусает за бочок",
   "item.rpgworldmod.pillager_scroll.destruction.features": "Призывает из-под земли ряд наносящих урон клыков, распространяющихся от чтеца по направлению его взгляда. Использование с зажатой клавишей [%1$s] вместо этого призывает клыки вокруг чтеца.",
@@ -599,6 +599,8 @@
   "effect.rpgworldmod.burnout.description": "Цель и сколько-то её сердец горят. Потухание тушит сердца. При следующем получении урона от живого существа, моментально сжигает все горящие сердца, превращая их в урон по этому существу.",
   "effect.rpgworldmod.amphibiosis": "Амфибиоз",
   "effect.rpgworldmod.amphibiosis.description": "Цель дышит водой вместо воздуха.",
+  "effect.rpgworldmod.mirroring": "Отражение",
+  "effect.rpgworldmod.mirroring.description": "У цели есть мнимые зеркальные отражения. Их количество зависит от уровня эффекта.",
 
   "item.minecraft.potion.effect.paralysis_potion": "Зелье нервного паралича",
   "item.minecraft.potion.effect.long_paralysis_potion": "Зелье нервного паралича",
@@ -934,6 +936,8 @@
   "subtitles.rpgworldmod.spell.destruction_pillager": "Клыки восходят",
   "subtitles.rpgworldmod.spell.conjuration_pillager": "Объект призван",
   "subtitles.rpgworldmod.spell.alteration_pillager": "Изменение реальности",
+  "subtitles.rpgworldmod.spell.illusion_pillager": "Иллюзия накладывается",
+  "subtitles.rpgworldmod.spell.illusion_pillager_move": "Перемешивание отражений",
 
   "subtitles.rpgworldmod.staff.start": "Посох заряжается",
   "subtitles.rpgworldmod.staff.stop": "Посох разряжается",

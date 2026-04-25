@@ -9,6 +9,7 @@ import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -75,6 +76,35 @@ public class ModGlobalLootModifiersProvider extends GlobalLootModifierProvider {
 				1,
 				1.0F,
 				List.of(ModEnchantments.NECROMANCY.getId())
+		));
+
+		add("pillager_scrolls_in_woodland_mansion", new AddEnchantedScrollModifier(
+				new LootItemCondition[]{
+						new LootTableIdCondition.Builder(new ResourceLocation("chests/woodland_mansion")).build(),
+						LootItemRandomChanceCondition.randomChance(0.5F).build()
+				},
+				ModItems.PILLAGER_SCROLL.get(),
+				1,
+				1,
+				0.1F,
+				List.of(
+						ModEnchantments.DESTRUCTION.getId(),
+						ModEnchantments.RESTORATION.getId(),
+						ModEnchantments.ALTERATION.getId(),
+						ModEnchantments.ILLUSION.getId(),
+						ModEnchantments.CONJURATION.getId(),
+						ModEnchantments.NECROMANCY.getId()
+				)
+		));
+
+		add("scroll_from_evoker", new ReplaceItemChanceModifier(
+				new LootItemCondition[]{
+						new LootTableIdCondition.Builder(new ResourceLocation("entities/evoker")).build()
+				},
+				Items.TOTEM_OF_UNDYING,
+				ModItems.PILLAGER_SCROLL.get(),
+				0.25F,
+				0.05F
 		));
 	}
 

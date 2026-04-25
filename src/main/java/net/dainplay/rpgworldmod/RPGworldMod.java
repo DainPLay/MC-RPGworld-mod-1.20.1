@@ -265,11 +265,11 @@ public class RPGworldMod {
 			event.accept(ModItems.RIE_SIGN);
 			event.accept(ModItems.RIE_HANGING_SIGN);
 			event.accept(ModBlocks.RIE_HOLLOW);
+			event.accept(ModBlocks.ENT_FACE);
 			event.accept(ModBlocks.BLOWER);
 			event.accept(ModBlocks.DRILL_TUSK);
 			event.accept(ModBlocks.QUARTZITE_DRILL_TUSK);
 			event.accept(ModItems.FIRE_CATCHER_ITEM);
-			event.accept(ModBlocks.ENT_FACE);
 			event.accept(ModBlocks.TIRE);
 		}
 
@@ -453,7 +453,7 @@ public class RPGworldMod {
 			SuspiciousStewItem.saveMobEffect(itemstack2, ModEffects.PARALYSIS.get(), 12 * 20);
 			event.accept(itemstack2, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
 			ItemStack itemstack3 = new ItemStack(Items.SUSPICIOUS_STEW);
-			SuspiciousStewItem.saveMobEffect(itemstack3, ModEffects.HAPPINESS.get(), 12 * 20);
+			SuspiciousStewItem.saveMobEffect(itemstack3, ModEffects.MIRRORING.get(), 6 * 20);
 			event.accept(itemstack3, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
 			ItemStack itemstack4 = new ItemStack(Items.SUSPICIOUS_STEW);
 			SuspiciousStewItem.saveMobEffect(itemstack4, MobEffects.GLOWING, 8 * 20);

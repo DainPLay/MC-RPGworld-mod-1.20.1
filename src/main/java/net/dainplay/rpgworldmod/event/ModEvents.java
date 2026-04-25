@@ -37,6 +37,7 @@ import net.dainplay.rpgworldmod.network.SculkStaffCDDataSyncS2CPacket;
 import net.dainplay.rpgworldmod.network.TotemEffectPacket;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.dainplay.rpgworldmod.util.BoundEntityHelper;
+import net.dainplay.rpgworldmod.util.EffectSyncHandler;
 import net.dainplay.rpgworldmod.util.ModTags;
 import net.dainplay.rpgworldmod.util.RemoteOpenContainerRegistry;
 import net.minecraft.advancements.Advancement;
@@ -45,6 +46,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
@@ -415,6 +417,7 @@ public class ModEvents {
 
 	@SubscribeEvent
 	public static void onLivingHurt(LivingHurtEvent event) {
+
 		if (event.getSource().getDirectEntity() instanceof AbstractArrow arrow &&
 				arrow.getOwner() instanceof Player shooter &&
 				!arrow.level().isClientSide) {
@@ -472,12 +475,20 @@ public class ModEvents {
 				player.getCooldowns().addCooldown(ModItems.NETHER_STAR_SCROLL.get(), 15);
 			}
 		}
+
+		if (!entity.level().isClientSide && entity.hasEffect(ModEffects.MIRRORING.get())) {
+			EffectSyncHandler.generateAndSyncSeed(entity);
+		}
 	}
 
 	@SubscribeEvent
 	public static void onLivingUpdate(LivingEvent.LivingTickEvent event) {
 		LivingEntity entity = event.getEntity();
 
+
+		if (!entity.level().isClientSide && entity.hasEffect(ModEffects.MIRRORING.get()) && entity.tickCount % 1200 == 0) {
+			EffectSyncHandler.generateAndSyncSeed(entity);
+		}
 
 		if (!entity.level().isClientSide && entity.tickCount % 20 == 0) {
 			CompoundTag tag = entity.getPersistentData();
@@ -779,16 +790,20 @@ public class ModEvents {
 			player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 900, 1));
 			player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 100, 1));
 			player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 800, 0));
+			if (player instanceof ServerPlayer serverPlayer) {
+				ModAdvancements.SPELL_RESTORATION_PILLAGER_TRIGGER.trigger(serverPlayer);
+			}
 			ModMessages.sendToNearbyPlayers(
 					new TotemEffectPacket(player.getId(), usingItem.copy()),
 					player.level(),
 					player.blockPosition(),
 					64.0
 			);
-			if (player instanceof ServerPlayer serverPlayer) {
-			}
-
 			player.getCooldowns().addCooldown(usingItem.getItem(), 15);
+			if(player.level() instanceof ServerLevel serverLevel) {
+				PillagerScrollItem.getPlayerUseData(serverLevel).remove(player.getUUID());
+				PillagerScrollItem.stopPlayerUse(serverLevel, player, usingItem, false);
+			}
 		}
 	}
 

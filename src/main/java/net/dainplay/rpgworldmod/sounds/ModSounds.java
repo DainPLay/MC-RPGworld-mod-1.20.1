@@ -222,6 +222,9 @@ public class ModSounds {
 		SPELL_CONJURATION_PILLAGER_PREPARE = registerSound("rpgworldmod.spell.conjuration_pillager_prepare");
 		SPELL_CONJURATION_PILLAGER = registerSound("rpgworldmod.spell.conjuration_pillager");
 		SPELL_ALTERATION_PILLAGER = registerSound("rpgworldmod.spell.alteration_pillager");
+		SPELL_ILLUSION_PILLAGER_PREPARE = registerSound("rpgworldmod.spell.illusion_pillager_prepare");
+		SPELL_ILLUSION_PILLAGER = registerSound("rpgworldmod.spell.illusion_pillager");
+		SPELL_ILLUSION_PILLAGER_MOVE = registerSound("rpgworldmod.spell.illusion_pillager_move");
 	}
 
 	private static RegistryObject<SoundEvent> registerSound(String name) {

@@ -96,6 +96,30 @@
     "spell_necromancy_nether_star": {
       "conditions": {},
       "trigger": "rpgworldmod:spell_necromancy_nether_star"
+    },
+    "spell_destruction_pillager": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_destruction_pillager"
+    },
+    "spell_restoration_pillager": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_restoration_pillager"
+    },
+    "spell_alteration_pillager": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_alteration_pillager"
+    },
+    "spell_illusion_pillager": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_illusion_pillager"
+    },
+    "spell_conjuration_pillager": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_conjuration_pillager"
+    },
+    "spell_necromancy_pillager": {
+      "conditions": {},
+      "trigger": "rpgworldmod:spell_necromancy_pillager"
     }
   },
   "display": {
@@ -186,10 +210,28 @@
     ],
     [
       "spell_necromancy_nether_star"
+    ],
+    [
+      "spell_destruction_pillager"
+    ],
+    [
+      "spell_restoration_pillager"
+    ],
+    [
+      "spell_alteration_pillager"
+    ],
+    [
+      "spell_illusion_pillager"
+    ],
+    [
+      "spell_conjuration_pillager"
+    ],
+    [
+      "spell_necromancy_pillager"
     ]
   ],
   "rewards": {
-    "experience": 240
+    "experience": 300
   },
   "sends_telemetry_event": true
 }

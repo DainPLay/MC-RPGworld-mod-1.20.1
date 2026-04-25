@@ -68,6 +68,12 @@ public class ModAdvancements {
 	public static final SpellIllusionNetherStarTrigger SPELL_ILLUSION_NETHER_STAR_TRIGGER = CriteriaTriggers.register(new SpellIllusionNetherStarTrigger());
 	public static final SpellConjurationNetherStarTrigger SPELL_CONJURATION_NETHER_STAR_TRIGGER = CriteriaTriggers.register(new SpellConjurationNetherStarTrigger());
 	public static final SpellNecromancyNetherStarTrigger SPELL_NECROMANCY_NETHER_STAR_TRIGGER = CriteriaTriggers.register(new SpellNecromancyNetherStarTrigger());
+	public static final SpellDestructionPillagerTrigger SPELL_DESTRUCTION_PILLAGER_TRIGGER = CriteriaTriggers.register(new SpellDestructionPillagerTrigger());
+	public static final SpellRestorationPillagerTrigger SPELL_RESTORATION_PILLAGER_TRIGGER = CriteriaTriggers.register(new SpellRestorationPillagerTrigger());
+	public static final SpellAlterationPillagerTrigger SPELL_ALTERATION_PILLAGER_TRIGGER = CriteriaTriggers.register(new SpellAlterationPillagerTrigger());
+	public static final SpellIllusionPillagerTrigger SPELL_ILLUSION_PILLAGER_TRIGGER = CriteriaTriggers.register(new SpellIllusionPillagerTrigger());
+	public static final SpellConjurationPillagerTrigger SPELL_CONJURATION_PILLAGER_TRIGGER = CriteriaTriggers.register(new SpellConjurationPillagerTrigger());
+	public static final SpellNecromancyPillagerTrigger SPELL_NECROMANCY_PILLAGER_TRIGGER = CriteriaTriggers.register(new SpellNecromancyPillagerTrigger());
 
 	public static void init() {
 	}

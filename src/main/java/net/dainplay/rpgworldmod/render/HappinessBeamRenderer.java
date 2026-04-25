@@ -25,7 +25,9 @@ public class HappinessBeamRenderer {
 	public static void onRenderLivingPost(RenderLivingEvent.Post<?, ?> event) {
 		LivingEntity entity = event.getEntity();
 
-		if (entity.hasEffect(ModEffects.HAPPINESS.get()) && !entity.isSpectator() && !entity.isInvisible()) {
+		if (entity.hasEffect(ModEffects.HAPPINESS.get())
+				&& !entity.isSpectator()
+				&& !entity.isInvisible()) {
 			var effect = entity.getEffect(ModEffects.HAPPINESS.get());
 			if (effect != null) {
 				renderRegenerationBeams(

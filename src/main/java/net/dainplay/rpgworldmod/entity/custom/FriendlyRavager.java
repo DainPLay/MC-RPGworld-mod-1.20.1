@@ -428,23 +428,6 @@ public class FriendlyRavager extends Ravager implements Saddleable, PlayerRideab
 		}
 	}
 
-	private static final MethodHandle RAIDER_AI_STEP;
-
-	static {
-		try {
-			MethodHandles.Lookup lookup = MethodHandles.lookup();
-			MethodType mt = MethodType.methodType(void.class);
-			RAIDER_AI_STEP = lookup.findSpecial(
-					Raider.class,
-					"aiStep",
-					mt,
-					FriendlyRavager.class
-			);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	@Override
 	public void aiStep() {
 		super.aiStep();

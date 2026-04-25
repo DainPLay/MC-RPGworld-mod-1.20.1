@@ -45,6 +45,7 @@ import net.dainplay.rpgworldmod.world.feature.tree.RieTreeGrower;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -78,6 +79,7 @@ import net.minecraft.world.level.block.WallHangingSignBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.Vec3;
@@ -190,9 +192,9 @@ public class ModBlocks {
 	public static final RegistryObject<Block> CHISELED_MASKONITE_BLOCK = registerBlock("chiseled_maskonite_block",
 			() -> new Block(BlockBehaviour.Properties.copy(Blocks.CHISELED_STONE_BRICKS).mapColor(MapColor.TERRACOTTA_CYAN).strength(1.6f).requiresCorrectToolForDrops()));
 	public static final RegistryObject<Block> MASKONITE_GLASS = registerBlock("maskonite_glass",
-			() -> new GlassBlock(BlockBehaviour.Properties.copy(Blocks.GLASS).mapColor(MapColor.TERRACOTTA_CYAN).noOcclusion()));
+			() -> new GlassBlock(BlockBehaviour.Properties.copy(Blocks.GLASS).mapColor(MapColor.TERRACOTTA_CYAN).instrument(NoteBlockInstrument.HAT).strength(0.3F).sound(SoundType.GLASS).noOcclusion().isValidSpawn(ModBlocks::never).isRedstoneConductor(ModBlocks::never).isSuffocating(ModBlocks::never).isViewBlocking(ModBlocks::never)));
 	public static final RegistryObject<Block> MASKONITE_GLASS_PANE = registerBlock("maskonite_glass_pane",
-			() -> new IronBarsBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE).noOcclusion()));
+			() -> new IronBarsBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)));
 	public static final RegistryObject<Block> SHIVERALIS = registerBlockWithoutBlockItem("shiveralis",
 			() -> new ShiveralisPlantBlock(BlockBehaviour.Properties.copy(Blocks.SWEET_BERRY_BUSH).noOcclusion()));
 	public static final RegistryObject<Block> POTTED_SHIVERALIS = registerBlockWithoutBlockItem("potted_shiveralis",
@@ -306,7 +308,7 @@ public class ModBlocks {
 			() -> new YoungRazorleafBlock(BlockBehaviour.Properties.copy(Blocks.MOSS_BLOCK).mapColor(MapColor.CRIMSON_NYLIUM).noOcclusion()));
 	public static final RegistryObject<Block> TRIPLOVER = registerBlock("triplover", () -> new PinkPetalsBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().sound(SoundType.GRASS).pushReaction(PushReaction.DESTROY)));
 	public static final RegistryObject<Block> HOLTS_REFLECTION = registerBlock("holts_reflection",
-			() -> new HoltsReflectionBlock(ModEffects.HAPPINESS, 12, BlockBehaviour.Properties.copy(Blocks.DANDELION).noOcclusion()));
+			() -> new HoltsReflectionBlock(ModEffects.MIRRORING, 6, BlockBehaviour.Properties.copy(Blocks.DANDELION).noOcclusion()));
 
 	private static ToIntFunction<BlockState> glowingBlockEmission(int pLightValue) {
 		return (p_50763_) -> p_50763_.getValue(GLOWING) ? pLightValue : 0;
@@ -594,6 +596,14 @@ public class ModBlocks {
 
 	public static void register(IEventBus eventbus) {
 		BLOCKS.register(eventbus);
+	}
+
+	private static Boolean never(BlockState p_50779_, BlockGetter p_50780_, BlockPos p_50781_, EntityType<?> p_50782_) {
+		return (boolean)false;
+	}
+
+	private static boolean never(BlockState p_50806_, BlockGetter p_50807_, BlockPos p_50808_) {
+		return false;
 	}
 
 }

@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.dainplay.rpgworldmod.RPGworldMod;
+import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.entity.custom.EnderEyeViewEntity;
 import net.dainplay.rpgworldmod.item.ModItems;
@@ -51,10 +52,10 @@ public class OrbitingItemRenderer {
 
 	@SubscribeEvent
 	public static void onRenderLiving(RenderLivingEvent.Post<LivingEntity, ?> event) {
-		if (event.getEntity() == Minecraft.getInstance().player &&
+		/*if (event.getEntity() == Minecraft.getInstance().player &&
 				Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
 			return;
-		}
+		}*/
 
 		LivingEntity entity = event.getEntity();
 		List<ItemStack> orbitingItems = getOrbitingItems(entity);
@@ -74,6 +75,10 @@ public class OrbitingItemRenderer {
 		Player player = minecraft.player;
 
 		if (player == null || !minecraft.options.getCameraType().isFirstPerson()) {
+			return;
+		}
+
+		if (player.hasEffect(ModEffects.MIRRORING.get()) && player.isInvisible()) {
 			return;
 		}
 
@@ -606,6 +611,7 @@ public class OrbitingItemRenderer {
 											MultiBufferSource buffer, List<ItemStack> orbitingItems) {
 		if (orbitingItems.isEmpty()) return;
 		if (entity instanceof Player player && player.isSpectator()) return;
+		if (entity.hasEffect(ModEffects.MIRRORING.get()) && entity.isInvisible()) return;
 
 		Minecraft minecraft = Minecraft.getInstance();
 		ItemRenderer itemRenderer = minecraft.getItemRenderer();

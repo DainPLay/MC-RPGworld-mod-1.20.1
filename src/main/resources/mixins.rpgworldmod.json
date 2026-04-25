@@ -38,6 +38,7 @@
   ],
   "client": [
     "AbstractContainerScreenMixin",
+    "EntityRendererMixin",
     "ForgeGuiMixin",
     "GuiGraphicsMixin",
     "GuiMixin",

@@ -1425,5 +1425,31 @@
       }
     ],
     "subtitle": "subtitles.rpgworldmod.spell.alteration_pillager"
+  },
+  "rpgworldmod.spell.illusion_pillager_prepare": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.illusioner.prepare_blindness"
+      }
+    ]
+  },
+  "rpgworldmod.spell.illusion_pillager": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.illusioner.prepare_mirror"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.illusion_pillager"
+  },
+  "rpgworldmod.spell.illusion_pillager_move": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.illusioner.mirror_move"
+      }
+    ],
+    "subtitle": "subtitles.rpgworldmod.spell.illusion_pillager_move"
   }
 }
