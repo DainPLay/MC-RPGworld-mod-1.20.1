@@ -47,6 +47,7 @@ public class MirroringEffectRenderer {
         if (entity == Minecraft.getInstance().player
                 && Minecraft.getInstance().options.getCameraType().isFirstPerson()) return;
         if (!entity.hasEffect(ModEffects.MIRRORING.get())) return;
+        if (entity.isSpectator()) return;
 
         MirrorData data = MIRROR_DATA.get(entity.getId());
         if (data == null || !data.isInitialized()) return;
@@ -89,6 +90,7 @@ public class MirroringEffectRenderer {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES) return;
         Minecraft mc = Minecraft.getInstance();
         LivingEntity player = mc.player;
+        if (player != null && player.isSpectator()) return;
         if (player == null || !mc.options.getCameraType().isFirstPerson()) return;
         if (!player.hasEffect(ModEffects.MIRRORING.get())) return;
 
@@ -207,21 +209,14 @@ public class MirroringEffectRenderer {
     }
 
     private static ResourceLocation extractTexture(RenderType type) {
-        try {
-            if (type instanceof RenderType.CompositeRenderType comp) {
-                Field stateField = ObfuscationReflectionHelper.findField(RenderType.CompositeRenderType.class, "state");
-                stateField.setAccessible(true);
-                RenderType.CompositeState state = (RenderType.CompositeState) stateField.get(comp);
-
-                Field textureStateField = ObfuscationReflectionHelper.findField(RenderType.CompositeState.class, "textureState");
-                textureStateField.setAccessible(true);
-                Object textureShard = textureStateField.get(state);
-                if (textureShard instanceof RenderStateShard.EmptyTextureStateShard empty) {
-                    Optional<ResourceLocation> texOpt = empty.cutoutTexture();
-                    if (texOpt.isPresent()) return texOpt.get();
-                }
+        if (type instanceof RenderType.CompositeRenderType comp) {
+            RenderType.CompositeState state = comp.state;
+            Object textureShard = state.textureState;
+            if (textureShard instanceof RenderStateShard.EmptyTextureStateShard empty) {
+                Optional<ResourceLocation> texOpt = empty.cutoutTexture();
+                if (texOpt.isPresent()) return texOpt.get();
             }
-        } catch (Exception ignored) {}
+        }
         return null;
     }
 

@@ -19,7 +19,7 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, M extend
 
 	@Inject(method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "HEAD"), cancellable = true)
 	private void renderMirroringCheck(T pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, CallbackInfo ci) {
-		if (pEntity.hasEffect(ModEffects.MIRRORING.get()) && pEntity.isInvisible()) {
+		if (pEntity.hasEffect(ModEffects.MIRRORING.get()) && pEntity.isInvisible() && !pEntity.isSpectator()) {
 			LivingEntityRenderer renderer = (LivingEntityRenderer) (Object) this;
 			net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post<T, M>(pEntity, renderer, pPartialTicks, pPoseStack, pBuffer, pPackedLight));
 			ci.cancel();
