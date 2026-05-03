@@ -3,6 +3,7 @@ package net.dainplay.rpgworldmod.data;
 
 import com.google.gson.JsonObject;
 import net.dainplay.rpgworldmod.RPGworldMod;
+import net.dainplay.rpgworldmod.data.craft.EffectDaggerRecipe;
 import net.dainplay.rpgworldmod.data.craft.SpellRecipe;
 import net.dainplay.rpgworldmod.data.craft.WoolDyeingScrollRecipe;
 import net.minecraft.network.FriendlyByteBuf;
@@ -21,7 +22,10 @@ public class ModRecipeSerializers {
 			RECIPE_SERIALIZERS.register("spell", SpellRecipe.Serializer::new);
 
 	public static final RegistryObject<RecipeSerializer<WoolDyeingScrollRecipe>> WOOL_DYEING_SCROLL_RECIPE =
-			RECIPE_SERIALIZERS.register("wool_dyeing_scroll", WoolDyeingScrollRecipe.Serializer::new);
+			RECIPE_SERIALIZERS.register("wool_dyeing_scroll", () -> WoolDyeingScrollRecipe.SERIALIZER);
+
+	public static final RegistryObject<RecipeSerializer<EffectDaggerRecipe>> EFFECT_DAGGER_RECIPE =
+			RECIPE_SERIALIZERS.register("effect_dagger", () -> EffectDaggerRecipe.SERIALIZER);
 
 	public static class Serializer implements RecipeSerializer<SpellRecipe> {
 		private final ShapelessRecipe.Serializer baseSerializer = new ShapelessRecipe.Serializer();

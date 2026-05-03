@@ -7,6 +7,7 @@ public interface ChooseTargetItem {
 	default boolean highlightAnimateTarget(ItemStack stack, Player player) {
 		return false;
 	}
+
 	default boolean highlightSheep(ItemStack stack, Player player) {
 		return false;
 	}

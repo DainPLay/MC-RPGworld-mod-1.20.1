@@ -1,0 +1,22 @@
+{
+  "parent": "rpgworldmod:item/dagger_stabbing",
+  "loader": "forge:separate_transforms",
+  "base": {
+    "parent": "rpgworldmod:item/dagger_stabbing",
+    "textures": {
+      "layer0": "rpgworldmod:item/stone_dagger_base",
+      "layer1": "rpgworldmod:item/dagger_effect"
+    }
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "rpgworldmod:item/stone_dagger_effect_gui"
+    },
+    "ground": {
+      "parent": "rpgworldmod:item/stone_dagger_effect_gui"
+    },
+    "fixed": {
+      "parent": "rpgworldmod:item/stone_dagger_effect_gui"
+    }
+  }
+}

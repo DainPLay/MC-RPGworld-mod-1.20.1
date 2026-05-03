@@ -1,43 +1,41 @@
 package net.dainplay.rpgworldmod.data.craft;
 
-import com.google.gson.JsonObject;
-import net.dainplay.rpgworldmod.data.ModRecipeSerializers;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.PillagerScrollItem;
 import net.dainplay.rpgworldmod.network.PlayerManaProvider;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.TransientCraftingContainer;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapelessRecipe;
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.WoolCarpetBlock;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class WoolDyeingScrollRecipe extends ShapelessRecipe {
+public class WoolDyeingScrollRecipe extends CustomRecipe {
 
-	public WoolDyeingScrollRecipe(ResourceLocation id, String group, CraftingBookCategory category,
-								  ItemStack result, NonNullList<Ingredient> ingredients) {
-		super(id, group, category, result, ingredients);
+	public static final RecipeSerializer<WoolDyeingScrollRecipe> SERIALIZER =
+			new SimpleCraftingRecipeSerializer<>(WoolDyeingScrollRecipe::new);
+
+	public WoolDyeingScrollRecipe(ResourceLocation id, CraftingBookCategory category) {
+		super(id, category);
 	}
 
 	@Override
@@ -79,25 +77,26 @@ public class WoolDyeingScrollRecipe extends ShapelessRecipe {
 		ItemStack scrollStack = ItemStack.EMPTY;
 		boolean isWool = false;
 		DyeColor woolColor = DyeColor.WHITE;
+
+
 		Player player = null;
-		if (container instanceof TransientCraftingContainer transientCraftingContainer) {
-			if(transientCraftingContainer.menu instanceof CraftingMenu menu)
-				player = menu.player;
-			if (transientCraftingContainer.menu instanceof InventoryMenu menu) {
-				player = menu.owner;
+		if (container instanceof TransientCraftingContainer transientCraft) {
+			if (transientCraft.menu instanceof CraftingMenu cMenu) {
+				player = cMenu.player;
+			} else if (transientCraft.menu instanceof InventoryMenu invMenu) {
+				player = invMenu.owner;
 			}
 		}
 		if (player == null) return ItemStack.EMPTY;
+
 
 		for (int i = 0; i < container.getContainerSize(); i++) {
 			ItemStack stack = container.getItem(i);
 			if (stack.is(ModItems.PILLAGER_SCROLL.get())) {
 				scrollStack = stack;
-			}
-			if (stack.is(ItemTags.WOOL)) {
+			} else if (stack.is(ItemTags.WOOL)) {
 				isWool = true;
-			}
-			if (stack.is(ItemTags.WOOL_CARPETS)) {
+			} else if (stack.is(ItemTags.WOOL_CARPETS)) {
 				isWool = false;
 			}
 		}
@@ -125,7 +124,6 @@ public class WoolDyeingScrollRecipe extends ShapelessRecipe {
 		}
 
 		Block woolBlock;
-
 		if (isWool) {
 			woolBlock = switch (woolColor) {
 				case WHITE -> Blocks.WHITE_WOOL;
@@ -167,8 +165,6 @@ public class WoolDyeingScrollRecipe extends ShapelessRecipe {
 		}
 
 
-
-
 		AtomicBoolean hasEnoughMana = new AtomicBoolean(true);
 		if (!player.getAbilities().instabuild && scrollStack.getItem() instanceof PillagerScrollItem scroll) {
 			ItemStack finalScrollStack = scrollStack;
@@ -192,61 +188,18 @@ public class WoolDyeingScrollRecipe extends ShapelessRecipe {
 			ItemStack stack = container.getItem(i);
 			if (stack.is(ModItems.PILLAGER_SCROLL.get())) {
 				remaining.set(i, stack.copy());
-			} else {
 			}
 		}
 		return remaining;
 	}
 
 	@Override
+	public boolean canCraftInDimensions(int width, int height) {
+		return width * height >= 2;
+	}
+
+	@Override
 	public RecipeSerializer<?> getSerializer() {
-		return ModRecipeSerializers.WOOL_DYEING_SCROLL_RECIPE.get();
-	}
-
-	public static class Serializer implements RecipeSerializer<WoolDyeingScrollRecipe> {
-		private final ShapelessRecipe.Serializer baseSerializer = new ShapelessRecipe.Serializer();
-
-		@Override
-		public WoolDyeingScrollRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
-			ShapelessRecipe baseRecipe = baseSerializer.fromJson(recipeId, json);
-			return new WoolDyeingScrollRecipe(
-					recipeId,
-					baseRecipe.getGroup(),
-					baseRecipe.category(),
-					baseRecipe.getResultItem(null),
-					replaceIngredients(baseRecipe.getIngredients())
-			);
-		}
-
-		@Override
-		public WoolDyeingScrollRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
-			ShapelessRecipe baseRecipe = baseSerializer.fromNetwork(recipeId, buffer);
-			return new WoolDyeingScrollRecipe(
-					recipeId,
-					baseRecipe.getGroup(),
-					baseRecipe.category(),
-					baseRecipe.getResultItem(null),
-					replaceIngredients(baseRecipe.getIngredients())
-			);
-		}
-
-		@Override
-		public void toNetwork(FriendlyByteBuf buffer, WoolDyeingScrollRecipe recipe) {
-			baseSerializer.toNetwork(buffer, recipe);
-		}
-	}
-
-	public static NonNullList<Ingredient> replaceIngredients(NonNullList<Ingredient> ingredients) {
-		NonNullList<Ingredient> modified = NonNullList.createWithCapacity(ingredients.size());
-		for (Ingredient original : ingredients) {
-			if (original.test(new ItemStack(ModItems.PILLAGER_SCROLL.get()))) {
-				ItemStack stack = new ItemStack(ModItems.PILLAGER_SCROLL.get());
-				stack.enchant(ModEnchantments.ALTERATION.get(), 1);
-				modified.add(Ingredient.of(stack));
-			} else {
-				modified.add(original);
-			}
-		}
-		return modified;
+		return SERIALIZER;
 	}
 }

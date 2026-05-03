@@ -1,0 +1,22 @@
+{
+  "parent": "rpgworldmod:item/dagger_self_stabbing",
+  "loader": "forge:separate_transforms",
+  "base": {
+    "parent": "rpgworldmod:item/dagger_self_stabbing",
+    "textures": {
+      "layer0": "rpgworldmod:item/iron_dagger_base",
+      "layer1": "rpgworldmod:item/dagger_effect"
+    }
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "rpgworldmod:item/iron_dagger_effect_gui"
+    },
+    "ground": {
+      "parent": "rpgworldmod:item/iron_dagger_effect_gui"
+    },
+    "fixed": {
+      "parent": "rpgworldmod:item/iron_dagger_effect_gui"
+    }
+  }
+}

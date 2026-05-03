@@ -5,23 +5,54 @@ import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.FireproofSkirtItem;
+import net.dainplay.rpgworldmod.item.custom.IgniteOnCritItem;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = RPGworldMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class FireproofSkirtHandler {
+public class AttackHandler {
 	@SubscribeEvent
 	public static void onEntityDamage(LivingAttackEvent event) {
+		if (event.getSource().getEntity() instanceof LivingEntity attacker && !(attacker instanceof Player)) {
+			if (attacker.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof IgniteOnCritItem item) {
+				LivingEntity target = event.getEntity();
+				if (!target.level().isClientSide()) {
+					int fortuneLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, attacker.getItemInHand(InteractionHand.MAIN_HAND));
+
+					float baseChance = 0.10f;
+					float chancePerLevel = 0.3f;
+
+					float totalChance = baseChance + (fortuneLevel * chancePerLevel);
+
+					if (attacker.isFallFlying()) totalChance *= 2;
+
+					totalChance = Math.min(totalChance, 1f);
+
+					float chance = target.level().getRandom().nextFloat();
+
+					if (chance < totalChance && !target.fireImmune()) {
+						int fireDuration = 5 + (fortuneLevel * 5);
+						target.setSecondsOnFire(fireDuration);
+					} else {
+						((ServerLevel) target.level()).sendParticles(ParticleTypes.FLAME, target.getX(), target.getY() + target.getBbHeight() * 0.5f, target.getZ(), 20, target.level().getRandom().nextFloat() / 5, target.level().getRandom().nextFloat() / 5, target.level().getRandom().nextFloat() / 5, 0.01f);
+					}
+				}
+			}
+		}
 		if (event.getSource().is(DamageTypes.ON_FIRE)
 				|| event.getSource().is(DamageTypes.IN_FIRE)
 				|| event.getSource().is(DamageTypes.LAVA)

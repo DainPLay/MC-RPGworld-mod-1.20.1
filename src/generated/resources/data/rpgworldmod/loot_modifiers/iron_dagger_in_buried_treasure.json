@@ -1,0 +1,14 @@
+{
+  "type": "rpgworldmod:add_dagger",
+  "chance": 1,
+  "conditions": [
+    {
+      "condition": "forge:loot_table_id",
+      "loot_table_id": "minecraft:chests/buried_treasure"
+    }
+  ],
+  "enchantChance": 0.0,
+  "enchantLevel": 0,
+  "item": "rpgworldmod:iron_dagger",
+  "potionEffectChance": 0.25
+}

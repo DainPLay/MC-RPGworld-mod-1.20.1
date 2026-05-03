@@ -11,6 +11,7 @@ import net.dainplay.rpgworldmod.item.custom.BubbleCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.CheeseItem;
 import net.dainplay.rpgworldmod.item.custom.ChitinThimbleItem;
 import net.dainplay.rpgworldmod.item.custom.CurioItem;
+import net.dainplay.rpgworldmod.item.custom.DaggerItem;
 import net.dainplay.rpgworldmod.item.custom.DoubleSidedRecordItem;
 import net.dainplay.rpgworldmod.item.custom.DriedWidoweedItem;
 import net.dainplay.rpgworldmod.item.custom.DrillSpearItem;
@@ -27,6 +28,7 @@ import net.dainplay.rpgworldmod.item.custom.FireCatcherItem;
 import net.dainplay.rpgworldmod.item.custom.FireCoralStaffItem;
 import net.dainplay.rpgworldmod.item.custom.FireproofSkirtItem;
 import net.dainplay.rpgworldmod.item.custom.FlintAxeItem;
+import net.dainplay.rpgworldmod.item.custom.FlintDaggerItem;
 import net.dainplay.rpgworldmod.item.custom.FlintHoeItem;
 import net.dainplay.rpgworldmod.item.custom.FlintPickaxeItem;
 import net.dainplay.rpgworldmod.item.custom.FlintShovelItem;
@@ -88,6 +90,23 @@ import java.util.List;
 public class ModItems {
 	public static final DeferredRegister<Item> ITEMS =
 			DeferredRegister.create(ForgeRegistries.ITEMS, RPGworldMod.MOD_ID);
+
+	public static final RegistryObject<Item> WOODEN_DAGGER = ITEMS.register("wooden_dagger",
+			() -> new DaggerItem(Tiers.WOOD, 0, -1.75F, new Item.Properties()));
+	public static final RegistryObject<Item> STONE_DAGGER = ITEMS.register("stone_dagger",
+			() -> new DaggerItem(Tiers.STONE, 0, -1.75F, new Item.Properties()));
+	public static final RegistryObject<Item> IRON_DAGGER = ITEMS.register("iron_dagger",
+			() -> new DaggerItem(Tiers.IRON, 0, -1.75F, new Item.Properties()));
+	public static final RegistryObject<Item> GOLDEN_DAGGER = ITEMS.register("golden_dagger",
+			() -> new DaggerItem(Tiers.GOLD, 0, -1.75F, new Item.Properties()));
+	public static final RegistryObject<Item> DIAMOND_DAGGER = ITEMS.register("diamond_dagger",
+			() -> new DaggerItem(Tiers.DIAMOND, 0, -1.75F, new Item.Properties()));
+	public static final RegistryObject<Item> NETHERITE_DAGGER = ITEMS.register("netherite_dagger",
+			() -> new DaggerItem(Tiers.NETHERITE, 0, -1.75F, new Item.Properties()));
+	public static final RegistryObject<Item> MASKONITE_DAGGER = ITEMS.register("maskonite_dagger",
+			() -> new DaggerItem(ModTiers.MASKONITE, 0, -1.75F, new Item.Properties()));
+	public static final RegistryObject<Item> FLINT_DAGGER = ITEMS.register("flint_dagger",
+			() -> new FlintDaggerItem(ModTiers.FLINT, 0, -1.75F, new Item.Properties()));
 	public static final RegistryObject<Item> WEALD_BLADE = ITEMS.register("weald_blade",
 			() -> new WealdBladeItem(ModTiers.BURR, 3, -2.4f, new Item.Properties().rarity(Rarity.RARE)));
 	public static final RegistryObject<Item> DRILL_SPEAR = ITEMS.register("drill_spear",
@@ -197,6 +216,7 @@ public class ModItems {
 					Component.translatable(Util.makeDescriptionId("item", new ResourceLocation("smithing_template.maskonite_upgrade.base_slot_description"))),
 					Component.translatable(Util.makeDescriptionId("item", new ResourceLocation("smithing_template.maskonite_upgrade.additions_slot_description"))),
 					List.of(
+							new ResourceLocation("item/empty_slot_dagger"),
 							new ResourceLocation("item/empty_slot_sword"),
 							new ResourceLocation("item/empty_slot_pickaxe"),
 							new ResourceLocation("item/empty_slot_axe"),
@@ -297,5 +317,9 @@ public class ModItems {
 
 	public static void register(IEventBus eventbus) {
 		ITEMS.register(eventbus);
+	}
+
+	private static Item get() {
+		return new DaggerItem(Tiers.WOOD, 0, -2F, new Item.Properties());
 	}
 }

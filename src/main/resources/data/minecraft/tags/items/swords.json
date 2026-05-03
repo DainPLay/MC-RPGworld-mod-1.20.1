@@ -4,6 +4,14 @@
     "rpgworldmod:maskonite_sword",
     "rpgworldmod:fairapier_sword",
     "rpgworldmod:flint_sword",
-    "rpgworldmod:weald_blade"
+    "rpgworldmod:weald_blade",
+    "rpgworldmod:wooden_dagger",
+    "rpgworldmod:stone_dagger",
+    "rpgworldmod:iron_dagger",
+    "rpgworldmod:golden_dagger",
+    "rpgworldmod:diamond_dagger",
+    "rpgworldmod:netherite_dagger",
+    "rpgworldmod:maskonite_dagger",
+    "rpgworldmod:flint_dagger"
   ]
 }

@@ -1,0 +1,6 @@
+{
+  "parent": "rpgworldmod:item/dagger_self_stabbing",
+  "textures": {
+    "layer0": "rpgworldmod:item/stone_dagger"
+  }
+}

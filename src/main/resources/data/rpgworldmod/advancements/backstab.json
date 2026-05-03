@@ -1,0 +1,30 @@
+{
+  "parent": "rpgworldmod:root",
+  "criteria": {
+    "backstab": {
+      "conditions": {},
+      "trigger": "rpgworldmod:backstab"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.backstab.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:iron_dagger"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.backstab.title"
+    }
+  },
+  "requirements": [
+    [
+      "backstab"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

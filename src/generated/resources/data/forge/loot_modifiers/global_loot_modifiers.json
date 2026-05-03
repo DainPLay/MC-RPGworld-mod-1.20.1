@@ -1,14 +1,26 @@
 {
   "entries": [
     "rpgworldmod:rie_weald_fog_fish",
+    "rpgworldmod:enchanted_iron_dagger_in_bastion_other",
+    "rpgworldmod:iron_dagger_in_village_weaponsmith",
+    "rpgworldmod:iron_dagger_in_buried_treasure",
+    "rpgworldmod:golden_dagger_in_bastion_bridge",
+    "rpgworldmod:diamond_dagger_in_bastion_treasure",
     "rpgworldmod:nether_star_scroll_pickaxe",
+    "rpgworldmod:diamond_dagger_in_bastion_hoglin_stable",
     "rpgworldmod:rie_weald_fish",
-    "rpgworldmod:tool_smelting",
     "rpgworldmod:rie_weald_fog_fish1",
     "rpgworldmod:scrolls_in_library",
+    "rpgworldmod:enchanted_diamond_dagger_in_bastion_treasure",
     "rpgworldmod:necromancy_scrolls_in_ancient_city",
     "rpgworldmod:scroll_from_evoker",
-    "rpgworldmod:pillager_scrolls_in_woodland_mansion"
+    "rpgworldmod:pillager_scrolls_in_woodland_mansion",
+    "rpgworldmod:diamond_dagger_in_end_city_treasure",
+    "rpgworldmod:iron_dagger_in_stronghold_corridor",
+    "rpgworldmod:golden_dagger_in_ruined_portal",
+    "rpgworldmod:golden_dagger_in_bastion_other",
+    "rpgworldmod:tool_smelting",
+    "rpgworldmod:iron_dagger_in_end_city_treasure"
   ],
   "replace": false
 }

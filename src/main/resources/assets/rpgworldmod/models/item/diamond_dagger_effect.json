@@ -1,0 +1,22 @@
+{
+  "parent": "item/handheld",
+  "loader": "forge:separate_transforms",
+  "base": {
+    "parent": "item/handheld",
+    "textures": {
+      "layer0": "rpgworldmod:item/diamond_dagger_base",
+      "layer1": "rpgworldmod:item/dagger_effect"
+    }
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "rpgworldmod:item/diamond_dagger_effect_gui"
+    },
+    "ground": {
+      "parent": "rpgworldmod:item/diamond_dagger_effect_gui"
+    },
+    "fixed": {
+      "parent": "rpgworldmod:item/diamond_dagger_effect_gui"
+    }
+  }
+}

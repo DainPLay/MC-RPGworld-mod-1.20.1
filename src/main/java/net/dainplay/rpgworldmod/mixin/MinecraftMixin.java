@@ -116,8 +116,7 @@ public abstract class MinecraftMixin {
 					cir.setReturnValue(true);
 					cir.cancel();
 				}
-			}
-			else if (catItem.highlightSheep(this.player.getUseItem(), this.player)) {
+			} else if (catItem.highlightSheep(this.player.getUseItem(), this.player)) {
 				LivingEntity target = null;
 				if (!(entity instanceof Sheep)) {
 					return;

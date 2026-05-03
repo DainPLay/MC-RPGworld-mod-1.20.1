@@ -25,7 +25,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -705,7 +704,6 @@ public class PillagerScrollItem extends ScrollItem {
 			);
 			player.gameEvent(GameEvent.ENTITY_DAMAGE, player);
 
-
 			if (player instanceof ServerPlayer serverPlayer) {
 				ModAdvancements.SPELL_NECROMANCY_PILLAGER_TRIGGER.trigger(serverPlayer);
 			}
@@ -1018,8 +1016,8 @@ public class PillagerScrollItem extends ScrollItem {
 								if (canSeePlayer(target, player)) {
 									Vec3 eyePos = player.getEyePosition();
 									Vec3 playerEyePos = target.getEyePosition();
-									double distance = Math.max(0,15D-eyePos.distanceTo(playerEyePos));
-									target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, (int)(400D*(distance/15D)), 0));
+									double distance = Math.max(0, 15D - eyePos.distanceTo(playerEyePos));
+									target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, (int) (400D * (distance / 15D)), 0));
 								}
 							}
 							player.gameEvent(GameEvent.ENTITY_INTERACT, player);

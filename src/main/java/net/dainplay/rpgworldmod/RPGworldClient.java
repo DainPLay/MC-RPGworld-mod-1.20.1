@@ -3,10 +3,12 @@ package net.dainplay.rpgworldmod;
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.block.entity.ModBlockEntities;
 import net.dainplay.rpgworldmod.block.entity.ModWoodTypes;
+import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.entity.client.model.SkirtModel;
 import net.dainplay.rpgworldmod.entity.client.render.CurioLayers;
 import net.dainplay.rpgworldmod.entity.client.render.CurioRenderers;
 import net.dainplay.rpgworldmod.entity.client.render.SkirtArmorLayer;
+import net.dainplay.rpgworldmod.event.ClientModEvents;
 import net.dainplay.rpgworldmod.fluid.ModFluids;
 import net.dainplay.rpgworldmod.gui.ChargesOverlayEventHandler;
 import net.dainplay.rpgworldmod.gui.HealthOverlayEventHandler;
@@ -43,6 +45,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -531,6 +536,118 @@ public class RPGworldClient {
 			ItemProperties.register(ModItems.GUITAR_AX.get().asItem(), new ResourceLocation("playing"), (stack, world, entity, seed) -> entity != null && entity.getOffhandItem() == stack ? 1.0F : 0.0F);
 			ItemProperties.register(ModItems.WEALD_BLADE.get().asItem(), new ResourceLocation("blocking"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
 			ItemProperties.register(ModItems.DRILL_SPEAR.get().asItem(), new ResourceLocation("throwing"), (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
+			ItemProperties.register(ModItems.WOODEN_DAGGER.get().asItem(), new ResourceLocation("stabbing"), (stack, world, entity, seed) -> {
+				if (entity != null && entity.isUsingItem() && entity.getUseItem() == stack)
+					return stack.getEnchantmentLevel(ModEnchantments.IMMOLATION.get()) > 0 ? 2.0F : 1.0F;
+				if (entity instanceof Player player && player.getCooldowns().isOnCooldown(stack.getItem()) && player.swinging && player.getItemInHand(player.swingingArm) == stack)
+					return stack.getEnchantmentLevel(ModEnchantments.IMMOLATION.get()) > 0 ? 2.0F : 1.0F;
+				;
+				return 0.0F;
+			});
+			ItemProperties.register(ModItems.STONE_DAGGER.get().asItem(), new ResourceLocation("stabbing"), (stack, world, entity, seed) -> {
+				if (entity != null && entity.isUsingItem() && entity.getUseItem() == stack)
+					return stack.getEnchantmentLevel(ModEnchantments.IMMOLATION.get()) > 0 ? 2.0F : 1.0F;
+				if (entity instanceof Player player && player.getCooldowns().isOnCooldown(stack.getItem()) && player.swinging && player.getItemInHand(player.swingingArm) == stack)
+					return stack.getEnchantmentLevel(ModEnchantments.IMMOLATION.get()) > 0 ? 2.0F : 1.0F;
+				;
+				return 0.0F;
+			});
+			ItemProperties.register(ModItems.IRON_DAGGER.get().asItem(), new ResourceLocation("stabbing"), (stack, world, entity, seed) -> {
+				if (entity != null && entity.isUsingItem() && entity.getUseItem() == stack)
+					return stack.getEnchantmentLevel(ModEnchantments.IMMOLATION.get()) > 0 ? 2.0F : 1.0F;
+				if (entity instanceof Player player && player.getCooldowns().isOnCooldown(stack.getItem()) && player.swinging && player.getItemInHand(player.swingingArm) == stack)
+					return stack.getEnchantmentLevel(ModEnchantments.IMMOLATION.get()) > 0 ? 2.0F : 1.0F;
+				;
+				return 0.0F;
+			});
+			ItemProperties.register(ModItems.GOLDEN_DAGGER.get().asItem(), new ResourceLocation("stabbing"), (stack, world, entity, seed) -> {
+				if (entity != null && entity.isUsingItem() && entity.getUseItem() == stack)
+					return stack.getEnchantmentLevel(ModEnchantments.IMMOLATION.get()) > 0 ? 2.0F : 1.0F;
+				if (entity instanceof Player player && player.getCooldowns().isOnCooldown(stack.getItem()) && player.swinging && player.getItemInHand(player.swingingArm) == stack)
+					return stack.getEnchantmentLevel(ModEnchantments.IMMOLATION.get()) > 0 ? 2.0F : 1.0F;
+				;
+				return 0.0F;
+			});
+			ItemProperties.register(ModItems.DIAMOND_DAGGER.get().asItem(), new ResourceLocation("stabbing"), (stack, world, entity, seed) -> {
+				if (entity != null && entity.isUsingItem() && entity.getUseItem() == stack)
+					return stack.getEnchantmentLevel(ModEnchantments.IMMOLATION.get()) > 0 ? 2.0F : 1.0F;
+				if (entity instanceof Player player && player.getCooldowns().isOnCooldown(stack.getItem()) && player.swinging && player.getItemInHand(player.swingingArm) == stack)
+					return stack.getEnchantmentLevel(ModEnchantments.IMMOLATION.get()) > 0 ? 2.0F : 1.0F;
+				;
+				return 0.0F;
+			});
+			ItemProperties.register(ModItems.NETHERITE_DAGGER.get().asItem(), new ResourceLocation("stabbing"), (stack, world, entity, seed) -> {
+				if (entity != null && entity.isUsingItem() && entity.getUseItem() == stack)
+					return stack.getEnchantmentLevel(ModEnchantments.IMMOLATION.get()) > 0 ? 2.0F : 1.0F;
+				if (entity instanceof Player player && player.getCooldowns().isOnCooldown(stack.getItem()) && player.swinging && player.getItemInHand(player.swingingArm) == stack)
+					return stack.getEnchantmentLevel(ModEnchantments.IMMOLATION.get()) > 0 ? 2.0F : 1.0F;
+				;
+				return 0.0F;
+			});
+			ItemProperties.register(ModItems.MASKONITE_DAGGER.get().asItem(), new ResourceLocation("stabbing"), (stack, world, entity, seed) -> {
+				if (entity != null && entity.isUsingItem() && entity.getUseItem() == stack)
+					return stack.getEnchantmentLevel(ModEnchantments.IMMOLATION.get()) > 0 ? 2.0F : 1.0F;
+				if (entity instanceof Player player && player.getCooldowns().isOnCooldown(stack.getItem()) && player.swinging && player.getItemInHand(player.swingingArm) == stack)
+					return stack.getEnchantmentLevel(ModEnchantments.IMMOLATION.get()) > 0 ? 2.0F : 1.0F;
+				;
+				return 0.0F;
+			});
+			ItemProperties.register(ModItems.FLINT_DAGGER.get().asItem(), new ResourceLocation("stabbing"), (stack, world, entity, seed) -> {
+				if (entity != null && entity.isUsingItem() && entity.getUseItem() == stack)
+					return stack.getEnchantmentLevel(ModEnchantments.IMMOLATION.get()) > 0 ? 2.0F : 1.0F;
+				if (entity instanceof Player player && player.getCooldowns().isOnCooldown(stack.getItem()) && player.swinging && player.getItemInHand(player.swingingArm) == stack)
+					return stack.getEnchantmentLevel(ModEnchantments.IMMOLATION.get()) > 0 ? 2.0F : 1.0F;
+				;
+				return 0.0F;
+			});
+			ItemProperties.register(ModItems.WOODEN_DAGGER.get().asItem(), new ResourceLocation("effect"), (stack, world, entity, seed) -> {
+				Potion potionType = PotionUtils.getPotion(stack);
+				if (potionType != Potions.EMPTY)
+					return 1.0F;
+				return 0.0F;
+			});
+			ItemProperties.register(ModItems.STONE_DAGGER.get().asItem(), new ResourceLocation("effect"), (stack, world, entity, seed) -> {
+				Potion potionType = PotionUtils.getPotion(stack);
+				if (potionType != Potions.EMPTY)
+					return 1.0F;
+				return 0.0F;
+			});
+			ItemProperties.register(ModItems.IRON_DAGGER.get().asItem(), new ResourceLocation("effect"), (stack, world, entity, seed) -> {
+				Potion potionType = PotionUtils.getPotion(stack);
+				if (potionType != Potions.EMPTY)
+					return 1.0F;
+				return 0.0F;
+			});
+			ItemProperties.register(ModItems.GOLDEN_DAGGER.get().asItem(), new ResourceLocation("effect"), (stack, world, entity, seed) -> {
+				Potion potionType = PotionUtils.getPotion(stack);
+				if (potionType != Potions.EMPTY)
+					return 1.0F;
+				return 0.0F;
+			});
+			ItemProperties.register(ModItems.DIAMOND_DAGGER.get().asItem(), new ResourceLocation("effect"), (stack, world, entity, seed) -> {
+				Potion potionType = PotionUtils.getPotion(stack);
+				if (potionType != Potions.EMPTY)
+					return 1.0F;
+				return 0.0F;
+			});
+			ItemProperties.register(ModItems.NETHERITE_DAGGER.get().asItem(), new ResourceLocation("effect"), (stack, world, entity, seed) -> {
+				Potion potionType = PotionUtils.getPotion(stack);
+				if (potionType != Potions.EMPTY)
+					return 1.0F;
+				return 0.0F;
+			});
+			ItemProperties.register(ModItems.MASKONITE_DAGGER.get().asItem(), new ResourceLocation("effect"), (stack, world, entity, seed) -> {
+				Potion potionType = PotionUtils.getPotion(stack);
+				if (potionType != Potions.EMPTY)
+					return 1.0F;
+				return 0.0F;
+			});
+			ItemProperties.register(ModItems.FLINT_DAGGER.get().asItem(), new ResourceLocation("effect"), (stack, world, entity, seed) -> {
+				Potion potionType = PotionUtils.getPotion(stack);
+				if (potionType != Potions.EMPTY)
+					return 1.0F;
+				return 0.0F;
+			});
 			ItemProperties.register(ModItems.FIREPROOF_SKIRT.get().asItem(), new ResourceLocation("broken"), (stack, world, entity, seed) -> FireproofSkirtItem.isFireproof(stack) ? 0.0F : 1.0F);
 			ItemProperties.register(ModItems.MINTAL_TRIANGLE.get(), new ResourceLocation("vibration"), (itemstack, level, livingEntity, p_174608_) -> livingEntity != null && MintalTriangleItem.getVibes(itemstack) > 0 ? (23F - (float) MintalTriangleItem.getVibes(itemstack)) / 100 : 1.0F);
 			ItemProperties.register(ModItems.MUSIC_DISC_RAIN_A_SIDE.get(), new ResourceLocation("flip"), (itemstack, level, livingEntity, p_174608_) -> DoubleSidedRecordItem.getFlipStage(itemstack));
@@ -676,5 +793,6 @@ public class RPGworldClient {
 					});
 
 		});
+		ClientModEvents.initSelector();
 	}
 }

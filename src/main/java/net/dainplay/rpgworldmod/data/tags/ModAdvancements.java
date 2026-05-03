@@ -74,6 +74,9 @@ public class ModAdvancements {
 	public static final SpellIllusionPillagerTrigger SPELL_ILLUSION_PILLAGER_TRIGGER = CriteriaTriggers.register(new SpellIllusionPillagerTrigger());
 	public static final SpellConjurationPillagerTrigger SPELL_CONJURATION_PILLAGER_TRIGGER = CriteriaTriggers.register(new SpellConjurationPillagerTrigger());
 	public static final SpellNecromancyPillagerTrigger SPELL_NECROMANCY_PILLAGER_TRIGGER = CriteriaTriggers.register(new SpellNecromancyPillagerTrigger());
+	public static final BackstabTrigger BACKSTAB_TRIGGER = CriteriaTriggers.register(new BackstabTrigger());
+	public static final EffectDaggerTrigger EFFECT_DAGGER_TRIGGER = CriteriaTriggers.register(new EffectDaggerTrigger());
+	public static final InvisBackstabKillTrigger INVIS_BACKSTAB_KILL_TRIGGER = CriteriaTriggers.register(new InvisBackstabKillTrigger());
 
 	public static void init() {
 	}

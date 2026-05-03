@@ -28,6 +28,7 @@ public class ModDamageTypes {
 	public static final ResourceKey<DamageType> ENT_ROOTS = create("ent_roots");
 	public static final ResourceKey<DamageType> NECROSIS = create("necrosis");
 	public static final ResourceKey<DamageType> CORRUPTED_BEACON = create("corrupted_beacon");
+	public static final ResourceKey<DamageType> STAB = create("stab");
 
 	public static ResourceKey<DamageType> create(String name) {
 		return ResourceKey.create(Registries.DAMAGE_TYPE, RPGworldMod.prefix(name));
@@ -61,5 +62,6 @@ public class ModDamageTypes {
 		context.register(ENT_ROOTS, new DamageType("ent_roots", 0.0F));
 		context.register(NECROSIS, new DamageType("necrosis", 0.0F));
 		context.register(CORRUPTED_BEACON, new DamageType("corrupted_beacon", 0.0F));
+		context.register(STAB, new DamageType("stab", 0.0F));
 	}
 }

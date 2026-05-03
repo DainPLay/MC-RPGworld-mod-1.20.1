@@ -310,23 +310,30 @@ public class RPGworldMod {
 		}
 
 		if (event.getTab() == ModCreativeModeTab.RPGWORLD_EQUIPMENT_TAB.get()) {
-			event.accept(ModItems.RIE_BOAT);
-			event.accept(ModItems.RIE_CHEST_BOAT);
+			event.accept(ModItems.WOODEN_DAGGER);
+			event.accept(ModItems.STONE_DAGGER);
+			event.accept(ModItems.IRON_DAGGER);
+			event.accept(ModItems.GOLDEN_DAGGER);
+			event.accept(ModItems.DIAMOND_DAGGER);
+			event.accept(ModItems.NETHERITE_DAGGER);
 			event.accept(ModItems.MASKONITE_SHOVEL);
 			event.accept(ModItems.MASKONITE_PICKAXE);
 			event.accept(ModItems.MASKONITE_AXE);
 			event.accept(ModItems.MASKONITE_HOE);
 			event.accept(ModItems.MASKONITE_SWORD);
+			event.accept(ModItems.MASKONITE_DAGGER);
 			event.accept(ModItems.FLINT_SHOVEL);
 			event.accept(ModItems.FLINT_PICKAXE);
 			event.accept(ModItems.FLINT_AXE);
 			event.accept(ModItems.FLINT_HOE);
 			event.accept(ModItems.FLINT_SWORD);
+			event.accept(ModItems.FLINT_DAGGER);
 			event.accept(ModItems.GUITAR_AX);
 			event.accept(ModItems.WEALD_BLADE);
 			event.accept(ModItems.FAIRAPIER_SWORD);
 			event.accept(ModItems.FAIRAPIER_SEED);
 			event.accept(ModItems.PROJECTRUFFLE_ITEM);
+			event.accept(ModItems.LIVING_WOOD_BOW);
 			event.accept(ModItems.MINTAL_TRIANGLE);
 			event.accept(ModItems.DRILL_SPEAR);
 			event.accept(ModItems.PLATINUMFISH_BUCKET);
@@ -335,7 +342,6 @@ public class RPGworldMod {
 			event.accept(ModItems.SHEENTROUT_BUCKET);
 			event.accept(ModItems.GASBASS_BUCKET);
 			event.accept(ModItems.ARBOR_FUEL_BUCKET);
-			event.accept(ModItems.FIREPROOF_SKIRT);
 			event.accept(ModItems.EMBER_GEM);
 			event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.RESTORATION.get(), ModEnchantments.RESTORATION.get().getMaxLevel())));
 			event.accept(EmberScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));
@@ -367,12 +373,12 @@ public class RPGworldMod {
 			event.accept(NetherStarScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ALTERATION.get(), ModEnchantments.ALTERATION.get().getMaxLevel())));
 			event.accept(NetherStarScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.CONJURATION.get(), ModEnchantments.CONJURATION.get().getMaxLevel())));
 			event.accept(NetherStarScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.NECROMANCY.get(), ModEnchantments.NECROMANCY.get().getMaxLevel())));
+			event.accept(ModItems.LAPIS_CHARM);
+			event.accept(ModItems.FIREPROOF_SKIRT);
 			event.accept(ModItems.LIVING_WOOD_HELMET);
 			event.accept(ModItems.LIVING_WOOD_CHESTPLATE);
 			event.accept(ModItems.LIVING_WOOD_LEGGINGS);
 			event.accept(ModItems.LIVING_WOOD_BOOTS);
-			event.accept(ModItems.LAPIS_CHARM);
-			event.accept(ModItems.LIVING_WOOD_BOW);
 			event.accept(StaffItem.createForGemType(ModItems.LIVING_WOOD_STAFF.get().getDefaultInstance(), StaffItem.GemType.EMBER_GEM));
 			event.accept(StaffItem.createForGemType(ModItems.LIVING_WOOD_STAFF.get().getDefaultInstance(), StaffItem.GemType.HEART_OF_THE_SEA));
 			event.accept(StaffItem.createForGemType(ModItems.LIVING_WOOD_STAFF.get().getDefaultInstance(), StaffItem.GemType.ENDER_EYE));
@@ -420,13 +426,14 @@ public class RPGworldMod {
 			event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.LONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
 			event.accept(PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), ModPotions.STRONG_PARANOIA_POTION.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
 
+			event.accept(ModItems.RIE_BOAT);
+			event.accept(ModItems.RIE_CHEST_BOAT);
 			event.accept(ModItems.BRAMBLEFOX_SCARF);
 			event.accept(ModItems.FIG_LEAF);
+			event.accept(ModItems.PORTABLE_TURRET);
 			event.accept(ModItems.MUSIC_DISC_HOWLING);
 			event.accept(ModItems.MUSIC_DISC_TIRE);
 			event.accept(ModItems.MUSIC_DISC_RAIN_A_SIDE);
-			event.accept(ModItems.RIE_WEALD_BANNER_PATTERN);
-			event.accept(ModItems.PORTABLE_TURRET);
 		}
 
 		if (event.getTab() == ModCreativeModeTab.RPGWORLD_FOODS_AND_DRINKS_TAB.get()) {
@@ -535,6 +542,7 @@ public class RPGworldMod {
 			event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.STRETCH.get(), ModEnchantments.STRETCH.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
 			event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.ACTIVE_RECHARGE.get(), ModEnchantments.ACTIVE_RECHARGE.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
 			event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DOUBLE_EXPOSURE.get(), ModEnchantments.DOUBLE_EXPOSURE.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.IMMOLATION.get(), ModEnchantments.IMMOLATION.get().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
 			event.accept(ModItems.EMPTY_SCROLL);
 			event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.RESTORATION.get(), ModEnchantments.RESTORATION.get().getMaxLevel())));
 			event.accept(EmptyScrollItem.createForEnchantment(new EnchantmentInstance(ModEnchantments.DESTRUCTION.get(), ModEnchantments.DESTRUCTION.get().getMaxLevel())));

@@ -11,7 +11,9 @@ import net.dainplay.rpgworldmod.network.C2SRequestTargetValidationPacket;
 import net.dainplay.rpgworldmod.network.ClientAnimateTargetData;
 import net.dainplay.rpgworldmod.network.ClientItemTargetData;
 import net.dainplay.rpgworldmod.network.ModMessages;
+import net.dainplay.rpgworldmod.util.SubCreativeTabSelector;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
@@ -24,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -85,7 +88,8 @@ public class ClientModEvents {
 					ItemEntity randomItem = getRandomItemInRadius(player, 64.0);
 					ItemEntity anotherRandomItem = randomItem;
 					ClientItemTargetData.clear();
-					if (randomItem != null && player.distanceToSqr(randomItem) <= 64.0 * 64.0) ClientItemTargetData.addTarget(randomItem);
+					if (randomItem != null && player.distanceToSqr(randomItem) <= 64.0 * 64.0)
+						ClientItemTargetData.addTarget(randomItem);
 					if (player.tickCount % 20 == 0 || (anotherRandomItem != null && player.distanceToSqr(anotherRandomItem) > 64.0 * 64.0)) {
 						anotherRandomItem = getRandomItemInRadius(player, 64.0);
 						ClientItemTargetData.set(anotherRandomItem);
@@ -151,6 +155,33 @@ public class ClientModEvents {
 				event.getPoseStack().popPose();
 				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 			}
+		}
+	}
+
+	private static SubCreativeTabSelector selector;
+
+	public static void initSelector() {
+		selector = SubCreativeTabSelector.bootstrap();
+	}
+
+	@SubscribeEvent
+	public static void onScreenInitPost(ScreenEvent.Init.Post event) {
+		if (selector != null) {
+			selector.initScreen(event.getScreen(), event::addListener);
+		}
+	}
+
+	@SubscribeEvent
+	public static void onScreenRenderPost(ScreenEvent.Render.Post event) {
+		if (selector != null && event.getScreen() instanceof AbstractContainerScreen<?> screen) {
+			selector.renderBackground(screen, event.getGuiGraphics());
+		}
+	}
+
+	@SubscribeEvent
+	public static void onScreenClosing(ScreenEvent.Closing event) {
+		if (selector != null) {
+			selector.onClose(event.getScreen());
 		}
 	}
 }

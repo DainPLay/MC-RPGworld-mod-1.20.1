@@ -1,0 +1,14 @@
+{
+  "type": "rpgworldmod:add_dagger",
+  "chance": 0.205,
+  "conditions": [
+    {
+      "condition": "forge:loot_table_id",
+      "loot_table_id": "minecraft:chests/ruined_portal"
+    }
+  ],
+  "enchantChance": 1.0,
+  "enchantLevel": 30,
+  "item": "rpgworldmod:golden_dagger",
+  "potionEffectChance": 0.0
+}

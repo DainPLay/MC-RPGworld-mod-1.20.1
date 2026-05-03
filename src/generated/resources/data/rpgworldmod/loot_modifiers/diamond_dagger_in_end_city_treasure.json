@@ -1,0 +1,14 @@
+{
+  "type": "rpgworldmod:add_dagger",
+  "chance": 0.127,
+  "conditions": [
+    {
+      "condition": "forge:loot_table_id",
+      "loot_table_id": "minecraft:chests/end_city_treasure"
+    }
+  ],
+  "enchantChance": 1.0,
+  "enchantLevel": 30,
+  "item": "rpgworldmod:diamond_dagger",
+  "potionEffectChance": 0.25
+}

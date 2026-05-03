@@ -24,7 +24,7 @@ public class DamageTypeTagGenerator extends TagsProvider<DamageType> {
 	protected void addTags(HolderLookup.Provider provider) {
 		this.tag(DamageTypeTags.BYPASSES_ARMOR).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS, ModDamageTypes.SCREAM, ModDamageTypes.DING, ModDamageTypes.MOSQUITOS, ModDamageTypes.CORRUPTED_BEACON);
 		this.tag(DamageTypeTags.BYPASSES_ENCHANTMENTS).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS, ModDamageTypes.MOSQUITOS);
-		this.tag(DamageTypeTags.BYPASSES_COOLDOWN).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS, ModDamageTypes.SWALLOW, ModDamageTypes.ENT_SNAP);
+		this.tag(DamageTypeTags.BYPASSES_COOLDOWN).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS, ModDamageTypes.SWALLOW, ModDamageTypes.ENT_SNAP, ModDamageTypes.STAB);
 		this.tag(DamageTypeTags.IS_FIRE).add(ModDamageTypes.SWALLOW);
 		this.tag(DamageTypeTags.BYPASSES_INVULNERABILITY).add(ModDamageTypes.SWALLOW, ModDamageTypes.NECROSIS);
 		this.tag(DamageTypeTags.BYPASSES_EFFECTS).add(ModDamageTypes.MOSSIOSIS, ModDamageTypes.NECROSIS);

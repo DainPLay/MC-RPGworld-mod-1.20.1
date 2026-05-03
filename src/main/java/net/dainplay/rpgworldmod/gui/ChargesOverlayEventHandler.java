@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
+import net.dainplay.rpgworldmod.item.custom.DaggerItem;
 import net.dainplay.rpgworldmod.item.custom.SculkStaffItem;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.dainplay.rpgworldmod.network.ClientSculkStaffCDData;
@@ -11,9 +12,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
@@ -44,13 +47,49 @@ public class ChargesOverlayEventHandler implements IGuiOverlay {
 			return;
 		}
 
+		boolean usingDagger = (mc.player.isUsingItem() && mc.player.getUseItem().getItem() instanceof DaggerItem dagger
+				&& mc.player.getUseItem().getEnchantmentLevel(ModEnchantments.IMMOLATION.get()) <= 0
+				&& (dagger.getUseDuration(mc.player.getUseItem()) - mc.player.getUseItemRemainingTicks()) < dagger.getAttackCooldown());
+
 		ItemStack stack = mc.player.getMainHandItem();
-		if (!(stack.getItem() instanceof StaffItem)) {
+		if (!(stack.getItem() instanceof StaffItem || usingDagger)) {
 			stack = mc.player.getOffhandItem();
-			if (!(stack.getItem() instanceof StaffItem)) {
+			if (!(stack.getItem() instanceof StaffItem || usingDagger)) {
 				active = false;
 				return;
 			}
+		}
+
+
+		if (usingDagger) {
+			if (mc.crosshairPickEntity instanceof LivingEntity target && mc.crosshairPickEntity.isAlive()) {
+
+				Vec3 vec32 = mc.player.getPosition(partialTick);
+				Vec3 vec3 = target.getViewVector(1.0F);
+				Vec3 vec31 = vec32.vectorTo(target.position()).normalize();
+				vec31 = new Vec3(vec31.x, 0.0D, vec31.z);
+				if (vec31.dot(vec3) >= 0.0D) {
+					int x = screenWidth / 2 - 8;
+					int y = screenHeight / 2 - 7 + 16;
+					guiGraphics.blit(ICONS, x, y, 85, 27, 16, 16);
+				} else {
+					RenderSystem.enableBlend();
+					RenderSystem.blendFuncSeparate(
+							GlStateManager.SourceFactor.ONE_MINUS_DST_COLOR,
+							GlStateManager.DestFactor.ONE_MINUS_SRC_COLOR,
+							GlStateManager.SourceFactor.ONE,
+							GlStateManager.DestFactor.ZERO
+					);
+					int x = screenWidth / 2 - 8;
+					int y = screenHeight / 2 - 7 + 16;
+					guiGraphics.blit(ICONS, x, y, 69, 27, 16, 16);
+					RenderSystem.defaultBlendFunc();
+					RenderSystem.disableBlend();
+					RenderSystem.setShaderColor(1, 1, 1, 1);
+				}
+				active = true;
+			} else active = false;
+			return;
 		}
 
 		StaffItem staff = (StaffItem) stack.getItem();

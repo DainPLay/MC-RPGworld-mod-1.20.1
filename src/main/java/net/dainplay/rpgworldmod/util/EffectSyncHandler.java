@@ -8,10 +8,7 @@ import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.ParanoiaSoundPacket;
 import net.dainplay.rpgworldmod.network.SyncEffectPacket;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -30,7 +27,7 @@ public class EffectSyncHandler {
 			LivingEntity entity = event.getEntity();
 			MobEffectInstance effect = event.getEffectInstance();
 
-			// HAPPINESS — как раньше
+
 			if (effect.getEffect() == ModEffects.HAPPINESS.get()) {
 				ModMessages.sendToClients(new SyncEffectPacket(
 						entity.getId(),
@@ -40,7 +37,7 @@ public class EffectSyncHandler {
 				));
 			}
 
-			// MIRRORING — эффект и начальный seed
+
 			if (effect.getEffect() == ModEffects.MIRRORING.get()) {
 				ModMessages.sendToClients(new MirroringEffectSyncPacket(
 						entity.getId(),
@@ -51,7 +48,7 @@ public class EffectSyncHandler {
 				generateAndSyncSeed(entity);
 			}
 
-			// PARANOIA — как раньше
+
 			if (effect.getEffect() == ModEffects.PARANOIA.get()
 					&& entity instanceof Player player) {
 				ModMessages.sendToPlayer(

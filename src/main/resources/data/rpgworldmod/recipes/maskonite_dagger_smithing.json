@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "rpgworldmod:maskonite_block"
+  },
+  "base": {
+    "item": "rpgworldmod:stone_dagger"
+  },
+  "result": {
+    "item": "rpgworldmod:maskonite_dagger"
+  },
+  "template": {
+    "item": "rpgworldmod:maskonite_upgrade_smithing_template"
+  }
+}

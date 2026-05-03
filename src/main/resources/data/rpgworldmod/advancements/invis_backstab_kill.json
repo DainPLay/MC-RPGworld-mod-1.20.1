@@ -1,0 +1,34 @@
+{
+  "parent": "rpgworldmod:effect_dagger",
+  "criteria": {
+    "invis_backstab_kill": {
+      "conditions": {},
+      "trigger": "rpgworldmod:invis_backstab_kill"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.invis_backstab_kill.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:diamond_dagger",
+      "nbt": "{Damage:0, Potion:\"minecraft:invisibility\"}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.invis_backstab_kill.title"
+    }
+  },
+  "requirements": [
+    [
+      "invis_backstab_kill"
+    ]
+  ],
+  "rewards": {
+    "experience": 80
+  },
+  "sends_telemetry_event": true
+}

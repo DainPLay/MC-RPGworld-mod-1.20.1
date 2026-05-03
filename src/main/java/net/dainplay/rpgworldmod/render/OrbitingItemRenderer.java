@@ -52,10 +52,7 @@ public class OrbitingItemRenderer {
 
 	@SubscribeEvent
 	public static void onRenderLiving(RenderLivingEvent.Post<LivingEntity, ?> event) {
-		/*if (event.getEntity() == Minecraft.getInstance().player &&
-				Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
-			return;
-		}*/
+
 
 		LivingEntity entity = event.getEntity();
 		List<ItemStack> orbitingItems = getOrbitingItems(entity);
@@ -97,15 +94,18 @@ public class OrbitingItemRenderer {
 			event.setCanceled(true);
 			return;
 		}
+
+		Minecraft mc = Minecraft.getInstance();
+		AbstractClientPlayer player = mc.player;
+		if (player == null) return;
+		if (Minecraft.getInstance().player.isScoping()) {
+			return;
+		}
 		if (event.getItemStack().getItem() instanceof NetherStarScrollItem &&
 				event.getItemStack().getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0 &&
 				event.getItemStack().getTag() != null &&
 				event.getItemStack().getTag().contains("isPickaxe", Tag.TAG_INT)) {
 			event.setCanceled(true);
-
-			Minecraft mc = Minecraft.getInstance();
-			AbstractClientPlayer player = mc.player;
-			if (player == null) return;
 
 
 			ItemStack dummyStack = new ItemStack(ModItems.NETHER_STAR_SCROLL.get());
@@ -176,8 +176,6 @@ public class OrbitingItemRenderer {
 			return;
 		}
 		if (event.getItemStack().getItem() instanceof OrbitingItem item1 && item1.shouldOrbit(event.getItemStack(), Minecraft.getInstance().player)) {
-			Minecraft mc = Minecraft.getInstance();
-			AbstractClientPlayer player = mc.player;
 			PlayerRenderer playerrenderer = (PlayerRenderer) mc.getEntityRenderDispatcher()
 					.getRenderer(player);
 
@@ -435,8 +433,6 @@ public class OrbitingItemRenderer {
 			event.setCanceled(true);
 		}
 		if (event.getItemStack().getItem() instanceof StaffItem item1 && Minecraft.getInstance().player != null && item1.isOffCooldown(event.getItemStack(), Minecraft.getInstance().player)) {
-			Minecraft mc = Minecraft.getInstance();
-			AbstractClientPlayer player = mc.player;
 
 			PoseStack ms = event.getPoseStack();
 			MultiBufferSource buffer = event.getMultiBufferSource();

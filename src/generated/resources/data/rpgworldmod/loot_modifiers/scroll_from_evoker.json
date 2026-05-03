@@ -1,6 +1,7 @@
 {
   "type": "rpgworldmod:replace_item_chance",
-  "chance": 0.4,
+  "both_chance": 0.05,
+  "chance": 0.25,
   "conditions": [
     {
       "condition": "forge:loot_table_id",

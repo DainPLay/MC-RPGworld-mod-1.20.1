@@ -1,6 +1,7 @@
 package net.dainplay.rpgworldmod.enchantment;
 
 import net.dainplay.rpgworldmod.RPGworldMod;
+import net.dainplay.rpgworldmod.item.custom.DaggerItem;
 import net.dainplay.rpgworldmod.item.custom.DrillSpearItem;
 import net.dainplay.rpgworldmod.item.custom.EmptyScrollItem;
 import net.dainplay.rpgworldmod.item.custom.GuitarAxItem;
@@ -28,6 +29,7 @@ public class ModEnchantments {
 	public static final EnchantmentCategory GUITAR_AX = EnchantmentCategory.create("guitar_ax", (item) -> (item instanceof MintalTriangleItem || item instanceof GuitarAxItem));
 	public static final EnchantmentCategory MAGIC_SCROLLS = EnchantmentCategory.create("magic_scrolls", (item) -> (item instanceof EmptyScrollItem || item instanceof ScrollItem));
 	public static final EnchantmentCategory STAFFS = EnchantmentCategory.create("staffs", (item) -> (item instanceof StaffItem));
+	public static final EnchantmentCategory DAGGERS = EnchantmentCategory.create("daggers", (item) -> (item instanceof DaggerItem));
 	public static RegistryObject<Enchantment> PITCH =
 			ENCHANTMENTS.register("pitch",
 					() -> new PitchEnchantment(Enchantment.Rarity.COMMON,
@@ -92,6 +94,10 @@ public class ModEnchantments {
 			ENCHANTMENTS.register("double_exposure",
 					() -> new DoubleExposureEnchantment(Enchantment.Rarity.RARE,
 							STAFFS, EquipmentSlot.MAINHAND));
+	public static RegistryObject<Enchantment> IMMOLATION =
+			ENCHANTMENTS.register("immolation",
+					() -> new CollectionEnchantment(Enchantment.Rarity.RARE,
+							DAGGERS, EquipmentSlot.MAINHAND));
 
 
 	public static void register(IEventBus eventBus) {

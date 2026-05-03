@@ -1,16 +1,4 @@
 {
   "type": "rpgworldmod:wool_dyeing_scroll",
-  "category": "building",
-  "ingredients": [
-    {
-      "tag": "minecraft:wool"
-    },
-    {
-      "item": "rpgworldmod:pillager_scroll",
-      "nbt": "{Enchantments:[{id:\"minecraft:mending\",lvl:1}],SelectedColor:\"red\"}"
-    }
-  ],
-  "result": {
-    "item": "minecraft:red_wool"
-  }
+  "category": "building"
 }

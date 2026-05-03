@@ -11,10 +11,12 @@ import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.ModItems;
+import net.dainplay.rpgworldmod.item.custom.DaggerItem;
 import net.dainplay.rpgworldmod.item.custom.EmptyScrollItem;
 import net.dainplay.rpgworldmod.item.custom.EnderEyeScrollItem;
 import net.dainplay.rpgworldmod.item.custom.GasbassItem;
 import net.dainplay.rpgworldmod.item.custom.HornCoralStaffItem;
+import net.dainplay.rpgworldmod.item.custom.IgniteOnCritItem;
 import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
 import net.dainplay.rpgworldmod.item.custom.PillagerScrollItem;
 import net.dainplay.rpgworldmod.item.custom.ScrollItem;
@@ -54,10 +56,12 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.CompoundContainer;
 import net.minecraft.world.Container;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -73,6 +77,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -91,8 +96,10 @@ import net.minecraftforge.event.entity.living.LivingBreatheEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -110,6 +117,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mod.EventBusSubscriber(modid = RPGworldMod.MOD_ID)
 public class ModEvents {
+
 	@SubscribeEvent
 	public static void addCustomTrades(VillagerTradesEvent event) {
 		if (event.getType() == VillagerProfession.FISHERMAN) {
@@ -282,6 +290,9 @@ public class ModEvents {
 			player.getCapability(PlayerSculkStaffCDProvider.PLAYER_SCULK_STAFF_COOLDOWN).ifPresent(cooldown -> {
 				ModMessages.sendToPlayer(new SculkStaffCDDataSyncS2CPacket(cooldown.getCooldown()), player);
 			});
+			if (player.getMainHandItem().getItem() instanceof DaggerItem) {
+				DaggerItem.addDaggerReachModifier(player);
+			}
 		}
 	}
 
@@ -485,11 +496,6 @@ public class ModEvents {
 	public static void onLivingUpdate(LivingEvent.LivingTickEvent event) {
 		LivingEntity entity = event.getEntity();
 
-
-		if (!entity.level().isClientSide && entity.hasEffect(ModEffects.MIRRORING.get()) && entity.tickCount % 1200 == 0) {
-			EffectSyncHandler.generateAndSyncSeed(entity);
-		}
-
 		if (!entity.level().isClientSide && entity.tickCount % 20 == 0) {
 			CompoundTag tag = entity.getPersistentData();
 			if (tag.hasUUID("BoundPlayer") && tag.getBoolean("LivingWoodBound")) {
@@ -670,7 +676,9 @@ public class ModEvents {
 
 					if (!hasContainerOpen) {
 						HornCoralStaffItem.removeStaffReachModifier(player);
-
+					}
+					if (!(player.getMainHandItem().getItem() instanceof DaggerItem) && !(player.isUsingItem() && player.getUseItem().getItem() instanceof DaggerItem)) {
+						DaggerItem.removeDaggerReachModifier(player);
 					}
 				}
 			}
@@ -800,7 +808,7 @@ public class ModEvents {
 					64.0
 			);
 			player.getCooldowns().addCooldown(usingItem.getItem(), 15);
-			if(player.level() instanceof ServerLevel serverLevel) {
+			if (player.level() instanceof ServerLevel serverLevel) {
 				PillagerScrollItem.getPlayerUseData(serverLevel).remove(player.getUUID());
 				PillagerScrollItem.stopPlayerUse(serverLevel, player, usingItem, false);
 			}
@@ -851,6 +859,48 @@ public class ModEvents {
 						}
 					});
 				}
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
+		if (!(event.getEntity() instanceof Player player) || player.level().isClientSide) {
+			return;
+		}
+
+		if (event.getSlot() == EquipmentSlot.MAINHAND) {
+			ItemStack newItem = event.getTo();
+			ItemStack oldItem = event.getFrom();
+
+			if (newItem.getItem() instanceof DaggerItem) {
+				DaggerItem.addDaggerReachModifier(player);
+			} else if (oldItem.getItem() instanceof DaggerItem && !(player.isUsingItem() && player.getUseItem().getItem() instanceof DaggerItem)) {
+				DaggerItem.removeDaggerReachModifier(player);
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onCriticalHit(CriticalHitEvent event) {
+		Player player = event.getEntity();
+		ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
+		Entity target = event.getTarget();
+		if (stack.getItem() instanceof IgniteOnCritItem && event.isVanillaCritical()) {
+			int fortuneLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, stack);
+
+			float baseChance = 0.10f;
+			float chancePerLevel = 0.3f;
+
+			float totalChance = baseChance + (fortuneLevel * chancePerLevel);
+
+			totalChance = Math.min(totalChance, 1f) * 5;
+
+			float chance = target.level().getRandom().nextFloat();
+
+			if (chance < totalChance && !target.fireImmune()) {
+				int fireDuration = 5 + (fortuneLevel * 5);
+				target.setSecondsOnFire(fireDuration);
 			}
 		}
 	}

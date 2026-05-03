@@ -6,6 +6,7 @@ import com.mojang.math.Axis;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.ModItems;
+import net.dainplay.rpgworldmod.item.custom.DaggerItem;
 import net.dainplay.rpgworldmod.item.custom.EnderEyeScrollItem;
 import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
 import net.dainplay.rpgworldmod.network.ClientGuardianAttackData;
@@ -17,6 +18,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EndCrystalRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -26,6 +28,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
@@ -65,6 +69,16 @@ public class BeamRenderer {
 
 		poseStack.pushPose();
 
+		for (Player player : mc.level.players()) {
+			ItemStack mainHand = player.getMainHandItem();
+			ItemStack offHand = player.getOffhandItem();
+			if (mainHand.getItem() instanceof DaggerItem && PotionUtils.getPotion(mainHand) != Potions.EMPTY) {
+				renderDaggerParticles(player, partialTick, cameraPos, mainHand, InteractionHand.MAIN_HAND);
+			}
+			if (offHand.getItem() instanceof DaggerItem && PotionUtils.getPotion(offHand) != Potions.EMPTY) {
+				renderDaggerParticles(player, partialTick, cameraPos, offHand, InteractionHand.OFF_HAND);
+			}
+		}
 
 		for (var entry : ClientGuardianAttackData.getAll().entrySet()) {
 			ClientGuardianAttackData.AttackData data = entry.getValue();
@@ -108,6 +122,101 @@ public class BeamRenderer {
 			}
 		}
 		poseStack.popPose();
+	}
+
+	private static Vec3 getDaggerPosition(Player player, float partialTick, boolean firstPerson, ItemStack daggerStack, InteractionHand hand) {
+		Minecraft mc = Minecraft.getInstance();
+		HumanoidArm mainArm = player.getMainArm();
+		int side = mainArm == HumanoidArm.RIGHT ? 1 : -1;
+		if (hand == InteractionHand.OFF_HAND) side *= -1;
+		boolean usingItem = player.isUsingItem() && player.getUseItem() == daggerStack;
+		boolean immolation = daggerStack.getEnchantmentLevel(ModEnchantments.IMMOLATION.get()) > 0;
+
+		if (firstPerson) {
+			Vec3 cameraPos = mc.gameRenderer.getMainCamera().getPosition();
+			double scale = 1000.0 / mc.getEntityRenderDispatcher().options.fov().get().intValue();
+			float pLeftScale = 0.938F;
+			if (usingItem && !immolation) {
+				pLeftScale = 0.438F;
+			}
+			float pUpScale = immolation ? -0.35F : -0.447F;
+			if (usingItem && daggerStack.getItem() instanceof DaggerItem dagger) {
+				float progress = Math.min(1F, (float) (dagger.getUseDuration(daggerStack) - player.getUseItemRemainingTicks()) / (float) dagger.getAttackCooldown());
+				if (immolation) {
+					pUpScale -= 0.1F * (1 - Math.min(0.7F, progress) / 0.7F);
+					pLeftScale -= 0.5F * (Math.min(0.7F, progress) / 0.7F);
+				} else {
+					if (progress > 0.1F) {
+						pUpScale += (progress - 0.1F) / 9F * 10F * 0.8F;
+					}
+				}
+			}
+			Vec3 nearPoint = mc.getEntityRenderDispatcher().camera.getNearPlane().getPointOnPlane(side * pLeftScale, pUpScale);
+			float attackAnim = player.getAttackAnim(partialTick);
+			float f1 = Mth.sin(Mth.sqrt(attackAnim) * (float) Math.PI);
+			nearPoint = nearPoint.scale(scale);
+			nearPoint = nearPoint.yRot(f1 * 0.5F);
+			nearPoint = nearPoint.xRot(-f1 * 0.7F);
+			return cameraPos.add(nearPoint);
+		} else {
+
+			float yaw = Mth.lerp(partialTick, player.yBodyRotO, player.yBodyRot) * Mth.DEG_TO_RAD;
+			double sinYaw = Mth.sin(yaw);
+			double cosYaw = Mth.cos(yaw);
+			double sideOffset = side * 0.35;
+			double forwardOffset = 0.7;
+			if (usingItem) {
+				if (player.isCrouching()) {
+					forwardOffset = immolation ? 0.5 : 0.7;
+				} else {
+					forwardOffset = immolation ? 0.5 : 0.6;
+				}
+			} else {
+				if (player.isCrouching()) {
+					forwardOffset = 0.5;
+				}
+			}
+
+			double feetX = Mth.lerp(partialTick, player.xo, player.getX());
+			double feetY = Mth.lerp(partialTick, player.yo, player.getY());
+			double feetZ = Mth.lerp(partialTick, player.zo, player.getZ());
+
+			double handX = feetX - cosYaw * sideOffset - sinYaw * forwardOffset;
+			double handY = feetY + player.getEyeHeight() - 0.75;
+			if (usingItem) {
+				if (immolation) {
+					if (!player.isCrouching()) {
+						handY -= 0.2F;
+					}
+				} else {
+					handY += 0.9F;
+				}
+			}
+			double handZ = feetZ - sinYaw * sideOffset + cosYaw * forwardOffset;
+
+			if (player.isCrouching()) {
+				handY -= 0.1875;
+			}
+			return new Vec3(handX, handY, handZ);
+		}
+	}
+
+	private static void renderDaggerParticles(Player player, float partialTick, Vec3 cameraPos, ItemStack daggerStack, InteractionHand hand) {
+		if (player.tickCount % 10 != 0) return;
+		if (Minecraft.getInstance().isPaused()) return;
+
+		boolean firstPerson = (player == Minecraft.getInstance().player)
+				&& Minecraft.getInstance().options.getCameraType().isFirstPerson();
+
+		Vec3 pos = getDaggerPosition(player, partialTick, firstPerson, daggerStack, hand);
+
+		int color = PotionUtils.getColor(daggerStack);
+		if (color != -1) {
+			double r = (color >> 16 & 255) / 255.0;
+			double g = (color >> 8 & 255) / 255.0;
+			double b = (color & 255) / 255.0;
+			player.level().addParticle(ParticleTypes.ENTITY_EFFECT, pos.x, pos.y, pos.z, r, g, b);
+		}
 	}
 
 	private static void renderNetherStarBeam(PoseStack poseStack, MultiBufferSource bufferSource,

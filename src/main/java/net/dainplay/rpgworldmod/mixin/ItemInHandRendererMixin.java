@@ -3,6 +3,7 @@ package net.dainplay.rpgworldmod.mixin;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.dainplay.rpgworldmod.effect.ModEffects;
+import net.dainplay.rpgworldmod.item.custom.DaggerItem;
 import net.dainplay.rpgworldmod.item.custom.LivingWoodBowItem;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
 import net.minecraft.client.Minecraft;
@@ -13,13 +14,16 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -27,6 +31,45 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class ItemInHandRendererMixin {
 	ItemInHandRenderer handRenderer = (ItemInHandRenderer) (Object) this;
 
+	@Shadow
+	private float mainHandHeight;
+	@Shadow
+	private float offHandHeight;
+
+
+	@Redirect(
+			method = "tick",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/util/Mth;clamp(FFF)F",
+					ordinal = 2
+			)
+	)
+	private float redirectMainHandClamp(float value, float min, float max) {
+		Player player = Minecraft.getInstance().player;
+		if (player.isUsingItem() && player.getUsedItemHand() == InteractionHand.MAIN_HAND && player.getUseItem().getItem() instanceof DaggerItem dagger) {
+			float f = (float) (dagger.getUseDuration(player.getUseItem()) - player.getUseItemRemainingTicks()) / (float) dagger.getAttackCooldown();
+			return Mth.clamp(f * f * f - mainHandHeight, min, max);
+		}
+		return Mth.clamp(value, min, max);
+	}
+
+	@Redirect(
+			method = "tick",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/util/Mth;clamp(FFF)F",
+					ordinal = 3
+			)
+	)
+	private float redirectOffHandClamp(float value, float min, float max) {
+		Player player = Minecraft.getInstance().player;
+		if (player.isUsingItem() && player.getUsedItemHand() == InteractionHand.OFF_HAND && player.getUseItem().getItem() instanceof DaggerItem dagger) {
+			float f = (float) (dagger.getUseDuration(player.getUseItem()) - player.getUseItemRemainingTicks()) / (float) dagger.getAttackCooldown();
+			return Mth.clamp(f * f * f - offHandHeight, min, max);
+		}
+		return Mth.clamp(value, min, max);
+	}
 
 	@Inject(
 			method = "evaluateWhichHandsToRender",

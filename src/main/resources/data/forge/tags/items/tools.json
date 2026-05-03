@@ -23,6 +23,14 @@
     "rpgworldmod:bubble_coral_staff",
     "rpgworldmod:fire_coral_staff",
     "rpgworldmod:horn_coral_staff",
-    "rpgworldmod:brain_coral_staff"
+    "rpgworldmod:brain_coral_staff",
+    "rpgworldmod:wooden_dagger",
+    "rpgworldmod:stone_dagger",
+    "rpgworldmod:iron_dagger",
+    "rpgworldmod:golden_dagger",
+    "rpgworldmod:diamond_dagger",
+    "rpgworldmod:netherite_dagger",
+    "rpgworldmod:maskonite_dagger",
+    "rpgworldmod:flint_dagger"
   ]
 }

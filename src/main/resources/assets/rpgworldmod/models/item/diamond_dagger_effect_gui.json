@@ -1,0 +1,7 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "rpgworldmod:item/diamond_dagger_base",
+    "layer1": "rpgworldmod:item/dagger_effect_gui"
+  }
+}

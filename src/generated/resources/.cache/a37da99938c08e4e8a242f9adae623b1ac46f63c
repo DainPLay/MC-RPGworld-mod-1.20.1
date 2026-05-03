@@ -1,8 +1,8 @@
-// 1.20.1	2026-04-23T00:30:41.4931596	Tags for minecraft:damage_type mod id rpgworldmod
+
 ff08fab59b861c211655bf27b78a4f5ba96738b0 data/minecraft/tags/damage_type/always_triggers_silverfish.json
 40aea76bd301737aea28f9b0737232054d5fc839 data/minecraft/tags/damage_type/avoids_guardian_thorns.json
 797e2f2bad03c3760bbaea8d2851b1adcb83d121 data/minecraft/tags/damage_type/bypasses_armor.json
-49b31e9e4fc23f83ba92b5e3ecc2eaa8437699ef data/minecraft/tags/damage_type/bypasses_cooldown.json
+adfcf98303922d55a2189701bd08399f2cba6ed9 data/minecraft/tags/damage_type/bypasses_cooldown.json
 c342e9d28e3068cd03c6a06a9729dd91f337b104 data/minecraft/tags/damage_type/bypasses_effects.json
 8788b3e36143323867bec3fa3c1537f0baed5cd9 data/minecraft/tags/damage_type/bypasses_enchantments.json
 422fd9ff6514466ff129ceaf4c17567d299718fc data/minecraft/tags/damage_type/bypasses_invulnerability.json

@@ -3,27 +3,16 @@ package net.dainplay.rpgworldmod.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.dainplay.rpgworldmod.RPGworldMod;
-import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.block.entity.custom.PottedStareblossomBlockEntity;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.level.FoliageColor;
-import net.minecraft.world.level.GrassColor;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 public class PottedStareblossomBlockEntityRenderer implements BlockEntityRenderer<PottedStareblossomBlockEntity> {
 	private static final ResourceLocation BUD_TEXTURE =
@@ -119,50 +108,4 @@ public class PottedStareblossomBlockEntityRenderer implements BlockEntityRendere
 		return true;
 	}
 
-	@Mod.EventBusSubscriber(modid = RPGworldMod.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
-	public static class ColorHandler {
-		@SubscribeEvent
-		public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-			event.getItemColors().register((stack, tintIndex) -> {
-						BlockState state = ((BlockItem) stack.getItem()).getBlock().defaultBlockState();
-						return event.getBlockColors().getColor(state, null, null, tintIndex);
-					},
-					ModBlocks.WIDOWEED.get(), ModBlocks.TRIPLOVER.get(), ModBlocks.RIE_LEAVES.get(), ModBlocks.SPIKY_IVY.get());
-		}
-
-		@SubscribeEvent
-		public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
-			event.getBlockColors().register((state, world, pos, tintIndex) ->
-							world != null && pos != null ? BiomeColors.getAverageGrassColor(world, pos) : GrassColor.get(0.5D, 1.0D),
-					ModBlocks.WIDOWEED.get(), ModBlocks.TRIPLOVER.get(), ModBlocks.HOLTS_REFLECTION.get(), ModBlocks.SPIKY_IVY.get(), ModBlocks.POTTED_SPIKY_IVY.get(), ModBlocks.POTTED_HOLTS_REFLECTION.get(), ModBlocks.PARALILY.get());
-
-
-			event.getBlockColors().register((state, world, pos, tintIndex) ->
-							world != null && pos != null ? BiomeColors.getAverageFoliageColor(world, pos) : FoliageColor.getDefaultColor(),
-					ModBlocks.RIE_LEAVES.get());
-
-			event.getBlockColors().register((state, world, pos, tintIndex) ->
-							11633736,
-					ModBlocks.ARBOR_FUEL_CAULDRON.get());
-
-
-			event.getBlockColors().register((p_92596_, p_92597_, p_92598_, p_92599_) -> p_92597_ != null && p_92598_ != null ? 2129968 : 7455580, ModBlocks.PARALILY.get());
-		}
-	}
-
-	public static class ColorConstants {
-		public static final int RIE_WEALD_WATER = 0x3B8CAE;
-
-		public static final int RIE_WEALD_WATERFOG = 0x1D4657;
-
-		public static int RIE_WEALD_FOLIAGE_COLOR = 0x3EB261;
-
-		public static int RIE_WEALD_GRASS_COLOR = 0x20AC6E;
-
-		public static int STANDARD_FOG = 0x7AABFA;
-
-		@Deprecated
-		private ColorConstants() {
-		}
-	}
 }

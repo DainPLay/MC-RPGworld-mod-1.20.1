@@ -1,0 +1,43 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "rpgworldmod:item/stone_dagger"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "stabbing": 1,
+        "effect": 0
+      },
+      "model": "rpgworldmod:item/stone_dagger_stabbing"
+    },
+    {
+      "predicate": {
+        "stabbing": 0,
+        "effect": 1
+      },
+      "model": "rpgworldmod:item/stone_dagger_effect"
+    },
+    {
+      "predicate": {
+        "stabbing": 1,
+        "effect": 1
+      },
+      "model": "rpgworldmod:item/stone_dagger_effect_stabbing"
+    },
+    {
+      "predicate": {
+        "stabbing": 2,
+        "effect": 0
+      },
+      "model": "rpgworldmod:item/stone_dagger_self_stabbing"
+    },
+    {
+      "predicate": {
+        "stabbing": 2,
+        "effect": 1
+      },
+      "model": "rpgworldmod:item/stone_dagger_effect_self_stabbing"
+    }
+  ]
+}

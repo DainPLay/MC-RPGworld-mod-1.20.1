@@ -1,0 +1,31 @@
+{
+  "parent": "rpgworldmod:backstab",
+  "criteria": {
+    "effect_dagger": {
+      "conditions": {},
+      "trigger": "rpgworldmod:effect_dagger"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.rpgworldmod.effect_dagger.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:iron_dagger",
+      "nbt": "{Damage:0, Potion:\"minecraft:poison\"}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.rpgworldmod.effect_dagger.title"
+    }
+  },
+  "requirements": [
+    [
+      "effect_dagger"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -953,7 +953,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				return false;
 			}
 
-			if(this.ownerLastHurt.isAlliedTo(owner)) return false;
+			if (this.ownerLastHurt.isAlliedTo(owner)) return false;
 
 			return mosquito.canAttack(this.ownerLastHurt) &&
 					!mosquito.isAlliedTo(this.ownerLastHurt) &&
@@ -1005,7 +1005,7 @@ public class MosquitoSwarm extends Monster implements OwnableEntity {
 				return false;
 			}
 
-			if(this.ownerLastHurtBy.isAlliedTo(owner)) return false;
+			if (this.ownerLastHurtBy.isAlliedTo(owner)) return false;
 
 
 			return mosquito.canAttack(this.ownerLastHurtBy) &&

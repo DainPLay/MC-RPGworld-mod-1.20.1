@@ -4,6 +4,7 @@ import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.gui.HealthOverlayEventHandler;
 import net.dainplay.rpgworldmod.gui.ManaOverlayEventHandler;
 import net.dainplay.rpgworldmod.item.ModItems;
+import net.dainplay.rpgworldmod.item.custom.DaggerItem;
 import net.dainplay.rpgworldmod.item.custom.PillagerScrollItem;
 import net.dainplay.rpgworldmod.network.ClientMaxManaData;
 import net.dainplay.rpgworldmod.util.BeaconSpellStarMenuHandler;
@@ -13,20 +14,28 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import static net.minecraft.world.item.alchemy.PotionUtils.getMobEffects;
 
 @Mixin(Gui.class)
 public abstract class GuiMixin {
@@ -56,6 +65,9 @@ public abstract class GuiMixin {
 				&& this.lastToolHighlight.getItem() != ModItems.BUBBLE_CORAL_STAFF.get()
 				&& this.lastToolHighlight.getItem() != ModItems.HORN_CORAL_STAFF.get()
 				&& this.lastToolHighlight.getItem() != ModItems.FIRE_CORAL_STAFF.get()
+				&& !(this.lastToolHighlight.getItem() instanceof DaggerItem
+				&& PotionUtils.getPotion(this.lastToolHighlight) != Potions.EMPTY
+				&& !getMobEffects(this.lastToolHighlight).isEmpty())
 				&& !(this.lastToolHighlight.getItem() == ModItems.PILLAGER_SCROLL.get()
 				&& this.lastToolHighlight.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0)) {
 			return;
@@ -79,16 +91,37 @@ public abstract class GuiMixin {
 		if (this.lastToolHighlight.getItem() == ModItems.HORN_CORAL_STAFF.get()) color = 0xEDEC4C;
 		if (this.lastToolHighlight.getItem() == ModItems.FIRE_CORAL_STAFF.get()) color = 0xC62A37;
 
-		String key =
-				this.lastToolHighlight.getItem() == ModItems.PILLAGER_SCROLL.get()
-				? Component.translatable("tooltip.rpgworldmod.selected_color." + PillagerScrollItem.getSelectedColor(this.lastToolHighlight).getName()).getString()
-				: this.lastToolHighlight.getDescriptionId() + ".target";
+		String key = this.lastToolHighlight.getDescriptionId() + ".target";
+		if (this.lastToolHighlight.getItem() == ModItems.PILLAGER_SCROLL.get())
+			key = Component.translatable("tooltip.rpgworldmod.selected_color." + PillagerScrollItem.getSelectedColor(this.lastToolHighlight).getName()).getString();
+		else if (this.lastToolHighlight.getItem() instanceof DaggerItem) key = "";
+
 		int finalColor = color;
-		Component secondLineComponent = Component.translatable(this.lastToolHighlight.getItem() == ModItems.PILLAGER_SCROLL.get() ? "tooltip.rpgworldmod.selected_color" : "tooltip.rpgworldmod.target")
+		Component secondLineComponent = Component.translatable("tooltip.rpgworldmod.target")
 				.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC)
 				.append(Component.literal(" ").withStyle(ChatFormatting.ITALIC))
 				.append(Component.translatable(key).withStyle(ChatFormatting.ITALIC).withStyle(style -> style.withColor(finalColor)));
 
+		if (this.lastToolHighlight.getItem() == ModItems.PILLAGER_SCROLL.get()) {
+			secondLineComponent = Component.translatable("tooltip.rpgworldmod.selected_color")
+					.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC)
+					.append(Component.literal(" ").withStyle(ChatFormatting.ITALIC))
+					.append(Component.translatable(key).withStyle(ChatFormatting.ITALIC).withStyle(style -> style.withColor(finalColor)));
+		} else if (this.lastToolHighlight.getItem() instanceof DaggerItem) {
+
+			for (MobEffectInstance mobeffectinstance : getMobEffects(this.lastToolHighlight)) {
+				MobEffect mobeffect = mobeffectinstance.getEffect();
+				secondLineComponent = Component.translatable(mobeffectinstance.getDescriptionId()).withStyle(mobeffect.getCategory().getTooltipFormatting());
+
+				if (mobeffectinstance.getAmplifier() > 0) {
+					secondLineComponent = Component.translatable("potion.withAmplifier", secondLineComponent, Component.translatable("potion.potency." + mobeffectinstance.getAmplifier()).withStyle(mobeffect.getCategory().getTooltipFormatting()));
+				}
+
+				if (!mobeffectinstance.endsWithin(20)) {
+					secondLineComponent = Component.translatable("potion.withDuration", secondLineComponent, MobEffectUtil.formatDuration(mobeffectinstance, 0.125F)).withStyle(mobeffect.getCategory().getTooltipFormatting());
+				}
+			}
+		}
 
 		ci.cancel();
 
@@ -187,5 +220,35 @@ public abstract class GuiMixin {
 		if (BeaconSpellStarMenuHandler.isActive() || RecolorWoolMenuHandler.isActive()) {
 			ci.cancel();
 		}
+	}
+
+	@Redirect(
+			method = "renderHotbar",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/player/LocalPlayer;getAttackStrengthScale(F)F"
+			)
+	)
+	private float renderHotbarDagger(LocalPlayer instance, float v) {
+		Player player = Minecraft.getInstance().player;
+		if (player.isUsingItem() && player.getUseItem().getItem() instanceof DaggerItem dagger) {
+			return (float) (dagger.getUseDuration(player.getUseItem()) - player.getUseItemRemainingTicks()) / (float) dagger.getAttackCooldown();
+		}
+		return player.getAttackStrengthScale(0.0F);
+	}
+
+	@Redirect(
+			method = "renderCrosshair",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/player/LocalPlayer;getAttackStrengthScale(F)F"
+			)
+	)
+	private float renderCrosshairDagger(LocalPlayer instance, float v) {
+		Player player = Minecraft.getInstance().player;
+		if (player.isUsingItem() && player.getUseItem().getItem() instanceof DaggerItem dagger) {
+			return (float) (dagger.getUseDuration(player.getUseItem()) - player.getUseItemRemainingTicks()) / (float) dagger.getAttackCooldown();
+		}
+		return player.getAttackStrengthScale(0.0F);
 	}
 }

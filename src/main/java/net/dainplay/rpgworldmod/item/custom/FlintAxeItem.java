@@ -3,9 +3,7 @@ package net.dainplay.rpgworldmod.item.custom;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
@@ -20,7 +18,7 @@ import net.minecraftforge.fml.DistExecutor;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class FlintAxeItem extends AxeItem implements RPGtooltip {
+public class FlintAxeItem extends AxeItem implements RPGtooltip, IgniteOnCritItem {
 	public FlintAxeItem(Tier pTier, float pAttackDamageModifier, float pAttackSpeedModifier, Properties pProperties) {
 		super(pTier, pAttackDamageModifier, pAttackSpeedModifier, pProperties);
 	}
@@ -46,11 +44,6 @@ public class FlintAxeItem extends AxeItem implements RPGtooltip {
 			float chancePerLevel = 0.3f;
 
 			float totalChance = baseChance + (fortuneLevel * chancePerLevel);
-
-			if (attacker instanceof Player player) {
-				boolean flag2 = player.fallDistance > 0.0F && !player.onGround() && !player.onClimbable() && !player.isInWater() && !player.hasEffect(MobEffects.BLINDNESS) && !player.isPassenger() && !player.isSprinting();
-				if (flag2) totalChance *= 5;
-			}
 
 			totalChance = Math.min(totalChance, 1f);
 

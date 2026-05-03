@@ -106,6 +106,150 @@ public class ModGlobalLootModifiersProvider extends GlobalLootModifierProvider {
 				0.25F,
 				0.05F
 		));
+
+		add("golden_dagger_in_bastion_bridge", new AddDaggerModifier(
+				new LootItemCondition[]{
+						new LootTableIdCondition.Builder(new ResourceLocation("chests/bastion_bridge")).build()
+				},
+				ModItems.GOLDEN_DAGGER.get(),
+				0.112F,
+				0.25F,
+				0,
+				0.0F,
+				false
+		));
+
+		add("golden_dagger_in_bastion_other", new AddDaggerModifier(
+				new LootItemCondition[]{
+						new LootTableIdCondition.Builder(new ResourceLocation("chests/bastion_other")).build()
+				},
+				ModItems.GOLDEN_DAGGER.get(),
+				0.098F,
+				0.25F,
+				0,
+				0.0F,
+				false
+		));
+
+		add("enchanted_iron_dagger_in_bastion_other", new AddDaggerModifier(
+				new LootItemCondition[]{
+						new LootTableIdCondition.Builder(new ResourceLocation("chests/bastion_other")).build()
+				},
+				ModItems.IRON_DAGGER.get(),
+				0.152F,
+				0.25F,
+				15,
+				1.0F,
+				true
+		));
+
+		add("diamond_dagger_in_bastion_hoglin_stable", new AddDaggerModifier(
+				new LootItemCondition[]{
+						new LootTableIdCondition.Builder(new ResourceLocation("chests/bastion_hoglin_stable")).build()
+				},
+				ModItems.DIAMOND_DAGGER.get(),
+				0.12F,
+				0F,
+				15,
+				1.0F,
+				false
+		));
+
+		add("diamond_dagger_in_bastion_treasure", new AddDaggerModifier(
+				new LootItemCondition[]{
+						new LootTableIdCondition.Builder(new ResourceLocation("chests/bastion_treasure")).build()
+				},
+				ModItems.DIAMOND_DAGGER.get(),
+				0.152F,
+				0.25F,
+				0,
+				0.0F,
+				false
+		));
+
+		add("enchanted_diamond_dagger_in_bastion_treasure", new AddDaggerModifier(
+				new LootItemCondition[]{
+						new LootTableIdCondition.Builder(new ResourceLocation("chests/bastion_treasure")).build()
+				},
+				ModItems.DIAMOND_DAGGER.get(),
+				0.152F,
+				0.25F,
+				15,
+				1.0F,
+				true
+		));
+
+		add("golden_dagger_in_ruined_portal", new AddDaggerModifier(
+				new LootItemCondition[]{
+						new LootTableIdCondition.Builder(new ResourceLocation("chests/ruined_portal")).build()
+				},
+				ModItems.GOLDEN_DAGGER.get(),
+				0.205F,
+				0F,
+				30,
+				1.0F,
+				false
+		));
+
+		add("iron_dagger_in_buried_treasure", new AddDaggerModifier(
+				new LootItemCondition[]{
+						new LootTableIdCondition.Builder(new ResourceLocation("chests/buried_treasure")).build()
+				},
+				ModItems.IRON_DAGGER.get(),
+				0.167F,
+				0.25F,
+				0,
+				0F,
+				false
+		));
+
+		add("iron_dagger_in_stronghold_corridor", new AddDaggerModifier(
+				new LootItemCondition[]{
+						new LootTableIdCondition.Builder(new ResourceLocation("chests/stronghold_corridor")).build()
+				},
+				ModItems.IRON_DAGGER.get(),
+				0.119F,
+				0.25F,
+				0,
+				0F,
+				false
+		));
+
+		add("iron_dagger_in_village_weaponsmith", new AddDaggerModifier(
+				new LootItemCondition[]{
+						new LootTableIdCondition.Builder(new ResourceLocation("chests/village/village_weaponsmith")).build()
+				},
+				ModItems.IRON_DAGGER.get(),
+				0.229F,
+				0F,
+				0,
+				0F,
+				false
+		));
+
+		add("iron_dagger_in_end_city_treasure", new AddDaggerModifier(
+				new LootItemCondition[]{
+						new LootTableIdCondition.Builder(new ResourceLocation("chests/end_city_treasure")).build()
+				},
+				ModItems.IRON_DAGGER.get(),
+				0.127F,
+				0.25F,
+				30,
+				1F,
+				false
+		));
+
+		add("diamond_dagger_in_end_city_treasure", new AddDaggerModifier(
+				new LootItemCondition[]{
+						new LootTableIdCondition.Builder(new ResourceLocation("chests/end_city_treasure")).build()
+				},
+				ModItems.DIAMOND_DAGGER.get(),
+				0.127F,
+				0.25F,
+				30,
+				1F,
+				false
+		));
 	}
 
 }

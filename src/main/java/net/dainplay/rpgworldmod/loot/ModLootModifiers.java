@@ -24,6 +24,8 @@ public class ModLootModifiers {
 			LOOT_MODIFIER_SERIALIZERS.register("add_enchanted_scroll", AddEnchantedScrollModifier.CODEC);
 	public static final RegistryObject<Codec<NetherStarScrollPickaxeModifier>> NETHER_STAR_PICKAXE =
 			LOOT_MODIFIER_SERIALIZERS.register("nether_star_pickaxe", () -> NetherStarScrollPickaxeModifier.CODEC);
+	public static final RegistryObject<Codec<? extends IGlobalLootModifier>> ADD_DAGGER =
+			LOOT_MODIFIER_SERIALIZERS.register("add_dagger", AddDaggerModifier.CODEC);
 
 
 	public static void register(IEventBus eventBus) {

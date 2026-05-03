@@ -599,7 +599,7 @@ public class ModBlocks {
 	}
 
 	private static Boolean never(BlockState p_50779_, BlockGetter p_50780_, BlockPos p_50781_, EntityType<?> p_50782_) {
-		return (boolean)false;
+		return (boolean) false;
 	}
 
 	private static boolean never(BlockState p_50806_, BlockGetter p_50807_, BlockPos p_50808_) {
