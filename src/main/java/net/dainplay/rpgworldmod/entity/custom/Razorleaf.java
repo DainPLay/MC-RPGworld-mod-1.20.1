@@ -252,11 +252,6 @@ public class Razorleaf extends Monster {
 	public void tick() {
 		super.tick();
 
-		if (this.level().isClientSide) {
-			this.randomSeed = this.entityData.get(DATA_RANDOM_SEED);
-
-			handleClientPull();
-		}
 
 		if (this.isOnFire()) this.extinguishFire();
 
@@ -264,19 +259,6 @@ public class Razorleaf extends Monster {
 			serverTick();
 		} else {
 			clientTick();
-		}
-	}
-
-	private void handleClientPull() {
-		Vec3 pullDirection = getPullDirection();
-		if (pullDirection.lengthSqr() > 0.01) {
-			Entity target = getTongueTargetEntity();
-			if (target != null) {
-				if (target instanceof Player player && player == Minecraft.getInstance().player) {
-					Vec3 motion = pullDirection.scale(0.75);
-					player.setDeltaMovement(motion);
-				}
-			}
 		}
 	}
 
@@ -604,9 +586,9 @@ public class Razorleaf extends Monster {
 					if (target instanceof ServerPlayer serverPlayer) {
 						ModMessages.sendToPlayer(new SyncEntityMotionPacket(
 								serverPlayer.getId(),
-								motion.x,
-								motion.y,
-								motion.z
+								this.getId(),
+								true,
+								motion.x, motion.y, motion.z
 						), serverPlayer);
 					}
 
@@ -820,9 +802,9 @@ public class Razorleaf extends Monster {
 		if (entity instanceof ServerPlayer serverPlayer) {
 			ModMessages.sendToPlayer(new SyncEntityMotionPacket(
 					serverPlayer.getId(),
-					direction.x,
-					direction.y,
-					direction.z
+					this.getId(),
+					false,
+					direction.x, direction.y, direction.z
 			), serverPlayer);
 		}
 
@@ -924,9 +906,9 @@ public class Razorleaf extends Monster {
 					if (player instanceof ServerPlayer serverPlayer) {
 						ModMessages.sendToPlayer(new SyncEntityMotionPacket(
 								serverPlayer.getId(),
-								knockback.x,
-								knockback.y,
-								knockback.z
+								this.getId(),
+								false,
+								knockback.x, knockback.y, knockback.z
 						), serverPlayer);
 					}
 				}

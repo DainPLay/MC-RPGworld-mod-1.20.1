@@ -623,8 +623,6 @@
   "effect.rpgworldmod.paranoia.description": "Отключает естественную регенерацию маны и истощает ману.",
   "effect.rpgworldmod.happiness": "Счастье",
   "effect.rpgworldmod.happiness.description": "Увеличивает максимальный запас маны и восстанавливает её со временем.",
-  "effect.rpgworldmod.burn_illusion": "Иллюзия горения",
-  "effect.rpgworldmod.burn_illusion.description": "Цель думает, что горит, но на самом деле она не получает урона.",
   "effect.rpgworldmod.necrosis": "Некроз",
   "effect.rpgworldmod.necrosis.description": "Уменьшает максимальный запас здоровья.",
   "effect.rpgworldmod.burnout": "Выгорание",
@@ -633,6 +631,12 @@
   "effect.rpgworldmod.amphibiosis.description": "Цель дышит водой вместо воздуха.",
   "effect.rpgworldmod.mirroring": "Отражение",
   "effect.rpgworldmod.mirroring.description": "У цели есть мнимые зеркальные отражения. Их количество зависит от уровня эффекта.",
+  "effect.rpgworldmod.burn_illusion": "Иллюзия",
+  "effect.rpgworldmod.burn_illusion.description": "Что-то не так.",
+  "effect.rpgworldmod.mob_beckon": "Иллюзия",
+  "effect.rpgworldmod.mob_beckon.description": "Что-то не так.",
+  "effect.rpgworldmod.nether_portal_illusion": "Иллюзия",
+  "effect.rpgworldmod.nether_portal_illusion.description": "Что-то не так.",
 
   "item.minecraft.potion.effect.paralysis_potion": "Зелье нервного паралича",
   "item.minecraft.potion.effect.long_paralysis_potion": "Зелье нервного паралича",
@@ -840,6 +844,8 @@
   "enchantment.rpgworldmod.conjuration.desc": "Один из шести типов магии. Всё, что способно создать что-либо материальное или мнимое, или дополнить существующее.",
   "enchantment.rpgworldmod.destruction.desc": "Один из шести типов магии. Всё, что нацелено на нанесение урона окружающей среде или может быть использовано в роли оружия.",
   "enchantment.rpgworldmod.necromancy.desc": "Один из шести типов магии. Всё, что недоступно в использовании ценой маны, но доступно в использовании ценой здоровья.",
+
+  "gamerule.disableGasbassPvpCooldown": "Без задержки Смокуня во время битвы",
 
   "trim_material.rpgworldmod.mintal": "Минталловая",
 

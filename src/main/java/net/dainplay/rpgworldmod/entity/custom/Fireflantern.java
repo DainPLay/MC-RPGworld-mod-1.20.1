@@ -132,7 +132,7 @@ public class Fireflantern extends Monster {
 				List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, aabb);
 
 				for (LivingEntity entity : entities) {
-					if (!(entity instanceof Fireflantern) && !entity.isSpectator()) {
+					if (!(entity instanceof Fireflantern) && !entity.isSpectator() && !level.isClientSide()) {
 						entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 140, 0));
 					}
 				}

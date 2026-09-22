@@ -35,11 +35,6 @@ public class LivingWoodLogBlock extends RotatedPillarBlock {
 	}
 
 	@Override
-	public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
-		return Shapes.empty();
-	}
-
-	@Override
 	public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
 		return 1.0F;
 	}

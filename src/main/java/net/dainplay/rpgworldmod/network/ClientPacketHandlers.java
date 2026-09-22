@@ -98,13 +98,67 @@ public class ClientPacketHandlers {
 		}
 	}
 
-	public static void handleSyncEntityMotion(int entityId, double motionX, double motionY, double motionZ) {
+	private static final long MAX_PULL_DURATION_MS = 5000L;   // 5 секунд
+	private static final long PULL_GAP_RESET_MS = 500L;       // пауза, после которой считаем, что началось новое притягивание
+	private static final double MAX_PULL_DISTANCE = 5.0;      // 5 блоков
+
+	private static final Map<Integer, PullData> pullDataMap = new HashMap<>();
+
+	private static class PullData {
+		int sourceId;
+		long startTime;
+		long lastPacketTime;
+	}
+
+	public static void handleSyncEntityMotion(int entityId, int sourceEntityId, boolean isPull,
+											  double motionX, double motionY, double motionZ) {
 		Level level = Minecraft.getInstance().level;
 		if (level == null) return;
 		Entity entity = level.getEntity(entityId);
-		if (entity != null) {
-			entity.setDeltaMovement(motionX, motionY, motionZ);
+		if (entity == null) return;
+
+		if (isPull) {
+			Entity source = level.getEntity(sourceEntityId);
+
+			// Источник должен существовать и быть Razorleaf'ом
+			if (!(source instanceof Razorleaf)) {
+				pullDataMap.remove(entityId);
+				return;
+			}
+
+			// Проверка дистанции: тянем только если игрок в радиусе 5 блоков
+			if (entity.distanceTo(source) > MAX_PULL_DISTANCE) {
+				pullDataMap.remove(entityId);
+				return;
+			}
+
+			// Проверка длительности: не более 5 секунд подряд
+			long now = System.currentTimeMillis();
+			PullData data = pullDataMap.get(entityId);
+			if (data == null
+					|| data.sourceId != sourceEntityId
+					|| (now - data.lastPacketTime) > PULL_GAP_RESET_MS) {
+				// Новое притягивание (или источник сменился)
+				data = new PullData();
+				data.sourceId = sourceEntityId;
+				data.startTime = now;
+				data.lastPacketTime = now;
+				pullDataMap.put(entityId, data);
+			} else if (now - data.startTime > MAX_PULL_DURATION_MS) {
+				// Превышен лимит — прерываем движение
+				pullDataMap.remove(entityId);
+				return;
+			} else {
+				data.lastPacketTime = now;
+			}
 		}
+
+		entity.setDeltaMovement(motionX, motionY, motionZ);
+	}
+
+	/** Сброс таймера (например, когда Razorleaf перестал тянуть). */
+	public static void clearPullData(int playerEntityId) {
+		pullDataMap.remove(playerEntityId);
 	}
 
 	public static void handleIllusionForceSync(int illusionForce, float entPositionX, float entPositionY, float entPositionZ, boolean isSet, boolean isEnt) {

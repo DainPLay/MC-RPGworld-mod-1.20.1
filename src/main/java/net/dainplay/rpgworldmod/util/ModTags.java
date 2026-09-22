@@ -15,9 +15,14 @@ public class ModTags {
 	public static class Blocks {
 		public static final TagKey<Block> STICKY_FOR_MOSQUITOS = forgeTag("sticky_for_mosquitos");
 		public static final TagKey<Block> SWEET_FOOD = forgeTag("sweet_food");
+		public static final TagKey<Block> LIVING_WOOD_LOGS = modTag("living_wood_logs");
 
 		private static TagKey<Block> forgeTag(String name) {
 			return BlockTags.create(new ResourceLocation("forge", name));
+		}
+
+		private static TagKey<Block> modTag(String name) {
+			return BlockTags.create(new ResourceLocation(RPGworldMod.MOD_ID, name));
 		}
 	}
 

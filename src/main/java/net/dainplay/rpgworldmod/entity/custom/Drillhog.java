@@ -4,6 +4,7 @@ import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.block.ModBlocks;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
+import net.dainplay.rpgworldmod.util.ModTags;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.core.BlockPos;
@@ -151,7 +152,7 @@ public class Drillhog extends Monster {
 
 		protected boolean isValidTarget(LevelReader pLevel, BlockPos pPos) {
 			BlockState blockstate = pLevel.getBlockState(pPos);
-			return blockstate.is(BlockTags.LOGS) && blockstate.hasProperty(BlockStateProperties.AXIS);
+			return blockstate.is(BlockTags.LOGS) && blockstate.hasProperty(BlockStateProperties.AXIS) && !blockstate.is(ModTags.Blocks.LIVING_WOOD_LOGS);
 		}
 
 

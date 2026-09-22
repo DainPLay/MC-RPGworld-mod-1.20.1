@@ -349,21 +349,12 @@ public class ModBlocks {
 				}
 
 				@Override
-				public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
-					return Shapes.empty();
-				}
-
-				@Override
 				public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
 					return 1.0F;
 				}
 			});
 	public static final RegistryObject<Block> STRIPPED_LIVING_WOOD_LOG = registerBlock("stripped_living_wood_log",
 			() -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_WARPED_STEM).mapColor(MapColor.GLOW_LICHEN)) {
-				@Override
-				public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
-					return Shapes.empty();
-				}
 
 				@Override
 				public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
@@ -372,10 +363,6 @@ public class ModBlocks {
 			});
 	public static final RegistryObject<Block> STRIPPED_LIVING_WOOD_WOOD = registerBlock("stripped_living_wood_wood",
 			() -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_WARPED_HYPHAE).mapColor(MapColor.GLOW_LICHEN)) {
-				@Override
-				public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
-					return Shapes.empty();
-				}
 
 				@Override
 				public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
@@ -534,10 +521,6 @@ public class ModBlocks {
 					.requiresCorrectToolForDrops()
 					.strength(5.0F, 6.0F)
 			) {
-				@Override
-				public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
-					return Shapes.empty();
-				}
 
 				@Override
 				public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {

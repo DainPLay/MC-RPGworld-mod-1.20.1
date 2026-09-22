@@ -623,8 +623,6 @@
   "effect.rpgworldmod.paranoia.description": "Disables natural mana regeneration and drains mana.",
   "effect.rpgworldmod.happiness": "Happiness",
   "effect.rpgworldmod.happiness.description": "Increases maximum mana and regenerates it.",
-  "effect.rpgworldmod.burn_illusion": "Burn Illusion",
-  "effect.rpgworldmod.burn_illusion.description": "The target thinks it's on fire, but it doesn't actually take damage.",
   "effect.rpgworldmod.necrosis": "Necrosis",
   "effect.rpgworldmod.necrosis.description": "Reduces maximum health.",
   "effect.rpgworldmod.burnout": "Burnout",
@@ -633,6 +631,12 @@
   "effect.rpgworldmod.amphibiosis.description": "Target breathes water instead of air.",
   "effect.rpgworldmod.mirroring": "Mirroring",
   "effect.rpgworldmod.mirroring.description": "Target has imaginary mirror images. Their number depends on the level of the effect.",
+  "effect.rpgworldmod.burn_illusion": "Illusion",
+  "effect.rpgworldmod.burn_illusion.description": "Something isn't right.",
+  "effect.rpgworldmod.mob_beckon": "Illusion",
+  "effect.rpgworldmod.mob_beckon.description": "Something isn't right.",
+  "effect.rpgworldmod.nether_portal_illusion": "Illusion",
+  "effect.rpgworldmod.nether_portal_illusion.description": "Something isn't right.",
 
   "item.minecraft.potion.effect.paralysis_potion": "Nerve Paralysis Potion",
   "item.minecraft.potion.effect.long_paralysis_potion": "Nerve Paralysis Potion",
@@ -840,6 +844,8 @@
   "enchantment.rpgworldmod.conjuration.desc": "One of the six types of magic. Anything that is capable of creating something material or imaginary, or complementing something that already exists.",
   "enchantment.rpgworldmod.destruction.desc": "One of the six types of magic. Anything that is aimed at causing damage to the environment or can be used as a weapon.",
   "enchantment.rpgworldmod.necromancy.desc": "One of the six types of magic. Anything that cannot be used at the cost of mana, but can be used at the cost of health.",
+
+  "gamerule.disableGasbassPvpCooldown": "Disable Gasbass cooldown in combat",
 
   "trim_material.rpgworldmod.mintal": "Mintal Material",
 

@@ -72,10 +72,10 @@ public class BeamRenderer {
 		for (Player player : mc.level.players()) {
 			ItemStack mainHand = player.getMainHandItem();
 			ItemStack offHand = player.getOffhandItem();
-			if (mainHand.getItem() instanceof DaggerItem && PotionUtils.getPotion(mainHand) != Potions.EMPTY) {
+			if (mainHand.getItem() instanceof DaggerItem && PotionUtils.getPotion(mainHand) != Potions.EMPTY && !player.isSpectator()) {
 				renderDaggerParticles(player, partialTick, cameraPos, mainHand, InteractionHand.MAIN_HAND);
 			}
-			if (offHand.getItem() instanceof DaggerItem && PotionUtils.getPotion(offHand) != Potions.EMPTY) {
+			if (offHand.getItem() instanceof DaggerItem && PotionUtils.getPotion(offHand) != Potions.EMPTY && !player.isSpectator()) {
 				renderDaggerParticles(player, partialTick, cameraPos, offHand, InteractionHand.OFF_HAND);
 			}
 		}
