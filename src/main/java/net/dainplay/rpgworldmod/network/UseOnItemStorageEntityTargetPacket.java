@@ -44,14 +44,6 @@ public class UseOnItemStorageEntityTargetPacket {
 							SoundSource.PLAYERS, 1.0F, 1.0F
 					);
 
-
-					ModMessages.sendToNearbyPlayers(
-							new LoopSoundPacket(player.getId(), false, itemInHand),
-							player.serverLevel(),
-							player.blockPosition(),
-							64.0
-					);
-
 					Entity target = null;
 					Entity entity = player.level().getEntity(msg.targetId);
 					if (entity instanceof ContainerEntity) {

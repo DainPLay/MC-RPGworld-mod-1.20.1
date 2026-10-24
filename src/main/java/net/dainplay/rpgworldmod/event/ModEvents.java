@@ -343,7 +343,7 @@ public class ModEvents {
 
 	@SubscribeEvent
 	public static void onPlayerWakeUp(PlayerWakeUpEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) {
+		if (event.getEntity() instanceof ServerPlayer player && !event.wakeImmediately()) {
 			player.getServer().execute(() -> {
 				player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
 					if (mana.getMana() > 0) mana.addMana(player, mana.getMaxMana() / 2);
@@ -752,6 +752,9 @@ public class ModEvents {
 			return;
 		}
 		ItemStack usingItem = player.getUseItem();
+		if (net.minecraftforge.common.ForgeHooks.onLivingUseTotem(player, event.getSource(), usingItem, player.getUsedItemHand())) {
+			return;
+		}
 		if (usingItem.getItem() instanceof EnderEyeScrollItem
 				&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), usingItem) > 0) {
 			double radius = 32.0D;

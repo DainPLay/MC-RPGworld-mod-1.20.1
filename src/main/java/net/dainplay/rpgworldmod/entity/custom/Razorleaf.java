@@ -679,7 +679,6 @@ public class Razorleaf extends Monster {
 		if (stack.getItem() == ModBlocks.TIRE.get().asItem()) {
 			item.discard();
 			setState(State.EXTINGUISHED);
-			die(this.damageSources().generic());
 			this.level().explode(this, this.getX(), this.getY(0.0625D), this.getZ(), 2.0F, Level.ExplosionInteraction.MOB);
 			spawnExtinguishSmokeCircleAnimated();
 			this.playSound(RPGSounds.RAZORLEAF_EXTINGUISH.get(), 1.0F, 0.8F + getRandom().nextFloat() * 0.4F);

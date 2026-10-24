@@ -78,77 +78,37 @@ public class ThrownDrillSpear extends AbstractArrow {
 	}
 
 	public void tick() {
-		AABB aabb = this.getBoundingBox().expandTowards(this.getDeltaMovement());
 		if (this.entityData.get(ID_POWER) > 0F) {
-			for (BlockPos pos : BlockPos.betweenClosed(Mth.floor(aabb.minX), Mth.floor(aabb.minY), Mth.floor(aabb.minZ), Mth.floor(aabb.maxX), Mth.floor(aabb.maxY), Mth.floor(aabb.maxZ))) {
-				BlockState blockstate = this.level().getBlockState(pos);
-				Block block = blockstate.getBlock();
-				Level level = this.level();
-				boolean isEntBlock = (block instanceof LivingWoodLogBlock livingWoodLogBlock && livingWoodLogBlock.isRelatedToEnt(blockstate) != 0) ||
-						(block instanceof RieLeavesBlock rieLeavesBlock && rieLeavesBlock.isRelatedToEnt(blockstate) != 0);
-				if (isEntBlock) {
-					for (int x = -16; x <= 16; x++) {
-						for (int y = -16; y <= 16; y++) {
-							for (int z = -16; z <= 16; z++) {
-								BlockPos checkPos = pos.offset(x, y, z);
-								BlockEntity blockEntity = level.getBlockEntity(checkPos);
+			Vec3 delta = this.getDeltaMovement();
+			double distance = delta.length();
 
-								if (blockEntity instanceof EntFaceBlockEntity entEntity) {
-									if (entEntity.getRelatedBlocks().contains(pos)) {
-										entEntity.onRelatedBlockAttacked(pos);
-									}
-								}
-							}
-						}
+			double radius = this.getBbWidth() * 0.5D;
+
+			int samples = Math.max(1, Mth.ceil(distance / 0.25D));
+
+			java.util.Set<BlockPos> visited = new java.util.HashSet<>();
+
+			for (int i = 0; i <= samples; i++) {
+				double t = (double) i / (double) samples;
+				double x = this.getX() + delta.x * t;
+				double y = this.getY() + delta.y * t;
+				double z = this.getZ() + delta.z * t;
+
+				AABB sampleBox = new AABB(
+						x - radius, y - radius, z - radius,
+						x + radius, y + radius, z + radius
+				);
+
+				for (BlockPos pos : BlockPos.betweenClosed(
+						Mth.floor(sampleBox.minX), Mth.floor(sampleBox.minY), Mth.floor(sampleBox.minZ),
+						Mth.floor(sampleBox.maxX), Mth.floor(sampleBox.maxY), Mth.floor(sampleBox.maxZ))) {
+
+					if (visited.add(pos.immutable())) {
+						this.processBlock(pos);
 					}
 				}
-				if (level.getBlockEntity(pos) instanceof EntFaceBlockEntity entEntity)
-					entEntity.onRelatedBlockAttacked(pos);
-				if (blockstate.getBlock().getExplosionResistance(blockstate, level(), pos, null) < 20F && !blockstate.isAir()) {
-					if (level.isClientSide())
-						level.addDestroyBlockEffect(pos, blockstate);
-					if (level instanceof ServerLevel) {
-						ItemStack silkTouchTool = new ItemStack(Items.DIAMOND_PICKAXE);
-						if (EnchantmentHelper.getEnchantments(drillSpearItem).containsKey(Enchantments.SILK_TOUCH))
-							silkTouchTool.enchant(Enchantments.SILK_TOUCH, 1);
-						if (EnchantmentHelper.getEnchantments(drillSpearItem).containsKey(Enchantments.BLOCK_FORTUNE))
-							silkTouchTool.enchant(Enchantments.BLOCK_FORTUNE, EnchantmentHelper.getEnchantments(drillSpearItem).get(Enchantments.BLOCK_FORTUNE));
 
-
-						BlockEntity blockEntity = level.getBlockEntity(pos);
-
-						LootParams.Builder lootparams$builder = (new LootParams.Builder((ServerLevel) level))
-								.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
-								.withParameter(LootContextParams.TOOL, silkTouchTool);
-
-						if (blockEntity != null) {
-							lootparams$builder.withParameter(LootContextParams.BLOCK_ENTITY, blockEntity);
-						}
-
-						List<ItemStack> drops = blockstate.getDrops(lootparams$builder);
-						int fortuneLevel = 0;
-						if (EnchantmentHelper.getEnchantments(drillSpearItem).containsKey(Enchantments.BLOCK_FORTUNE))
-							fortuneLevel = EnchantmentHelper.getEnchantments(drillSpearItem).get(Enchantments.BLOCK_FORTUNE);
-						int exp = blockstate.getExpDrop(level, level.random, pos, fortuneLevel, 0);
-						for (ItemStack itemStack : drops) {
-							if (EnchantmentHelper.getEnchantments(drillSpearItem).containsKey(ModEnchantments.COLLECTION.get())
-									&& this.getOwner() instanceof Player player) {
-								if (!(player.getInventory().add(itemStack))) {
-									Block.popResource(level, pos, itemStack);
-								}
-								if (player instanceof ServerPlayer && !EnchantmentHelper.getEnchantments(drillSpearItem).containsKey(Enchantments.SILK_TOUCH))
-									player.giveExperiencePoints(exp);
-							} else {
-								Block.popResource(level, pos, itemStack);
-								if (!EnchantmentHelper.getEnchantments(drillSpearItem).containsKey(Enchantments.SILK_TOUCH))
-									blockstate.getBlock().popExperience((ServerLevel) level, pos, exp);
-							}
-						}
-						level.destroyBlock(pos, false);
-					}
-					this.entityData.set(ID_POWER, this.entityData.get(ID_POWER) - blockstate.getBlock().defaultDestroyTime());
-					this.playSound(RPGSounds.DRILL.get(), 0.5F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
-				}
+				if (this.entityData.get(ID_POWER) <= 0F) break;
 			}
 		}
 
@@ -163,7 +123,6 @@ public class ThrownDrillSpear extends AbstractArrow {
 				if (!this.level().isClientSide && this.pickup == AbstractArrow.Pickup.ALLOWED) {
 					this.spawnAtLocation(this.getPickupItem(), 0.1F);
 				}
-
 				this.discard();
 			} else {
 				this.setNoPhysics(true);
@@ -172,18 +131,94 @@ public class ThrownDrillSpear extends AbstractArrow {
 				if (this.level().isClientSide) {
 					this.yOld = this.getY();
 				}
-
 				double d0 = 0.05D * (double) i;
 				this.setDeltaMovement(this.getDeltaMovement().scale(0.95D).add(vec3.normalize().scale(d0)));
 				if (this.clientSideReturnTridentTickCount == 0) {
 					this.playSound(RPGSounds.DRILL_SPEAR_RETURN.get(), 10.0F, 1.0F);
 				}
-
 				++this.clientSideReturnTridentTickCount;
 			}
 		}
 
 		super.tick();
+	}
+
+	private void processBlock(BlockPos pos) {
+		Level level = this.level();
+		BlockState blockstate = level.getBlockState(pos);
+		if (blockstate.isAir()) return;
+
+		Block block = blockstate.getBlock();
+
+		boolean isEntBlock = (block instanceof LivingWoodLogBlock lw && lw.isRelatedToEnt(blockstate) != 0)
+				|| (block instanceof RieLeavesBlock rl && rl.isRelatedToEnt(blockstate) != 0);
+
+		if (isEntBlock) {
+			for (int x = -16; x <= 16; x++) {
+				for (int y = -16; y <= 16; y++) {
+					for (int z = -16; z <= 16; z++) {
+						BlockPos checkPos = pos.offset(x, y, z);
+						if (level.getBlockEntity(checkPos) instanceof EntFaceBlockEntity entEntity) {
+							if (entEntity.getRelatedBlocks().contains(pos)) {
+								entEntity.onRelatedBlockAttacked(pos);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (level.getBlockEntity(pos) instanceof EntFaceBlockEntity entEntity) {
+			entEntity.onRelatedBlockAttacked(pos);
+		}
+
+		if (blockstate.getBlock().getExplosionResistance(blockstate, level, pos, null) >= 20F) return;
+
+		if (level.isClientSide()) {
+			level.addDestroyBlockEffect(pos, blockstate);
+			this.entityData.set(ID_POWER, this.entityData.get(ID_POWER) - blockstate.getBlock().defaultDestroyTime());
+			this.playSound(RPGSounds.DRILL.get(), 0.5F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
+			return;
+		}
+
+		if (!(level instanceof ServerLevel serverLevel)) return;
+
+		ItemStack silkTouchTool = new ItemStack(Items.DIAMOND_PICKAXE);
+		var enchants = EnchantmentHelper.getEnchantments(drillSpearItem);
+		if (enchants.containsKey(Enchantments.SILK_TOUCH))
+			silkTouchTool.enchant(Enchantments.SILK_TOUCH, 1);
+		if (enchants.containsKey(Enchantments.BLOCK_FORTUNE))
+			silkTouchTool.enchant(Enchantments.BLOCK_FORTUNE, enchants.get(Enchantments.BLOCK_FORTUNE));
+
+		BlockEntity blockEntity = level.getBlockEntity(pos);
+		LootParams.Builder builder = new LootParams.Builder(serverLevel)
+				.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
+				.withParameter(LootContextParams.TOOL, silkTouchTool);
+		if (blockEntity != null) {
+			builder.withParameter(LootContextParams.BLOCK_ENTITY, blockEntity);
+		}
+
+		List<ItemStack> drops = blockstate.getDrops(builder);
+		int fortuneLevel = enchants.getOrDefault(Enchantments.BLOCK_FORTUNE, 0);
+		int exp = blockstate.getExpDrop(level, level.random, pos, fortuneLevel, 0);
+
+		for (ItemStack itemStack : drops) {
+			if (enchants.containsKey(ModEnchantments.COLLECTION.get()) && this.getOwner() instanceof Player player) {
+				if (!player.getInventory().add(itemStack)) {
+					Block.popResource(level, pos, itemStack);
+				}
+				if (player instanceof ServerPlayer && !enchants.containsKey(Enchantments.SILK_TOUCH))
+					player.giveExperiencePoints(exp);
+			} else {
+				Block.popResource(level, pos, itemStack);
+				if (!enchants.containsKey(Enchantments.SILK_TOUCH))
+					blockstate.getBlock().popExperience(serverLevel, pos, exp);
+			}
+		}
+
+		level.destroyBlock(pos, false);
+		this.entityData.set(ID_POWER, this.entityData.get(ID_POWER) - blockstate.getBlock().defaultDestroyTime());
+		this.playSound(RPGSounds.DRILL.get(), 0.5F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
 	}
 
 	private boolean isAcceptibleReturnOwner() {

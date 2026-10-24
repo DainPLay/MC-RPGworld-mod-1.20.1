@@ -2,7 +2,6 @@ package net.dainplay.rpgworldmod.item.custom;
 
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.network.ClientSculkStaffCDData;
-import net.dainplay.rpgworldmod.network.LoopSoundPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.PlayerSculkStaffCDProvider;
 import net.dainplay.rpgworldmod.network.PullDownPlayerPacket;
@@ -86,7 +85,6 @@ public class SculkStaffItem extends StaffItem {
 			}
 			if (endTick - currentTick <= activeRechargeLevel + 1 + divider) {
 				if (!pLevel.isClientSide) {
-					ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), false, pStack), pLevel, player.blockPosition(), 64.0);
 					pLevel.playSound(null, player.getX(), player.getY(), player.getZ(), RPGSounds.STAFF_STOP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 				}
 				if (pLevel.isClientSide && pLivingEntity instanceof LocalPlayer)
@@ -123,13 +121,11 @@ public class SculkStaffItem extends StaffItem {
 						cooldown.setCooldown((ServerPlayer) player, resultTick);
 						if (pStack.getEnchantmentLevel(ModEnchantments.DOUBLE_EXPOSURE.get()) > 0) {
 							if (useTick >= getMaxCooldown(pStack) * 2) {
-								ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), false, pStack), pLevel, player.blockPosition(), 64.0);
 								pLevel.playSound(null, player.getX(), player.getY(), player.getZ(), RPGSounds.STAFF_STOP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 								player.stopUsingItem();
 							}
 						} else {
 							if (useTick >= getMaxCooldown(pStack)) {
-								ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), false, pStack), pLevel, player.blockPosition(), 64.0);
 								pLevel.playSound(null, player.getX(), player.getY(), player.getZ(), RPGSounds.STAFF_STOP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 								player.stopUsingItem();
 							}
@@ -210,7 +206,6 @@ public class SculkStaffItem extends StaffItem {
 
 		if (!level.isClientSide) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(), RPGSounds.STAFF_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
-			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, itemstack), (ServerLevel) level, player.blockPosition(), 64.0);
 
 
 			SculkStaffVibrationSystem system = new SculkStaffVibrationSystem(player, itemstack);
@@ -229,7 +224,6 @@ public class SculkStaffItem extends StaffItem {
 			if (system != null) {
 				unregisterListener((ServerLevel) level, system);
 			}
-			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), false, stack), level, player.blockPosition(), 64.0);
 			level.playSound(null, player.getX(), player.getY(), player.getZ(), RPGSounds.STAFF_STOP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 		}
 		super.releaseUsing(stack, level, livingEntity, timeCharged);

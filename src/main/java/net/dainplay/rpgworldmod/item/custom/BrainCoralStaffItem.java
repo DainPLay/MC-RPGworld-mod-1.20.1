@@ -1,11 +1,8 @@
 package net.dainplay.rpgworldmod.item.custom;
 
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
-import net.dainplay.rpgworldmod.network.LoopSoundPacket;
-import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.client.Minecraft;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -25,6 +22,9 @@ import java.util.List;
 import java.util.Map;
 
 public class BrainCoralStaffItem extends StaffItem implements ChooseTargetItem {
+
+	private static final double MATCH_RADIUS = 8.0D;
+
 	public BrainCoralStaffItem(Properties properties) {
 		super(properties);
 	}
@@ -65,7 +65,6 @@ public class BrainCoralStaffItem extends StaffItem implements ChooseTargetItem {
 			return InteractionResultHolder.pass(itemstack);
 		}
 
-
 		if (player.getCooldowns().getCooldownPercent(itemstack.getItem(), 0.0F) > 0.0F) {
 			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = player.getCooldowns().cooldowns;
 			int currentTick = player.getCooldowns().tickCount;
@@ -96,14 +95,6 @@ public class BrainCoralStaffItem extends StaffItem implements ChooseTargetItem {
 					RPGSounds.STAFF_START.get(),
 					SoundSource.PLAYERS, 1.0F, 1.0F
 			);
-
-
-			ModMessages.sendToNearbyPlayers(
-					new LoopSoundPacket(player.getId(), true, itemstack),
-					(ServerLevel) level,
-					player.blockPosition(),
-					64.0
-			);
 		}
 
 		player.startUsingItem(hand);
@@ -114,13 +105,6 @@ public class BrainCoralStaffItem extends StaffItem implements ChooseTargetItem {
 	public void releaseUsing(ItemStack stack, Level level, LivingEntity livingEntity, int timeCharged) {
 		if (livingEntity instanceof Player player) {
 			if (!level.isClientSide) {
-				ModMessages.sendToNearbyPlayers(
-						new LoopSoundPacket(player.getId(), false, stack),
-						level,
-						player.blockPosition(),
-						64.0
-				);
-
 				level.playSound(null,
 						player.getX(), player.getY(), player.getZ(),
 						RPGSounds.STAFF_STOP.get(),
@@ -143,7 +127,9 @@ public class BrainCoralStaffItem extends StaffItem implements ChooseTargetItem {
 		} else player.getCooldowns().addCooldown(this, getUseCooldown(item));
 		player.swing(player.getUsedItemHand());
 
-		for (ItemEntity target : targets) {
+		List<ItemEntity> effectiveTargets = expandTargets(player, targets);
+
+		for (ItemEntity target : effectiveTargets) {
 			switch (getGemType(item)) {
 				case EMBER_GEM: {
 					player.level().playSound(null,
@@ -233,6 +219,26 @@ public class BrainCoralStaffItem extends StaffItem implements ChooseTargetItem {
 		item.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(player.getUsedItemHand()));
 	}
 
+	private List<ItemEntity> expandTargets(Player player, List<ItemEntity> targets) {
+		if (targets.isEmpty()) return targets;
+
+		ItemEntity primary = targets.get(0);
+		if (primary == null || !primary.isAlive()) return targets;
+
+		ItemStack primaryStack = primary.getItem();
+		if (primaryStack.isEmpty()) return targets;
+
+		final Item selectedItem = primaryStack.getItem();
+
+		return player.level().getEntitiesOfClass(
+				ItemEntity.class,
+				primary.getBoundingBox().inflate(MATCH_RADIUS),
+				e -> e.isAlive()
+						&& !e.getItem().isEmpty()
+						&& e.getItem().getItem() == selectedItem
+		);
+	}
+
 	@Override
 	public boolean hasControls(ItemStack item) {
 		return true;
@@ -240,7 +246,7 @@ public class BrainCoralStaffItem extends StaffItem implements ChooseTargetItem {
 
 	@Override
 	public int getMaxCooldown(ItemStack item) {
-		return 60;
+		return 100;
 	}
 
 	public boolean isValidRepairItem(ItemStack pToRepair, ItemStack pRepair) {
@@ -265,5 +271,4 @@ public class BrainCoralStaffItem extends StaffItem implements ChooseTargetItem {
 	public float getX(ItemStack stack, Entity entity, boolean righthand) {
 		return -0.065F;
 	}
-
 }

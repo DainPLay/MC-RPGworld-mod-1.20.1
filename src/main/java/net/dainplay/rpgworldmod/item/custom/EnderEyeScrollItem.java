@@ -9,7 +9,6 @@ import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.entity.custom.EnderEyeViewEntity;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.network.ClientManaData;
-import net.dainplay.rpgworldmod.network.LoopSoundPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.PlayerIllusionForceProvider;
 import net.dainplay.rpgworldmod.network.PlayerManaProvider;
@@ -405,8 +404,6 @@ public class EnderEyeScrollItem extends ScrollItem {
 
 
 			if (!canUse(player, itemstack)) {
-				ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), false, itemstack),
-						(ServerLevel) level, player.blockPosition(), 64.0);
 				return InteractionResultHolder.fail(itemstack);
 			}
 
@@ -527,24 +524,20 @@ public class EnderEyeScrollItem extends ScrollItem {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_DESTRUCTION_ENDER_EYE_START.get(), SoundSource.PLAYERS, 0.5F, 1.0F);
 			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
-			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_ALTERATION_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
-			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_RESTORATION_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
-			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_ILLUSION_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
-			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
 		}
 	}
 
@@ -609,8 +602,6 @@ public class EnderEyeScrollItem extends ScrollItem {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_ILLUSION_STOP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 		}
-		ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), false, stack),
-				(ServerLevel) level, player.blockPosition(), 64.0);
 	}
 
 	@Override

@@ -11,11 +11,9 @@ import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.ModTiers;
 import net.dainplay.rpgworldmod.network.ClientManaData;
-import net.dainplay.rpgworldmod.network.LoopSoundPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.PlayerManaProvider;
 import net.dainplay.rpgworldmod.network.PortalEffectPacket;
-import net.dainplay.rpgworldmod.network.S2CBeamUpdatePacket;
 import net.dainplay.rpgworldmod.network.UpdateItemTagMessage;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.ChatFormatting;
@@ -77,7 +75,7 @@ public class NetherStarScrollItem extends ScrollItem {
 	private static final Map<Level, Map<UUID, PlayerUseData>> playerUseData = new HashMap<>();
 
 	private static final double DESTRUCTION_BEAM_RANGE = 128.0;
-	private static final double DESTRUCTION_BEAM_RADIUS = 1.2;
+	private static final double DESTRUCTION_BEAM_RADIUS = 0;
 	private static final int DESTRUCTION_CHARGE_TICKS = 40;
 
 	public NetherStarScrollItem(Properties pProperties) {
@@ -491,8 +489,6 @@ public class NetherStarScrollItem extends ScrollItem {
 			}
 
 			if (!canUse(player, itemstack)) {
-				ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), false, itemstack),
-						(ServerLevel) level, player.blockPosition(), 64.0);
 				return InteractionResultHolder.fail(itemstack);
 			}
 
@@ -507,8 +503,6 @@ public class NetherStarScrollItem extends ScrollItem {
 				data.lastManaTick = 0;
 				data.active = true;
 				data.lastSentBeamEndPoint = null;
-				ModMessages.sendToNearbyPlayers(new S2CBeamUpdatePacket(player.getId(), Vec3.ZERO, false, new ArrayList<>()),
-						level, player.blockPosition(), 144.0);
 			}
 
 			startEnchantmentSounds(level, player, itemstack);
@@ -580,25 +574,23 @@ public class NetherStarScrollItem extends ScrollItem {
 	private void startEnchantmentSounds(Level level, Player player, ItemStack stack) {
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), stack) > 0) {
 			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
-			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_ALTERATION_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
-			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_RESTORATION_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
-			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
+
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), stack) > 0) {
-			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
+
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), stack) > 0) {
-			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
+
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_NECROMANCY_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -608,7 +600,7 @@ public class NetherStarScrollItem extends ScrollItem {
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_ILLUSION_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
-			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack), level, player.blockPosition(), 64.0);
+
 		}
 	}
 
@@ -666,8 +658,6 @@ public class NetherStarScrollItem extends ScrollItem {
 					data.active = false;
 				}
 				stopEnchantmentSounds(level, player, stack, data.useTicks);
-				ModMessages.sendToNearbyPlayers(new S2CBeamUpdatePacket(player.getId(), Vec3.ZERO, false, new ArrayList<>()),
-						level, player.blockPosition(), 144.0);
 			} else {
 				ModMessages.sendToServer(new UpdateItemTagMessage(player.getId(), stack));
 			}
@@ -697,8 +687,6 @@ public class NetherStarScrollItem extends ScrollItem {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_NECROMANCY_STOP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 		}
-		ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), false, stack),
-				(ServerLevel) level, player.blockPosition(), 64.0);
 	}
 
 	@Override
@@ -769,9 +757,6 @@ public class NetherStarScrollItem extends ScrollItem {
 		if (usingItem.getItem() instanceof NetherStarScrollItem scroll) {
 			scroll.stopEnchantmentSounds(level, player, usingItem, data.useTicks);
 		}
-
-		ModMessages.sendToNearbyPlayers(new S2CBeamUpdatePacket(player.getId(), Vec3.ZERO, false, new ArrayList<>()),
-				level, player.blockPosition(), 144.0);
 
 		player.getCooldowns().addCooldown(usingItem.getItem(), 15);
 	}
@@ -1051,10 +1036,6 @@ public class NetherStarScrollItem extends ScrollItem {
 						handleBeamStart(player, eyePos, endPoint, usingItem);
 					}
 					data.lastSentBeamEndPoint = endPoint;
-					ModMessages.sendToNearbyPlayers(
-							new S2CBeamUpdatePacket(player.getId(), endPoint, true, hitPositions),
-							level, player.blockPosition(), 144.0
-					);
 				}
 			}
 		}
@@ -1292,8 +1273,6 @@ public class NetherStarScrollItem extends ScrollItem {
 		}
 		if (player instanceof ServerPlayer serverPlayer)
 			ModAdvancements.SPELL_DESTRUCTION_NETHER_STAR_TRIGGER.trigger(serverPlayer);
-		ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), false, itemStack),
-				(ServerLevel) player.level(), player.blockPosition(), 64.0);
 	}
 
 	public static void handleBeamStop(Player player, Vec3 start, Vec3 end) {
@@ -1320,13 +1299,19 @@ public class NetherStarScrollItem extends ScrollItem {
 				e -> e != player && e.isAlive() && !(e instanceof Player && ((Player) e).isCreative()));
 
 		for (LivingEntity target : entities) {
+			AABB targetBox = target.getBoundingBox().inflate(radius);
+
+			double[] tRange = rayAABBIntersect(eyePos, direction, targetBox);
+			if (tRange == null) continue;
+			if (tRange[0] > maxDist) continue;
+			if (tRange[1] < 0) continue;
+
+			double along = Math.max(0, tRange[0]);
+
 			Vec3 targetCenter = target.getBoundingBox().getCenter();
-			Vec3 toTarget = targetCenter.subtract(eyePos);
-			double along = toTarget.dot(direction);
-			if (along <= 0 || along > maxDist) continue;
-			double distPerp = toTarget.cross(direction).length();
-			if (distPerp > radius) continue;
-			if (!isEntityVisibleThroughTransparentBlocks(level, eyePos, targetCenter)) continue;
+			double closestT = Mth.clamp(targetCenter.subtract(eyePos).dot(direction), 0.0, maxDist);
+			Vec3 closestPoint = eyePos.add(direction.scale(closestT));
+			if (!isEntityVisibleThroughTransparentBlocks(level, eyePos, closestPoint)) continue;
 
 			double t = 1.0 - along / maxDist;
 			double damage = 7.0F * t * t;
@@ -1346,6 +1331,47 @@ public class NetherStarScrollItem extends ScrollItem {
 			}
 		}
 		return hitPositions;
+	}
+
+	private static double[] rayAABBIntersect(Vec3 origin, Vec3 dir, AABB box) {
+		double tmin = 0.0;
+		double tmax = Double.POSITIVE_INFINITY;
+		final double EPS = 1.0E-8;
+
+		if (Math.abs(dir.x) < EPS) {
+			if (origin.x < box.minX || origin.x > box.maxX) return null;
+		} else {
+			double t1 = (box.minX - origin.x) / dir.x;
+			double t2 = (box.maxX - origin.x) / dir.x;
+			if (t1 > t2) { double tmp = t1; t1 = t2; t2 = tmp; }
+			tmin = Math.max(tmin, t1);
+			tmax = Math.min(tmax, t2);
+			if (tmin > tmax) return null;
+		}
+
+		if (Math.abs(dir.y) < EPS) {
+			if (origin.y < box.minY || origin.y > box.maxY) return null;
+		} else {
+			double t1 = (box.minY - origin.y) / dir.y;
+			double t2 = (box.maxY - origin.y) / dir.y;
+			if (t1 > t2) { double tmp = t1; t1 = t2; t2 = tmp; }
+			tmin = Math.max(tmin, t1);
+			tmax = Math.min(tmax, t2);
+			if (tmin > tmax) return null;
+		}
+
+		if (Math.abs(dir.z) < EPS) {
+			if (origin.z < box.minZ || origin.z > box.maxZ) return null;
+		} else {
+			double t1 = (box.minZ - origin.z) / dir.z;
+			double t2 = (box.maxZ - origin.z) / dir.z;
+			if (t1 > t2) { double tmp = t1; t1 = t2; t2 = tmp; }
+			tmin = Math.max(tmin, t1);
+			tmax = Math.min(tmax, t2);
+			if (tmin > tmax) return null;
+		}
+
+		return new double[]{ tmin, tmax };
 	}
 
 	private static Vec3 calculateBeamEndPoint(ServerLevel level, Vec3 start, Vec3 direction, double maxDist) {

@@ -44,12 +44,10 @@ public class PositionedLoopSound extends AbstractTickableSoundInstance {
 		this.position = newPos;
 	}
 
-
 	public void setActive(boolean active) {
 		this.isActive = active;
 		this.volume = active ? 0.1F : 0.0F;
 	}
-
 
 	public void markForStop() {
 		this.shouldStop = true;
@@ -70,7 +68,6 @@ public class PositionedLoopSound extends AbstractTickableSoundInstance {
 			return;
 		}
 
-
 		if (checkCooldown-- <= 0) {
 			checkCooldown = 5;
 
@@ -81,20 +78,17 @@ public class PositionedLoopSound extends AbstractTickableSoundInstance {
 			}
 
 			Player owner = (Player) mc.level.getEntity(ownerId);
-			if (owner == null || !owner.isAlive()) {
+			if (owner == null || !owner.isAlive() || !owner.isUsingItem()) {
 				this.stop();
 				return;
 			}
 
 			ItemStack usingItem = owner.getUseItem();
-			if (usingItem.getItem() instanceof NetherStarScrollItem) {
-				int useTicks = owner.getTicksUsingItem();
-				if (useTicks > 40 && usingItem.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0) {
-					return;
-				}
+			if (!(usingItem.getItem() instanceof NetherStarScrollItem)
+					|| usingItem.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) <= 0) {
+				this.stop();
+				return;
 			}
-
-			this.stop();
 		}
 	}
 }

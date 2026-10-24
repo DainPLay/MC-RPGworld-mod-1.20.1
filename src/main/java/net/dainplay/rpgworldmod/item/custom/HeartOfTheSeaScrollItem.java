@@ -11,7 +11,6 @@ import net.dainplay.rpgworldmod.entity.custom.ConjuredDolphin;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.network.ClientGuardianAttackData;
 import net.dainplay.rpgworldmod.network.ClientManaData;
-import net.dainplay.rpgworldmod.network.LoopSoundPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.PlayerManaProvider;
 import net.dainplay.rpgworldmod.network.S2CGuardianAttackData;
@@ -377,8 +376,6 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 
 			if (!canUse(player, itemstack)) {
 				getPlayerUseData(level).remove(player.getUUID());
-				ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), false, itemstack),
-						(ServerLevel) level, player.blockPosition(), 64.0);
 				return InteractionResultHolder.fail(itemstack);
 			}
 
@@ -523,21 +520,15 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_DESTRUCTION_HEART_OF_THE_SEA_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
-			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack),
-					(ServerLevel) level, player.blockPosition(), 64.0);
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_ALTERATION_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 			player.gameEvent(GameEvent.ENTITY_INTERACT, player);
-			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack),
-					(ServerLevel) level, player.blockPosition(), 64.0);
 		}
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), stack) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_ILLUSION_START.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
-			ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), true, stack),
-					(ServerLevel) level, player.blockPosition(), 64.0);
 		}
 	}
 
@@ -663,8 +654,6 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_ILLUSION_STOP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 		}
-		ModMessages.sendToNearbyPlayers(new LoopSoundPacket(player.getId(), false, stack),
-				(ServerLevel) level, player.blockPosition(), 64.0);
 	}
 
 	@Override

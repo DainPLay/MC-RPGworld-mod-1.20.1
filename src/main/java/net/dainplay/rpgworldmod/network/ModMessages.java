@@ -119,12 +119,6 @@ public class ModMessages {
 				.consumerMainThread(MoveParticlesPacket::handle)
 				.add();
 
-		net.messageBuilder(LoopSoundPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
-				.decoder(LoopSoundPacket::decode)
-				.encoder(LoopSoundPacket::encode)
-				.consumerMainThread(LoopSoundPacket::handle)
-				.add();
-
 		net.messageBuilder(UseOnAnimateTargetPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
 				.decoder(UseOnAnimateTargetPacket::new)
 				.encoder(UseOnAnimateTargetPacket::toBytes)
@@ -237,12 +231,6 @@ public class ModMessages {
 				.decoder(UseRecolorWoolSpellPacket::new)
 				.encoder(UseRecolorWoolSpellPacket::toBytes)
 				.consumerMainThread(UseRecolorWoolSpellPacket::handle)
-				.add();
-
-		net.messageBuilder(S2CBeamUpdatePacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
-				.encoder(S2CBeamUpdatePacket::encode)
-				.decoder(S2CBeamUpdatePacket::decode)
-				.consumerMainThread(S2CBeamUpdatePacket::handle)
 				.add();
 
 		net.messageBuilder(PortalEffectPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)

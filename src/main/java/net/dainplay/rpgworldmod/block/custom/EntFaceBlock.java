@@ -4,6 +4,7 @@ import net.dainplay.rpgworldmod.block.entity.custom.EntFaceBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -186,6 +187,11 @@ public class EntFaceBlock extends BaseEntityBlock {
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
 		pBuilder.add(FACING, LOOKING, ASLEEP, IS_ATTACKING, DESTROY_STAGE, MELEE_PROGRESS, DEALT_DAMAGE);
+	}
+
+	@Override
+	public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader level, net.minecraft.util.RandomSource randomSource, BlockPos pos, int fortuneLevel, int silkTouchLevel) {
+		return 40;
 	}
 
 	public static int getDestroyStage(BlockState state) {

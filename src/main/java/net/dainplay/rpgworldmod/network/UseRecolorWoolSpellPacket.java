@@ -47,13 +47,6 @@ public class UseRecolorWoolSpellPacket {
 								RPGSounds.SPELL_ALTERATION_PILLAGER.get(),
 								SoundSource.PLAYERS, 1.0F, 1.0F);
 
-						ModMessages.sendToNearbyPlayers(
-								new LoopSoundPacket(player.getId(), false, itemInHand),
-								player.serverLevel(),
-								player.blockPosition(),
-								64.0
-						);
-
 						scroll.selectColor(player, itemInHand, msg.colorId);
 					}
 				}

@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 public class ProjectruffleArrowEntity extends AbstractArrow {
 	@Override
 	public double getBaseDamage() {
-		return 0.0F;
+		return 2.0F;
 	}
 
 	@Override

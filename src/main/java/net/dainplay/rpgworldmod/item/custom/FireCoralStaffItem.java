@@ -1,11 +1,8 @@
 package net.dainplay.rpgworldmod.item.custom;
 
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
-import net.dainplay.rpgworldmod.network.LoopSoundPacket;
-import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.client.Minecraft;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -33,11 +30,6 @@ public class FireCoralStaffItem extends StaffItem implements ChooseTargetItem {
 
 	public String getFirstPredicate(ItemStack item) {
 		return Minecraft.getInstance().options.keyAttack.getKey().getDisplayName().getString();
-	}
-
-	@Override
-	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-		return enchantment == Enchantments.MENDING || super.canApplyAtEnchantingTable(stack, enchantment);
 	}
 
 	@Override
@@ -103,14 +95,6 @@ public class FireCoralStaffItem extends StaffItem implements ChooseTargetItem {
 					RPGSounds.STAFF_START.get(),
 					SoundSource.PLAYERS, 1.0F, 1.0F
 			);
-
-
-			ModMessages.sendToNearbyPlayers(
-					new LoopSoundPacket(player.getId(), true, itemstack),
-					(ServerLevel) level,
-					player.blockPosition(),
-					64.0
-			);
 		}
 
 		player.startUsingItem(hand);
@@ -121,12 +105,6 @@ public class FireCoralStaffItem extends StaffItem implements ChooseTargetItem {
 	public void releaseUsing(ItemStack stack, Level level, LivingEntity livingEntity, int timeCharged) {
 		if (livingEntity instanceof Player player) {
 			if (!level.isClientSide) {
-				ModMessages.sendToNearbyPlayers(
-						new LoopSoundPacket(player.getId(), false, stack),
-						level,
-						player.blockPosition(),
-						64.0
-				);
 
 				level.playSound(null,
 						player.getX(), player.getY(), player.getZ(),

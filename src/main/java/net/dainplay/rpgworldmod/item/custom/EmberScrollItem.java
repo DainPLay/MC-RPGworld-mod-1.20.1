@@ -10,7 +10,6 @@ import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.network.ClientManaData;
-import net.dainplay.rpgworldmod.network.LoopSoundPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.dainplay.rpgworldmod.network.PlayerManaProvider;
 import net.dainplay.rpgworldmod.network.UpdateItemTagMessage;
@@ -421,13 +420,6 @@ public class EmberScrollItem extends ScrollItem {
 
 			if (cir.get()) {
 				getPlayerUseData(level).remove(playerId);
-
-				ModMessages.sendToNearbyPlayers(
-						new LoopSoundPacket(player.getId(), false, itemstack),
-						(ServerLevel) level,
-						player.blockPosition(),
-						64.0
-				);
 				return InteractionResultHolder.fail(itemstack);
 			}
 
@@ -441,13 +433,6 @@ public class EmberScrollItem extends ScrollItem {
 				);
 				player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 
-
-				ModMessages.sendToNearbyPlayers(
-						new LoopSoundPacket(player.getId(), true, itemstack),
-						(ServerLevel) level,
-						player.blockPosition(),
-						64.0
-				);
 			}
 
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), itemstack) > 0) {
@@ -459,12 +444,6 @@ public class EmberScrollItem extends ScrollItem {
 				player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 
 
-				ModMessages.sendToNearbyPlayers(
-						new LoopSoundPacket(player.getId(), true, itemstack),
-						(ServerLevel) level,
-						player.blockPosition(),
-						64.0
-				);
 			}
 
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), itemstack) > 0) {
@@ -476,12 +455,6 @@ public class EmberScrollItem extends ScrollItem {
 				player.gameEvent(GameEvent.ENTITY_INTERACT, player);
 
 
-				ModMessages.sendToNearbyPlayers(
-						new LoopSoundPacket(player.getId(), true, itemstack),
-						(ServerLevel) level,
-						player.blockPosition(),
-						64.0
-				);
 			}
 
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ILLUSION.get(), itemstack) > 0) {
@@ -491,13 +464,6 @@ public class EmberScrollItem extends ScrollItem {
 						SoundSource.PLAYERS, 1.0F, 1.0F
 				);
 
-
-				ModMessages.sendToNearbyPlayers(
-						new LoopSoundPacket(player.getId(), true, itemstack),
-						(ServerLevel) level,
-						player.blockPosition(),
-						64.0
-				);
 			}
 
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), itemstack) > 0) {
@@ -509,12 +475,6 @@ public class EmberScrollItem extends ScrollItem {
 				player.gameEvent(GameEvent.ENTITY_DAMAGE, player);
 
 
-				ModMessages.sendToNearbyPlayers(
-						new LoopSoundPacket(player.getId(), true, itemstack),
-						(ServerLevel) level,
-						player.blockPosition(),
-						64.0
-				);
 			}
 
 			player.startUsingItem(hand);
@@ -734,12 +694,6 @@ public class EmberScrollItem extends ScrollItem {
 					);
 
 
-					ModMessages.sendToNearbyPlayers(
-							new LoopSoundPacket(player.getId(), false, stack),
-							(ServerLevel) level,
-							player.blockPosition(),
-							64.0
-					);
 				}
 
 				if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ALTERATION.get(), stack) > 0) {
@@ -749,13 +703,6 @@ public class EmberScrollItem extends ScrollItem {
 							SoundSource.PLAYERS, 1.0F, 1.0F
 					);
 
-
-					ModMessages.sendToNearbyPlayers(
-							new LoopSoundPacket(player.getId(), false, stack),
-							(ServerLevel) level,
-							player.blockPosition(),
-							64.0
-					);
 				}
 
 				if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), stack) > 0) {
@@ -765,13 +712,6 @@ public class EmberScrollItem extends ScrollItem {
 							SoundSource.PLAYERS, 1.0F, 1.0F
 					);
 
-
-					ModMessages.sendToNearbyPlayers(
-							new LoopSoundPacket(player.getId(), false, stack),
-							(ServerLevel) level,
-							player.blockPosition(),
-							64.0
-					);
 
 					player.extinguishFire();
 				}
@@ -784,12 +724,6 @@ public class EmberScrollItem extends ScrollItem {
 					);
 
 
-					ModMessages.sendToNearbyPlayers(
-							new LoopSoundPacket(player.getId(), false, stack),
-							(ServerLevel) level,
-							player.blockPosition(),
-							64.0
-					);
 				}
 
 				if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.NECROMANCY.get(), stack) > 0) {
@@ -799,13 +733,6 @@ public class EmberScrollItem extends ScrollItem {
 							SoundSource.PLAYERS, 1.0F, 1.0F
 					);
 
-
-					ModMessages.sendToNearbyPlayers(
-							new LoopSoundPacket(player.getId(), false, stack),
-							(ServerLevel) level,
-							player.blockPosition(),
-							64.0
-					);
 				}
 			} else {
 				ModMessages.sendToServer(new UpdateItemTagMessage(player.getId(), stack));
@@ -920,14 +847,6 @@ public class EmberScrollItem extends ScrollItem {
 		if (player == null) return;
 		player.stopUsingItem();
 
-
-		ModMessages.sendToNearbyPlayers(
-				new LoopSoundPacket(player.getId(), false, usingItem),
-				level,
-				player.blockPosition(),
-				64.0
-		);
-
 		if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.DESTRUCTION.get(), usingItem) > 0) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					RPGSounds.SPELL_DESTRUCTION_EMBER_STOP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
@@ -972,13 +891,6 @@ public class EmberScrollItem extends ScrollItem {
 			if (!player.isUsingItem()) {
 				levelPlayerUseData.remove(playerId);
 				ItemStack usingItem = player.getUseItem();
-
-				ModMessages.sendToNearbyPlayers(
-						new LoopSoundPacket(player.getId(), false, usingItem),
-						level,
-						player.blockPosition(),
-						64.0
-				);
 				if (usingItem.getItem() instanceof EmberScrollItem) {
 					stopPlayerUse(level, player, usingItem);
 				}
@@ -989,13 +901,6 @@ public class EmberScrollItem extends ScrollItem {
 			if (!(usingItem.getItem() instanceof EmberScrollItem)) {
 				levelPlayerUseData.remove(playerId);
 				player.stopUsingItem();
-
-				ModMessages.sendToNearbyPlayers(
-						new LoopSoundPacket(player.getId(), false, usingItem),
-						level,
-						player.blockPosition(),
-						64.0
-				);
 				continue;
 			}
 

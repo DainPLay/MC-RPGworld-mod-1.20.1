@@ -1,4 +1,4 @@
-
+// 1.20.1	2026-10-14T02:18:19.7220379	Global Loot Modifiers : rpgworldmod
 d1974b492438d6bac594b49129077eea3c836460 data/forge/loot_modifiers/global_loot_modifiers.json
 97520de98a9ec484fc17e8e9b728b9e832328878 data/rpgworldmod/loot_modifiers/diamond_dagger_in_bastion_hoglin_stable.json
 c24bb2dfee8fd8adf37a75c674443249f10122a4 data/rpgworldmod/loot_modifiers/diamond_dagger_in_bastion_treasure.json

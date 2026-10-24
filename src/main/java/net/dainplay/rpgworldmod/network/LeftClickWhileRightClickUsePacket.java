@@ -42,14 +42,6 @@ public class LeftClickWhileRightClickUsePacket {
 							RPGSounds.STAFF_STOP.get(),
 							SoundSource.PLAYERS, 1.0F, 1.0F
 					);
-
-
-					ModMessages.sendToNearbyPlayers(
-							new LoopSoundPacket(player.getId(), false, itemInHand),
-							player.serverLevel(),
-							player.blockPosition(),
-							64.0
-					);
 					staff.cast(player, itemInHand);
 				}
 			}

@@ -57,7 +57,7 @@ public class NoteBlockMixin {
 						if (!VibrationSystem.Listener.isOccluded(pLevel, pPos.getCenter(), targetPos)) {
 							double scaledDamage = 2D * (1 - Math.min(1, getDistance(target, pPos) / 16D));
 							if (Mintobat.isEyeInAnyFluid(target)) scaledDamage /= 4;
-							(target).hurt(ModDamageTypes.getDamageSource(pLevel, ModDamageTypes.DING), (float) scaledDamage);
+							(target).hurt(ModDamageTypes.getDamageSource(pLevel, ModDamageTypes.NOTE_DING), (float) scaledDamage);
 						}
 					});
 

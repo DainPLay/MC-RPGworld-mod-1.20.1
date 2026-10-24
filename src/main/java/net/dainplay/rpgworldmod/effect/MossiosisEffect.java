@@ -6,9 +6,11 @@ import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.entity.ModEntities;
 import net.dainplay.rpgworldmod.entity.custom.Bhlee;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
+import net.dainplay.rpgworldmod.util.ArmorPiercingDamageSource;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -60,10 +62,16 @@ public class MossiosisEffect extends MobEffect {
 		}
 
 		if (pLivingEntity.canBeAffected(new MobEffectInstance(ModEffects.MOSSIOSIS.get())) && pLivingEntity.getHealth() - (pAmplifier + 1) * 6 <= 0) {
-			if (pLivingEntity.getLastDamageSource() == null) {
-				pLivingEntity.hurt(ModDamageTypes.getDamageSource(pLivingEntity.level(), ModDamageTypes.MOSSIOSIS), Float.MAX_VALUE);
-			} else {
-				pLivingEntity.hurt(pLivingEntity.getLastDamageSource(), Float.MAX_VALUE);
+			if (pLivingEntity.getHealth() - (pAmplifier + 1) * 6 <= 0) {
+				DamageSource lastDamage = pLivingEntity.getLastDamageSource();
+
+				DamageSource baseSource = (lastDamage != null)
+						? lastDamage
+						: ModDamageTypes.getDamageSource(pLivingEntity.level(), ModDamageTypes.MOSSIOSIS);
+
+				DamageSource deathSource = new ArmorPiercingDamageSource(baseSource);
+
+				pLivingEntity.hurt(deathSource, Float.MAX_VALUE);
 			}
 		}
 		super.applyEffectTick(pLivingEntity, pAmplifier);

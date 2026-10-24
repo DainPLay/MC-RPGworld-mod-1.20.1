@@ -48,13 +48,6 @@ public class UseBeaconSpellPacket {
 								SoundSource.PLAYERS, 1.0F, 1.0F
 						);
 
-						ModMessages.sendToNearbyPlayers(
-								new LoopSoundPacket(player.getId(), false, itemInHand),
-								player.serverLevel(),
-								player.blockPosition(),
-								64.0
-						);
-
 						scroll.applyBeaconEffect(player, itemInHand, msg.effectId);
 					}
 				}

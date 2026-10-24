@@ -55,14 +55,6 @@ public class UseOnAnimateTargetPacket {
 								SoundSource.PLAYERS, 1.0F, 1.0F
 						);
 
-
-						ModMessages.sendToNearbyPlayers(
-								new LoopSoundPacket(player.getId(), false, itemInHand),
-								player.serverLevel(),
-								player.blockPosition(),
-								64.0
-						);
-
 						LivingEntity target = null;
 						Entity entity = player.level().getEntity(msg.targetId);
 						if (entity instanceof LivingEntity livingEntity) {
@@ -107,14 +99,6 @@ public class UseOnAnimateTargetPacket {
 								SoundSource.PLAYERS, 1.0F, 1.0F
 						);
 
-
-						ModMessages.sendToNearbyPlayers(
-								new LoopSoundPacket(player.getId(), false, itemInHand),
-								player.serverLevel(),
-								player.blockPosition(),
-								64.0
-						);
-
 						LivingEntity target = null;
 						Entity entity = player.level().getEntity(msg.targetId);
 						if (entity instanceof LivingEntity livingEntity) {
@@ -138,14 +122,6 @@ public class UseOnAnimateTargetPacket {
 								SoundSource.PLAYERS, 1.0F, 1.0F
 						);
 
-
-						ModMessages.sendToNearbyPlayers(
-								new LoopSoundPacket(player.getId(), false, itemInHand),
-								player.serverLevel(),
-								player.blockPosition(),
-								64.0
-						);
-
 						LivingEntity target = null;
 						Entity entity = player.level().getEntity(msg.targetId);
 						if (entity instanceof LivingEntity livingEntity) {
@@ -162,14 +138,6 @@ public class UseOnAnimateTargetPacket {
 							player.getX(), player.getY(), player.getZ(),
 							RPGSounds.STAFF_STOP.get(),
 							SoundSource.PLAYERS, 1.0F, 1.0F
-					);
-
-
-					ModMessages.sendToNearbyPlayers(
-							new LoopSoundPacket(player.getId(), false, itemInHand),
-							player.serverLevel(),
-							player.blockPosition(),
-							64.0
 					);
 
 					LivingEntity target = null;
@@ -192,13 +160,6 @@ public class UseOnAnimateTargetPacket {
 								player.getX(), player.getY(), player.getZ(),
 								RPGSounds.SPELL_ALTERATION_PILLAGER.get(),
 								SoundSource.PLAYERS, 1.0F, 1.0F
-						);
-
-						ModMessages.sendToNearbyPlayers(
-								new LoopSoundPacket(player.getId(), false, itemInHand),
-								player.serverLevel(),
-								player.blockPosition(),
-								64.0
 						);
 
 						LivingEntity target = null;

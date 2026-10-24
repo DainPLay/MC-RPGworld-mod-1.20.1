@@ -2,6 +2,7 @@
   "values": [
     "rpgworldmod:scream",
     "rpgworldmod:ding",
+    "rpgworldmod:note_ding",
     "minecraft:sonic_boom"
   ]
 }

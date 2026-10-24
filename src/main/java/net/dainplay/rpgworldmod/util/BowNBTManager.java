@@ -2,7 +2,6 @@ package net.dainplay.rpgworldmod.util;
 
 import net.dainplay.rpgworldmod.item.ModItems;
 import net.dainplay.rpgworldmod.item.custom.StaffItem;
-import net.dainplay.rpgworldmod.network.LoopSoundPacket;
 import net.dainplay.rpgworldmod.network.ModMessages;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
@@ -37,16 +36,6 @@ public class BowNBTManager {
 			ItemStack bowStack = event.getItem();
 			if (bowStack.hasTag() && bowStack.getTag().contains("UsingProjectruffle")) {
 				bowStack.getTag().remove("UsingProjectruffle");
-			}
-		}
-		if (event.getEntity() instanceof Player player && !player.level().isClientSide()) {
-			if (event.getItem().getItem() instanceof StaffItem) {
-				ModMessages.sendToNearbyPlayers(
-						new LoopSoundPacket(player.getId(), false, event.getItem()),
-						player.level(),
-						player.blockPosition(),
-						64.0
-				);
 			}
 		}
 	}

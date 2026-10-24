@@ -22,6 +22,7 @@ public class ModDamageTypes {
 	public static final ResourceKey<DamageType> MOSQUITOS = create("mosquitos");
 	public static final ResourceKey<DamageType> SCREAM = create("scream");
 	public static final ResourceKey<DamageType> DING = create("ding");
+	public static final ResourceKey<DamageType> NOTE_DING = create("note_ding");
 	public static final ResourceKey<DamageType> SWALLOW = create("swallow");
 	public static final ResourceKey<DamageType> ENT_RIE_FRUIT = create("ent_rie_fruit");
 	public static final ResourceKey<DamageType> ENT_SNAP = create("ent_snap");
@@ -56,6 +57,7 @@ public class ModDamageTypes {
 		context.register(MOSQUITOS, new DamageType("mosquitos", 0.0F));
 		context.register(SCREAM, new DamageType("scream", 0.0F));
 		context.register(DING, new DamageType("ding", 0.0F));
+		context.register(NOTE_DING, new DamageType("note_ding", 0.0F));
 		context.register(SWALLOW, new DamageType("swallow", 0.0F));
 		context.register(ENT_RIE_FRUIT, new DamageType("ent_rie_fruit", 0.0F));
 		context.register(ENT_SNAP, new DamageType("ent_snap", 0.0F));

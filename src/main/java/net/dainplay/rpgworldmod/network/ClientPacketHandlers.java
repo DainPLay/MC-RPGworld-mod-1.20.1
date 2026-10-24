@@ -3,20 +3,13 @@ package net.dainplay.rpgworldmod.network;
 import net.dainplay.rpgworldmod.effect.ModEffects;
 import net.dainplay.rpgworldmod.enchantment.ModEnchantments;
 import net.dainplay.rpgworldmod.entity.custom.Razorleaf;
-import net.dainplay.rpgworldmod.item.custom.EmberScrollItem;
-import net.dainplay.rpgworldmod.item.custom.EnderEyeScrollItem;
-import net.dainplay.rpgworldmod.item.custom.HeartOfTheSeaScrollItem;
 import net.dainplay.rpgworldmod.item.custom.NetherStarScrollItem;
-import net.dainplay.rpgworldmod.item.custom.PillagerScrollItem;
-import net.dainplay.rpgworldmod.item.custom.StaffItem;
-import net.dainplay.rpgworldmod.sounds.LoopSound;
 import net.dainplay.rpgworldmod.sounds.PositionedLoopSound;
 import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -35,7 +28,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientPacketHandlers {
@@ -98,9 +90,9 @@ public class ClientPacketHandlers {
 		}
 	}
 
-	private static final long MAX_PULL_DURATION_MS = 5000L;   // 5 секунд
-	private static final long PULL_GAP_RESET_MS = 500L;       // пауза, после которой считаем, что началось новое притягивание
-	private static final double MAX_PULL_DISTANCE = 5.0;      // 5 блоков
+	private static final long MAX_PULL_DURATION_MS = 5000L;
+	private static final long PULL_GAP_RESET_MS = 500L;
+	private static final double MAX_PULL_DISTANCE = 5.0;
 
 	private static final Map<Integer, PullData> pullDataMap = new HashMap<>();
 
@@ -119,33 +111,25 @@ public class ClientPacketHandlers {
 
 		if (isPull) {
 			Entity source = level.getEntity(sourceEntityId);
-
-			// Источник должен существовать и быть Razorleaf'ом
 			if (!(source instanceof Razorleaf)) {
 				pullDataMap.remove(entityId);
 				return;
 			}
-
-			// Проверка дистанции: тянем только если игрок в радиусе 5 блоков
 			if (entity.distanceTo(source) > MAX_PULL_DISTANCE) {
 				pullDataMap.remove(entityId);
 				return;
 			}
-
-			// Проверка длительности: не более 5 секунд подряд
 			long now = System.currentTimeMillis();
 			PullData data = pullDataMap.get(entityId);
 			if (data == null
 					|| data.sourceId != sourceEntityId
 					|| (now - data.lastPacketTime) > PULL_GAP_RESET_MS) {
-				// Новое притягивание (или источник сменился)
 				data = new PullData();
 				data.sourceId = sourceEntityId;
 				data.startTime = now;
 				data.lastPacketTime = now;
 				pullDataMap.put(entityId, data);
 			} else if (now - data.startTime > MAX_PULL_DURATION_MS) {
-				// Превышен лимит — прерываем движение
 				pullDataMap.remove(entityId);
 				return;
 			} else {
@@ -156,7 +140,6 @@ public class ClientPacketHandlers {
 		entity.setDeltaMovement(motionX, motionY, motionZ);
 	}
 
-	/** Сброс таймера (например, когда Razorleaf перестал тянуть). */
 	public static void clearPullData(int playerEntityId) {
 		pullDataMap.remove(playerEntityId);
 	}
@@ -276,117 +259,20 @@ public class ClientPacketHandlers {
 		}
 	}
 
-	public static void handleLoopSound(int playerId, boolean start, ItemStack itemStack) {
-		Level level = Minecraft.getInstance().level;
-		if (level == null) return;
-		Player player = (Player) level.getEntity(playerId);
-		if (player == null) return;
-
-		if (start) {
-			SoundEvent soundEvent = RPGSounds.STAFF_LOOP.get();
-			if (itemStack.getItem() instanceof EmberScrollItem) {
-				if (itemStack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_DESTRUCTION_EMBER_LOOP.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_RESTORATION_LOOP.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_ALTERATION_LOOP.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_ILLUSION_LOOP.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0)
-					soundEvent = RPGSounds.SPELL_NECROMANCY_LOOP.get();
-			}
-			if (itemStack.getItem() instanceof HeartOfTheSeaScrollItem) {
-				if (itemStack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_DESTRUCTION_HEART_OF_THE_SEA_LOOP.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_RESTORATION_LOOP.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_ALTERATION_LOOP.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_ILLUSION_LOOP.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0)
-					soundEvent = RPGSounds.SPELL_NECROMANCY_LOOP.get();
-			}
-			if (itemStack.getItem() instanceof EnderEyeScrollItem) {
-				if (itemStack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_DESTRUCTION_ENDER_EYE_LOOP.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_RESTORATION_LOOP.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_ALTERATION_LOOP.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_ILLUSION_LOOP.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0)
-					soundEvent = RPGSounds.SPELL_NECROMANCY_LOOP.get();
-			}
-			if (itemStack.getItem() instanceof NetherStarScrollItem) {
-				if (itemStack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_DESTRUCTION_NETHER_STAR_CHARGE.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_RESTORATION_LOOP.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_ALTERATION_LOOP.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_ILLUSION_LOOP.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_CONJURATION_LOOP.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0)
-					soundEvent = RPGSounds.SPELL_NECROMANCY_LOOP.get();
-			}
-			if (itemStack.getItem() instanceof PillagerScrollItem) {
-				if (itemStack.getEnchantmentLevel(ModEnchantments.RESTORATION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_RESTORATION_LOOP.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.ALTERATION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_ALTERATION_LOOP.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.CONJURATION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_CONJURATION_PILLAGER_PREPARE.get();
-				if (itemStack.getEnchantmentLevel(ModEnchantments.ILLUSION.get()) > 0)
-					soundEvent = RPGSounds.SPELL_ILLUSION_PILLAGER_PREPARE.get();
-			}
-			if (itemStack.getItem() instanceof StaffItem) {
-				soundEvent = RPGSounds.STAFF_LOOP.get();
-			}
-			LoopSound sound = new LoopSound(player, itemStack, soundEvent);
-			Minecraft.getInstance().getSoundManager().play(sound);
-			RPGLoopSoundManager.addSound(player.getUUID(), sound);
-
-		} else {
-			RPGLoopSoundManager.stopSound(player.getUUID());
-
-		}
-	}
-
-	public static class RPGLoopSoundManager {
-		private static final Map<UUID, LoopSound> activeSounds = new HashMap<>();
-		private static final Map<UUID, LoopSound> corruptedBeaconSounds = new HashMap<>();
-
-		public static void addSound(UUID playerId, LoopSound sound) {
-			stopSound(playerId);
-			activeSounds.put(playerId, sound);
-		}
-
-		public static void stopSound(UUID playerId) {
-			LoopSound sound = activeSounds.remove(playerId);
-			if (sound != null) {
-				sound.stop();
-			}
-		}
-	}
-
 	public static class BeamSoundManager {
 		private static final Map<Integer, List<PositionedLoopSound>> activeBeamSounds = new HashMap<>();
 
-		public static void updateBeamSounds(int ownerId, Vec3 start, Vec3 direction, double length, boolean isActive) {
+		public static void updateBeamSounds(int ownerId, Vec3 start, Vec3 direction,
+											double length, int useTicks, boolean isActive) {
 			Level level = Minecraft.getInstance().level;
 			if (level == null) return;
 			Entity entity = level.getEntity(ownerId);
 			if (!(entity instanceof Player owner)) return;
 
 			ItemStack usingItem = owner.getUseItem();
-			boolean conditionMet = (usingItem.getItem() instanceof NetherStarScrollItem &&
-					usingItem.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0 &&
-					owner.getTicksUsingItem() > 40);
+			boolean conditionMet = usingItem.getItem() instanceof NetherStarScrollItem
+					&& usingItem.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0
+					&& useTicks > 40;
 
 			boolean shouldBeActive = conditionMet && isActive && length > 0.1;
 
@@ -395,9 +281,9 @@ public class ClientPacketHandlers {
 
 			List<Vec3> newPositions = new ArrayList<>();
 			if (length > 0.1) {
-				double step = 1.0;
-				for (double d = step; d <= length; d += step) {
-					newPositions.add(start.add(direction.scale(d)));
+				int count = (int) Math.ceil(length - 1e-3);
+				for (int i = 1; i <= count; i++) {
+					newPositions.add(start.add(direction.scale(i)));
 				}
 			}
 
@@ -407,45 +293,25 @@ public class ClientPacketHandlers {
 			for (int i = 0; i < maxSize; i++) {
 				if (i < newPositions.size()) {
 					if (i < oldSounds.size()) {
+						// переиспользуем — звук уже в движке
 						PositionedLoopSound sound = oldSounds.get(i);
 						sound.setPosition(newPositions.get(i));
 						sound.setActive(shouldBeActive);
 						newSounds.add(sound);
-					} else {
+					} else if (shouldBeActive) {
 						PositionedLoopSound newSound = new PositionedLoopSound(
 								RPGSounds.SPELL_DESTRUCTION_NETHER_STAR_LOOP.get(),
 								ownerId, newPositions.get(i));
-						newSound.setActive(shouldBeActive);
+						newSound.setActive(true);
 						Minecraft.getInstance().getSoundManager().play(newSound);
 						newSounds.add(newSound);
 					}
 				} else {
-					PositionedLoopSound old = oldSounds.get(i);
-					old.markForStop();
+					oldSounds.get(i).markForStop();
 				}
 			}
 
 			activeBeamSounds.put(ownerId, newSounds);
-		}
-	}
-
-	public static void handleBeamUpdate(int ownerId, double endX, double endY, double endZ, boolean active, List<Vec3> hitEntityPositions) {
-		Level level = Minecraft.getInstance().level;
-		if (level == null) return;
-		Entity entity = level.getEntity(ownerId);
-		if (!(entity instanceof Player owner)) return;
-
-		if (active) {
-			Vec3 eyePos = owner.getEyePosition(1.0F);
-			Vec3 endPos = new Vec3(endX, endY, endZ);
-			Vec3 direction = endPos.subtract(eyePos).normalize();
-			double length = eyePos.distanceTo(endPos);
-			BeamSoundManager.updateBeamSounds(ownerId, eyePos, direction, length, true);
-
-			SpecialBeamSoundManager.updateSpecialSounds(ownerId, hitEntityPositions, endPos);
-		} else {
-			BeamSoundManager.updateBeamSounds(ownerId, Vec3.ZERO, Vec3.ZERO, 0, false);
-			SpecialBeamSoundManager.updateSpecialSounds(ownerId, new ArrayList<>(), Vec3.ZERO);
 		}
 	}
 
@@ -454,7 +320,8 @@ public class ClientPacketHandlers {
 		private static final Map<Integer, PositionedLoopSound> activeEndSound = new HashMap<>();
 		private static final Map<Integer, PositionedLoopSound> activeOwnerSound = new HashMap<>();
 
-		public static void updateSpecialSounds(int ownerId, List<Vec3> hitEntityPositions, Vec3 endPos) {
+		public static void updateSpecialSounds(int ownerId, List<Vec3> hitEntityPositions,
+											   Vec3 endPos, int useTicks) {
 			Level level = Minecraft.getInstance().level;
 			if (level == null) return;
 			Entity entity = level.getEntity(ownerId);
@@ -478,8 +345,8 @@ public class ClientPacketHandlers {
 						PositionedLoopSound newSound = new PositionedLoopSound(
 								RPGSounds.SPELL_DESTRUCTION_NETHER_STAR_HIT_ENTITY.get(),
 								ownerId, pos);
-						newSound.setVolume(1.0F);
 						newSound.setActive(true);
+						newSound.setVolume(1.0F);
 						Minecraft.getInstance().getSoundManager().play(newSound);
 						newEntitySounds.add(newSound);
 					}
@@ -502,8 +369,8 @@ public class ClientPacketHandlers {
 					PositionedLoopSound newSound = new PositionedLoopSound(
 							RPGSounds.SPELL_DESTRUCTION_NETHER_STAR_HIT_ENTITY.get(),
 							ownerId, ownerPos);
-					newSound.setVolume(1.0F);
 					newSound.setActive(true);
+					newSound.setVolume(1.0F);
 					Minecraft.getInstance().getSoundManager().play(newSound);
 					activeOwnerSound.put(ownerId, newSound);
 				}
@@ -516,10 +383,10 @@ public class ClientPacketHandlers {
 
 			PositionedLoopSound oldEndSound = activeEndSound.get(ownerId);
 			ItemStack usingItem = owner.getUseItem();
-			boolean isBeamActive = usingItem.getItem() instanceof NetherStarScrollItem &&
-					usingItem.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0 &&
-					owner.getTicksUsingItem() > 40 &&
-					owner.isUsingItem();
+			boolean isBeamActive = usingItem.getItem() instanceof NetherStarScrollItem
+					&& usingItem.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get()) > 0
+					&& useTicks > 40
+					&& owner.isUsingItem();
 			boolean shouldHaveEndSound = isBeamActive && endPos.distanceTo(owner.getEyePosition()) > 0.1;
 
 			if (oldEndSound != null && (!shouldHaveEndSound || oldEndSound.isStopped())) {
@@ -533,8 +400,8 @@ public class ClientPacketHandlers {
 					PositionedLoopSound newSound = new PositionedLoopSound(
 							RPGSounds.SPELL_DESTRUCTION_NETHER_STAR_HIT_BLOCK.get(),
 							ownerId, endPos);
-					newSound.setVolume(0.3F);
 					newSound.setActive(true);
+					newSound.setVolume(0.3F);
 					Minecraft.getInstance().getSoundManager().play(newSound);
 					activeEndSound.put(ownerId, newSound);
 				} else {
