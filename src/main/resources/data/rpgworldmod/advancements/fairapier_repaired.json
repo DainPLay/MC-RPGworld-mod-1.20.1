@@ -1,5 +1,6 @@
 {
-  "parent": "rpgworldmod:find_rie_weald",
+  "parent": "rpgworldmod:collect_all_rie_weald_flora",
+  "show_depth": 3,
   "criteria": {
     "fairapier_repaired": {
       "conditions": {},

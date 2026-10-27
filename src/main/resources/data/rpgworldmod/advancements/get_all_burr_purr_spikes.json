@@ -1,5 +1,6 @@
 {
-  "parent": "rpgworldmod:find_rie_weald",
+  "parent": "rpgworldmod:golden_token_burr_purr",
+  "show_depth": 2,
   "criteria": {
     "get_all_burr_purr_spikes": {
       "conditions": {},

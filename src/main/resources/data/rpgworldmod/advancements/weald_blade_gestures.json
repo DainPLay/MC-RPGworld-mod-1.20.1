@@ -1,5 +1,11 @@
 {
-  "parent": "rpgworldmod:get_all_burr_purr_spikes",
+  "parent": "rpgworldmod:mintal_triangle_hit_16_targets",
+  "parents": [
+    "rpgworldmod:mintal_triangle_hit_16_targets",
+    "rpgworldmod:get_all_burr_purr_spikes",
+    "rpgworldmod:fly_in_oil"
+  ],
+  "show_depth": 5,
   "criteria": {
     "weald_blade_gestures": {
       "conditions": {},

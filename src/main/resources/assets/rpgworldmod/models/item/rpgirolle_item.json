@@ -57,6 +57,114 @@
         "token": 9.0
       },
       "model": "rpgworldmod:item/all_staffs"
+    },
+    {
+      "predicate": {
+        "token": 10.0
+      },
+      "model": "rpgworldmod:item/bramblefox_silver_token"
+    },
+    {
+      "predicate": {
+        "token": 11.0
+      },
+      "model": "rpgworldmod:item/bramblefox_golden_token"
+    },
+    {
+      "predicate": {
+        "token": 12.0
+      },
+      "model": "rpgworldmod:item/bibbit_silver_token"
+    },
+    {
+      "predicate": {
+        "token": 13.0
+      },
+      "model": "rpgworldmod:item/bibbit_golden_token"
+    },
+    {
+      "predicate": {
+        "token": 14.0
+      },
+      "model": "rpgworldmod:item/burr_purr_silver_token"
+    },
+    {
+      "predicate": {
+        "token": 15.0
+      },
+      "model": "rpgworldmod:item/burr_purr_golden_token"
+    },
+    {
+      "predicate": {
+        "token": 16.0
+      },
+      "model": "rpgworldmod:item/mintobat_silver_token"
+    },
+    {
+      "predicate": {
+        "token": 17.0
+      },
+      "model": "rpgworldmod:item/mintobat_golden_token"
+    },
+    {
+      "predicate": {
+        "token": 18.0
+      },
+      "model": "rpgworldmod:item/fireflantern_silver_token"
+    },
+    {
+      "predicate": {
+        "token": 19.0
+      },
+      "model": "rpgworldmod:item/fireflantern_golden_token"
+    },
+    {
+      "predicate": {
+        "token": 20.0
+      },
+      "model": "rpgworldmod:item/drillhog_silver_token"
+    },
+    {
+      "predicate": {
+        "token": 21.0
+      },
+      "model": "rpgworldmod:item/drillhog_golden_token"
+    },
+    {
+      "predicate": {
+        "token": 22.0
+      },
+      "model": "rpgworldmod:item/mosquito_swarm_silver_token"
+    },
+    {
+      "predicate": {
+        "token": 23.0
+      },
+      "model": "rpgworldmod:item/mosquito_swarm_golden_token"
+    },
+    {
+      "predicate": {
+        "token": 24.0
+      },
+      "model": "rpgworldmod:item/razorleaf_silver_token"
+    },
+    {
+      "predicate": {
+        "token": 25.0
+      },
+      "model": "rpgworldmod:item/razorleaf_golden_token"
+    },
+    {
+      "predicate": {
+        "token": 26.0
+      },
+      "model": "rpgworldmod:item/ent_silver_token"
+    },
+    {
+      "predicate": {
+        "token": 27.0
+      },
+      "model": "rpgworldmod:item/ent_golden_token"
     }
   ]
 }

@@ -3,13 +3,17 @@ package net.dainplay.rpgworldmod.render;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import net.dainplay.rpgworldmod.entity.client.render.ClientLayerRegistry;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
+import java.util.Map;
 import java.util.OptionalDouble;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 public class ModRenderTypes extends RenderType {
@@ -251,4 +255,38 @@ public class ModRenderTypes extends RenderType {
 					.setTransparencyState(LIGHTNING_TRANSPARENCY)
 					.createCompositeState(false)
 	);
+
+	public static void ensureRepeatWrap(ResourceLocation texture) {
+		RenderSystem.setShaderTexture(0, texture);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+	}
+
+	private static final Map<ResourceLocation, RenderType> MOSS_OVERLAY_CACHE = new ConcurrentHashMap<>();
+
+	public static RenderType getMossOverlay(ResourceLocation mossTexture) {
+		return MOSS_OVERLAY_CACHE.computeIfAbsent(mossTexture, ModRenderTypes::createMossOverlay);
+	}
+
+	private static RenderType createMossOverlay(ResourceLocation mossTexture) {
+		return RenderType.create(
+				"moss_overlay_" + mossTexture.getPath(),
+				DefaultVertexFormat.NEW_ENTITY,
+				VertexFormat.Mode.QUADS,
+				256,
+				true,
+				true,
+				RenderType.CompositeState.builder()
+						.setShaderState(RenderStateShard.RENDERTYPE_ENTITY_CUTOUT_SHADER)
+						.setTextureState(new RenderStateShard.TextureStateShard(mossTexture, false, false))
+						.setTransparencyState(RenderStateShard.NO_TRANSPARENCY)
+						.setCullState(RenderStateShard.CULL)
+						.setLightmapState(RenderStateShard.LIGHTMAP)
+						.setOverlayState(RenderStateShard.OVERLAY)
+						.setWriteMaskState(RenderStateShard.COLOR_WRITE)
+						.setDepthTestState(RenderStateShard.EQUAL_DEPTH_TEST)
+						.createCompositeState(true)
+		);
+	}
+
 }

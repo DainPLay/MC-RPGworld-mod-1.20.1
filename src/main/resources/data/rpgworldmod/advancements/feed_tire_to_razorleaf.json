@@ -1,5 +1,9 @@
 {
-  "parent": "rpgworldmod:defeat_ent",
+  "parent": "rpgworldmod:feed_zombie_to_razorleaf",
+  "parents": [
+    "rpgworldmod:feed_zombie_to_razorleaf",
+    "rpgworldmod:ride_tire_swing"
+  ],
   "criteria": {
     "feed_tire_to_razorleaf": {
       "conditions": {},

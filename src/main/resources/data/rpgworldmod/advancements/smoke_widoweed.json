@@ -1,5 +1,11 @@
 {
-  "parent": "rpgworldmod:find_rie_weald",
+  "parent": "rpgworldmod:fairapier_repaired",
+  "greyscale": true,
+  "parents": [
+    "rpgworldmod:fairapier_repaired",
+    "rpgworldmod:get_depressed"
+  ],
+  "show_depth": 4,
   "criteria": {
     "smoke_widoweed": {
       "conditions": {},

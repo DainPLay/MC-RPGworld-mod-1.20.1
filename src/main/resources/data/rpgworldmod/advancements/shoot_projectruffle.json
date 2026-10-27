@@ -1,5 +1,6 @@
 {
   "parent": "rpgworldmod:defeat_ent",
+  "show_depth": 5,
   "criteria": {
     "shoot_projectruffle": {
       "conditions": {},

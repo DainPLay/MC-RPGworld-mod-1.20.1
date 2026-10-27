@@ -1,0 +1,34 @@
+{
+  "parent": "rpgworldmod:silver_token_razorleaf",
+  "show_depth": 4,
+  "criteria": {
+    "golden_kill_razorleaf": {
+      "conditions": {},
+      "trigger": "rpgworldmod:golden_kill_razorleaf"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.rpgworldmod.golden_token_razorleaf.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:rpgirolle_item",
+      "nbt": "{Token:25}"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.rpgworldmod.golden_token_razorleaf.title"
+    }
+  },
+  "requirements": [
+    [
+      "golden_kill_razorleaf"
+    ]
+  ],
+  "rewards": {
+  },
+  "sends_telemetry_event": false
+}

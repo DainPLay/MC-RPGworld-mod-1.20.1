@@ -250,13 +250,14 @@ public class OrbitingItemRenderer {
 					hasEnough = (int) Math.ceil(player.getHealth()) >= manacost;
 			}
 
+			boolean useCube = item.useCubeEffect(event.getItemStack(), player);
+			float swingCF = useCube ? 1F : 3F;
 			ms.pushPose();
 			ms.translate(
-					flip * (f2 * 2F + 0.64000005F),
+					flip * (f2 * swingCF + 0.64000005F),
 					f3 + -0.6F + equipProgress * -0.6F,
 					f4 + -0.71999997F
 			);
-			boolean useCube = item.useCubeEffect(event.getItemStack(), player);
 			boolean isSlim = "slim".equals(player.getModelName());
 			if (useCube) {
 				ms.mulPose(Axis.YP.rotationDegrees(flip * 45.0F));

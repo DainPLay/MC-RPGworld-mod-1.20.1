@@ -1,5 +1,6 @@
 {
-  "parent": "rpgworldmod:find_rie_weald",
+  "parent": "rpgworldmod:golden_token_mosquito_swarm",
+  "show_depth": 5,
   "criteria": {
     "release_mosquitos_in_nether": {
       "conditions": {},

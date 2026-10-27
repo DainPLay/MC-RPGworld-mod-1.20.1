@@ -1,5 +1,6 @@
 {
   "parent": "rpgworldmod:mossiosis_get",
+  "show_depth": 6,
   "criteria": {
     "mossiosis_fish_transform": {
       "conditions": {},

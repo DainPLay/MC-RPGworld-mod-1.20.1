@@ -126,22 +126,42 @@ public class BubbleCoralStaffItem extends StaffItem implements ChooseTargetItem 
 		} else player.getCooldowns().addCooldown(this, getUseCooldown(item));
 		player.swing(player.getUsedItemHand());
 
+		switch (getGemType(item)) {
+			case EMBER_GEM:
+				player.level().playSound(null,
+						player.getX(), player.getY(), player.getZ(),
+						RPGSounds.STAFF_EMBER_GEM_CAST.get(),
+						SoundSource.PLAYERS, 1.2F, 1.0F
+				);
+				break;
+			case ENDER_EYE:
+				player.level().playSound(null,
+						player.getX(), player.getY(), player.getZ(),
+						RPGSounds.STAFF_ENDER_EYE_CAST.get(),
+						SoundSource.PLAYERS, 1.2F, 1.0F
+				);
+				break;
+			case HEART_OF_THE_SEA:
+				player.level().playSound(null,
+						player.getX(), player.getY(), player.getZ(),
+						RPGSounds.STAFF_HEART_OF_THE_SEA_ITEM.get(),
+						SoundSource.PLAYERS, 1.2F, 1.0F
+				);
+				break;
+			case NETHER_STAR:
+				player.level().playSound(null,
+						player.getX(), player.getY(), player.getZ(),
+						RPGSounds.STAFF_NETHER_STAR_ITEM.get(),
+						SoundSource.PLAYERS, 1.2F, 1.0F
+				);
+				break;
+		}
+
 		for (ItemEntity target : targets) {
 			switch (getGemType(item)) {
 				case EMBER_GEM: {
-					player.level().playSound(null,
-							player.getX(), player.getY(), player.getZ(),
-							RPGSounds.STAFF_EMBER_GEM_CAST.get(),
-							SoundSource.PLAYERS, 1.0F, 1.0F
-					);
 					player.gameEvent(GameEvent.ENTITY_INTERACT, player);
-
 					if (target != null) {
-						target.level().playSound(null,
-								target.getX(), target.getY(), target.getZ(),
-								RPGSounds.STAFF_EMBER_GEM_CAST.get(),
-								SoundSource.PLAYERS, 1.0F, 1.0F
-						);
 						if (!target.fireImmune()) {
 							target.setSecondsOnFire(5);
 						}
@@ -150,37 +170,15 @@ public class BubbleCoralStaffItem extends StaffItem implements ChooseTargetItem 
 				}
 				break;
 				case ENDER_EYE: {
-					player.level().playSound(null,
-							player.getX(), player.getY(), player.getZ(),
-							RPGSounds.STAFF_ENDER_EYE_CAST.get(),
-							SoundSource.PLAYERS, 1.0F, 1.0F
-					);
 					player.gameEvent(GameEvent.ENTITY_INTERACT, player);
-
 					if (target != null) {
-						target.level().playSound(null,
-								target.getX(), target.getY(), target.getZ(),
-								RPGSounds.STAFF_ENDER_EYE_CAST.get(),
-								SoundSource.PLAYERS, 1.0F, 1.0F
-						);
 						target.setGlowingTag(true);
 					}
 				}
 				break;
 				case HEART_OF_THE_SEA: {
-					player.level().playSound(null,
-							player.getX(), player.getY(), player.getZ(),
-							RPGSounds.STAFF_HEART_OF_THE_SEA_ITEM.get(),
-							SoundSource.PLAYERS, 1.0F, 1.0F
-					);
 					player.gameEvent(GameEvent.SPLASH);
-
 					if (target != null) {
-						target.level().playSound(null,
-								target.getX(), target.getY(), target.getZ(),
-								RPGSounds.STAFF_HEART_OF_THE_SEA_ITEM.get(),
-								SoundSource.PLAYERS, 1.0F, 1.0F
-						);
 						ItemStack itemStack = target.getItem();
 						player.getInventory().add(itemStack);
 						if (!itemStack.isEmpty()) {
@@ -191,19 +189,8 @@ public class BubbleCoralStaffItem extends StaffItem implements ChooseTargetItem 
 				}
 				break;
 				case NETHER_STAR: {
-					player.level().playSound(null,
-							player.getX(), player.getY(), player.getZ(),
-							RPGSounds.STAFF_NETHER_STAR_ITEM.get(),
-							SoundSource.PLAYERS, 0.5F, 1.0F
-					);
 					player.level().gameEvent(player, GameEvent.EXPLODE, new Vec3(player.getX(), player.getY(), player.getZ()));
-
 					if (target != null) {
-						target.level().playSound(null,
-								target.getX(), target.getY(), target.getZ(),
-								RPGSounds.STAFF_NETHER_STAR_ITEM.get(),
-								SoundSource.PLAYERS, 0.5F, 1.0F
-						);
 						ItemStack targetStack = target.getItem();
 						float power = ((float) targetStack.getCount() / targetStack.getMaxStackSize()) * 2.0F;
 						target.level().explode(target, target.getX(), target.getY(), target.getZ(), power, Level.ExplosionInteraction.MOB);

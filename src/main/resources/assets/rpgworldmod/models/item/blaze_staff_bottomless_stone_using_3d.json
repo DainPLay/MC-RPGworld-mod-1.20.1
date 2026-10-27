@@ -1,6 +1,7 @@
 {
-	"parent": "rpgworldmod:item/blaze_staff_bottomless_stone_3d",
+	"parent": "rpgworldmod:item/blaze_staff_ember_gem_3d",
 	"textures": {
-		"base": "rpgworldmod:item/blaze_staff_using_3d"
+		"base": "rpgworldmod:item/blaze_staff_using_3d",
+		"gem": "rpgworldmod:item/bottomless_stone_3d"
 	}
 }

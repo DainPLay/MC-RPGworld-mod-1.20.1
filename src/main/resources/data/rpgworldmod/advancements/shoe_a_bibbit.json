@@ -1,5 +1,6 @@
 {
-  "parent": "rpgworldmod:find_rie_weald",
+  "parent": "rpgworldmod:golden_token_bibbit",
+  "show_depth": 5,
   "criteria": {
     "shoe_a_bibbit": {
       "conditions": {},

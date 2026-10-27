@@ -1,0 +1,50 @@
+{
+  "parent": "rpgworldmod:golden_kill_all_rie_weald_mobs",
+  "show_depth": 3,
+  "display_order": 2,
+  "criteria": {
+    "shoe_a_bibbit": {
+      "conditions": {},
+      "trigger": "rpgworldmod:shoe_a_bibbit"
+    },
+    "rpgworldmod:bibbit": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "rpgworldmod:bibbit"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.rpgworldmod.silver_token_bibbit.description"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:rpgirolle_item",
+      "nbt": "{Token:12}"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.rpgworldmod.silver_token_bibbit.title"
+    }
+  },
+  "requirements": [
+    [
+      "shoe_a_bibbit",
+      "rpgworldmod:bibbit"
+    ]
+  ],
+  "rewards": {
+  },
+  "sends_telemetry_event": false
+}

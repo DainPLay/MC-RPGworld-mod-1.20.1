@@ -1,5 +1,10 @@
 {
-  "parent": "rpgworldmod:fly_in_oil",
+  "parent": "rpgworldmod:mossiosis_convert_mobs",
+  "show_depth": 2,
+  "parents": [
+    "rpgworldmod:mossiosis_convert_mobs",
+    "rpgworldmod:fly_in_oil"
+  ],
   "criteria": {
     "clear_effects_with_cheese": {
       "conditions": {},

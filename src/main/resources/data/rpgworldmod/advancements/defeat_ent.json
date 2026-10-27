@@ -1,5 +1,6 @@
 {
-  "parent": "rpgworldmod:find_rie_weald",
+  "parent": "rpgworldmod:golden_token_ent",
+  "show_depth": 5,
   "criteria": {
     "kill_ent": {
       "conditions": {},

@@ -1,5 +1,6 @@
 {
   "parent": "rpgworldmod:find_rie_weald",
+  "display_order": 1,
   "criteria": {
     "find_rie_weald_first": {
       "conditions": {},

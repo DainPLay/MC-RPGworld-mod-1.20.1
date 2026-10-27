@@ -1,0 +1,45 @@
+{
+  "parent": "rpgworldmod:golden_kill_all_rie_weald_mobs",
+  "show_depth": 3,
+  "display_order": 5,
+  "criteria": {
+    "rpgworldmod:fireflantern": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "rpgworldmod:fireflantern"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.rpgworldmod.silver_token_fireflantern.description"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:rpgirolle_item",
+      "nbt": "{Token:18}"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.rpgworldmod.silver_token_fireflantern.title"
+    }
+  },
+  "requirements": [
+    [
+      "rpgworldmod:fireflantern"
+    ]
+  ],
+  "rewards": {
+  },
+  "sends_telemetry_event": false
+}

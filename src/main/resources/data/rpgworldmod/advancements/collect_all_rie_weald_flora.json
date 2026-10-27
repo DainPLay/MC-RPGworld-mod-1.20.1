@@ -1,5 +1,6 @@
 {
-  "parent": "rpgworldmod:clear_effects_with_cheese",
+  "parent": "rpgworldmod:eat_gasbass",
+  "show_depth": 2,
   "criteria": {
     "projectruffle": {
       "conditions": {

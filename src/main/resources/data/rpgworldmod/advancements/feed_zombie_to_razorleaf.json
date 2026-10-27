@@ -1,5 +1,6 @@
 {
-  "parent": "rpgworldmod:defeat_razorleaf",
+  "parent": "rpgworldmod:get_eaten_by_razorleaf_wearing_skirt",
+  "show_depth": 5,
   "criteria": {
     "feed_zombie_to_razorleaf": {
       "conditions": {},

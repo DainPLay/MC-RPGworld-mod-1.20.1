@@ -1,0 +1,44 @@
+{
+  "parent": "rpgworldmod:silver_token_bramblefox",
+  "show_depth": 4,
+  "criteria": {
+    "rpgworldmod:bramblefox": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "rpgworldmod:bramblefox"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.rpgworldmod.golden_token_bramblefox.description"
+    },
+    "frame": "goal",
+    "hidden": true,
+    "icon": {
+      "item": "rpgworldmod:rpgirolle_item",
+      "nbt": "{Token:11}"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.rpgworldmod.golden_token_bramblefox.title"
+    }
+  },
+  "requirements": [
+    [
+      "rpgworldmod:bramblefox"
+    ]
+  ],
+  "rewards": {
+  },
+  "sends_telemetry_event": false
+}

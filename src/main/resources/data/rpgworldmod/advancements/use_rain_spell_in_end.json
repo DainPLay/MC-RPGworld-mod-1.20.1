@@ -1,5 +1,5 @@
 {
-  "parent": "rpgworldmod:obtain_spell",
+  "parent": "rpgworldmod:use_all_spells",
   "criteria": {
     "use_rain_spell_in_end": {
       "conditions": {},

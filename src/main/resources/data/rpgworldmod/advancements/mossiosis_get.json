@@ -1,5 +1,6 @@
 {
-  "parent": "rpgworldmod:find_rie_weald",
+  "parent": "rpgworldmod:smoke_widoweed",
+  "show_depth": 5,
   "criteria": {
     "mossiosis_get": {
       "conditions": {

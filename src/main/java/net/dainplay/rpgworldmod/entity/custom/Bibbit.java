@@ -348,7 +348,7 @@ public class Bibbit extends PathfinderMob {
 	}
 
 	public boolean wantsToPickUp(ItemStack pStack) {
-		return this.canPickUpLoot() && pStack.is(Tags.Items.ARMORS_BOOTS) && this.getItemBySlot(EquipmentSlot.FEET).isEmpty();
+		return this.canPickUpLoot() && Player.getEquipmentSlotForItem(pStack) == EquipmentSlot.FEET && this.getItemBySlot(EquipmentSlot.FEET).isEmpty();
 	}
 
 

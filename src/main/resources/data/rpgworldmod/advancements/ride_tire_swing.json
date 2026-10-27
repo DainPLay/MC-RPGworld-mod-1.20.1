@@ -1,5 +1,10 @@
 {
-  "parent": "rpgworldmod:defeat_ent",
+  "parent": "rpgworldmod:shoot_projectruffle",
+  "greyscale": true,
+  "parents": [
+    "rpgworldmod:shoot_projectruffle",
+    "rpgworldmod:get_depressed"
+  ],
   "criteria": {
     "ride_tire_swing": {
       "conditions": {},

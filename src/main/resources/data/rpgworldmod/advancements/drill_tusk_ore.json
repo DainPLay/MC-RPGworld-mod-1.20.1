@@ -1,5 +1,6 @@
 {
-  "parent": "rpgworldmod:find_rie_weald",
+  "parent": "rpgworldmod:drill_straight_down",
+  "show_depth": 3,
   "criteria": {
     "drill_tusk_ore": {
       "conditions": {},

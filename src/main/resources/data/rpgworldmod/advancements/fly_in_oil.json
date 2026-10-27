@@ -1,5 +1,6 @@
 {
-  "parent": "rpgworldmod:mossiosis_get",
+  "parent": "rpgworldmod:blow_away_a_fireflantern",
+  "show_depth": 3,
   "criteria": {
     "fly_in_oil": {
       "conditions": {},

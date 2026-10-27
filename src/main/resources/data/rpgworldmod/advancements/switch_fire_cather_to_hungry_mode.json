@@ -1,5 +1,6 @@
 {
   "parent": "rpgworldmod:defeat_razorleaf",
+  "show_depth": 3,
   "criteria": {
     "switch_fire_cather_to_hungry_mode": {
       "conditions": {},

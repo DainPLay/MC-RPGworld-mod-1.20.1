@@ -1,5 +1,6 @@
 {
   "parent": "rpgworldmod:root",
+  "display_order": 6,
   "criteria": {
     "backstab": {
       "conditions": {},

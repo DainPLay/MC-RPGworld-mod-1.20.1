@@ -1,5 +1,6 @@
 {
-  "parent": "rpgworldmod:find_rie_weald",
+  "parent": "rpgworldmod:mintal_block_note",
+  "show_depth": 3,
   "criteria": {
     "mintal_triangle_used": {
       "conditions": {},

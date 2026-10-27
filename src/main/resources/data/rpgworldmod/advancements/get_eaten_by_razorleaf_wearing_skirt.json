@@ -1,5 +1,6 @@
 {
-  "parent": "rpgworldmod:defeat_razorleaf",
+  "parent": "rpgworldmod:switch_fire_cather_to_hungry_mode",
+  "show_depth": 4,
   "criteria": {
     "get_eaten_by_razorleaf_wearing_skirt": {
       "conditions": {},

@@ -27,6 +27,114 @@
         ]
       },
       "trigger": "minecraft:inventory_changed"
+    },
+    "dig_flint_with_flint": {
+      "conditions": {},
+      "trigger": "rpgworldmod:dig_flint_with_flint"
+    },
+    "obtain_spell": {
+      "conditions": {},
+      "trigger": "rpgworldmod:obtain_spell"
+    },
+    "living_wood_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:living_wood_staff"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "blaze_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:blaze_staff"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "sculk_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:sculk_staff"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "tube_coral_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:tube_coral_staff"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "brain_coral_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:brain_coral_staff"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "bubble_coral_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:bubble_coral_staff"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "fire_coral_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:fire_coral_staff"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "horn_coral_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "rpgworldmod:horn_coral_staff"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "backstab": {
+      "conditions": {},
+      "trigger": "rpgworldmod:backstab"
     }
   },
   "display": {
@@ -49,7 +157,18 @@
   "requirements": [
     [
       "rpgworldmod:rie_weald",
-      "rpgworldmod:rpgirolle"
+      "rpgworldmod:rpgirolle",
+      "dig_flint_with_flint",
+      "obtain_spell",
+      "living_wood_staff",
+      "blaze_staff",
+      "sculk_staff",
+      "tube_coral_staff",
+      "brain_coral_staff",
+      "bubble_coral_staff",
+      "fire_coral_staff",
+      "horn_coral_staff",
+      "backstab"
     ]
   ],
   "sends_telemetry_event": true

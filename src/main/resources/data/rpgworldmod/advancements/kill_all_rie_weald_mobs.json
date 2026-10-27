@@ -1,5 +1,7 @@
 {
-  "parent": "rpgworldmod:defeat_razorleaf",
+  "parent": "rpgworldmod:find_rie_weald",
+  "show_depth": 1,
+  "display_order": 1,
   "criteria": {
     "rpgworldmod:fireflantern": {
       "conditions": {

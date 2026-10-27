@@ -1,5 +1,6 @@
 {
   "parent": "rpgworldmod:kill_all_rie_weald_mobs",
+  "show_depth": 2,
   "criteria": {
     "golden_kill_fireflantern": {
       "conditions": {},

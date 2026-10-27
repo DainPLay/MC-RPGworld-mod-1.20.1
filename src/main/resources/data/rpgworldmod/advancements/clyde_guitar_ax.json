@@ -1,5 +1,5 @@
 {
-  "parent": "rpgworldmod:mintal_triangle_used",
+  "parent": "rpgworldmod:weald_blade_gestures",
   "criteria": {
     "clyde_got_guitar_ax": {
       "conditions": {},

@@ -1,5 +1,6 @@
 {
-  "parent": "rpgworldmod:find_rie_weald",
+  "parent": "rpgworldmod:golden_token_razorleaf",
+  "show_depth": 5,
   "criteria": {
     "razorleaf": {
       "conditions": {

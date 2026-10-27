@@ -356,7 +356,7 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 
 		if (!level.isClientSide) {
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), itemstack) > 0) {
-				return InteractionResultHolder.pass(itemstack);
+				return handleConjurationAtPlayer(level, player, itemstack);
 			}
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), itemstack) > 0) {
 				return handleRestoration(level, player, itemstack);
@@ -388,7 +388,7 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 			player.startUsingItem(hand);
 		} else {
 			if (EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.CONJURATION.get(), itemstack) > 0) {
-				return InteractionResultHolder.pass(itemstack);
+				return handleConjurationAtPlayer(level, player, itemstack);
 			}
 
 			if (!canUseClient(player, itemstack)) {
@@ -571,12 +571,8 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 		BlockPos spawnPos = clickedState.getCollisionShape(level, clickedPos).isEmpty() ? clickedPos : clickedPos.relative(face);
 
 		ServerLevel serverLevel = (ServerLevel) level;
-		Entity dolphin = new ConjuredDolphin(ModEntities.CONJURED_DOLPHIN.get(), serverLevel);
-		dolphin.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
-		if (dolphin instanceof ConjuredDolphin conjured) {
-			conjured.setOwnerUUID(player.getUUID());
-		}
-		serverLevel.addFreshEntity(dolphin);
+		spawnConjuredDolphin(serverLevel, player, spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
+
 		player.getCooldowns().addCooldown(this, 15);
 		level.playSound(null, context.getClickedPos(),
 				RPGSounds.SPELL_CONJURATION_START.get(),
@@ -587,6 +583,59 @@ public class HeartOfTheSeaScrollItem extends ScrollItem {
 			ModAdvancements.SPELL_CONJURATION_HEART_OF_THE_SEA_TRIGGER.trigger(serverPlayer);
 		}
 		return InteractionResult.CONSUME;
+	}
+
+	/**
+	 * Призыв дельфина при использовании свитка по воздуху (не по блоку).
+	 * Дельфин появляется на позиции игрока.
+	 */
+	private InteractionResultHolder<ItemStack> handleConjurationAtPlayer(Level level, Player player, ItemStack stack) {
+		if (level.isClientSide) {
+			if (player != null && !player.getAbilities().instabuild && ClientManaData.get() < getManaCost(stack, player)) {
+				return InteractionResultHolder.fail(stack);
+			}
+			return InteractionResultHolder.success(stack);
+		}
+
+		if (player == null) return InteractionResultHolder.fail(stack);
+
+		if (!player.getAbilities().instabuild) {
+			AtomicBoolean hasMana = new AtomicBoolean(true);
+			player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+				if (mana.getMana() < getManaCost(stack, player)) {
+					hasMana.set(false);
+				} else {
+					mana.reduceMana((ServerPlayer) player, getManaCost(stack, player));
+				}
+			});
+			if (!hasMana.get()) return InteractionResultHolder.fail(stack);
+		}
+
+		ServerLevel serverLevel = (ServerLevel) level;
+		spawnConjuredDolphin(serverLevel, player, player.getX(), player.getY(), player.getZ());
+
+		player.getCooldowns().addCooldown(this, 15);
+		level.playSound(null, player.blockPosition(),
+				RPGSounds.SPELL_CONJURATION_START.get(),
+				SoundSource.NEUTRAL, 1.0F, (level.random.nextFloat() - level.random.nextFloat()) * 0.2F + 1.0F
+		);
+		level.gameEvent(player, GameEvent.ENTITY_PLACE, player.blockPosition());
+		if (player instanceof ServerPlayer serverPlayer) {
+			ModAdvancements.SPELL_CONJURATION_HEART_OF_THE_SEA_TRIGGER.trigger(serverPlayer);
+		}
+		return InteractionResultHolder.success(stack);
+	}
+
+	/**
+	 * Общий метод создания и добавления призванного дельфина в мир.
+	 */
+	private void spawnConjuredDolphin(ServerLevel serverLevel, Player player, double x, double y, double z) {
+		Entity dolphin = new ConjuredDolphin(ModEntities.CONJURED_DOLPHIN.get(), serverLevel);
+		dolphin.setPos(x, y, z);
+		if (dolphin instanceof ConjuredDolphin conjured) {
+			conjured.setOwnerUUID(player.getUUID());
+		}
+		serverLevel.addFreshEntity(dolphin);
 	}
 
 	public void cast(Player player, LivingEntity target, ItemStack item) {

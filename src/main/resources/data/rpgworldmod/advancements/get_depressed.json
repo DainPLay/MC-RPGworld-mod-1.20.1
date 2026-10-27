@@ -1,5 +1,6 @@
 {
-  "parent": "rpgworldmod:obtain_spell",
+  "parent": "rpgworldmod:eat_sweets_paranoid",
+  "show_depth": 3,
   "criteria": {
     "get_depressed": {
       "conditions": {},

@@ -1,5 +1,6 @@
 {
   "parent": "rpgworldmod:root",
+  "display_order": 2,
   "criteria": {
     "rpgworldmod:rie_weald": {
       "conditions": {

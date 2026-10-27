@@ -1,0 +1,54 @@
+{
+  "parent": "rpgworldmod:golden_kill_all_rie_weald_mobs",
+  "show_depth": 3,
+  "display_order": 1,
+  "criteria": {
+    "interact_with_bramblefox": {
+      "trigger": "minecraft:player_interacted_with_entity",
+      "conditions": {
+        "entity": {
+          "type": "rpgworldmod:bramblefox"
+        }
+      }
+    },
+    "rpgworldmod:bramblefox": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "rpgworldmod:bramblefox"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.rpgworldmod.silver_token_bramblefox.description"
+    },
+    "frame": "goal",
+    "hidden": true,
+    "icon": {
+      "item": "rpgworldmod:rpgirolle_item",
+      "nbt": "{Token:10}"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.rpgworldmod.silver_token_bramblefox.title"
+    }
+  },
+  "requirements": [
+    [
+      "interact_with_bramblefox",
+      "rpgworldmod:bramblefox"
+    ]
+  ],
+  "rewards": {
+  },
+  "sends_telemetry_event": false
+}

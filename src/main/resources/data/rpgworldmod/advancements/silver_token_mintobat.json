@@ -1,0 +1,45 @@
+{
+  "parent": "rpgworldmod:golden_kill_all_rie_weald_mobs",
+  "show_depth": 3,
+  "display_order": 4,
+  "criteria": {
+    "rpgworldmod:mintobat": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "rpgworldmod:mintobat"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.rpgworldmod.silver_token_mintobat.description"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:rpgirolle_item",
+      "nbt": "{Token:16}"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.rpgworldmod.silver_token_mintobat.title"
+    }
+  },
+  "requirements": [
+    [
+      "rpgworldmod:mintobat"
+    ]
+  ],
+  "rewards": {
+  },
+  "sends_telemetry_event": false
+}

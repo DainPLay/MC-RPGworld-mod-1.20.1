@@ -1,5 +1,6 @@
 {
-  "parent": "rpgworldmod:drill_tusk_ore",
+  "parent": "rpgworldmod:golden_token_drillhog",
+  "show_depth": 2,
   "criteria": {
     "drill_straight_down": {
       "conditions": {},

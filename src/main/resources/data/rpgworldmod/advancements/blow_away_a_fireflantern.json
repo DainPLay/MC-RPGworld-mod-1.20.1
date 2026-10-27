@@ -1,5 +1,6 @@
 {
-  "parent": "rpgworldmod:find_rie_weald",
+  "parent": "rpgworldmod:golden_token_fireflantern",
+  "show_depth": 2,
   "criteria": {
     "blow_away_a_fireflantern": {
       "conditions": {},

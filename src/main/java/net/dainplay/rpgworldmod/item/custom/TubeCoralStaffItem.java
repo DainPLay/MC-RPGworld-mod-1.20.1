@@ -14,8 +14,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
@@ -64,7 +62,6 @@ public class TubeCoralStaffItem extends StaffItem implements ChooseTargetItem {
 			return InteractionResultHolder.pass(itemstack);
 		}
 
-
 		if (player.getCooldowns().getCooldownPercent(itemstack.getItem(), 0.0F) > 0.0F) {
 			Map<Item, ItemCooldowns.CooldownInstance> cooldownsMap = player.getCooldowns().cooldowns;
 			int currentTick = player.getCooldowns().tickCount;
@@ -105,7 +102,6 @@ public class TubeCoralStaffItem extends StaffItem implements ChooseTargetItem {
 	public void releaseUsing(ItemStack stack, Level level, LivingEntity livingEntity, int timeCharged) {
 		if (livingEntity instanceof Player player) {
 			if (!level.isClientSide) {
-
 				level.playSound(null,
 						player.getX(), player.getY(), player.getZ(),
 						RPGSounds.STAFF_STOP.get(),
@@ -128,22 +124,13 @@ public class TubeCoralStaffItem extends StaffItem implements ChooseTargetItem {
 		} else player.getCooldowns().addCooldown(this, getUseCooldown(item));
 		player.swing(player.getUsedItemHand());
 
+		playPlayerCastSound(player, item);
+
 		for (ItemEntity target : targets) {
 			switch (getGemType(item)) {
 				case EMBER_GEM: {
-					player.level().playSound(null,
-							player.getX(), player.getY(), player.getZ(),
-							RPGSounds.STAFF_EMBER_GEM_CAST.get(),
-							SoundSource.PLAYERS, 1.0F, 1.0F
-					);
 					player.gameEvent(GameEvent.ENTITY_INTERACT, player);
-
 					if (target != null) {
-						target.level().playSound(null,
-								target.getX(), target.getY(), target.getZ(),
-								RPGSounds.STAFF_EMBER_GEM_CAST.get(),
-								SoundSource.PLAYERS, 1.0F, 1.0F
-						);
 						if (!target.fireImmune()) {
 							target.setSecondsOnFire(5);
 						}
@@ -152,37 +139,15 @@ public class TubeCoralStaffItem extends StaffItem implements ChooseTargetItem {
 				}
 				break;
 				case ENDER_EYE: {
-					player.level().playSound(null,
-							player.getX(), player.getY(), player.getZ(),
-							RPGSounds.STAFF_ENDER_EYE_CAST.get(),
-							SoundSource.PLAYERS, 1.0F, 1.0F
-					);
 					player.gameEvent(GameEvent.ENTITY_INTERACT, player);
-
 					if (target != null) {
-						target.level().playSound(null,
-								target.getX(), target.getY(), target.getZ(),
-								RPGSounds.STAFF_ENDER_EYE_CAST.get(),
-								SoundSource.PLAYERS, 1.0F, 1.0F
-						);
 						target.setGlowingTag(true);
 					}
 				}
 				break;
 				case HEART_OF_THE_SEA: {
-					player.level().playSound(null,
-							player.getX(), player.getY(), player.getZ(),
-							RPGSounds.STAFF_HEART_OF_THE_SEA_ITEM.get(),
-							SoundSource.PLAYERS, 1.0F, 1.0F
-					);
 					player.gameEvent(GameEvent.SPLASH);
-
 					if (target != null) {
-						target.level().playSound(null,
-								target.getX(), target.getY(), target.getZ(),
-								RPGSounds.STAFF_HEART_OF_THE_SEA_ITEM.get(),
-								SoundSource.PLAYERS, 1.0F, 1.0F
-						);
 						ItemStack itemStack = target.getItem();
 						player.getInventory().add(itemStack);
 						if (!itemStack.isEmpty()) {
@@ -193,19 +158,8 @@ public class TubeCoralStaffItem extends StaffItem implements ChooseTargetItem {
 				}
 				break;
 				case NETHER_STAR: {
-					player.level().playSound(null,
-							player.getX(), player.getY(), player.getZ(),
-							RPGSounds.STAFF_NETHER_STAR_ITEM.get(),
-							SoundSource.PLAYERS, 0.5F, 1.0F
-					);
 					player.level().gameEvent(player, GameEvent.EXPLODE, new Vec3(player.getX(), player.getY(), player.getZ()));
-
 					if (target != null) {
-						target.level().playSound(null,
-								target.getX(), target.getY(), target.getZ(),
-								RPGSounds.STAFF_NETHER_STAR_ITEM.get(),
-								SoundSource.PLAYERS, 0.5F, 1.0F
-						);
 						ItemStack targetStack = target.getItem();
 						float power = ((float) targetStack.getCount() / targetStack.getMaxStackSize()) * 2.0F;
 						target.level().explode(target, target.getX(), target.getY(), target.getZ(), power, Level.ExplosionInteraction.MOB);
@@ -216,6 +170,35 @@ public class TubeCoralStaffItem extends StaffItem implements ChooseTargetItem {
 			}
 		}
 		item.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(player.getUsedItemHand()));
+	}
+
+	private void playPlayerCastSound(Player player, ItemStack item) {
+		switch (getGemType(item)) {
+			case EMBER_GEM:
+				player.level().playSound(null,
+						player.getX(), player.getY(), player.getZ(),
+						RPGSounds.STAFF_EMBER_GEM_CAST.get(),
+						SoundSource.PLAYERS, 1.0F, 1.0F);
+				break;
+			case ENDER_EYE:
+				player.level().playSound(null,
+						player.getX(), player.getY(), player.getZ(),
+						RPGSounds.STAFF_ENDER_EYE_CAST.get(),
+						SoundSource.PLAYERS, 1.0F, 1.0F);
+				break;
+			case HEART_OF_THE_SEA:
+				player.level().playSound(null,
+						player.getX(), player.getY(), player.getZ(),
+						RPGSounds.STAFF_HEART_OF_THE_SEA_ITEM.get(),
+						SoundSource.PLAYERS, 1.0F, 1.0F);
+				break;
+			case NETHER_STAR:
+				player.level().playSound(null,
+						player.getX(), player.getY(), player.getZ(),
+						RPGSounds.STAFF_NETHER_STAR_ITEM.get(),
+						SoundSource.PLAYERS, 1.0F, 1.0F);
+				break;
+		}
 	}
 
 	@Override
@@ -250,5 +233,4 @@ public class TubeCoralStaffItem extends StaffItem implements ChooseTargetItem {
 	public float getX(ItemStack stack, Entity entity, boolean righthand) {
 		return -0.065F;
 	}
-
 }

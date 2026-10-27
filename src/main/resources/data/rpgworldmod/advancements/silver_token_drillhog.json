@@ -1,0 +1,45 @@
+{
+  "parent": "rpgworldmod:golden_kill_all_rie_weald_mobs",
+  "show_depth": 3,
+  "display_order": 6,
+  "criteria": {
+    "rpgworldmod:drillhog": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "rpgworldmod:drillhog"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.rpgworldmod.silver_token_drillhog.description"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:rpgirolle_item",
+      "nbt": "{Token:20}"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.rpgworldmod.silver_token_drillhog.title"
+    }
+  },
+  "requirements": [
+    [
+      "rpgworldmod:drillhog"
+    ]
+  ],
+  "rewards": {
+  },
+  "sends_telemetry_event": false
+}

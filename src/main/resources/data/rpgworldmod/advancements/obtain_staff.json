@@ -1,5 +1,6 @@
 {
-  "parent": "rpgworldmod:obtain_spell",
+  "parent": "rpgworldmod:root",
+  "display_order": 5,
   "criteria": {
     "living_wood_staff": {
       "conditions": {

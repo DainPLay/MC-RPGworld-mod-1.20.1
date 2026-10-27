@@ -1,5 +1,7 @@
 {
   "parent": "rpgworldmod:find_rie_weald",
+  "display_order": 3,
+  "show_depth": 1,
   "criteria": {
     "gasbass": {
       "conditions": {

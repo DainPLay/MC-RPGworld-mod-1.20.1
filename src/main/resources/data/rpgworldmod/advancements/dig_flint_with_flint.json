@@ -1,5 +1,6 @@
 {
   "parent": "rpgworldmod:root",
+  "display_order": 3,
   "criteria": {
     "dig_flint_with_flint": {
       "conditions": {},

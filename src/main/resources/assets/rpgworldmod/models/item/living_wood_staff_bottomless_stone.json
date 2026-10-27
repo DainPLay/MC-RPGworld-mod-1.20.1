@@ -1,21 +1,21 @@
 {
-	"parent": "minecraft:item/handheld",
-	"loader": "forge:separate_transforms",
-	"base": {
-		"parent": "rpgworldmod:item/living_wood_staff_bottomless_stone_3d"
-	},
-	"textures": {
-		"particle": "rpgworldmod:block/rie_log"
-	},
-	"perspectives": {
-		"gui": {
-			"parent": "rpgworldmod:item/living_wood_staff_bottomless_stone_2d"
-		},
-		"ground": {
-			"parent": "rpgworldmod:item/living_wood_staff_bottomless_stone_2d"
-		},
-		"fixed": {
-			"parent": "rpgworldmod:item/living_wood_staff_bottomless_stone_2d"
-		}
-	}
+  "parent": "minecraft:item/handheld",
+  "loader": "forge:separate_transforms",
+  "base": {
+    "parent": "rpgworldmod:item/living_wood_staff_bottomless_stone_3d"
+  },
+  "textures": {
+    "particle": "rpgworldmod:block/rie_log"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "rpgworldmod:item/living_wood_staff_bottomless_stone_2d"
+    },
+    "ground": {
+      "parent": "rpgworldmod:item/living_wood_staff_bottomless_stone_2d"
+    },
+    "fixed": {
+      "parent": "rpgworldmod:item/living_wood_staff_bottomless_stone_2d"
+    }
+  }
 }

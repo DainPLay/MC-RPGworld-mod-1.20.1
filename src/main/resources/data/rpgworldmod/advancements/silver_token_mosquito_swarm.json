@@ -1,0 +1,35 @@
+{
+  "parent": "rpgworldmod:golden_kill_all_rie_weald_mobs",
+  "show_depth": 3,
+  "display_order": 7,
+  "criteria": {
+    "kill_mosquito_swarm": {
+      "conditions": {},
+      "trigger": "rpgworldmod:kill_mosquito_swarm"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.rpgworldmod.silver_token_mosquito_swarm.description"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "rpgworldmod:rpgirolle_item",
+      "nbt": "{Token:22}"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.rpgworldmod.silver_token_mosquito_swarm.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_mosquito_swarm"
+    ]
+  ],
+  "rewards": {
+  },
+  "sends_telemetry_event": false
+}
