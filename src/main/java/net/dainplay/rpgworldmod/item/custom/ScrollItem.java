@@ -109,4 +109,18 @@ public class ScrollItem extends Item implements RPGtooltip, ManaCostItem, Orbiti
 		if (pStack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get()) > 0) addition = ".necromancy";
 		return this.getDescriptionId() + addition;
 	}
+
+	@Override
+	public int getMaxStackSize(ItemStack stack) {
+		return hasScrollEnchantment(stack) ? 1 : 16;
+	}
+
+	private static boolean hasScrollEnchantment(ItemStack stack) {
+		return stack.getEnchantmentLevel(ModEnchantments.ALTERATION.get())   > 0
+				|| stack.getEnchantmentLevel(ModEnchantments.RESTORATION.get())  > 0
+				|| stack.getEnchantmentLevel(ModEnchantments.DESTRUCTION.get())  > 0
+				|| stack.getEnchantmentLevel(ModEnchantments.ILLUSION.get())     > 0
+				|| stack.getEnchantmentLevel(ModEnchantments.CONJURATION.get())  > 0
+				|| stack.getEnchantmentLevel(ModEnchantments.NECROMANCY.get())   > 0;
+	}
 }

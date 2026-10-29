@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "rpgworldmod:mintal_nugget"
+    "rpgworldmod:mintal_nugget",
+    "rpgworldmod:platinum_nugget"
   ]
 }

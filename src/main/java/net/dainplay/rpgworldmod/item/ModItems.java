@@ -55,9 +55,16 @@ import net.dainplay.rpgworldmod.sounds.RPGSounds;
 import net.dainplay.rpgworldmod.util.ModTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BannerPatternItem;
@@ -67,6 +74,7 @@ import net.minecraft.world.item.HangingSignItem;
 import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MobBucketItem;
 import net.minecraft.world.item.PickaxeItem;
@@ -78,7 +86,14 @@ import net.minecraft.world.item.SignItem;
 import net.minecraft.world.item.SmithingTemplateItem;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -170,6 +185,10 @@ public class ModItems {
 			() -> new DriedWidoweedItem(new Item.Properties()));
 	public static final RegistryObject<Item> SAMARAGUARD = ITEMS.register("samaraguard",
 			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> PLATINUM_INGOT = ITEMS.register("platinum_ingot",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> PLATINUM_NUGGET = ITEMS.register("platinum_nugget",
+			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> MINTAL_INGOT = ITEMS.register("mintal_ingot",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> MINTAL_NUGGET = ITEMS.register("mintal_nugget",
@@ -184,6 +203,22 @@ public class ModItems {
 			() -> new Item(new Item.Properties().food(ModFoods.RIE_FRUIT)));
 	public static final RegistryObject<Item> MINT_RIE_FRUIT = ITEMS.register("mint_rie_fruit",
 			() -> new ExtinguishingItem(new Item.Properties().food(ModFoods.MINT_RIE_FRUIT)));
+	public static final RegistryObject<Item> COILCARROT = ITEMS.register("coilcarrot",
+			() -> new Item(new Item.Properties().food(ModFoods.COILCARROT)));
+	public static final RegistryObject<Item> PLATINUM_COILCARROT = ITEMS.register("platinum_coilcarrot",
+			() -> new Item(new Item.Properties().food(ModFoods.PLATINUM_COILCARROT)) {
+
+				@Override
+				public ItemStack finishUsingItem(ItemStack pStack, Level pLevel, LivingEntity pEntityLiving) {
+					pEntityLiving.removeEffect(MobEffects.BLINDNESS);
+					pEntityLiving.removeEffect(MobEffects.DARKNESS);
+
+					if (pEntityLiving instanceof Player && !((Player) pEntityLiving).getAbilities().instabuild) {
+						pEntityLiving.eat(pLevel, pStack);
+					}
+					return pStack;
+				}
+			});
 	public static final RegistryObject<Item> BRAMBLEFOX_BERRIES = ITEMS.register("bramblefox_berries",
 			() -> new Item(new Item.Properties().food(ModFoods.BRAMBLEFOX_BERRIES)));
 	public static final RegistryObject<Item> FAIRAPIER_SEED = ITEMS.register("fairapier_seed",
@@ -272,11 +307,11 @@ public class ModItems {
 	public static final RegistryObject<Item> MUSIC_DISC_RAIN_B_SIDE = ITEMS.register("music_disc_rain_b_side", () -> new DoubleSidedRecordItem(2, RPGSounds.MUSIC_DISC_RAIN_B_SIDE.get(), new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 178 * 20));
 	public static final RegistryObject<Item> RIE_WEALD_BANNER_PATTERN = ITEMS.register("rie_weald_banner_pattern", () -> new BannerPatternItem(ModTags.BannerPatterns.PATTERN_ITEM_RIE_WEALD, (new Item.Properties()).stacksTo(1).rarity(Rarity.EPIC)));
 	public static final RegistryObject<Item> EMPTY_SCROLL = ITEMS.register("empty_scroll", () -> new EmptyScrollItem((new Item.Properties()).stacksTo(16)));
-	public static final RegistryObject<Item> EMBER_SCROLL = ITEMS.register("ember_scroll", () -> new EmberScrollItem((new Item.Properties()).stacksTo(1).rarity(Rarity.UNCOMMON)));
-	public static final RegistryObject<Item> HEART_OF_THE_SEA_SCROLL = ITEMS.register("heart_of_the_sea_scroll", () -> new HeartOfTheSeaScrollItem((new Item.Properties()).stacksTo(1).rarity(Rarity.UNCOMMON)));
-	public static final RegistryObject<Item> ENDER_EYE_SCROLL = ITEMS.register("ender_eye_scroll", () -> new EnderEyeScrollItem((new Item.Properties()).stacksTo(1).rarity(Rarity.UNCOMMON)));
-	public static final RegistryObject<Item> NETHER_STAR_SCROLL = ITEMS.register("nether_star_scroll", () -> new NetherStarScrollItem((new Item.Properties()).stacksTo(1).rarity(Rarity.UNCOMMON)));
-	public static final RegistryObject<Item> PILLAGER_SCROLL = ITEMS.register("pillager_scroll", () -> new PillagerScrollItem((new Item.Properties()).stacksTo(1).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> EMBER_SCROLL = ITEMS.register("ember_scroll", () -> new EmberScrollItem((new Item.Properties()).stacksTo(16).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> HEART_OF_THE_SEA_SCROLL = ITEMS.register("heart_of_the_sea_scroll", () -> new HeartOfTheSeaScrollItem((new Item.Properties()).stacksTo(16).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> ENDER_EYE_SCROLL = ITEMS.register("ender_eye_scroll", () -> new EnderEyeScrollItem((new Item.Properties()).stacksTo(16).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> NETHER_STAR_SCROLL = ITEMS.register("nether_star_scroll", () -> new NetherStarScrollItem((new Item.Properties()).stacksTo(16).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> PILLAGER_SCROLL = ITEMS.register("pillager_scroll", () -> new PillagerScrollItem((new Item.Properties()).stacksTo(16).rarity(Rarity.UNCOMMON)));
 
 	public static final RegistryObject<Item> FIRE_CATCHER_ITEM = ITEMS.register("fire_catcher",
 			() -> new FireCatcherItem(ModBlocks.FIRE_CATCHER.get(), new Item.Properties().fireResistant()));

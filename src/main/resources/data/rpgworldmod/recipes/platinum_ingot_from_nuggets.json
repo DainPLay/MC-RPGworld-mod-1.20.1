@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "platinum_ingot",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "rpgworldmod:platinum_nugget"
+    }
+  },
+  "result": {
+    "item": "rpgworldmod:platinum_ingot"
+  }
+}

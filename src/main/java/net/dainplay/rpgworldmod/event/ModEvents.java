@@ -4,8 +4,11 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.dainplay.rpgworldmod.RPGworldMod;
 import net.dainplay.rpgworldmod.block.custom.EntFaceBlock;
 import net.dainplay.rpgworldmod.block.custom.LivingWoodLogBlock;
+import net.dainplay.rpgworldmod.block.custom.RazorleafBudBlock;
 import net.dainplay.rpgworldmod.block.custom.RieLeavesBlock;
+import net.dainplay.rpgworldmod.block.custom.YoungRazorleafBlock;
 import net.dainplay.rpgworldmod.block.entity.custom.EntFaceBlockEntity;
+import net.dainplay.rpgworldmod.block.entity.custom.RazorleafBudBlockEntity;
 import net.dainplay.rpgworldmod.data.tags.DepressionDeathCheck;
 import net.dainplay.rpgworldmod.data.tags.ModAdvancements;
 import net.dainplay.rpgworldmod.effect.ModEffects;
@@ -84,6 +87,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
@@ -106,6 +111,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
@@ -293,18 +299,6 @@ public class ModEvents {
 			if (player.getMainHandItem().getItem() instanceof DaggerItem) {
 				DaggerItem.addDaggerReachModifier(player);
 			}
-		}
-	}
-
-	@SubscribeEvent
-	public static void onPlayerDeath(LivingDeathEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) {
-			player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-				if (mana.getMana() == 0) {
-					player.setRespawnPosition(player.serverLevel().dimension(), null, 0, false, false);
-					ModAdvancements.DEPRESSION_DEATH_CHECK.trigger(player);
-				}
-			});
 		}
 	}
 
@@ -743,6 +737,14 @@ public class ModEvents {
 
 	@SubscribeEvent
 	public static void onLivingDeath(LivingDeathEvent event) {
+		if (event.getEntity() instanceof ServerPlayer player) {
+			player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+				if (mana.getMana() == 0) {
+					player.setRespawnPosition(player.serverLevel().dimension(), null, 0, false, false);
+					ModAdvancements.DEPRESSION_DEATH_CHECK.trigger(player);
+				}
+			});
+		}
 		if (event.isCanceled()) return;
 		if (!(event.getEntity() instanceof Player player)) return;
 		if (player.level().isClientSide) return;
@@ -752,9 +754,6 @@ public class ModEvents {
 			return;
 		}
 		ItemStack usingItem = player.getUseItem();
-		if (net.minecraftforge.common.ForgeHooks.onLivingUseTotem(player, event.getSource(), usingItem, player.getUsedItemHand())) {
-			return;
-		}
 		if (usingItem.getItem() instanceof EnderEyeScrollItem
 				&& EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.RESTORATION.get(), usingItem) > 0) {
 			double radius = 32.0D;
@@ -904,6 +903,48 @@ public class ModEvents {
 			if (chance < totalChance && !target.fireImmune()) {
 				int fireDuration = 5 + (fortuneLevel * 5);
 				target.setSecondsOnFire(fireDuration);
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onChunkLoad(ChunkEvent.Load event) {
+		if (event.getLevel().isClientSide()) return;
+		if (!(event.getChunk() instanceof LevelChunk chunk)) return;
+
+		LevelChunkSection[] sections = chunk.getSections();
+		int minSection = chunk.getMinSection();
+		int chunkMinX  = chunk.getPos().getMinBlockX();
+		int chunkMinZ  = chunk.getPos().getMinBlockZ();
+
+		for (int secIdx = 0; secIdx < sections.length; secIdx++) {
+			LevelChunkSection section = sections[secIdx];
+			if (section == null || section.hasOnlyAir()) continue;
+
+			int baseY = (minSection + secIdx) << 4;
+
+			boolean hasOurBlock = false;
+			outer:
+			for (int x = 0; x < 16; x++)
+				for (int y = 0; y < 16; y++)
+					for (int z = 0; z < 16; z++)
+						if (section.getBlockState(x, y, z).getBlock() instanceof RazorleafBudBlock || section.getBlockState(x, y, z).getBlock() instanceof YoungRazorleafBlock) {
+							hasOurBlock = true;
+							break outer;
+						}
+
+			if (!hasOurBlock) continue;
+
+			for (int x = 0; x < 16; x++) {
+				for (int y = 0; y < 16; y++) {
+					for (int z = 0; z < 16; z++) {
+						BlockState st = section.getBlockState(x, y, z);
+						if (st.getBlock() instanceof RazorleafBudBlock || st.getBlock() instanceof YoungRazorleafBlock) {
+							BlockPos pos = new BlockPos(chunkMinX + x, baseY + y, chunkMinZ + z);
+							chunk.getBlockEntity(pos, LevelChunk.EntityCreationType.IMMEDIATE);
+						}
+					}
+				}
 			}
 		}
 	}

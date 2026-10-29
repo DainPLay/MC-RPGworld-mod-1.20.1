@@ -14,7 +14,6 @@
     "CreeperMixin",
     "DolphinPlayWithItemsGoalMixin",
     "EnchantmentHelperMixin",
-    "EnchantRandomlyFunctionMixin",
     "EntityMixin",
     "FireBlockMixin",
     "FoxMixin",

@@ -1,0 +1,9 @@
+{
+  "asset_name": "platinum",
+  "description": {
+    "color": "#FF8097B8",
+    "translate": "trim_material.rpgworldmod.platinum"
+  },
+  "ingredient": "rpgworldmod:platinum_ingot",
+  "item_model_index": -1.0
+}

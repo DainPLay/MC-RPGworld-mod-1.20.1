@@ -1,6 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "rpgworldmod:item/all_staffs"
+    "layer0": "rpgworldmod:item/all_staffs",
+    "layer1": "rpgworldmod:item/all_staffs_gems"
   }
 }

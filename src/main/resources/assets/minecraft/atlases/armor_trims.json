@@ -64,7 +64,8 @@
       ],
       "palette_key": "trims/color_palettes/trim_palette",
       "permutations": {
-        "mintal": "rpgworldmod:trims/color_palettes/mintal"
+        "mintal": "rpgworldmod:trims/color_palettes/mintal",
+        "platinum": "rpgworldmod:trims/color_palettes/platinum"
       }
     }
   ]

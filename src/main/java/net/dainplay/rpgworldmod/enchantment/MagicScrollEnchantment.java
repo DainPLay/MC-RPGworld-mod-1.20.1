@@ -31,6 +31,10 @@ public class MagicScrollEnchantment extends Enchantment {
 		return false;
 	}
 
+	public boolean canApplyAtEnchantingTable(ItemStack stack) {
+		return true;
+	}
+
 	public boolean canEnchant(ItemStack pStack) {
 		if (pStack.getItem() == Items.BOOK || pStack.getItem() == Items.ENCHANTED_BOOK) return false;
 		return super.canEnchant(pStack);
@@ -38,6 +42,18 @@ public class MagicScrollEnchantment extends Enchantment {
 
 	public boolean isTradeable() {
 		return false;
+	}
+
+	public boolean isDiscoverable() {
+		return false;
+	}
+
+	public boolean isCurse() {
+		return true;
+	}
+
+	public boolean isTreasureOnly() {
+		return true;
 	}
 
 	@Override

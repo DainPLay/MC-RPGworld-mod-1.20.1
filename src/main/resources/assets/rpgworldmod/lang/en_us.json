@@ -268,6 +268,8 @@
   "item.rpgworldmod.shiveralis_berries": "Shiveralis Berries",
   "item.rpgworldmod.rie_fruit": "Rie",
   "item.rpgworldmod.mint_rie_fruit": "Mint Rie",
+  "item.rpgworldmod.coilcarrot": "Coilcarrot",
+  "item.rpgworldmod.platinum_coilcarrot": "Platinum Coilcarrot",
   "item.rpgworldmod.steelpork": "Steelpork",
   "item.rpgworldmod.cooked_steelpork": "Hardened Steelpork",
   "item.rpgworldmod.rpgirolle_item": "RPGirolle",
@@ -317,6 +319,8 @@
   "item.rpgworldmod.cheese_cap": "Cheese Cap",
   "item.rpgworldmod.quartzite": "Quartzite",
   "item.rpgworldmod.samaraguard": "Samaraguard",
+  "item.rpgworldmod.platinum_ingot": "Platinum Ingot",
+  "item.rpgworldmod.platinum_nugget": "Platinum Nugget",
   "item.rpgworldmod.mintal_ingot": "Mintal Ingot",
   "item.rpgworldmod.mintal_nugget": "Mintal Nugget",
   "item.rpgworldmod.mintal_triangle": "Mintal Triangle",
@@ -890,6 +894,7 @@
   "gamerule.disableGasbassPvpCooldown": "Disable Gasbass cooldown in combat",
 
   "trim_material.rpgworldmod.mintal": "Mintal Material",
+  "trim_material.rpgworldmod.platinum": "Platinum Material",
 
   "creativemodetab.rpgworldtab_blocks": "RPGworld: Blocks",
   "creativemodetab.rpgworldtab_flora": "RPGworld: Flora",

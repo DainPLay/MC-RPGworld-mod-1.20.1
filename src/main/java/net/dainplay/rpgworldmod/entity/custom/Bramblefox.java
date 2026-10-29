@@ -257,6 +257,8 @@ public class Bramblefox extends Animal {
 				itemstack = new ItemStack(ModItems.FAIRAPIER_SWORD_WILTED.get());
 			} else if (f < 0.2F) {
 				itemstack = new ItemStack(ModItems.RIE_FRUIT.get());
+			} else if (f < 0.3F) {
+				itemstack = new ItemStack(ModItems.COILCARROT.get());
 			} else if (f < 0.4F) {
 				itemstack = new ItemStack(ModItems.FAIRAPIER_SEED.get());
 			} else if (f < 0.6F) {

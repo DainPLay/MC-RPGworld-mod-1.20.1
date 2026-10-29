@@ -294,6 +294,7 @@ public class RPGworldMod {
 			event.accept(ModBlocks.YOUNG_RAZORLEAF);
 			event.accept(ModItems.FAIRAPIER_SEED);
 			event.accept(ModItems.RIE_FRUIT);
+			event.accept(ModItems.COILCARROT);
 			event.accept(ModItems.BRAMBLEFOX_BERRIES);
 			event.accept(ModItems.SHIVERALIS_BERRIES);
 			event.accept(ModItems.PARALILY_BERRY);
@@ -439,6 +440,8 @@ public class RPGworldMod {
 		if (event.getTab() == ModCreativeModeTab.RPGWORLD_FOODS_AND_DRINKS_TAB.get()) {
 			event.accept(ModItems.RIE_FRUIT);
 			event.accept(ModItems.MINT_RIE_FRUIT);
+			event.accept(ModItems.COILCARROT);
+			event.accept(ModItems.PLATINUM_COILCARROT);
 			event.accept(ModItems.BRAMBLEFOX_BERRIES);
 			event.accept(ModItems.SHIVERALIS_BERRIES);
 			event.accept(ModItems.PARALILY_BERRY);
@@ -517,6 +520,8 @@ public class RPGworldMod {
 			event.accept(ModBlocks.MASKONITE_BLOCK);
 			event.accept(ModItems.DRIED_WIDOWEED);
 			event.accept(ModItems.TYPHON_DYE);
+			event.accept(ModItems.PLATINUM_NUGGET);
+			event.accept(ModItems.PLATINUM_INGOT);
 			event.accept(ModItems.MINTAL_NUGGET);
 			event.accept(ModItems.MINTAL_INGOT);
 			event.accept(ModItems.SAMARAGUARD);
@@ -582,6 +587,7 @@ public class RPGworldMod {
 			ComposterBlock.COMPOSTABLES.put(ModBlocks.RIE_LEAVES.get().asItem(), 0.3F);
 			ComposterBlock.COMPOSTABLES.put(ModItems.FAIRAPIER_SEED.get().asItem(), 0.3F);
 			ComposterBlock.COMPOSTABLES.put(ModItems.RIE_FRUIT.get().asItem(), 0.5F);
+			ComposterBlock.COMPOSTABLES.put(ModItems.COILCARROT.get().asItem(), 0.65F);
 			ComposterBlock.COMPOSTABLES.put(ModItems.SHIVERALIS_BERRIES.get().asItem(), 0.3F);
 			ComposterBlock.COMPOSTABLES.put(ModItems.PARALILY_BERRY.get().asItem(), 0.3F);
 			ComposterBlock.COMPOSTABLES.put(ModItems.RPGIROLLE_ITEM.get().asItem(), 0.65F);

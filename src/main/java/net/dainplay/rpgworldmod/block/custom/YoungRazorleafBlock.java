@@ -1,101 +1,68 @@
 package net.dainplay.rpgworldmod.block.custom;
 
 import net.dainplay.rpgworldmod.block.ModBlocks;
-import net.dainplay.rpgworldmod.entity.ModEntities;
-import net.dainplay.rpgworldmod.entity.custom.Razorleaf;
+import net.dainplay.rpgworldmod.block.entity.custom.YoungRazorleafBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
-public class YoungRazorleafBlock extends BushBlock {
+public class YoungRazorleafBlock extends BushBlock implements EntityBlock {
+
 	protected static final VoxelShape SHAPE = Shapes.or(
 			Block.box(0.25D, 0.75D, 0.25D, 15.75D, 8.25D, 15.75D),
 			Block.box(2.15D, 8.25D, 2.15D, 13.85D, 15.75D, 13.85D));
 
-	public YoungRazorleafBlock(Properties pProperties) {
-		super(pProperties);
+	public YoungRazorleafBlock(Properties props) {
+		super(props);
 	}
 
 	@Override
-	protected boolean mayPlaceOn(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
-		return pState.is(ModBlocks.SPIKY_IVY.get());
+	protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
+		return state.is(ModBlocks.SPIKY_IVY.get());
 	}
 
 	@Override
-	public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
 		return SHAPE;
 	}
 
+	@Nullable
 	@Override
-	public void randomTick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
-		float f = 0.25F;
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return new YoungRazorleafBlockEntity(pos, state);
+	}
 
-		if (!pLevel.isDay()) return;
-
-		if (!net.minecraftforge.common.ForgeHooks.onCropsGrowPre(
-				pLevel, pPos, pState, pRandom.nextInt((int) (25.0F / f) + 1) == 0)) {
-			return;
-		}
-
-		for (int dx = -1; dx <= 1; dx++) {
-			for (int dy = 0; dy <= 2; dy++) {
-				for (int dz = -1; dz <= 1; dz++) {
-					if (dx == 0 && dz == 0 && dy == 0) continue;
-
-					BlockPos checkPos = pPos.offset(dx, dy, dz);
-					if (!canBeReplacedBy(pLevel, pLevel.getBlockState(checkPos), checkPos)) {
-						return;
-					}
-				}
+	@Nullable
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+		if (level.isClientSide) return null;
+		return (lvl, pos, st, be) -> {
+			if (be instanceof YoungRazorleafBlockEntity young) {
+				young.tick(lvl, pos, st);
 			}
-		}
-
-		pLevel.setBlock(pPos, ModBlocks.SPIKY_IVY.get().defaultBlockState().setValue(SpikyIvyBlock.AGE, 3), 2);
-
-		for (int dx = -1; dx <= 1; dx++) {
-			for (int dy = 0; dy <= 2; dy++) {
-				for (int dz = -1; dz <= 1; dz++) {
-					if (dx == 0 && dz == 0 && dy == 0) continue;
-
-					BlockPos checkPos = pPos.offset(dx, dy, dz);
-					pLevel.destroyBlock(checkPos, true);
-				}
-			}
-		}
-
-
-		Razorleaf razorleaf = new Razorleaf(ModEntities.RAZORLEAF.get(), pLevel);
-		razorleaf.setPos(pPos.getX() + 0.5, pPos.getY(), pPos.getZ() + 0.5);
-		pLevel.addFreshEntityWithPassengers(razorleaf);
-
-
-		net.minecraftforge.common.ForgeHooks.onCropsGrowPost(pLevel, pPos, pState);
-	}
-
-	public boolean canBeReplacedBy(Level level, BlockState state, BlockPos pos) {
-		return state.getBlock().getExplosionResistance(state, level, pos, null) < 20F || state.isAir();
+		};
 	}
 
 	@Override
-	public boolean isRandomlyTicking(BlockState pState) {
-		return true;
-	}
-
-	@Override
-	public void animateTick(BlockState pState, Level pLevel, BlockPos pPos, RandomSource pRandom) {
-		if (pRandom.nextFloat() < 0.1f) {
-			pLevel.addParticle(ParticleTypes.LARGE_SMOKE,
-					pPos.getX() + 0.5F, pPos.getY() + 0.5F, pPos.getZ() + 0.5F,
+	public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource rng) {
+		if (rng.nextFloat() < 0.1f) {
+			level.addParticle(ParticleTypes.LARGE_SMOKE,
+					pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F,
 					0, 0.05, 0);
 		}
 	}
+
 }

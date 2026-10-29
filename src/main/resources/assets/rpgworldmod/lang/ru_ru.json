@@ -268,6 +268,8 @@
   "item.rpgworldmod.shiveralis_berries": "Ягоды трусянки",
   "item.rpgworldmod.rie_fruit": "Рия",
   "item.rpgworldmod.mint_rie_fruit": "Мятная рия",
+  "item.rpgworldmod.coilcarrot": "Штопорковь",
+  "item.rpgworldmod.platinum_coilcarrot": "Платиновая штопорковь",
   "item.rpgworldmod.steelpork": "Стальная свинина",
   "item.rpgworldmod.cooked_steelpork": "Закалённая стальная свинина",
   "item.rpgworldmod.rpgirolle_item": "РПГриб",
@@ -317,6 +319,8 @@
   "item.rpgworldmod.cheese_cap": "Сырядовка",
   "item.rpgworldmod.quartzite": "Кварцит",
   "item.rpgworldmod.samaraguard": "Гарда-крылатка",
+  "item.rpgworldmod.platinum_ingot": "Платиновый слиток",
+  "item.rpgworldmod.platinum_nugget": "Кусочек платины",
   "item.rpgworldmod.mintal_ingot": "Слиток минталла",
   "item.rpgworldmod.mintal_nugget": "Кусочек минталла",
   "item.rpgworldmod.mintal_triangle": "Минталловый треугольник",
@@ -890,6 +894,7 @@
   "gamerule.disableGasbassPvpCooldown": "Без задержки Смокуня во время битвы",
 
   "trim_material.rpgworldmod.mintal": "Минталловая",
+  "trim_material.rpgworldmod.platinum": "Платиновая",
 
   "creativemodetab.rpgworldtab_blocks": "РПГмир: Блоки",
   "creativemodetab.rpgworldtab_flora": "РПГмир: Флора",

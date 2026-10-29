@@ -13,9 +13,11 @@ import net.dainplay.rpgworldmod.block.entity.custom.HoltsReflectionBlockEntity;
 import net.dainplay.rpgworldmod.block.entity.custom.ModHangingSignBlockEntity;
 import net.dainplay.rpgworldmod.block.entity.custom.ModSignBlockEntity;
 import net.dainplay.rpgworldmod.block.entity.custom.PottedStareblossomBlockEntity;
+import net.dainplay.rpgworldmod.block.entity.custom.RazorleafBudBlockEntity;
 import net.dainplay.rpgworldmod.block.entity.custom.StareblossomBlockEntity;
 import net.dainplay.rpgworldmod.block.entity.custom.TreeHollowBlockEntity;
 import net.dainplay.rpgworldmod.block.entity.custom.TyphonBlockEntity;
+import net.dainplay.rpgworldmod.block.entity.custom.YoungRazorleafBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -40,6 +42,14 @@ public class ModBlockEntities {
 			BlockEntityType.Builder.of(DirectionalFlowerBlockEntity::new).build(null));
 	public static final RegistryObject<BlockEntityType<BoundCampfireBlockEntity>> BOUND_CAMPFIRE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("bound_campfire_block_entity", () ->
 			BlockEntityType.Builder.of(BoundCampfireBlockEntity::new, ModBlocks.BOUND_CAMPFIRE.get()).build(null));
+	public static final RegistryObject<BlockEntityType<RazorleafBudBlockEntity>> RAZORLEAF_BUD_BLOCK_ENTITY =
+			BLOCK_ENTITY_TYPES.register("razorleaf_bud", () ->
+					BlockEntityType.Builder.of(RazorleafBudBlockEntity::new,
+							ModBlocks.RAZORLEAF_BUD.get()).build(null));
+	public static final RegistryObject<BlockEntityType<YoungRazorleafBlockEntity>> YOUNG_RAZORLEAF_BLOCK_ENTITY =
+			BLOCK_ENTITY_TYPES.register("young_razorleaf", () ->
+					BlockEntityType.Builder.of(YoungRazorleafBlockEntity::new,
+							ModBlocks.YOUNG_RAZORLEAF.get()).build(null));
 
 	public static final RegistryObject<BlockEntityType<BlowerBlockEntity>> BLOWER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("blower",
 			() -> BlockEntityType.Builder.of(BlowerBlockEntity::new, ModBlocks.BLOWER.get()).build(null));

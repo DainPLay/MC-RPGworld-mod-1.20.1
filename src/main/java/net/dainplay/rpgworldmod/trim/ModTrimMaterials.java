@@ -17,6 +17,7 @@ import java.util.Map;
 
 public class ModTrimMaterials {
 	public static final ResourceKey<TrimMaterial> MINTAL = registerKey("mintal");
+	public static final ResourceKey<TrimMaterial> PLATINUM = registerKey("platinum");
 
 	private static ResourceKey<TrimMaterial> registerKey(String name) {
 		return ResourceKey.create(Registries.TRIM_MATERIAL, new ResourceLocation(RPGworldMod.MOD_ID, name));
@@ -24,6 +25,7 @@ public class ModTrimMaterials {
 
 	public static void bootstrap(BootstapContext<TrimMaterial> context) {
 		register(context, MINTAL, ModItems.MINTAL_INGOT.getHolder().get(), Style.EMPTY.withColor(2416792), 0.7F);
+		register(context, PLATINUM, ModItems.PLATINUM_INGOT.getHolder().get(), Style.EMPTY.withColor(0xFF8097B8), 0.2F);
 	}
 
 	private static void register(BootstapContext<TrimMaterial> context, ResourceKey<TrimMaterial> trimKey, Holder<Item> trimItem, Style color, float itemModelIndex) {

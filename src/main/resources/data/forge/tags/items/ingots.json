@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "rpgworldmod:mintal_ingot"
+    "rpgworldmod:mintal_ingot",
+    "rpgworldmod:platinum_ingot"
   ]
 }

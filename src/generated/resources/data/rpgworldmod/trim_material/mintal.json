@@ -5,5 +5,5 @@
     "translate": "trim_material.rpgworldmod.mintal"
   },
   "ingredient": "rpgworldmod:mintal_ingot",
-  "item_model_index": 0.7
+  "item_model_index": -1.0
 }

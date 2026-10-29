@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "tag": "forge:nuggets/platinum"
+    },
+    "X": {
+      "item": "rpgworldmod:coilcarrot"
+    }
+  },
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "result": {
+    "item": "rpgworldmod:platinum_coilcarrot"
+  },
+  "show_notification": true
+}
